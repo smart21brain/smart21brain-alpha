@@ -268,6 +268,6 @@
     if (cm && !isMobile()) setTimeout(function () { cm.focus(); }, 80);
   }
 
-  window.S21E = { cm: function () { return cm; }, cur: function () { return cur; }, file: function () { return curFile; }, run: run, get: runCode, raw: getVal, set: setVal, setFile: setFile, pick: pick, byId: byId, store: store, isMobile: isMobile };
+  window.S21E = { langs: LANGS, cm: function () { return cm; }, cur: function () { return cur; }, file: function () { return curFile; }, run: run, get: runCode, raw: getVal, set: setVal, setFile: setFile, pick: pick, byId: byId, store: store, isMobile: isMobile };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

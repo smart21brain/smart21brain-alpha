@@ -15,7 +15,7 @@
     if (c && l && E.byId(l)) {
       var code = decodeURIComponent(escape(atob(c)));
       if (l === 'web') { var o = JSON.parse(code); ['html', 'css', 'js'].forEach(function (f) { st('s21e-web-' + f, o[f] || ''); }); } else st('s21e-code-' + l, code);
-      st('s21e-lang', l); history.replaceState(null, '', location.pathname + '#' + l);
+      st('s21e-lang', l); E.shared = l; history.replaceState(null, '', location.pathname + '#' + l);
     }
   } catch (e) { /* ignore bad links */ }
 
