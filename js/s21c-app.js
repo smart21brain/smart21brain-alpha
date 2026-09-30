@@ -5,8 +5,11 @@
   var S = window.S21C, R = window.S21CRunner;
   if (!S) return;
 
-  var ICON = { html: 'fa-brands fa-html5', css: 'fa-brands fa-css3-alt', javascript: 'fa-brands fa-js', python: 'fa-brands fa-python', sql: 'fa-solid fa-database' };
+  var ICON = { html: 'fa-brands fa-html5', css: 'fa-brands fa-css3-alt', javascript: 'fa-brands fa-js', python: 'fa-brands fa-python', sql: 'fa-solid fa-database', bootstrap: 'fa-brands fa-bootstrap', jquery: 'fa-solid fa-bolt', react: 'fa-brands fa-react' };
   var STARTER = {
+    bootstrap: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n<div class="container mt-4">\n  <h1 class="text-primary">My Bootstrap page</h1>\n  <p class="lead">Add classes to style things.</p>\n  <button class="btn btn-success">Click me</button>\n</div>\n<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>',
+    jquery: '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"><\/script>\n</head>\n<body>\n<h2 id="title">Hello!</h2>\n<button id="btn">Click me</button>\n\n<script>\n$(function () {\n  $("#btn").click(function () {\n    $("#title").text("jQuery works!").css("color", "crimson");\n  });\n});\n<\/script>\n</body>\n</html>',
+    react: '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"><\/script>\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"><\/script>\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"><\/script>\n</head>\n<body>\n<div id="root"></div>\n\n<script type="text/babel">\nconst { useState } = React;\n\nfunction App() {\n  const [n, setN] = useState(0);\n  return <button onClick={() => setN(n + 1)}>Clicked {n} times</button>;\n}\n\nReactDOM.createRoot(document.getElementById("root")).render(<App />);\n<\/script>\n</body>\n</html>',
     html: '<!DOCTYPE html>\n<html>\n<head>\n  <title>My page</title>\n  <style>\n    body { font-family: sans-serif; padding: 16px; }\n    h1 { color: #0B6E4F; }\n  </style>\n</head>\n<body>\n  <h1>Hello, world!</h1>\n  <p>Edit me and press Run.</p>\n</body>\n</html>',
     javascript: '// Write JavaScript here and press Run\nconst name = "Smart21Code";\nconsole.log("Hello from " + name);\n\nfor (let i = 1; i <= 3; i++) {\n  console.log("Loop number " + i);\n}',
     python: '# Write Python here and press Run\nname = "Smart21Code"\nprint("Hello from", name)\n\nfor i in range(1, 4):\n    print("Loop number", i)',
@@ -100,7 +103,7 @@
   }
 
   function viewHome() {
-    document.title = 'Smart21Code — Learn HTML, CSS, JavaScript, Python & SQL | Smart21Brain';
+    document.title = 'Smart21Code — Learn HTML, CSS, JavaScript, Python, SQL, Bootstrap, jQuery & React | Smart21Brain';
     setLayout(false, false, true);
     var last = (store('s21c-last') || '').split('/');
     var cont = '';
@@ -110,7 +113,7 @@
     }
     var total = S.langs.reduce(function (n, l) { return n + list(l.id).length; }, 0);
     var h = '<section class="c-hero"><h1>Learn to code. Try it. Build it.</h1>' +
-      '<p>Free, hands-on tutorials in HTML, CSS, JavaScript, Python and SQL. Every example opens in a real editor — change the code and run it right in your browser.</p>' +
+      '<p>Free, hands-on tutorials in HTML, CSS, JavaScript, Python, SQL, Bootstrap, jQuery and React. Every example opens in a real editor — change the code and run it right in your browser.</p>' +
       '<div class="btns"><a class="c-btn" href="#/html"><i class="fa-solid fa-play"></i> Start with HTML</a>' +
       '<a class="c-btn alt" href="#/playground"><i class="fa-solid fa-flask"></i> Open the Playground</a>' + cont + '</div></section>';
     h += '<h2 class="c-h2">Choose a tutorial</h2><div class="c-cards">';
@@ -121,7 +124,7 @@
     });
     h += '</div><h2 class="c-h2">How it works</h2><div class="c-steps">' +
       '<div class="c-step"><b>1</b><h4>Read a short lesson</h4><p>Plain-English explanations, one idea at a time.</p></div>' +
-      '<div class="c-step"><b>2</b><h4>Try it Yourself</h4><p>Edit any example and run it. Python and SQL really run in your browser.</p></div>' +
+      '<div class="c-step"><b>2</b><h4>Try it Yourself</h4><p>Edit any example and run it. Web frameworks, Python and SQL all really run in your browser.</p></div>' +
       '<div class="c-step"><b>3</b><h4>Practise with exercises</h4><p>Fill in the blank to check what you learned — ' + total + ' lessons in all.</p></div></div>';
     h += '<div class="c-panel" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between"><div><h4 style="margin:0 0 .2rem"><i class="fa-solid fa-robot" style="color:var(--s21-primary)"></i> Get more advanced with Smart21brain AI</h4><p style="margin:0">Ask the AI to explain a lesson, debug your code, or suggest what to build next.</p></div><button class="c-btn" data-ai-ask="1">Ask the AI</button></div>';
     $('#cMain').innerHTML = h;
@@ -220,9 +223,9 @@
   function viewPlay(route) {
     document.title = 'Playground | Smart21Code';
     setLayout(false, false, true);
-    var opts = ['html', 'javascript', 'python', 'sql'];
+    var opts = ['html', 'javascript', 'python', 'sql', 'bootstrap', 'jquery', 'react'];
     var h = '<div class="c-crumb"><a href="#/">Smart21Code</a> › <span>Playground</span></div><h1><i class="fa-solid fa-flask" style="color:var(--s21-primary)"></i> Playground</h1>' +
-      '<p class="c-body">A full-screen editor with syntax colours. HTML, CSS and JavaScript run instantly; Python and SQL run for real too. Your code is saved on this device.</p><div class="c-cards">';
+      '<p class="c-body">A full-screen editor with syntax colours. HTML, CSS, JavaScript, Bootstrap, jQuery and React run instantly; Python and SQL run for real too. Your code is saved on this device.</p><div class="c-cards">';
     opts.forEach(function (id) {
       var l = lang(id);
       h += '<a class="c-card" href="#/playground/' + id + '" style="--lc:' + l.color + '"><div class="ic"><i class="' + ICON[id] + '"></i></div><h3>' + (id === 'html' ? 'HTML / CSS' : esc(l.name)) + '</h3><p>' + esc(l.tag) + '</p><div class="meta"><span>Open editor</span><span class="go">Go ›</span></div></a>';
