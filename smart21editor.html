@@ -42,6 +42,22 @@
   .ed-modal > div { background: var(--s21-white); color: var(--s21-text); border-radius: 14px; padding: 1.2rem 1.4rem; max-width: 460px; width: 100%; max-height: 85vh; overflow: auto; }
   .ed-modal table { width: 100%; border-collapse: collapse; font-size: .88rem; } .ed-modal td { padding: .3rem .2rem; border-bottom: 1px solid var(--s21-border); } .ed-modal kbd { background: var(--s21-bg); border: 1px solid var(--s21-border); border-radius: 5px; padding: 1px 6px; font-size: .8rem; }
   @media (max-width: 700px) { .c-hint, .c-try-bar .brand span { display: none; } }
+
+  /* Mobile: the second toolbar (.ed-tools) becomes a slide-in side menu, opened by the hamburger button in the top bar */
+  .c-try-bar .ed-burger, .ed-tools-head, .ed-scrim { display: none; }
+  @media (max-width: 700px) {
+    .c-try-bar .ed-burger { display: inline-flex; flex: none; padding: .45rem .65rem; }
+    .c-try-bar select { min-width: 0; }
+    .ed-tools { position: fixed; top: 0; bottom: 0; left: 0; z-index: 2600; width: min(290px, 84vw); flex-direction: column; align-items: stretch; gap: .4rem; overflow-x: hidden; overflow-y: auto; padding: calc(.7rem + env(safe-area-inset-top, 0px)) .9rem calc(.9rem + env(safe-area-inset-bottom, 0px)); border-bottom: 0; border-right: 1px solid var(--s21-border); transform: translateX(-105%); visibility: hidden; transition: transform .25s ease, visibility 0s linear .25s; }
+    .ed-tools.open { transform: none; visibility: visible; box-shadow: 8px 0 28px rgba(0,0,0,.4); transition: transform .25s ease; }
+    .ed-tools-head { display: flex; align-items: center; justify-content: space-between; flex: none; padding: 0 0 .3rem .2rem; font: 800 .8rem var(--font-body, sans-serif); letter-spacing: .06em; text-transform: uppercase; color: var(--s21-text-soft); }
+    .ed-tools .ed-tools-head button { width: auto; min-height: 40px; min-width: 40px; justify-content: center; padding: .3rem; }
+    .ed-tools button, .ed-tools select { display: flex; align-items: center; gap: .6rem; width: 100%; min-height: 44px; padding: .5rem .75rem; font-size: .9rem; text-align: left; }
+    .ed-tools select { display: block; }
+    .ed-tools i { width: 1.1em; text-align: center; }
+    #edUndo::after, #edRedo::after, #edKeys::after, #edFontD::after, #edFontU::after { content: attr(title); }
+    .ed-scrim.open { display: block; position: fixed; inset: 0; z-index: 2500; background: rgba(0,0,0,.55); }
+  }
 </style>
 <script src="js/darkmode.js"></script>
 </head>
@@ -49,6 +65,7 @@
 
 <div class="c-try" id="cTry" data-layout="h" data-panel="code" aria-label="Smart21Editor">
   <div class="c-try-bar">
+    <button class="c-btn ghost ed-burger" id="edBurger" type="button" aria-label="Open editor tools" aria-expanded="false" aria-controls="edTools"><i class="fa-solid fa-bars"></i></button>
     <a class="brand" href="smart21code.html" aria-label="Smart21Code home"><img src="images/logo/coool.png" alt="Smart21Brain logo"><strong><span>Smart<em>21</em>Editor</span></strong></a>
     <select id="edLang" aria-label="Programming language"></select>
     <span class="sp"></span>
@@ -61,6 +78,7 @@
     <button class="c-btn ghost" data-theme-toggle title="Light / dark" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
     <a class="c-btn ghost" href="courses.html" id="edClose" aria-label="Back to courses" title="Back to courses"><i class="fa-solid fa-xmark"></i></a>
   </div>
+  <div class="ed-scrim" id="edScrim"></div>
   <div class="c-try-tabs" id="tryTabs"><button class="active" data-p="code">Code</button><button data-p="result">Result</button></div>
   <div class="c-try-body" id="tryBody">
     <section class="c-pane c-pane-code" id="paneCode" aria-label="Code">
@@ -131,5 +149,32 @@
 <script src="js/s21-editor-pro.js?v=2"></script>
 <script src="js/s21-editor-more.js?v=1"></script>
 <script src="js/ai-assistant.js"></script>
+<script>
+/* Mobile side menu for the editor toolbar (.ed-tools, built by s21-editor-pro.js) */
+(function () {
+  var tools = document.querySelector('.ed-tools'), burger = document.getElementById('edBurger'), scrim = document.getElementById('edScrim');
+  if (!tools || !burger || !scrim) { if (burger) burger.hidden = true; return; }
+  tools.id = 'edTools';
+  var head = document.createElement('div'); head.className = 'ed-tools-head';
+  head.innerHTML = '<span>Editor tools</span><button type="button" class="ed-tools-x" aria-label="Close editor tools"><i class="fa-solid fa-xmark"></i></button>';
+  tools.insertBefore(head, tools.firstChild);
+  var keepOpen = /^(edFontD|edFontU|edWrap|edHints|edAuto)$/, mq = window.matchMedia('(max-width: 700px)');
+  function setOpen(open, refocus) {
+    tools.classList.toggle('open', open); scrim.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) { var first = tools.querySelector('.ed-tools-x'); if (first) first.focus(); } else if (refocus) burger.focus();
+  }
+  burger.addEventListener('click', function () { setOpen(!tools.classList.contains('open')); });
+  scrim.addEventListener('click', function () { setOpen(false, true); });
+  head.querySelector('button').addEventListener('click', function () { setOpen(false, true); });
+  tools.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b && !b.classList.contains('ed-tools-x') && !keepOpen.test(b.id)) setOpen(false);
+  });
+  tools.addEventListener('change', function (e) { if (e.target.tagName === 'SELECT') setOpen(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && tools.classList.contains('open')) setOpen(false, true); });
+  (mq.addEventListener ? mq.addEventListener.bind(mq, 'change') : mq.addListener.bind(mq))(function () { setOpen(false); window.dispatchEvent(new Event('resize')); });
+})();
+</script>
 </body>
 </html>
