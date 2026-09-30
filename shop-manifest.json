@@ -1,0 +1,23 @@
+{
+  "id": "/shop-app.html",
+  "name": "Smart21Shop",
+  "short_name": "Smart21Shop",
+  "description": "Point of sale, customers, products, stock, expenses and reports — run your shop from one app.",
+  "start_url": "/shop-app.html?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0E0F1A",
+  "theme_color": "#4F46E5",
+  "orientation": "any",
+  "categories": ["business", "productivity", "shopping"],
+  "icons": [
+    { "src": "/icons/shop-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/shop-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/shop-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "New sale", "url": "/shop-app.html#/pos" },
+    { "name": "Customers", "url": "/shop-app.html#/customers" },
+    { "name": "Products", "url": "/shop-app.html#/products" }
+  ]
+}

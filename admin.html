@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Smart21Brain</title>
+<meta name="description" content="Smart21Brain's admin dashboard — manage users, moderate content, review payments and subscriptions, and control platform settings.">
+<link rel="canonical" href="https://smart21brain.com/admin.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+<style>
+  /* ---- YouTube-Studio-style video uploader ---- */
+  .yts-dropzone {
+    border: 2px dashed var(--s21-border);
+    border-radius: var(--radius-md);
+    padding: 3rem 1.5rem;
+    text-align: center;
+    background: var(--s21-bg);
+    transition: border-color .2s var(--ease), background .2s var(--ease);
+    cursor: pointer;
+  }
+  .yts-dropzone:hover, .yts-dropzone.yts-dragover {
+    border-color: var(--s21-primary);
+    background: var(--s21-primary-light);
+  }
+  .yts-dropzone-icon {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: var(--s21-primary-light);
+    color: var(--s21-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem;
+    margin: 0 auto 1rem;
+  }
+
+  .yts-modal-overlay {
+    position: fixed; inset: 0; z-index: 1080;
+    background: rgba(0,0,0,.6);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.25rem;
+  }
+  .yts-modal {
+    width: 100%; max-width: 860px; max-height: 92vh;
+    background: var(--s21-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow-hover);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .yts-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid var(--s21-border);
+  }
+  .yts-modal-progress { height: 3px; background: var(--s21-border); }
+  .yts-modal-progress-bar {
+    height: 100%; width: 0%;
+    background: var(--s21-primary);
+    transition: width .2s linear;
+  }
+  .yts-modal-steps {
+    display: flex; gap: 1.5rem;
+    padding: .9rem 1.4rem 0;
+  }
+  .yts-step {
+    background: none; border: none; padding: 0 0 .8rem;
+    font-size: .85rem; font-weight: 700;
+    color: var(--s21-text-soft);
+    display: flex; align-items: center; gap: .5rem;
+    border-bottom: 2px solid transparent;
+  }
+  .yts-step.active { color: var(--s21-primary); border-bottom-color: var(--s21-primary); }
+  .yts-step-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--s21-border); color: var(--s21-text);
+    font-size: .72rem; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .yts-step.active .yts-step-num { background: var(--s21-primary); color: #fff; }
+
+  .yts-modal-body { padding: 1.4rem; overflow-y: auto; flex: 1; }
+
+  .yts-thumb-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; }
+  .yts-thumb {
+    position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;
+    border: 2px solid var(--s21-border); cursor: pointer; background: #000;
+  }
+  .yts-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .yts-thumb.selected { border-color: var(--s21-primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--s21-primary) 35%, transparent); }
+  .yts-thumb.selected::after {
+    content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--s21-primary); color: #fff; font-size: .6rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .yts-thumb-upload {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: .3rem; color: var(--s21-text-soft); font-size: .7rem; text-align: center; padding: .4rem;
+  }
+  .yts-thumb-upload i { font-size: 1.1rem; }
+
+  .yts-preview-box {
+    border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--s21-border);
+    aspect-ratio: 16/9;
+  }
+  .yts-preview-box video { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
+  .yts-preview-meta { font-size: .8rem; margin-top: .8rem; display: flex; flex-direction: column; gap: .45rem; }
+  .yts-preview-meta > div > span:last-child { font-weight: 600; text-align: right; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .yts-visibility-list { display: flex; flex-direction: column; gap: .7rem; }
+  .yts-visibility-option {
+    display: flex; align-items: flex-start; gap: .8rem;
+    border: 1px solid var(--s21-border); border-radius: 10px; padding: .9rem 1rem;
+    cursor: pointer; transition: border-color .2s var(--ease);
+  }
+  .yts-visibility-option:has(input:checked) { border-color: var(--s21-primary); background: var(--s21-primary-light); }
+  .yts-visibility-option input { margin-top: .2rem; }
+
+  .yts-modal-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.4rem; border-top: 1px solid var(--s21-border);
+  }
+
+  .yts-done { padding: 3rem 1.5rem; text-align: center; }
+  .yts-done i { font-size: 3rem; color: var(--s21-primary); }
+
+  /* Base .yts-table-wrap / .yts-table look (border, header tint, zebra rows)
+     now lives in css/style.css alongside .dash-table so both admin tables
+     share one consistent, non-white styling. Only overflow behavior stays
+     here since this table sits inside a scrollable modal. */
+  .yts-table-wrap { overflow-x: auto; }
+  .yts-video-cell { display: flex; align-items: center; gap: .8rem; }
+  .yts-video-thumb {
+    width: 100px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; background: var(--s21-bg);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--s21-text-soft);
+    border: 1px solid var(--s21-border);
+  }
+  .yts-video-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .yts-video-title { font-weight: 700; font-size: .86rem; }
+  .yts-video-desc { color: var(--s21-text-soft); font-size: .76rem; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .yts-badge {
+    display: inline-block; font-size: .68rem; font-weight: 700; text-transform: uppercase;
+    padding: .18rem .5rem; border-radius: var(--radius-pill);
+    background: var(--s21-primary-light); color: var(--s21-primary); margin: 0 .2rem .2rem 0;
+  }
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link" data-i18n="blog_skip_to_main_content">Skip to main content</a>
+
+<header class="s21-navbar admin-topbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="admin.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      Smart<span class="brand-21">21</span>Brain
+    </a>
+    <span class="admin-console-badge d-none d-sm-inline-flex">Admin console</span>
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0 ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu"><i class="fa-solid fa-bars fa-lg"></i></button>
+    <div class="d-none d-lg-flex align-items-center gap-2 ms-auto">
+      <a href="index.html" class="icon-btn" aria-label="View public site" title="View public site"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <span data-guest-nav="desktop" style="display:contents"></span>
+      <a href="login.html" data-logout class="btn-s21 btn-s21-outline" style="padding:.5rem 1rem;font-size:.82rem"><i class="fa-solid fa-right-from-bracket"></i> Log out</a>
+    </div>
+  </nav>
+</header>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+  <div class="offcanvas-header">
+    <h5 id="mobileNavLabel" class="font-display mb-0">Admin console</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <span data-guest-nav="mobile" style="display:contents"></span>
+    <nav class="d-flex flex-column gap-1 mb-4 mt-2" data-admin-view-nav>
+      <a href="#overview" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-gauge me-2"></i> Overview</a>
+      <a href="#analytics" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-chart-line me-2"></i> Analytics</a>
+      <a href="#users" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-users me-2"></i> Users</a>
+      <a href="#moderation" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-shield-halved me-2"></i> Content moderation</a>
+      <a href="#payments" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-credit-card me-2"></i> Payments</a>
+      <a href="#settings" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-gear me-2"></i> Settings</a>
+      <a href="#content-manager" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-layer-group me-2"></i> Content</a>
+    </nav>
+    <div class="mt-auto d-flex flex-column gap-2">
+      <a href="index.html" class="btn-s21 btn-s21-outline w-100"><i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View public site</a>
+      <a href="login.html" data-logout class="btn-s21 btn-s21-primary w-100"><i class="fa-solid fa-right-from-bracket me-1"></i> Log out</a>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+
+  <div class="admin-shell" data-role-access="admin">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-head">
+        <div class="fw-bold text-soft admin-sidebar-title" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em" data-i18n="admin_admin">Admin</div>
+        <button type="button" class="admin-sidebar-toggle" data-sidebar-toggle aria-label="Toggle sidebar" aria-expanded="true"><i class="fa-solid fa-angles-left"></i></button>
+      </div>
+      <nav class="d-flex flex-column gap-1" data-admin-view-nav>
+        <a href="#overview" class="nav-link active"><i class="fa-solid fa-gauge"></i> <span class="nav-label" data-i18n="admin_overview">Overview</span></a>
+        <a href="#analytics" class="nav-link"><i class="fa-solid fa-chart-line"></i> <span class="nav-label">Analytics</span></a>
+        <a href="#users" class="nav-link"><i class="fa-solid fa-users"></i> <span class="nav-label" data-i18n="admin_users">Users</span></a>
+        <a href="#moderation" class="nav-link"><i class="fa-solid fa-shield-halved"></i> <span class="nav-label" data-i18n="admin_content_moderation">Content moderation</span></a>
+        <a href="#payments" class="nav-link"><i class="fa-solid fa-credit-card"></i> <span class="nav-label" data-i18n="admin_payments">Payments</span></a>
+        <a href="#settings" class="nav-link"><i class="fa-solid fa-gear"></i> <span class="nav-label" data-i18n="admin_settings">Settings</span></a>
+        <a href="#content-manager" class="nav-link"><i class="fa-solid fa-layer-group"></i> <span class="nav-label">Content</span></a>
+      </nav>
+    </aside>
+
+    <div class="admin-content">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4" data-aos="fade-up">
+        <div>
+          <h1 class="h4 mb-1" id="admin-view-title" data-i18n="admin_platform_overview">Platform overview</h1>
+          <p class="text-soft mb-0" style="font-size:.85rem" id="admin-last-updated">Loading…</p>
+        </div>
+        <span class="badge-pill"><i class="fa-solid fa-circle" style="font-size:.5rem;color:#2ECC71"></i> Live data</span>
+      </div>
+
+      <!-- Stat cards -->
+      <section class="admin-view" data-view="overview" id="overview">
+      <div class="row g-3 mb-3">
+        <div class="col-6 col-md-3" data-aos="fade-up"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-users"></i></div><div><div class="stat-num" id="stat-total-users">—</div><div class="text-soft" style="font-size:.8rem">Total users</div></div></div></div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-child"></i></div><div><div class="stat-num" id="stat-students">—</div><div class="text-soft" style="font-size:.8rem">Students</div></div></div></div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:#FDECF1;color:var(--s21-accent)"><i class="fa-solid fa-chalkboard-user"></i></div><div><div class="stat-num" id="stat-teachers">—</div><div class="text-soft" style="font-size:.8rem">Teachers</div></div></div></div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:#FFF6E0;color:#A66A00"><i class="fa-solid fa-people-roof"></i></div><div><div class="stat-num" id="stat-parents">—</div><div class="text-soft" style="font-size:.8rem">Parents</div></div></div></div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3" data-aos="fade-up"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-layer-group"></i></div><div><div class="stat-num" id="stat-total-content">—</div><div class="text-soft" style="font-size:.8rem">Total content items</div></div></div></div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:#FFF6E0;color:#A66A00"><i class="fa-solid fa-arrow-trend-up"></i></div><div><div class="stat-num" id="stat-new-week">—</div><div class="text-soft" style="font-size:.8rem">New this week</div></div></div></div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:#FDECF1;color:var(--s21-accent)"><i class="fa-solid fa-fire"></i></div><div><div class="stat-num" id="stat-busiest-type" style="font-size:1.05rem">—</div><div class="text-soft" style="font-size:.8rem">Most-published type</div></div></div></div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180">
+          <a href="#analytics" class="s21-card dash-stat-card d-flex flex-column align-items-center justify-content-center h-100 text-decoration-none" style="color:var(--s21-primary)">
+            <i class="fa-solid fa-chart-line mb-2" style="font-size:1.3rem"></i>
+            <div class="fw-bold" style="font-size:.85rem">View full analytics</div>
+          </a>
+        </div>
+      </div>
+      <p class="text-soft" style="font-size:.85rem">Use the sidebar on the left to jump to Analytics, Users, Content moderation, Payments, Settings or Content management — each opens as its own screen.</p>
+      </section>
+
+      <section class="admin-view d-none" data-view="analytics" id="analytics">
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-3" data-aos="fade-up"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-layer-group"></i></div><div><div class="stat-num" id="an-stat-total-content">—</div><div class="text-soft" style="font-size:.8rem">Total content items</div></div></div></div>
+          <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:#FFF6E0;color:#A66A00"><i class="fa-solid fa-arrow-trend-up"></i></div><div><div class="stat-num" id="an-stat-content-week">—</div><div class="text-soft" style="font-size:.8rem">Content published this week</div></div></div></div>
+          <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-user-plus"></i></div><div><div class="stat-num" id="an-stat-users-week">—</div><div class="text-soft" style="font-size:.8rem">New users this week</div></div></div></div>
+          <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180"><div class="s21-card dash-stat-card"><div class="stat-icon" style="background:#FDECF1;color:var(--s21-accent)"><i class="fa-solid fa-fire"></i></div><div><div class="stat-num" id="an-stat-busiest" style="font-size:1.05rem">—</div><div class="text-soft" style="font-size:.8rem">Most-published type</div></div></div></div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-8">
+            <div class="s21-card p-4 h-100" data-aos="fade-up">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h3 class="h6 mb-0"><i class="fa-solid fa-chart-line" style="color:var(--s21-primary)"></i> Growth — last 30 days</h3>
+                <span class="text-soft" style="font-size:.76rem">Cumulative users &amp; content</span>
+              </div>
+              <div style="position:relative;height:260px"><canvas id="chart-growth" role="img" aria-label="Cumulative users and content items over the last 30 days"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="s21-card p-4 h-100" data-aos="fade-up" data-aos-delay="60">
+              <h3 class="h6 mb-3"><i class="fa-solid fa-chart-pie" style="color:var(--s21-accent)"></i> Content mix</h3>
+              <div style="position:relative;height:220px"><canvas id="chart-content-mix" role="img" aria-label="Breakdown of content items by type"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+          <div class="col-lg-4">
+            <div class="s21-card p-4 h-100" data-aos="fade-up">
+              <h3 class="h6 mb-3"><i class="fa-solid fa-user-group" style="color:var(--s21-primary)"></i> Users by role</h3>
+              <div style="position:relative;height:220px"><canvas id="chart-user-roles" role="img" aria-label="Breakdown of users by role"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <div class="s21-card p-4 h-100" data-aos="fade-up" data-aos-delay="60">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h3 class="h6 mb-0"><i class="fa-solid fa-table-list" style="color:var(--s21-primary)"></i> Content breakdown</h3>
+                <button class="btn-s21 btn-s21-outline" style="padding:.4rem .9rem;font-size:.78rem" id="admin-export-content-btn"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table dash-table mb-0">
+                  <thead><tr><th>Type</th><th>Count</th><th>Share</th></tr></thead>
+                  <tbody id="an-content-table"><tr><td colspan="3" class="text-soft" style="font-size:.85rem">Loading…</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-view d-none" data-view="users" id="users">
+      <div class="row g-4">
+        <div class="col-12">
+          <!-- Users table -->
+          <div class="s21-card p-4" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+              <h2 class="h5 mb-0"><i class="fa-solid fa-users" style="color:var(--s21-primary)"></i> <span data-i18n="admin_recent_users">Recent users</span></h2>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="text-soft" style="font-size:.8rem" id="admin-users-count"></span>
+                <select class="form-select s21-input" id="admin-users-role-filter" style="width:auto;font-size:.82rem;padding:.4rem 1.9rem .4rem .8rem">
+                  <option value="">All roles</option>
+                  <option value="user">Students</option>
+                  <option value="teacher">Teachers</option>
+                  <option value="parent">Parents</option>
+                  <option value="admin">Admins</option>
+                </select>
+                <div class="admin-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" id="admin-users-search" placeholder="Search name or email…"></div>
+                <button class="btn-s21 btn-s21-outline" style="padding:.4rem .9rem;font-size:.78rem" id="admin-export-users-btn"><i class="fa-solid fa-file-arrow-down"></i> Export CSV</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table dash-table mb-0">
+                <thead><tr><th data-i18n="admin_name">Name</th><th data-i18n="admin_role">Role</th><th data-i18n="admin_joined">Joined</th></tr></thead>
+                <tbody id="admin-users-tbody">
+                  <tr><td colspan="3" class="text-soft" style="font-size:.85rem">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      </section>
+
+      <section class="admin-view d-none" data-view="moderation" id="moderation">
+      <div class="row g-4">
+        <div class="col-12">
+          <!-- Recent content activity (live feed — this platform has no
+               separate approve/reject workflow: games, quizzes, posts,
+               materials and videos publish immediately when created, so
+               this shows what actually just happened rather than a fake
+               pending queue). -->
+          <div class="s21-card p-4" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5 mb-0"><i class="fa-solid fa-shield-halved" style="color:var(--s21-accent)"></i> Recent content activity</h2>
+              <span class="badge-pill pink" id="admin-activity-count"></span>
+            </div>
+            <div id="admin-activity-list" class="d-flex flex-column gap-2">
+              <p class="text-soft" style="font-size:.85rem">Loading…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      </section>
+
+      <section class="admin-view d-none" data-view="payments" id="payments">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="s21-card p-4" data-aos="fade-up">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-credit-card" style="color:var(--s21-primary)"></i> <span data-i18n="admin_payments_subscriptions">Payments &amp; subscriptions</span></h3>
+            <ul class="list-unstyled d-flex flex-column gap-2" style="font-size:.85rem">
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="admin_premium_subscribers">Premium subscribers</span><span class="fw-bold">—</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="admin_school_accounts">School accounts</span><span class="fw-bold">—</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="admin_failed_payments_7d">Failed payments (7d)</span><span class="fw-bold">—</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="admin_refund_requests">Refund requests</span><span class="fw-bold">—</span></li>
+            </ul>
+            <p class="text-soft mt-3 mb-0" style="font-size:.76rem" data-i18n="admin_connect_stripe_paypal_mobile_money_o">No payment provider is connected yet, so there's nothing real to show here. Wire up Stripe/PayPal/Mobile Money on the backend — never expose secret keys client-side — and these numbers can come alive too.</p>
+          </div>
+        </div>
+      </div>
+      </section>
+
+      <section class="admin-view d-none" data-view="settings" id="settings">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="s21-card p-4" data-aos="fade-up">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-gear" style="color:var(--s21-text-soft)"></i> <span data-i18n="admin_platform_settings">Platform settings</span></h3>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span style="font-size:.85rem" data-i18n="admin_require_content_review_before_publis">Require content review before publish</span>
+              <label class="s21-switch"><input type="checkbox" data-setting="require_content_review" disabled><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span style="font-size:.85rem" data-i18n="admin_allow_public_comments">Allow public comments</span>
+              <label class="s21-switch"><input type="checkbox" data-setting="allow_public_comments" disabled><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2">
+              <span style="font-size:.85rem" data-i18n="admin_maintenance_mode">Maintenance mode</span>
+              <label class="s21-switch"><input type="checkbox" data-setting="maintenance_mode" disabled><span class="slider"></span></label>
+            </div>
+            <p class="text-soft mt-3 mb-0" style="font-size:.76rem" id="admin-settings-feedback"></p>
+          </div>
+        </div>
+      </div>
+      </section>
+
+      <section class="admin-view d-none" data-view="content-manager" id="content-manager">
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="s21-card p-4" data-aos="fade-up">
+            <h2 class="h5 mb-3"><i class="fa-solid fa-layer-group" style="color:var(--s21-primary)"></i> Content management</h2>
+
+            <div class="p-3 mb-4 rounded-3 d-flex gap-3 align-items-start" style="background:var(--s21-primary-light)">
+              <i class="fa-solid fa-lightbulb mt-1" style="color:var(--s21-primary)"></i>
+              <div style="font-size:.85rem">
+                <strong>Want more content on the site? Here's how to add it:</strong>
+                <ul class="mb-0 mt-1 ps-3">
+                  <li><strong>More games</strong> — use the <em>Add Game</em> tab below. Each one publishes straight to the Games page, no review step.</li>
+                  <li><strong>More videos</strong> — use <em>Post Video</em>: upload a file or paste a YouTube/Vimeo/CDN link, then tick where it should show.</li>
+                  <li><strong>More courses</strong> — use <em>Add Course</em> below to create the course, then use the curriculum manager underneath the course list to add its lessons.</li>
+                  <li><strong>More blog posts</strong> — use <em>Add Blog Post</em>, write the content, and hit Publish.</li>
+                </ul>
+              </div>
+            </div>
+
+            <ul class="nav nav-pills mb-3 flex-wrap gap-2" id="cm-tabs" role="tablist">
+              <li class="nav-item" role="presentation"><button class="btn-s21 btn-s21-outline active" data-bs-toggle="pill" data-bs-target="#cm-game" type="button">Add Game</button></li>
+              <li class="nav-item" role="presentation"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#cm-course" type="button">Add Course</button></li>
+              <li class="nav-item" role="presentation"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#cm-quiz" type="button">Add Quiz</button></li>
+              <li class="nav-item" role="presentation"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#cm-blog" type="button">Add Blog Post</button></li>
+              <li class="nav-item" role="presentation"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#cm-material" type="button">Upload Material</button></li>
+              <li class="nav-item" role="presentation"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#cm-video" type="button">Post Video</button></li>
+              <li class="nav-item" role="presentation"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#cm-book" type="button">Add Book</button></li>
+            </ul>
+
+            <div class="tab-content">
+              <!-- Add Game -->
+              <div class="tab-pane fade show active" id="cm-game">
+                <form id="admin-game-form" class="row g-3">
+                  <div class="col-md-6"><label class="form-label">Title</label><input class="form-control s21-input" name="title" required></div>
+                  <div class="col-md-6"><label class="form-label">Subject</label><input class="form-control s21-input" name="subject" placeholder="e.g. Math"></div>
+                  <div class="col-md-3"><label class="form-label">Emoji</label><input class="form-control s21-input" name="emoji" placeholder="🎮" value="🎮"></div>
+                  <div class="col-md-9"><label class="form-label">Description</label><input class="form-control s21-input" name="description"></div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Create Game</button></div>
+                </form>
+              </div>
+
+              <!-- Add Course -->
+              <div class="tab-pane fade" id="cm-course">
+                <form id="admin-course-form" class="row g-3">
+                  <div class="col-md-6"><label class="form-label">Title</label><input class="form-control s21-input" name="title" required></div>
+                  <div class="col-md-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-control s21-input" name="category_id" id="admin-course-category-select">
+                      <option value="">Uncategorized</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Level</label>
+                    <select class="form-control s21-input" name="level">
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                      <option value="all-levels">All levels</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4"><label class="form-label">Age range</label><input class="form-control s21-input" name="age_range" placeholder="e.g. 7-10"></div>
+                  <div class="col-md-4"><label class="form-label">Language</label><input class="form-control s21-input" name="language" value="English"></div>
+                  <div class="col-md-4">
+                    <label class="form-label">Instructor</label>
+                    <select class="form-control s21-input" name="instructor_id" id="admin-course-instructor-select">
+                      <option value="">Me</option>
+                    </select>
+                    <div class="form-text">Teachers are always listed as the instructor of courses they create.</div>
+                  </div>
+                  <div class="col-12"><label class="form-label">Description</label><textarea class="form-control s21-input" name="description" rows="3"></textarea></div>
+                  <div class="col-12"><label class="form-label">Thumbnail image URL (optional)</label><input class="form-control s21-input" type="url" name="thumbnail_url" placeholder="https://…"></div>
+                  <div class="col-12">
+                    <label class="form-label">What you'll learn (one per line)</label>
+                    <textarea class="form-control s21-input" name="objectives" rows="4" placeholder="Compare and order fractions confidently&#10;Add and subtract simple fractions"></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label">Requirements (one per line, optional)</label>
+                    <textarea class="form-control s21-input" name="requirements" rows="2" placeholder="No prior knowledge needed"></textarea>
+                  </div>
+                  <div class="col-md-3"><label class="form-label">Price (TZS, 0 = free)</label><input class="form-control s21-input" type="number" min="0" step="1" name="price" value="0"></div>
+                  <div class="col-md-3"><label class="form-label">Passing score (%)</label><input class="form-control s21-input" type="number" min="1" max="100" name="passing_score" value="70"></div>
+                  <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="certificate_enabled" id="admin-course-cert">
+                      <label class="form-check-label" for="admin-course-cert">Issue a certificate on completion</label>
+                    </div>
+                  </div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Create Course</button></div>
+                </form>
+              </div>
+
+              <!-- Add Quiz -->
+              <div class="tab-pane fade" id="cm-quiz">
+                <form id="admin-quiz-form" class="row g-3">
+                  <div class="col-md-6"><label class="form-label">Title</label><input class="form-control s21-input" name="title" required></div>
+                  <div class="col-md-6"><label class="form-label">Subject</label><input class="form-control s21-input" name="subject" placeholder="e.g. Science"></div>
+                  <div class="col-12"><label class="form-label">Description</label><input class="form-control s21-input" name="description"></div>
+                  <div class="col-12">
+                    <label class="form-label">Questions (JSON array)</label>
+                    <textarea class="form-control s21-input" name="questions" rows="6" required
+                      placeholder='[{"prompt":"2 + 2 = ?","options":["3","4","5"],"correct_index":1,"explanation":"2+2 equals 4."}]'></textarea>
+                    <div class="form-text">Each question needs: prompt, options[], correct_index (0-based), explanation.</div>
+                  </div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Create Quiz</button></div>
+                </form>
+              </div>
+
+              <!-- Add Blog Post -->
+              <div class="tab-pane fade" id="cm-blog">
+                <form id="admin-blog-form" class="row g-3">
+                  <div class="col-md-8"><label class="form-label">Title</label><input class="form-control s21-input" name="title" required></div>
+                  <div class="col-md-4"><label class="form-label">Slug (optional)</label><input class="form-control s21-input" name="slug" placeholder="auto from title"></div>
+                  <div class="col-12"><label class="form-label">Excerpt</label><input class="form-control s21-input" name="excerpt"></div>
+                  <div class="col-12"><label class="form-label">Content</label><textarea class="form-control s21-input" name="content" rows="6" required></textarea></div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Publish Post</button></div>
+                </form>
+              </div>
+
+              <!-- Upload Material -->
+              <div class="tab-pane fade" id="cm-material">
+                <form id="admin-material-form" class="row g-3">
+                  <div class="col-md-6"><label class="form-label">Title</label><input class="form-control s21-input" name="title" required></div>
+                  <div class="col-md-6"><label class="form-label">Subject</label><input class="form-control s21-input" name="subject"></div>
+                  <div class="col-12"><label class="form-label">File (PDF or image, max 25MB)</label><input class="form-control s21-input" type="file" name="file" accept=".pdf,image/*" required></div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Upload</button></div>
+                </form>
+              </div>
+
+              <!-- Post Video — YouTube-Studio-style uploader -->
+              <div class="tab-pane fade" id="cm-video">
+                <div class="yts-dropzone" id="yts-dropzone">
+                  <input type="file" id="yts-file-input" accept="video/mp4,video/webm,video/ogg" hidden>
+                  <div class="yts-dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                  <h3 class="h6 mb-1">Drag and drop video files to upload</h3>
+                  <p class="text-soft mb-3" style="font-size:.85rem">Your video stays unpublished until you choose where it should show.</p>
+                  <button type="button" class="btn-s21 btn-s21-primary" id="yts-select-btn">Select files</button>
+                  <p class="text-soft mt-3 mb-2" style="font-size:.72rem">MP4, WebM or OGG · up to 100MB.</p>
+                  <button type="button" class="btn-s21 btn-s21-outline" id="yts-url-toggle" style="font-size:.78rem;padding:.4rem .9rem">
+                    <i class="fa-solid fa-link"></i> Or paste a YouTube/Vimeo/CDN link instead
+                  </button>
+                </div>
+
+                <!-- Lightweight fallback for externally-hosted videos -->
+                <form id="admin-video-url-form" class="row g-3 mt-3 d-none">
+                  <div class="col-md-6"><label class="form-label">Title</label><input class="form-control s21-input" name="title" required></div>
+                  <div class="col-md-6"><label class="form-label">Subject</label><input class="form-control s21-input" name="subject" placeholder="e.g. Science"></div>
+                  <div class="col-12"><label class="form-label">Description</label><input class="form-control s21-input" name="description"></div>
+                  <div class="col-12"><label class="form-label">Video URL</label><input class="form-control s21-input" type="url" name="external_url" placeholder="https://…" required></div>
+                  <div class="col-12"><label class="form-label">Thumbnail URL (optional)</label><input class="form-control s21-input" type="url" name="thumbnail_url" placeholder="https://…"></div>
+                  <div class="col-12">
+                    <label class="form-label d-block">Show on</label>
+                    <div class="d-flex flex-wrap gap-3">
+                      <label class="d-flex align-items-center gap-2"><input type="checkbox" name="placements" value="videohub" checked> Video Hub</label>
+                      <label class="d-flex align-items-center gap-2"><input type="checkbox" name="placements" value="cartoons"> Cartoons</label>
+                      <label class="d-flex align-items-center gap-2"><input type="checkbox" name="placements" value="courses"> Courses</label>
+                      <label class="d-flex align-items-center gap-2"><input type="checkbox" name="placements" value="kids"> Kids Zone</label>
+                    </div>
+                  </div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Post Video</button></div>
+                </form>
+              </div>
+
+              <!-- Add Book -->
+              <div class="tab-pane fade" id="cm-book">
+                <form id="admin-book-form" class="row g-3">
+                  <div class="col-md-6"><label class="form-label">Title</label><input class="form-control s21-input" name="title" required></div>
+                  <div class="col-md-6"><label class="form-label">Category</label>
+                    <select class="form-control s21-input" name="subject" required>
+                      <option value="" selected disabled>Select a category…</option>
+                      <option value="Religion">Religion</option>
+                      <option value="Psychology">Psychology</option>
+                      <option value="Philosophy">Philosophy</option>
+                      <option value="Science">Science</option>
+                      <option value="Art">Art</option>
+                      <option value="Technology">Technology</option>
+                      <option value="Computer">Computer</option>
+                    </select>
+                  </div>
+                  <div class="col-12"><label class="form-label">Description</label><input class="form-control s21-input" name="description"></div>
+                  <div class="col-12"><label class="form-label">Cover image URL (optional)</label><input class="form-control s21-input" type="url" name="cover_url" placeholder="https://…"></div>
+                  <div class="col-12">
+                    <label class="form-label">Pages (JSON array)</label>
+                    <textarea class="form-control s21-input" name="pages" rows="6" required
+                      placeholder='[{"heading":"Chapter 1","text":"Once upon a time…"}]'></textarea>
+                    <div class="form-text">Each page needs: heading (optional), text.</div>
+                  </div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Publish Book</button></div>
+                </form>
+              </div>
+            </div>
+
+            <div id="cm-feedback" class="mt-3" style="font-size:.9rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-12">
+          <div class="s21-card p-4" data-aos="fade-up">
+            <h2 class="h5 mb-3"><i class="fa-solid fa-list-check" style="color:var(--s21-primary)"></i> Manage existing content</h2>
+
+            <ul class="nav nav-pills mb-3 flex-wrap gap-2">
+              <li class="nav-item"><button class="btn-s21 btn-s21-outline active" data-bs-toggle="pill" data-bs-target="#mg-games" type="button">Games</button></li>
+              <li class="nav-item"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#mg-courses" type="button">Courses</button></li>
+              <li class="nav-item"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#mg-quizzes" type="button">Quizzes</button></li>
+              <li class="nav-item"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#mg-blog" type="button">Blog Posts</button></li>
+              <li class="nav-item"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#mg-materials" type="button">Materials</button></li>
+              <li class="nav-item"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#mg-videos" type="button">Videos</button></li>
+              <li class="nav-item"><button class="btn-s21 btn-s21-outline" data-bs-toggle="pill" data-bs-target="#mg-books" type="button">Books</button></li>
+            </ul>
+
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="mg-games"><div id="mg-games-list" class="d-flex flex-column gap-2"><p class="text-soft" style="font-size:.85rem">Loading…</p></div></div>
+              <div class="tab-pane fade" id="mg-courses"><div id="mg-courses-list" class="d-flex flex-column gap-2"><p class="text-soft" style="font-size:.85rem">Loading…</p></div></div>
+              <div class="tab-pane fade" id="mg-quizzes"><div id="mg-quizzes-list" class="d-flex flex-column gap-2"><p class="text-soft" style="font-size:.85rem">Loading…</p></div></div>
+              <div class="tab-pane fade" id="mg-blog"><div id="mg-blog-list" class="d-flex flex-column gap-2"><p class="text-soft" style="font-size:.85rem">Loading…</p></div></div>
+              <div class="tab-pane fade" id="mg-materials"><div id="mg-materials-list" class="d-flex flex-column gap-2"><p class="text-soft" style="font-size:.85rem">Loading…</p></div></div>
+              <div class="tab-pane fade" id="mg-videos">
+                <div class="yts-table-wrap">
+                  <table class="yts-table">
+                    <thead><tr><th>Video</th><th>Visibility</th><th>Date</th><th></th></tr></thead>
+                    <tbody id="mg-videos-list"><tr><td colspan="4" class="text-soft" style="font-size:.85rem">Loading…</td></tr></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="mg-books"><div id="mg-books-list" class="d-flex flex-column gap-2"><p class="text-soft" style="font-size:.85rem">Loading…</p></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-12">
+          <div class="s21-card p-4" data-aos="fade-up">
+            <h2 class="h5 mb-3"><i class="fa-solid fa-list-ol" style="color:var(--s21-primary)"></i> Course curriculum manager</h2>
+            <p class="text-soft" style="font-size:.85rem">Pick a course, then add its lessons in order. A lesson can be plain text, or point at a video/material/quiz you've already uploaded elsewhere in this panel.</p>
+
+            <div class="row g-2 align-items-end mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Course</label>
+                <select class="form-control s21-input" id="admin-curriculum-course-select"><option value="">Select a course…</option></select>
+              </div>
+            </div>
+
+            <div id="admin-curriculum-body" style="display:none">
+              <div id="admin-curriculum-list" class="d-flex flex-column gap-2 mb-4"></div>
+
+              <h3 class="h6 mb-3">Add a lesson</h3>
+              <form id="admin-lesson-form" class="row g-3">
+                <div class="col-md-6"><label class="form-label">Lesson title</label><input class="form-control s21-input" name="title" required></div>
+                <div class="col-md-3">
+                  <label class="form-label">Type</label>
+                  <select class="form-control s21-input" name="content_type" id="admin-lesson-type-select">
+                    <option value="text">Text</option>
+                    <option value="video">Video</option>
+                    <option value="pdf">PDF / material</option>
+                    <option value="quiz">Quiz</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-check mt-4 pt-1">
+                    <input class="form-check-input" type="checkbox" name="is_preview" id="admin-lesson-preview">
+                    <label class="form-check-label" for="admin-lesson-preview">Free preview</label>
+                  </div>
+                </div>
+                <div class="col-12" id="admin-lesson-body-wrap"><label class="form-label">Text content</label><textarea class="form-control s21-input" name="body" rows="3"></textarea></div>
+                <div class="col-md-6" id="admin-lesson-video-wrap" style="display:none">
+                  <label class="form-label">Video</label>
+                  <select class="form-control s21-input" name="video_id" id="admin-lesson-video-select"><option value="">Select a video…</option></select>
+                </div>
+                <div class="col-md-6" id="admin-lesson-material-wrap" style="display:none">
+                  <label class="form-label">Material</label>
+                  <select class="form-control s21-input" name="material_id" id="admin-lesson-material-select"><option value="">Select a material…</option></select>
+                </div>
+                <div class="col-md-6" id="admin-lesson-quiz-wrap" style="display:none">
+                  <label class="form-label">Quiz</label>
+                  <select class="form-control s21-input" name="quiz_id" id="admin-lesson-quiz-select"><option value="">Select a quiz…</option></select>
+                </div>
+                <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Add Lesson</button></div>
+              </form>
+            </div>
+            <div id="admin-curriculum-feedback" class="mt-3" style="font-size:.9rem"></div>
+          </div>
+        </div>
+      </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- YouTube-Studio-style upload modal -->
+  <div class="yts-modal-overlay d-none" id="yts-modal-overlay">
+    <div class="yts-modal">
+      <div class="yts-modal-header">
+        <div>
+          <div class="fw-bold" id="yts-modal-filename">Uploading video</div>
+          <div class="text-soft" style="font-size:.78rem" id="yts-modal-status">Starting upload…</div>
+        </div>
+        <button type="button" class="icon-btn" id="yts-modal-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="yts-modal-progress"><div class="yts-modal-progress-bar" id="yts-modal-progress-bar"></div></div>
+
+      <div class="yts-modal-steps" id="yts-modal-steps">
+        <button type="button" class="yts-step active" data-step="details"><span class="yts-step-num">1</span> Details</button>
+        <button type="button" class="yts-step" data-step="visibility"><span class="yts-step-num">2</span> Visibility</button>
+      </div>
+
+      <div class="yts-modal-body">
+        <!-- Step 1: Details -->
+        <div class="yts-step-pane" data-pane="details">
+          <div class="row g-4">
+            <div class="col-lg-7">
+              <label class="form-label">Title</label>
+              <input class="form-control s21-input mb-1" id="yts-title" maxlength="100" required>
+              <div class="text-soft text-end mb-3" style="font-size:.7rem" id="yts-title-count">0/100</div>
+
+              <label class="form-label">Description</label>
+              <textarea class="form-control s21-input mb-3" id="yts-description" rows="4" placeholder="Tell viewers about your video"></textarea>
+
+              <label class="form-label">Subject</label>
+              <input class="form-control s21-input mb-3" id="yts-subject" placeholder="e.g. Science">
+
+              <label class="form-label d-block">Thumbnail</label>
+              <p class="text-soft mb-2" style="font-size:.78rem">Pick one of the auto-generated frames, or upload your own.</p>
+              <div class="yts-thumb-grid" id="yts-thumb-grid">
+                <label class="yts-thumb yts-thumb-upload" id="yts-thumb-upload-tile">
+                  <input type="file" accept="image/*" id="yts-thumb-file-input" hidden>
+                  <i class="fa-solid fa-upload"></i>
+                  <span>Upload</span>
+                </label>
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <div class="yts-preview-box"><video id="yts-preview-video" muted playsinline></video></div>
+              <div class="yts-preview-meta">
+                <div class="d-flex justify-content-between"><span class="text-soft">Filename</span><span id="yts-meta-filename">—</span></div>
+                <div class="d-flex justify-content-between"><span class="text-soft">File size</span><span id="yts-meta-size">—</span></div>
+                <div class="d-flex justify-content-between"><span class="text-soft">Duration</span><span id="yts-meta-duration">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Visibility -->
+        <div class="yts-step-pane d-none" data-pane="visibility">
+          <p class="text-soft mb-3" style="font-size:.85rem">Choose where this video should appear. You can select more than one.</p>
+          <div class="yts-visibility-list">
+            <label class="yts-visibility-option">
+              <input type="checkbox" name="yts-placement" value="videohub" checked>
+              <div><div class="fw-bold" style="font-size:.9rem">Video Hub</div><div class="text-soft" style="font-size:.78rem">Shows in the main video library.</div></div>
+            </label>
+            <label class="yts-visibility-option">
+              <input type="checkbox" name="yts-placement" value="cartoons">
+              <div><div class="fw-bold" style="font-size:.9rem">Cartoons</div><div class="text-soft" style="font-size:.78rem">Shows on the Cartoons page for younger viewers.</div></div>
+            </label>
+            <label class="yts-visibility-option">
+              <input type="checkbox" name="yts-placement" value="courses">
+              <div><div class="fw-bold" style="font-size:.9rem">Courses</div><div class="text-soft" style="font-size:.78rem">Groups with other videos on the same subject as a lesson.</div></div>
+            </label>
+            <label class="yts-visibility-option">
+              <input type="checkbox" name="yts-placement" value="kids">
+              <div><div class="fw-bold" style="font-size:.9rem">Kids Zone</div><div class="text-soft" style="font-size:.78rem">Shows in the Kids Zone.</div></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="yts-modal-footer" id="yts-modal-footer">
+        <div class="text-soft" style="font-size:.78rem" id="yts-footer-status"></div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn-s21 btn-s21-outline d-none" id="yts-back-btn">Back</button>
+          <button type="button" class="btn-s21 btn-s21-primary" id="yts-next-btn">Next</button>
+          <button type="button" class="btn-s21 btn-s21-primary d-none" id="yts-publish-btn">Publish</button>
+        </div>
+      </div>
+
+      <!-- Done state -->
+      <div class="yts-done d-none" id="yts-done">
+        <i class="fa-solid fa-circle-check"></i>
+        <h3 class="h5 mt-3 mb-1">Video published</h3>
+        <p class="text-soft mb-3" style="font-size:.85rem">It's now live wherever you selected.</p>
+        <button type="button" class="btn-s21 btn-s21-primary" id="yts-done-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for kids, students, teachers and parents to learn together.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_learning">Learning</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="subjects.html" data-i18n="footer_mathematics">Mathematics</a></li>
+          <li><a href="subjects.html" data-i18n="book_science">Science</a></li>
+          <li><a href="subjects.html" data-i18n="book_english">English</a></li>
+          <li><a href="subjects.html" data-i18n="footer_kiswahili">Kiswahili</a></li>
+          <li><a href="subjects.html" data-i18n="dash_coding">Coding</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> <span data-i18n="blog_study_buddy">Study Buddy</span></span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai" data-i18n="blog_hi_ask_me_to_explain_a_topic_or_sugg">Hi! Ask me to explain a topic or suggest a video or book to try next.</div></div>
+  <p class="ai-disclaimer" data-i18n="blog_ai_generated_answers_are_separate_fr">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" data-i18n-placeholder="blog_ph_ask_a_question" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/admin-analytics.js"></script>
+<script src="js/admin-video-upload.js"></script>
+<script src="js/admin-views.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/sidebar-nav.js"></script>
+<script src="js/sidebar-collapse.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/search.js"></script>
+<script src="js/voice-search.js"></script>
+<script src="js/ai-assistant.js"></script>
+<script src="js/main.js"></script>
+<script src="js/nav-account.js"></script>
+
+<script>AOS.init({duration:650,once:true,offset:60});</script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

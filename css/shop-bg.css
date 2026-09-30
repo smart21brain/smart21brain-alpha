@@ -1,0 +1,14 @@
+/* Background image for the Smart21Shop page and the Shop section on the
+   home page (images/shop/bg-shop.svg). The shop APP uses a different image —
+   see the "app background" block at the bottom of css/shop-app.css. */
+.s21-shop-bg{position:relative;isolation:isolate;background:#191651 url("../images/shop/bg-shop.svg") center/cover no-repeat;color:#fff}
+.s21-shop-bg::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(20,17,65,.82) 0%,rgba(20,17,65,.55) 55%,rgba(20,17,65,.2) 100%)}
+@media(max-width:991px){.s21-shop-bg::before{background:rgba(20,17,65,.66)}}
+.s21-shop-bg h1,.s21-shop-bg h2,.s21-shop-bg h3,.s21-shop-bg .h4{color:#fff}
+.s21-shop-bg .text-soft,.s21-shop-bg li,.s21-shop-bg p{color:rgba(255,255,255,.86)}
+.s21-shop-bg .eyebrow{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.25)}
+.s21-shop-bg .btn-s21-outline{color:#fff;border-color:rgba(255,255,255,.75);background:transparent}
+.s21-shop-bg .btn-s21-outline:hover{background:rgba(255,255,255,.14);color:#fff}
+.s21-shop-bg .fa-circle-check{color:#A5B4FC !important}
+.s21-shop-bg .s21-card,.s21-shop-bg .s21-card *{color:inherit}
+.s21-shop-bg .s21-card .text-soft{color:var(--s21-text-soft,#64736C)}

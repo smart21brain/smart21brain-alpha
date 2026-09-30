@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-shop-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Smart21Shop — Smart21Brain</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#4F46E5">
+<link rel="manifest" href="shop-manifest.json">
+<link rel="apple-touch-icon" href="icons/shop-apple-touch.png" data-shop="1">
+<link rel="icon" href="images/shop/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/shop-app.css?v=2">
+<script>
+  // Apply the saved light/dark choice before the page paints (no flash).
+  try { var t = localStorage.getItem('sp-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body class="sp-body">
+<noscript><p style="padding:2rem;font-family:sans-serif">Smart21Shop needs JavaScript. Please turn it on in your browser.</p></noscript>
+<!--
+  The whole app is drawn by js/shop/*.js into <body>. Each file is one screen
+  of the system (dashboard, customers, products, point of sale…) so a shop
+  can change or replace a part without touching the rest.
+-->
+<script src="js/shop/core.js?v=2"></script>
+<script src="js/shop/app.js?v=2"></script>
+<script src="js/shop/qr.js?v=1"></script>
+<script src="js/shop/dashboard.js?v=1"></script>
+<script src="js/shop/pos.js?v=2"></script>
+<script src="js/shop/sales.js?v=2"></script>
+<script src="js/shop/customers.js?v=1"></script>
+<script src="js/shop/products.js?v=3"></script>
+<script src="js/shop/expenses.js?v=1"></script>
+<script src="js/shop/reports.js?v=1"></script>
+<script src="js/shop/users.js?v=1"></script>
+<script src="js/shop/settings.js?v=1"></script>
+<script src="js/shop/audit.js?v=1"></script>
+<script src="js/shop-install.js?v=1"></script>
+</body>
+</html>

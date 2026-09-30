@@ -1,0 +1,383 @@
+/* ==========================================================================
+   Smart21Code — W3Schools-style "learn to code" section
+   Reuses site design tokens (--s21-*, --radius-*, --ease) so it matches
+   light/dark theme automatically.
+   ========================================================================== */
+
+.s21code-section {
+  background: var(--s21-white);
+  border-top: 1px solid var(--s21-border);
+  border-bottom: 1px solid var(--s21-border);
+}
+
+.s21code-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.s21code-head h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  margin-bottom: .35rem;
+}
+
+/* ---- language tabs ---- */
+.s21code-lang-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1.25rem;
+}
+
+.s21code-lang-tab {
+  --lang-color: var(--s21-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem 1rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--s21-border);
+  background: var(--s21-white);
+  color: var(--s21-text);
+  font-weight: 700;
+  font-size: .88rem;
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+.s21code-lang-tab i { color: var(--lang-color); }
+.s21code-lang-tab:hover {
+  border-color: var(--lang-color);
+  transform: translateY(-2px);
+}
+.s21code-lang-tab.active {
+  background: color-mix(in srgb, var(--lang-color) 14%, transparent);
+  border-color: var(--lang-color);
+  color: var(--lang-color);
+}
+
+/* ---- layout: sidebar + lesson ---- */
+.s21code-body {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 991px) {
+  .s21code-body { grid-template-columns: 1fr; }
+}
+
+.s21code-sidebar {
+  background: var(--s21-bg);
+  border: 1px solid var(--s21-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  position: sticky;
+  top: 90px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+@media (max-width: 991px) {
+  .s21code-sidebar { position: static; max-height: none; }
+}
+
+.s21code-search-wrap {
+  position: relative;
+  margin-bottom: .85rem;
+}
+.s21code-search-wrap i {
+  position: absolute; left: .75rem; top: 50%; transform: translateY(-50%);
+  color: var(--s21-text-soft); font-size: .85rem;
+}
+.s21code-search-wrap input {
+  width: 100%;
+  padding: .55rem .75rem .55rem 2.1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--s21-border);
+  background: var(--s21-white);
+  color: var(--s21-text);
+  font-size: .85rem;
+}
+.s21code-search-wrap input:focus { outline: 2px solid var(--s21-primary); outline-offset: 1px; }
+
+.s21code-topic-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: .55rem .6rem;
+  margin-bottom: .15rem;
+  color: var(--s21-text);
+  font-size: .87rem;
+  cursor: pointer;
+  transition: background .18s var(--ease);
+}
+.s21code-topic-link:hover { background: var(--s21-primary-light); }
+.s21code-topic-link.active {
+  background: var(--s21-primary);
+  color: #fff;
+  font-weight: 700;
+}
+.s21code-topic-num {
+  flex: 0 0 auto;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(127,127,127,.18);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: .68rem; font-weight: 800;
+}
+.s21code-topic-link.active .s21code-topic-num { background: rgba(255,255,255,.28); }
+.s21code-topic-title { flex: 1 1 auto; }
+.s21code-topic-level {
+  flex: 0 0 auto;
+  font-size: .62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  padding: .15rem .45rem;
+  border-radius: var(--radius-pill);
+  background: var(--s21-secondary-tint);
+  color: #A66A00;
+}
+.s21code-topic-link.active .s21code-topic-level {
+  background: rgba(255,255,255,.22);
+  color: #fff;
+}
+.lvl-intermediate { background: var(--s21-accent-tint); color: var(--s21-accent); }
+.lvl-advanced { background: var(--s21-primary-light); color: var(--s21-primary); }
+
+/* ---- lesson panel ---- */
+.s21code-lesson {
+  background: var(--s21-white);
+  border: 1px solid var(--s21-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  min-height: 320px;
+}
+
+.s21code-syntax-box {
+  background: #17221C;
+  color: #EDEFEC;
+  border-radius: var(--radius-sm);
+  padding: .85rem 1rem;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: .85rem;
+  position: relative;
+  overflow-x: auto;
+}
+.s21code-syntax-label {
+  position: absolute; top: -.6rem; left: .85rem;
+  background: var(--s21-secondary);
+  color: #4A3300;
+  font-size: .62rem; font-weight: 800; text-transform: uppercase;
+  padding: .12rem .5rem; border-radius: var(--radius-pill);
+}
+
+/* ---- try it yourself editor ---- */
+.s21code-tryit {
+  border: 1px solid var(--s21-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.s21code-tryit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  flex-wrap: wrap;
+  background: var(--s21-bg);
+  padding: .6rem 1rem;
+  font-weight: 700;
+  font-size: .88rem;
+  border-bottom: 1px solid var(--s21-border);
+}
+.btn-sm-s21 { padding: .35rem .75rem; font-size: .78rem; }
+
+.s21code-tryit-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 260px;
+}
+@media (max-width: 767px) {
+  .s21code-tryit-body { grid-template-columns: 1fr; }
+}
+
+#s21code-editor {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  border: none;
+  border-right: 1px solid var(--s21-border);
+  background: #0F1712;
+  color: #EDEFEC;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: .84rem;
+  line-height: 1.55;
+  padding: 1rem;
+  resize: vertical;
+  tab-size: 2;
+}
+#s21code-editor:focus { outline: none; }
+@media (max-width: 767px) {
+  #s21code-editor { border-right: none; border-bottom: 1px solid var(--s21-border); }
+}
+
+#s21code-frame {
+  width: 100%;
+  min-height: 260px;
+  border: none;
+  background: #fff;
+}
+
+.s21code-output {
+  margin: 0;
+  padding: 1rem;
+  min-height: 260px;
+  background: #0F1712;
+  color: #7CE3A6;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: .84rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
+
+.s21code-crumb i { color: var(--s21-primary); }
+
+.s21code-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.s21code-pager-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--s21-primary);
+  color: #fff;
+  border: none;
+  padding: .6rem 1.1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: background .18s var(--ease), transform .18s var(--ease);
+  max-width: 260px;
+}
+.s21code-pager-btn span,
+.s21code-pager-btn { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s21code-pager-btn:hover { background: var(--s21-primary-dark); transform: translateY(-2px); }
+
+/* ---- collapse toggle ---- */
+.s21code-collapsed .s21code-collapsible { display: none; }
+
+/* ==========================================================================
+   Standalone Smart21Code page (smart21code.html) — a fuller, more "real
+   tutorial site" look: a sticky green category bar under the site header,
+   a flat full-height sidebar, and a wider two-column reading layout.
+   ========================================================================== */
+body.s21code-page main { background: var(--s21-white); }
+
+.s21code-masthead {
+  background: linear-gradient(135deg, var(--s21-primary) 0%, var(--s21-primary-dark) 100%);
+  color: #fff;
+  padding: 2.4rem 0 4.4rem;
+}
+.s21code-masthead .badge-pill { background: rgba(255,255,255,.16); color: #fff; }
+.s21code-masthead h1 { font-family: var(--font-display); font-weight: 800; }
+.s21code-masthead p { color: rgba(255,255,255,.85); max-width: 620px; }
+.s21code-masthead .breadcrumb a { color: rgba(255,255,255,.75); }
+.s21code-masthead .breadcrumb-item.active { color: #fff; }
+
+/* sticky green category bar, W3Schools-style */
+.s21code-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--s21-primary-dark);
+  margin-top: -2.6rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,.18);
+}
+.s21code-topbar .s21code-lang-tabs {
+  margin-bottom: 0;
+  gap: 0;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.s21code-topbar .s21code-lang-tabs::-webkit-scrollbar { display: none; }
+.s21code-topbar .s21code-lang-tab {
+  --lang-color: #fff;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(255,255,255,.78);
+  padding: .95rem 1.15rem;
+  flex: 0 0 auto;
+}
+.s21code-topbar .s21code-lang-tab i { color: inherit; }
+.s21code-topbar .s21code-lang-tab:hover { background: rgba(255,255,255,.08); color: #fff; transform: none; }
+.s21code-topbar .s21code-lang-tab.active {
+  background: var(--s21-primary);
+  color: #fff;
+  box-shadow: inset 0 -3px 0 var(--s21-secondary);
+}
+
+.s21code-page-body {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 0;
+  align-items: start;
+  border: 1px solid var(--s21-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  overflow: hidden;
+  background: var(--s21-white);
+}
+@media (max-width: 991px) {
+  .s21code-page-body { grid-template-columns: 1fr; }
+}
+
+.s21code-page-body .s21code-sidebar {
+  background: var(--s21-bg);
+  border: none;
+  border-right: 1px solid var(--s21-border);
+  border-radius: 0;
+  position: sticky;
+  top: 56px;
+  max-height: calc(100vh - 56px);
+}
+@media (max-width: 991px) {
+  .s21code-page-body .s21code-sidebar { position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--s21-border); }
+}
+.s21code-page-body .s21code-topic-link.active {
+  border-left: 4px solid var(--s21-secondary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.s21code-page-body .s21code-lesson {
+  border: none;
+  border-radius: 0;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+}
+
+.s21code-side-panel {
+  background: var(--s21-bg);
+  border: 1px solid var(--s21-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+.s21code-side-panel h6 { font-weight: 800; }
+.s21code-side-panel ul { list-style: none; padding: 0; margin: 0; }
+.s21code-side-panel li { padding: .4rem 0; border-bottom: 1px dashed var(--s21-border); font-size: .88rem; }
+.s21code-side-panel li:last-child { border-bottom: none; }
+.s21code-side-panel li a { color: var(--s21-text); font-weight: 600; }
+.s21code-side-panel li a:hover { color: var(--s21-primary); }

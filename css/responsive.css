@@ -1,0 +1,186 @@
+/* ======================================================
+   SMART21BRAIN — RESPONSIVE RULES
+   Mobile-first overrides layered on top of style.css.
+   Breakpoints follow Bootstrap 5's grid tiers so they line
+   up with the row/col classes already used in the markup:
+     >=1400px  xxl / large desktop
+     1200-1399 xl  / desktop
+     992-1199  lg  / small desktop & landscape tablet
+     768-991   md  / tablet (portrait)
+     576-767   sm  / large phone
+     <576      xs  / phone
+   ====================================================== */
+
+/* ---------- Global safety net (all sizes) ---------- */
+html, body { max-width: 100%; overflow-x: hidden; }
+img, video, iframe, svg, canvas { max-width: 100%; height: auto; }
+.videohub-formula-canvas canvas,
+.gamify-canvas canvas,
+.player-shell video,
+.stn-photo-stage canvas { height: 100%; } /* these are explicitly sized by JS, keep fluid width only */
+.table-responsive { -webkit-overflow-scrolling: touch; }
+* { -webkit-tap-highlight-color: transparent; }
+
+/* =========================================================
+   DESKTOP / LARGE SCREENS (>=1400px) — a little extra room
+   ========================================================= */
+@media (min-width: 1400px) {
+  .container { max-width: 1240px; }
+}
+
+/* =========================================================
+   LAPTOP / SMALL DESKTOP (992px – 1199.98px)
+   ========================================================= */
+@media (max-width: 1199.98px) {
+  .hero h1 { font-size: 2.4rem; }
+  .stat-strip { gap: 1.2rem 1.6rem; }
+}
+
+/* =========================================================
+   TABLET (768px – 991.98px)
+   ========================================================= */
+@media (max-width: 991.98px) {
+  .hero-path { display: none; }
+  .section { padding: 3.5rem 0; }
+  .section-tight { padding: 2.4rem 0; }
+  .hero { padding: 3rem 0 2.5rem; min-height: 560px; text-align: center; background-position: center 30%; }
+  .hero .lead, .hero .lead-sub { margin-left: auto; margin-right: auto; }
+  .hero-search { margin-left: auto; margin-right: auto; }
+  .hero-divider-link { margin-left: auto; margin-right: auto; }
+  .stat-strip { justify-content: center; }
+  .cta-band { padding: 2.2rem; text-align: center; }
+
+  /* Admin console: sidebar is replaced by the offcanvas menu at this width */
+  .admin-sidebar { display: none; }
+  .admin-content { padding: 1.4rem; }
+  .admin-search { width: 100%; }
+  .admin-search input { width: 100%; }
+
+  /* Dashboard sticky sidebars / cards stack instead of pinning */
+  .sticky-card { position: static; }
+
+  /* Auth pages: hide the decorative side panel, form takes full width */
+  .auth-visual { display: none; }
+
+  /* Gallery: 3 columns feels tighter and avoids overly narrow tiles */
+  .gallery-grid { columns: 3 180px; }
+
+  /* Order board (stationery) scrolls horizontally as a kanban on tablet */
+  .stn-board { grid-template-columns: repeat(4, minmax(200px, 1fr)); }
+}
+
+/* =========================================================
+   LARGE PHONE (576px – 767.98px)
+   ========================================================= */
+@media (max-width: 767.98px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.25rem; }
+  .section { padding: 2.75rem 0; }
+  .section-head { text-align: center; margin-left: auto; margin-right: auto; }
+  .section-head p { margin-left: auto; margin-right: auto; }
+
+  .floating-stack { right: 1rem; bottom: 1rem; gap: .6rem; }
+  .fab { width: 48px; height: 48px; font-size: 1.1rem; }
+  .fab-avatar { width: 48px; height: 48px; }
+
+  .footer-bottom { text-align: center; flex-direction: column; }
+  .s21-footer .col-6 { margin-bottom: 1.8rem; }
+  .s21-footer { text-align: center; }
+  .s21-footer .social-circle { margin: 0 .25rem; }
+
+  /* Nav / brand */
+  .s21-logo { font-size: 1.15rem; }
+  .admin-console-badge { display: none !important; }
+
+  /* Hero */
+  .hero-badge { display: inline-flex; margin: 0 auto 1rem; }
+  .hero-visual-card { display: none; }
+
+  /* Buttons stack cleanly and stay full-width friendly in tight rows */
+  .cta-band .btn-s21 { width: 100%; }
+  .cta-band .d-flex { flex-direction: column; gap: .6rem !important; }
+  .game-access-actions { flex-direction: column; }
+  .game-access-actions .btn-s21 { width: 100%; }
+
+  /* Tables that aren't already using table-responsive still get a safety scroll */
+  table { max-width: 100%; }
+
+  /* Modals get full-bleed spacing on small screens */
+  .modal-dialog { margin: .75rem; }
+  .stn-modal-backdrop { padding: 2vh .6rem; }
+  .stn-modal-body { max-height: 65vh; }
+
+  /* Gallery drops to 2 columns */
+  .gallery-grid { columns: 2 150px; }
+
+  /* Video / theater player keeps its 16:9 shape, never overflows */
+  .player-shell.theater { aspect-ratio: 16/9; }
+
+  /* Stationery workspace: kanban board & grids collapse to one column */
+  .stn-board { grid-template-columns: minmax(0, 1fr); overflow-x: visible; }
+  .stn-grid-2, .stn-grid-3, .stn-grid-4 { grid-template-columns: 1fr; }
+  .stn-chat-msg { max-width: 92%; }
+
+  /* Dashboard welcome banner needs tighter padding on phones */
+  .dash-welcome { padding: 1.5rem 1.3rem; text-align: center; }
+  .dash-welcome .d-flex { flex-direction: column; text-align: center; }
+}
+
+/* =========================================================
+   PHONE (up to 575.98px)
+   ========================================================= */
+@media (max-width: 575.98px) {
+  h1 { font-size: 1.7rem; }
+  .hero h1 { font-size: 1.8rem; }
+  .hero-search { padding: .4rem .4rem .4rem 1rem; margin-left: 0; margin-right: 0; width: 100%; }
+  .hero-search input { font-size: .9rem; }
+  .stat-strip { gap: .9rem 1.1rem; }
+  .stat-strip .num { font-size: 1.3rem; }
+
+  .btn-s21 { padding: .65rem 1.2rem; font-size: .92rem; }
+  .section-head h2 { font-size: 1.5rem; }
+
+  .s21-toast-stack { bottom: 5.5rem; }
+
+  /* Single-column layouts for card grids that were 2-up */
+  .subject-card, .testimonial-card { padding: 1.2rem; }
+  .cta-band { padding: 1.6rem 1.2rem; }
+
+  /* Gallery: single column on very small phones */
+  .gallery-grid { columns: 1; }
+
+  /* Stationery receipt / print preview shrinks to fit */
+  .stn-receipt { max-width: 100%; }
+
+  /* Keep floating chat / assistant panel usable on narrow screens */
+  #s21-ai-panel { right: .6rem; left: .6rem; bottom: 5.5rem; width: auto; }
+}
+
+/* =========================================================
+   VERY SMALL PHONES (up to 400px)
+   ========================================================= */
+@media (max-width: 400px) {
+  .hero h1 { font-size: 1.6rem; }
+  .btn-s21-guest-cta .guest-cta-text strong { font-size: .95rem; }
+  .fab { width: 44px; height: 44px; font-size: 1rem; }
+}
+
+/* =========================================================
+   SHORT / LANDSCAPE PHONES
+   ========================================================= */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  .hero { min-height: 0; padding: 2rem 0; }
+  .splash-shell { min-height: 100svh; }
+  .stn-modal-body { max-height: 78vh; }
+}
+
+/* =========================================================
+   TOUCH DEVICES — larger, easier-to-hit targets
+   ========================================================= */
+@media (hover: none) {
+  .btn-s21, .icon-btn, .s21-nav-link, .nav-link, .fab { min-height: 44px; }
+  .icon-btn, .nav-account-link { min-width: 44px; }
+  .quiz-option, .dropdown-item, .stn-checklist-item { min-height: 44px; }
+}
+

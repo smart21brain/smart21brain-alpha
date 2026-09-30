@@ -1,0 +1,129 @@
+/* ======================================================
+   SMART21BRAIN — ANIMATIONS
+   ====================================================== */
+
+@keyframes s21-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.float-anim { animation: s21-float 5s ease-in-out infinite; }
+.float-anim.delay-1 { animation-delay: .8s; }
+.float-anim.delay-2 { animation-delay: 1.6s; }
+
+@keyframes s21-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(255,255,255,.45); }
+  100% { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
+}
+.pulse-ring { animation: s21-pulse-ring 2.2s ease-out infinite; }
+
+@keyframes s21-fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up-in { animation: s21-fade-up .7s var(--ease) both; }
+
+@keyframes s21-draw-path {
+  from { stroke-dashoffset: 620; }
+  to { stroke-dashoffset: 0; }
+}
+.path-draw { stroke-dasharray: 620; animation: s21-draw-path 2.4s var(--ease) forwards; }
+
+/* ---- Light/dark theme switch: fade colors instead of snapping ---- */
+html, body, .navbar, .s21-card, .subject-card, .media-card, .game-card,
+.book-card, .testimonial-card, .pricing-card, .auth-card, .dash-stat-card,
+.contact-info-card, .onboard-card, .icon-btn, .btn-s21, #s21-ai-panel,
+.offcanvas {
+  transition: background-color .35s var(--ease), color .35s var(--ease),
+    border-color .35s var(--ease), box-shadow .35s var(--ease),
+    transform .3s var(--ease);
+}
+
+/* ---- Theme toggle icon: quick spin + fade when switching ---- */
+[data-theme-toggle] i {
+  display: inline-block;
+  transition: transform .45s var(--ease), opacity .2s var(--ease);
+}
+[data-theme-toggle]:active i { transform: rotate(180deg) scale(.8); }
+
+/* ---- A little more life on tappable/hoverable chrome ---- */
+.btn-s21:hover { transform: translateY(-2px); }
+.btn-s21:active { transform: translateY(1px) scale(.97); }
+
+.game-card:hover .game-emoji {
+  transform: scale(1.12) rotate(-4deg);
+}
+.game-emoji { transition: transform .35s var(--ease); }
+
+.subject-card { transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease); }
+.subject-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow-hover);
+}
+.subject-card:hover .subject-icon { animation: s21-icon-pop .5s var(--ease); }
+
+@keyframes s21-icon-pop {
+  0% { transform: scale(1) rotate(0); }
+  40% { transform: scale(1.15) rotate(-6deg); }
+  70% { transform: scale(.96) rotate(3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.fab-avatar, .fab { transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+.fab-avatar:hover, .fab:hover { transform: translateY(-3px) scale(1.06); }
+.fab-avatar:active, .fab:active { transform: scale(.92); }
+
+/* ---- Page-load entrance (runs once on load, NOT scroll-triggered —
+   safe for screenshot/capture tools, unlike the old AOS scroll-reveal
+   this file already disables above) ---- */
+.s21-page-in {
+  animation: s21-page-fade .55s var(--ease) both;
+}
+@keyframes s21-page-fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Nav link: little bounce on hover, not just color swap ---- */
+.s21-nav-link { transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease); }
+.s21-nav-link:hover { transform: translateY(-2px); }
+
+/* ---- Logo mark: gentle wobble on hover ---- */
+.s21-logo .mark { transition: transform .35s var(--ease); }
+.s21-logo:hover .mark { transform: rotate(-8deg) scale(1.08); }
+
+/* ---- Button ripple ---- */
+.btn-s21 { position: relative; overflow: hidden; }
+.s21-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.55);
+  transform: scale(0);
+  animation: s21-ripple-anim .6s var(--ease) forwards;
+  pointer-events: none;
+}
+@keyframes s21-ripple-anim {
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+/* ---- Stat numbers: subtle pop when their count-up finishes ---- */
+.stat-num.is-counted { animation: s21-stat-pop .4s var(--ease); }
+@keyframes s21-stat-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-anim, .pulse-ring, .fade-up-in, .path-draw,
+  html, body, .navbar, .s21-card, .subject-card, .media-card, .game-card,
+  .book-card, .testimonial-card, .pricing-card, .auth-card, .dash-stat-card,
+  .contact-info-card, .onboard-card, .icon-btn, .btn-s21, #s21-ai-panel,
+  .offcanvas, [data-theme-toggle] i, .game-emoji, .subject-card,
+  .fab-avatar, .fab, .s21-page-in, .s21-nav-link, .s21-logo .mark,
+  .stat-num.is-counted {
+    animation: none !important;
+    transition: none !important;
+  }
+  .s21-page-in { opacity: 1 !important; transform: none !important; }
+  .s21-ripple { display: none !important; }
+}

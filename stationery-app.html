@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Stationery OS — smart21brain</title>
+<meta name="description" content="Stationery OS: the all-in-one digital stationery operating system — POS, inventory, photo studio, PDF tools, online services, machine center, academy and Smart21brain AI.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link rel="manifest" href="stationery-manifest.json">
+<meta name="theme-color" content="#0B6E4F">
+
+<!-- Same look everywhere: Bootstrap, Font Awesome, and smart21brain's own
+     stylesheet (brand colors, fonts, dark/light mode) as every other page. -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/stationery-app.css?v=5">
+</head>
+<body>
+<!-- js/stationery/app.js builds the whole app shell (sidebar/topbar/content)
+     into document.body on load — one render path for every screen. -->
+
+<script src="js/i18n.js"></script>
+<script src="js/stationery/api.js"></script>
+<script src="js/stationery/dashboard.js"></script>
+<script src="js/stationery/pos.js"></script>
+<script src="js/stationery/inventory.js"></script>
+<script src="js/stationery/customers.js"></script>
+<script src="js/stationery/finance.js"></script>
+<script src="js/stationery/reports.js"></script>
+<script src="js/stationery/photostudio.js"></script>
+<script src="js/stationery/pdftools.js"></script>
+<script src="js/stationery/onlineservices.js"></script>
+<script src="js/stationery/machines.js"></script>
+<script src="js/stationery/academy.js"></script>
+<script src="js/stationery/chopaai.js"></script>
+<script src="js/stationery/employees.js"></script>
+<script src="js/stationery/settings.js"></script>
+<script src="js/stationery/security.js"></script>
+<script src="js/stationery/app.js"></script>
+<script src="js/darkmode.js"></script>
+
+<script>
+  // Photo Studio and PDF/Image Tools pull in their own libraries (pdf-lib,
+  // pdf.js, jsPDF, JSZip, Tesseract.js) only the moment they're actually
+  // used — see STN.loadScripts() in js/stationery/api.js — so this page
+  // stays light for everyone using POS, Orders, Inventory, etc.
+  //
+  // NOTE: this page intentionally does NOT register a service worker.
+  // An earlier version did, for offline app-shell caching, but its fetch
+  // handler had a bug that could make the page fail to load entirely
+  // (ERR_FAILED) once installed. stationery-sw.js now exists only to
+  // clean up and unregister itself in any browser that already
+  // installed the old one — see that file for details.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((regs) => {
+      regs.forEach((reg) => {
+        if (reg.active && /stationery-sw\.js/.test(reg.active.scriptURL)) {
+          reg.update();
+        }
+      });
+    }).catch(() => {});
+  }
+</script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

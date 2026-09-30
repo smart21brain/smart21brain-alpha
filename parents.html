@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Dashboard | Smart21Brain</title>
+<meta name="description" content="Smart21Brain's parent dashboard — monitor your child's learning progress, manage screen-time limits, view weekly reports, and control safety settings.">
+<link rel="canonical" href="https://smart21brain.com/parents.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+
+</head>
+<body>
+<a href="#main" class="skip-link" data-i18n="blog_skip_to_main_content">Skip to main content</a>
+
+<header class="s21-navbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      Smart<span class="brand-21">21</span>Brain
+    </a>
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu"><i class="fa-solid fa-bars fa-lg"></i></button>
+    <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <span data-guest-nav="desktop" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </nav>
+</header>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+  <div class="offcanvas-header">
+    <h5 id="mobileNavLabel" class="font-display mb-0" data-i18n="blog_menu">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <div class="fw-bold text-soft mb-2" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em">On this page</div>
+    <nav class="d-flex flex-column gap-1 mb-3" data-section-nav>
+      <a href="#overview" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-gauge me-2"></i> Overview</a>
+      <a href="#children" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-child-reaching me-2"></i> Children</a>
+      <a href="#report" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-chart-line me-2"></i> Learning report</a>
+      <a href="#screentime" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-hourglass-half me-2"></i> Screen time</a>
+      <a href="#subscription" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-crown me-2"></i> Subscription</a>
+      <a href="#settings" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-gear me-2"></i> Settings</a>
+    </nav>
+    <hr class="w-100">
+    <ul class="navbar-nav gap-1 mb-4">
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    <div class="mt-auto d-flex flex-column gap-2">
+      <span data-guest-nav="mobile" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline w-100" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary w-100" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+
+  <div class="admin-shell" data-role-access="parent,admin">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-head">
+        <div class="fw-bold text-soft admin-sidebar-title" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em">Parent</div>
+        <button type="button" class="admin-sidebar-toggle" data-sidebar-toggle aria-label="Toggle sidebar" aria-expanded="true"><i class="fa-solid fa-angles-left"></i></button>
+      </div>
+      <nav class="d-flex flex-column gap-1" data-section-nav>
+        <a href="#overview" class="nav-link active"><i class="fa-solid fa-gauge"></i> <span class="nav-label">Overview</span></a>
+        <a href="#children" class="nav-link"><i class="fa-solid fa-child-reaching"></i> <span class="nav-label">Children</span></a>
+        <a href="#report" class="nav-link"><i class="fa-solid fa-chart-line"></i> <span class="nav-label">Learning report</span></a>
+        <a href="#screentime" class="nav-link"><i class="fa-solid fa-hourglass-half"></i> <span class="nav-label">Screen time</span></a>
+        <a href="#subscription" class="nav-link"><i class="fa-solid fa-crown"></i> <span class="nav-label">Subscription</span></a>
+        <a href="#settings" class="nav-link"><i class="fa-solid fa-gear"></i> <span class="nav-label">Settings</span></a>
+      </nav>
+    </aside>
+
+    <div class="admin-content">
+
+      <!-- Welcome banner -->
+      <div class="dash-welcome mb-4" data-aos="fade-up">
+        <div class="row align-items-center g-4">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center gap-3">
+              <img src="https://i.pravatar.cc/120?img=5" class="dash-avatar" alt="Samuel's profile picture" loading="lazy">
+              <div>
+                <h1 class="h3 text-white mb-1" data-i18n="parents_welcome_back_samuel">Welcome back, Samuel 👋</h1>
+                <p class="mb-0" style="color:rgba(255,255,255,.85);font-size:.9rem" data-i18n="parents_here_s_how_your_children_are_doing_t">Here's how your children are doing this week.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <a href="#" class="btn-s21 btn-s21-secondary"><i class="fa-solid fa-user-plus"></i> <span data-i18n="parents_add_a_child_profile">Add a child profile</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Child selector -->
+      <div id="children" class="mb-4" data-aos="fade-up">
+        <div class="d-flex flex-wrap gap-2 mb-3" role="tablist" aria-label="Select child">
+          <button type="button" class="child-tab active"><img src="https://i.pravatar.cc/60?img=47" alt=""> <span data-i18n="parents_amara_9">Amara, 9</span></button>
+          <button type="button" class="child-tab"><img src="https://i.pravatar.cc/60?img=68" alt=""> <span data-i18n="parents_joseph_12">Joseph, 12</span></button>
+        </div>
+        <div class="s21-card p-3 d-flex flex-wrap gap-4" style="font-size:.85rem">
+          <div><span class="text-soft">Grade</span><div class="fw-bold" id="child-grade">Grade 4</div></div>
+          <div><span class="text-soft">School</span><div class="fw-bold" id="child-school">Uhuru Primary</div></div>
+          <div><span class="text-soft">Plan</span><div class="fw-bold">Premium (2 profiles)</div></div>
+        </div>
+      </div>
+
+      <div class="row g-4 align-items-start" id="overview">
+        <div class="col-lg-8">
+
+          <!-- Stat cards -->
+          <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3" data-aos="fade-up">
+              <div class="s21-card dash-stat-card">
+                <div class="stat-icon" style="background:#FDECF1;color:var(--s21-accent)"><i class="fa-solid fa-clapperboard"></i></div>
+                <div class="stat-num">86</div>
+                <div class="text-soft" style="font-size:.8rem" data-i18n="dash_videos_watched">Videos watched</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60">
+              <div class="s21-card dash-stat-card">
+                <div class="stat-icon" style="background:#FFF6E0;color:#A66A00"><i class="fa-solid fa-book"></i></div>
+                <div class="stat-num">14</div>
+                <div class="text-soft" style="font-size:.8rem" data-i18n="dash_books_read">Books read</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120">
+              <div class="s21-card dash-stat-card">
+                <div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-gamepad"></i></div>
+                <div class="stat-num">32</div>
+                <div class="text-soft" style="font-size:.8rem" data-i18n="parents_games_played">Games played</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180">
+              <div class="s21-card dash-stat-card">
+                <div class="stat-icon" style="background:#E7F1FF;color:#3A86FF"><i class="fa-solid fa-circle-question"></i></div>
+                <div class="stat-num">91%</div>
+                <div class="text-soft" style="font-size:.8rem" data-i18n="dash_avg_quiz_score">Avg. quiz score</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weekly report -->
+          <div class="s21-card p-4 mb-4" id="report" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5 mb-0"><i class="fa-solid fa-chart-line" style="color:var(--s21-primary)"></i> <span data-i18n="parents_this_week_s_learning_report">This week's learning report</span></h2>
+              <a href="#" class="text-soft" style="font-size:.85rem" data-i18n="book_download_pdf">Download PDF</a>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between mb-1" style="font-size:.85rem"><span data-i18n="game_mathematics">Mathematics</span><span class="text-soft" data-i18n="parents_4h_20m">4h 20m</span></div>
+                <div class="progress-s21"><span style="width:72%"></span></div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between mb-1" style="font-size:.85rem"><span data-i18n="book_science">Science</span><span class="text-soft" data-i18n="parents_2h_10m">2h 10m</span></div>
+                <div class="progress-s21"><span style="width:45%;background:linear-gradient(90deg,#06A77D,#2DD4A7)"></span></div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between mb-1" style="font-size:.85rem"><span data-i18n="parents_reading">Reading</span><span class="text-soft" data-i18n="parents_1h_50m">1h 50m</span></div>
+                <div class="progress-s21"><span style="width:38%;background:linear-gradient(90deg,#FFD166,#FFB703)"></span></div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between mb-1" style="font-size:.85rem"><span data-i18n="parents_games_quizzes">Games &amp; quizzes</span><span class="text-soft" data-i18n="parents_1h_05m">1h 05m</span></div>
+                <div class="progress-s21"><span style="width:25%;background:linear-gradient(90deg,var(--s21-accent),#FF7A9C)"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent activity -->
+          <div class="s21-card p-4" data-aos="fade-up">
+            <h2 class="h5 mb-3"><i class="fa-solid fa-clock-rotate-left" style="color:var(--s21-accent)"></i> <span data-i18n="parents_recent_activity">Recent activity</span></h2>
+            <ul class="list-unstyled d-flex flex-column gap-3" style="font-size:.85rem">
+              <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-soft mt-1"></i> <span data-i18n="parents_completed_quiz">Completed quiz</span> <strong data-i18n="games_solar_system_quiz">Solar System Quiz</strong> <span data-i18n="parents_scored_90">— scored 90%</span></li>
+              <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-soft mt-1"></i> <span data-i18n="parents_watched">Watched</span> <strong data-i18n="video_times_tables_in_5_minutes">Times Tables in 5 Minutes</strong></li>
+              <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-soft mt-1"></i> <span data-i18n="parents_read_2_chapters_of">Read 2 chapters of</span> <strong data-i18n="book_the_solar_system_storybook">The Solar System Storybook</strong></li>
+              <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-soft mt-1"></i> <span data-i18n="parents_earned_the">Earned the</span> <strong data-i18n="dash_7_day_streak">7-Day Streak</strong> <span data-i18n="parents_badge">badge</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <!-- Screen time controls -->
+          <div class="s21-card p-4 mb-4" id="screentime" data-aos="fade-up">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-hourglass-half" style="color:var(--s21-primary)"></i> <span data-i18n="parents_screen_time_controls">Screen-time controls</span></h3>
+            <label class="d-block mb-1" style="font-size:.85rem"><span data-i18n="parents_daily_limit">Daily limit:</span> <strong id="screentime-value" data-i18n="parents_90_minutes">90 minutes</strong></label>
+            <input type="range" class="form-range mb-3" min="15" max="180" step="15" value="90" id="screentime-slider" aria-label="Daily screen-time limit in minutes">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span style="font-size:.85rem" data-i18n="parents_allow_games_on_school_nights">Allow games on school nights</span>
+              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span style="font-size:.85rem" data-i18n="parents_safe_search_only">Safe search only</span>
+              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span style="font-size:.85rem" data-i18n="parents_comments_chat_enabled">Comments &amp; chat enabled</span>
+              <label class="s21-switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <!-- Subscription -->
+          <div class="s21-card p-4 mb-4" id="subscription" data-aos="fade-up" data-aos-delay="60">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-crown" style="color:var(--s21-secondary-dark)"></i> <span data-i18n="parents_subscription">Subscription</span></h3>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge-pill gold" data-i18n="parents_premium_plan">Premium plan</span>
+              <span class="text-soft" style="font-size:.8rem" data-i18n="parents_renews_sep_12">Renews Sep 12</span>
+            </div>
+            <p class="text-soft mb-3" style="font-size:.85rem" data-i18n="parents_2_child_profiles_unlimited_courses_c">2 child profiles, unlimited courses, certificates and offline downloads.</p>
+            <a href="pricing.html" class="btn-s21 btn-s21-outline w-100 justify-content-center" style="font-size:.85rem" data-i18n="parents_manage_subscription">Manage subscription</a>
+          </div>
+
+          <!-- Report button -->
+          <div class="s21-card p-4 mb-4" data-aos="fade-up" data-aos-delay="120">
+            <h3 class="h6 mb-2"><i class="fa-solid fa-shield-heart" style="color:var(--s21-accent)"></i> <span data-i18n="parents_safety">Safety</span></h3>
+            <p class="text-soft mb-3" style="font-size:.85rem" data-i18n="parents_something_doesn_t_look_right_report_">Something doesn't look right? Report content directly to our safety team.</p>
+            <a href="#" class="btn-s21 btn-s21-outline w-100 justify-content-center" style="font-size:.85rem"><i class="fa-solid fa-flag"></i> <span data-i18n="contact_report_a_concern">Report a concern</span></a>
+          </div>
+
+          <!-- Settings -->
+          <div class="s21-card p-4" id="settings" data-aos="fade-up" data-aos-delay="180">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-gear" style="color:var(--s21-text-soft)"></i> Parent settings</h3>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span style="font-size:.85rem">Weekly progress report email</span>
+              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span style="font-size:.85rem">Achievement &amp; badge alerts</span>
+              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2">
+              <span style="font-size:.85rem">Promotional emails</span>
+              <label class="s21-switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+            <a href="profile.html" class="btn-s21 btn-s21-outline w-100 justify-content-center mt-3" style="font-size:.85rem"><i class="fa-solid fa-user-gear"></i> Manage account details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const s21ScreenSlider = document.getElementById('screentime-slider');
+    const s21ScreenValue = document.getElementById('screentime-value');
+    s21ScreenSlider?.addEventListener('input', () => {
+      s21ScreenValue.textContent = s21ScreenSlider.value + ' minutes';
+    });
+    document.querySelectorAll('.child-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.child-tab').forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  </script>
+
+</main>
+
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for kids, students, teachers and parents to learn together.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_learning">Learning</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="subjects.html" data-i18n="footer_mathematics">Mathematics</a></li>
+          <li><a href="subjects.html" data-i18n="book_science">Science</a></li>
+          <li><a href="subjects.html" data-i18n="book_english">English</a></li>
+          <li><a href="subjects.html" data-i18n="footer_kiswahili">Kiswahili</a></li>
+          <li><a href="subjects.html" data-i18n="dash_coding">Coding</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> <span data-i18n="blog_study_buddy">Study Buddy</span></span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai" data-i18n="blog_hi_ask_me_to_explain_a_topic_or_sugg">Hi! Ask me to explain a topic or suggest a video or book to try next.</div></div>
+  <p class="ai-disclaimer" data-i18n="blog_ai_generated_answers_are_separate_fr">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" data-i18n-placeholder="blog_ph_ask_a_question" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/search.js"></script>
+<script src="js/voice-search.js"></script>
+<script src="js/ai-assistant.js"></script>
+<script src="js/main.js"></script>
+<script src="js/nav-account.js"></script>
+<script src="js/sidebar-nav.js"></script>
+<script src="js/sidebar-collapse.js"></script>
+
+<script>AOS.init({duration:650,once:true,offset:60});</script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

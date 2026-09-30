@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart21Code — Learn HTML, CSS, JavaScript, Python & SQL | Smart21Brain</title>
+<meta name="description" content="Smart21Code: free tutorials with a real Try it Yourself editor for HTML, CSS, JavaScript, Python and SQL. Python and SQL run in your browser.">
+<link rel="canonical" href="https://smart21brain.com/smart21code.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/s21c.css?v=2">
+<script src="js/darkmode.js"></script>
+</head>
+<body class="s21c">
+
+<header class="c-head">
+  <div class="c-top">
+    <button class="c-iconbtn" id="cMenu" aria-label="Open tutorial menu"><i class="fa-solid fa-bars"></i></button>
+    <a class="c-brand" href="#/" aria-label="Smart21Code home"><span class="mark">21</span><span class="txt">Smart<em>21</em>Code</span></a>
+    <div class="c-search" role="search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="cSearch" type="search" placeholder="Search tutorials…  ( / )" aria-label="Search tutorials" autocomplete="off">
+      <div class="c-results" id="cResults"></div>
+    </div>
+    <button class="c-iconbtn" id="cSearchBtn" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+    <div class="c-toplinks">
+      <a href="courses.html">Courses</a>
+      <a href="index.html"><i class="fa-solid fa-house"></i> Smart21Brain</a>
+    </div>
+    <button class="c-iconbtn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+  </div>
+  <nav class="c-langs" id="cLangs" aria-label="Languages"></nav>
+</header>
+
+<div class="c-backdrop" id="cBackdrop"></div>
+<div class="c-layout" id="cLayout">
+  <aside class="c-side" id="cSide" aria-label="Tutorial menu"></aside>
+  <main class="c-main" id="cMain"></main>
+  <aside class="c-right" id="cRight"></aside>
+</div>
+
+<footer class="c-foot">
+  <div><a href="index.html">Smart21Brain</a><a href="courses.html">Courses</a><a href="earth21.html">Earth21</a><a href="contact.html">Contact</a></div>
+  <p style="margin:.7rem 0 0">© <span id="cYear"></span> Smart21Brain · Free tutorials with original lessons. Python runs with Pyodide and SQL with SQLite, right in your browser.</p>
+</footer>
+
+<!-- Try it Yourself — full-screen editor -->
+<div class="c-try" id="cTry" hidden data-layout="h" data-panel="code" role="dialog" aria-modal="true" aria-label="Code editor">
+  <div class="c-try-bar">
+    <strong id="tryTitle">Try it Yourself</strong>
+    <span class="sp"></span>
+    <button class="c-btn run" id="tryRun"><i class="fa-solid fa-play"></i> Run</button>
+    <button class="c-btn ghost" id="tryRestore" hidden><i class="fa-solid fa-database"></i> <span class="hide-sm">Restore DB</span></button>
+    <button class="c-btn ghost" id="tryReset" title="Reset code"><i class="fa-solid fa-rotate-left"></i> <span class="hide-sm">Reset</span></button>
+    <button class="c-btn ghost hide-sm" id="tryLayout" title="Switch layout"><i class="fa-solid fa-table-columns"></i></button>
+    <button class="c-btn ghost" id="tryClose" aria-label="Close editor"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="c-try-tabs" id="tryTabs"><button class="active" data-p="code">Code</button><button data-p="result">Result</button></div>
+  <div class="c-try-body" id="tryBody">
+    <section class="c-pane c-pane-code" id="paneCode" aria-label="Code">
+      <div id="tryEditorHost"></div>
+      <div class="c-stdin" id="tryStdinWrap" hidden><label for="tryStdin">Input (one line for each input() call)</label><textarea id="tryStdin" spellcheck="false" placeholder="Amina&#10;12"></textarea></div>
+    </section>
+    <div class="c-split" id="trySplit" role="separator" aria-label="Resize panels"></div>
+    <section class="c-pane c-pane-result" aria-label="Result">
+      <div class="c-result-head"><span>Result</span><span id="tryStatus" role="status"></span></div>
+      <iframe id="tryFrame" title="Result" sandbox="allow-scripts allow-modals allow-forms allow-popups"></iframe>
+      <pre id="tryOut" hidden></pre>
+      <div id="trySql" hidden></div>
+      <div class="c-console" id="tryConsole" hidden>
+        <div class="c-console-head"><span>Console</span><button id="tryClearConsole">Clear</button></div>
+        <div id="tryConsoleBody"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="floating-stack">
+  <button class="fab-avatar" data-ai-trigger aria-label="Open Smart21brain AI assistant">
+    <img src="images/logo/coool.png" alt="Smart21brain AI" loading="lazy">
+  </button>
+</div>
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> Smart21brain AI</span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai">Hi! Ask me to explain a lesson, fix your code, or suggest what to build next.</div></div>
+  <p class="ai-disclaimer">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" aria-label="Ask the AI">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<noscript><p style="padding:2rem;text-align:center">Smart21Code needs JavaScript to run the tutorials and editor.</p></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/runmode/runmode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="js/s21c-data-web.js?v=1"></script>
+<script src="js/s21c-data-py.js?v=1"></script>
+<script src="js/s21c-refs.js?v=1"></script>
+<script src="js/s21c-runner.js?v=1"></script>
+<script src="js/ai-assistant.js"></script>
+<script src="js/s21c-app.js?v=1"></script>
+</body>
+</html>

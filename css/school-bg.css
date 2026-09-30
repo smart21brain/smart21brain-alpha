@@ -1,0 +1,15 @@
+/* Background image for the School System page and the School section on the
+   home page (images/school/bg-school.svg). The school APP uses a different
+   image — see the "app background" block at the bottom of css/school-app.css. */
+.s21-school-bg{position:relative;isolation:isolate;background:#082a20 url("../images/school/bg-school.svg") center/cover no-repeat;color:#fff}
+.s21-school-bg::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,26,19,.80) 0%,rgba(4,26,19,.50) 55%,rgba(4,26,19,.18) 100%)}
+@media(max-width:991px){.s21-school-bg::before{background:rgba(4,26,19,.62)}}
+.s21-school-bg h1,.s21-school-bg h2,.s21-school-bg h3,.s21-school-bg .h4{color:#fff}
+.s21-school-bg .text-soft,.s21-school-bg li,.s21-school-bg p{color:rgba(255,255,255,.86)}
+.s21-school-bg .eyebrow{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.25)}
+.s21-school-bg .btn-s21-outline{color:#fff;border-color:rgba(255,255,255,.75);background:transparent}
+.s21-school-bg .btn-s21-outline:hover{background:rgba(255,255,255,.14);color:#fff}
+.s21-school-bg .fa-circle-check{color:#4ADE9E !important}
+/* keep text inside the video card / chapter list in its normal colours */
+.s21-school-bg .s21-card,.s21-school-bg .s21-card *{color:inherit}
+.s21-school-bg .s21-card .text-soft{color:var(--s21-text-soft,#64736C)}

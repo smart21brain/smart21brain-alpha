@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-shop-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart21Shop — Smart21Brain</title>
+<meta name="description" content="Smart21Shop: point of sale, customers, products, stock, expenses and reports for any shop, kiosk or store.">
+<link rel="canonical" href="https://smart21brain.com/shop.html">
+<meta name="theme-color" content="#4F46E5">
+<link rel="manifest" href="shop-manifest.json">
+<link rel="apple-touch-icon" href="icons/shop-apple-touch.png" data-shop="1">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+<link rel="stylesheet" href="css/shop-bg.css?v=1">
+</head>
+<body>
+<a href="#main" class="skip-link" data-i18n="blog_skip_to_main_content">Skip to main content</a>
+
+<header class="s21-navbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      Smart<span class="brand-21">21</span>Brain
+    </a>
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu"><i class="fa-solid fa-bars fa-lg"></i></button>
+    <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link active" href="earth21.html">Earth21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <span data-guest-nav="desktop" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </nav>
+</header>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+  <div class="offcanvas-header">
+    <h5 id="mobileNavLabel" class="font-display mb-0" data-i18n="blog_menu">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <ul class="navbar-nav gap-1 mb-4">
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link active" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    <div class="mt-auto d-flex flex-column gap-2">
+      <span data-guest-nav="mobile" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline w-100" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary w-100" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="section-tight s21-shop-bg" style="padding-top:3rem;padding-bottom:3.2rem">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6" data-aos="fade-right">
+          <span class="eyebrow"><a href="earth21.html" style="color:inherit;text-decoration:none"><i class="fa-solid fa-globe"></i> Earth21</a> <i class="fa-solid fa-chevron-right" style="font-size:.6rem;opacity:.6"></i> Smart21Shop</span>
+          <h1 class="mt-2 mb-3">Run your shop from one place</h1>
+          <p class="text-soft" style="font-size:1.02rem">A fast point of sale, customer records, product & stock control, expenses and real profit reports — connected, secure, and easy enough for anyone on your team to use. Any shop, kiosk or store can register and set it up in minutes.</p>
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <a href="shop-login.html#register" class="btn-s21 btn-s21-primary btn-lg"><i class="fa-solid fa-store"></i> Register your shop</a>
+            <a href="shop-login.html" class="btn-s21 btn-s21-outline btn-lg"><i class="fa-solid fa-right-to-bracket"></i> Sign in</a>
+            <a href="shop-app.html" data-shop-install class="btn-s21 btn-s21-outline btn-lg"><i class="fa-solid fa-download"></i> Download the app</a>
+          </div>
+          <p class="text-soft mt-3" style="font-size:.82rem"><i class="fa-solid fa-circle-info"></i> Free to set up. Explore instantly with one-click sample data.</p>
+        </div>
+        <div class="col-lg-6" data-aos="fade-left">
+          <div class="s21-card p-3 p-lg-4" style="border-radius:20px">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#6366F1,#3730A3);display:grid;place-items:center;color:#fff"><i class="fa-solid fa-shop"></i></span>
+              <div><b style="font-family:var(--s21-font-display,inherit)">Mama Neema Store</b><div class="text-soft" style="font-size:.78rem">Dashboard · Today</div></div>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6"><div class="p-3" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Today's Sales</div><div style="font-size:1.25rem;font-weight:800">TZS 486,000</div></div></div>
+              <div class="col-6"><div class="p-3" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Customers Owing</div><div style="font-size:1.25rem;font-weight:800;color:#C77700">TZS 92,000</div></div></div>
+            </div>
+            <ul class="list-unstyled d-flex flex-column gap-2 mb-0" style="font-size:.86rem">
+              <li class="d-flex justify-content-between"><span><i class="fa-solid fa-receipt text-soft me-2"></i>RCT-000482 · Amina Juma</span><b>TZS 24,500</b></li>
+              <li class="d-flex justify-content-between"><span><i class="fa-solid fa-receipt text-soft me-2"></i>RCT-000481 · Walk-in customer</span><b>TZS 8,000</b></li>
+              <li class="d-flex justify-content-between"><span><i class="fa-solid fa-triangle-exclamation text-soft me-2"></i>Sugar 1kg — low stock</span><span class="text-soft">3 kg left</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="section" aria-labelledby="features-head">
+    <div class="container">
+      <div class="section-head text-center mx-auto mb-4" data-aos="fade-up">
+        <span class="eyebrow"><i class="fa-solid fa-shapes"></i> Everything a shop needs</span>
+        <h2 id="features-head" class="mt-2">One system, every part of running a shop</h2>
+        <p class="text-soft">Built as a real, connected management system — not a basic prototype.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-cash-register"></i></div>
+            <h3 class="h6 mb-1">Point of Sale</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">A fast till — tap products or scan a barcode, take cash, mobile money, bank or card, and print a receipt in seconds.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-users"></i></div>
+            <h3 class="h6 mb-1">Customers</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Save every customer automatically. See what they've bought, what they owe, and receive part-payments toward their balance.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <h3 class="h6 mb-1">Products & Stock</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Track stock automatically with every sale. Get warned before something runs out, and see the exact value of what's on your shelves.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <h3 class="h6 mb-1">Credit & Debts</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Sell on credit with a credit limit per customer, and a clear list of everyone who owes you — nothing gets forgotten.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="240">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-money-bill-wave"></i></div>
+            <h3 class="h6 mb-1">Expenses</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Record rent, transport, salaries and every other cost, so your profit numbers reflect what the shop really makes.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-chart-pie"></i></div>
+            <h3 class="h6 mb-1">Reports & Dashboard</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">A live dashboard with charts for sales and payments, plus a full reports centre — profit & loss, stock, debtors — exportable to PDF or Excel.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="360">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-user-shield"></i></div>
+            <h3 class="h6 mb-1">Roles & Permissions</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Owners, managers and cashiers each see only what they need — you decide exactly what each role can do, including who sees cost and profit.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="420">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3 class="h6 mb-1">Activity Log</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Every sale, cancellation, stock change and staff action is logged — a plain record of who did what, and when.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORKFLOW ============ -->
+  <section class="section" aria-labelledby="workflow-head" style="background:linear-gradient(180deg, rgba(79,70,229,.10), transparent)">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5" data-aos="fade-right">
+          <span class="eyebrow"><i class="fa-solid fa-route"></i> How it works</span>
+          <h2 id="workflow-head" class="mt-2 mb-3">From sign-up to your first sale</h2>
+          <p class="text-soft">Every step is connected — a sale taken at the till shows up immediately in stock, the customer's profile and the dashboard.</p>
+        </div>
+        <div class="col-lg-7 d-flex flex-column gap-3" data-aos="fade-up">
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">1</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Register your shop in under a minute</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">2</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Add your products (or start from ready-made categories)</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">3</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Save your customers as you serve them</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">4</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Sell at the till — stock and receipts update automatically</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">5</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Record expenses as they come up</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">6</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Check your real profit any time from the reports centre</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MULTI-SHOP ============ -->
+  <section class="section" aria-labelledby="multi-head">
+    <div class="container">
+      <div class="s21-card p-4 p-lg-5 text-center" data-aos="fade-up" style="max-width:820px;margin:0 auto">
+        <div class="subject-icon mx-auto mb-3"><i class="fa-solid fa-shop"></i></div>
+        <h2 id="multi-head" class="h4 mb-2">Built for any shop, not just one</h2>
+        <p class="text-soft mb-4">Every shop that registers gets its own private workspace — its own customers, products, staff and settings, completely separate from every other shop. Owners can change the branding, currency, VAT rate, payment methods and what each role is allowed to do.</p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+          <a href="shop-login.html#register" class="btn-s21 btn-s21-primary"><i class="fa-solid fa-store"></i> Register your shop</a>
+          <a href="shop-login.html" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-right-to-bracket"></i> Sign in to an existing shop</a>
+          <a href="shop-app.html" data-shop-install class="btn-s21 btn-s21-outline"><i class="fa-solid fa-download"></i> Download the app</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for kids, students, teachers and parents to learn together.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6>Smart21Shop</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="shop-login.html#register">Register your shop</a></li>
+          <li><a href="shop-login.html">Sign in</a></li>
+          <li><a href="shop-app.html" data-shop-install>Download the app</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> <span data-i18n="blog_study_buddy">Study Buddy</span></span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai" data-i18n="blog_hi_ask_me_to_explain_a_topic_or_sugg">Hi! Ask me to explain a topic or suggest a video or book to try next.</div></div>
+  <p class="ai-disclaimer" data-i18n="blog_ai_generated_answers_are_separate_fr">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" data-i18n-placeholder="blog_ph_ask_a_question" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/live-data.js"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/search.js"></script>
+<script src="js/voice-search.js"></script>
+<script src="js/ai-assistant.js"></script>
+<script src="js/main.js"></script>
+<script src="js/nav-account.js"></script>
+<script>AOS.init({duration:650,once:true,offset:60});</script>
+<script src="js/shop-install.js?v=1"></script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

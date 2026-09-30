@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /profile.html
+Disallow: /admin.html
+Disallow: /teachers.html
+Disallow: /parents.html
+Disallow: /onboarding.html
+Disallow: /splash.html
+
+Sitemap: https://smart21brain.com/sitemap.xml
