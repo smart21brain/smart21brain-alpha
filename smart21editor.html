@@ -36,12 +36,22 @@
   .ed-err { width: 14px; } .CodeMirror-hints { z-index: 3000; } .CodeMirror-activeline-background { background: rgba(127,127,127,.12); }
   .CodeMirror-foldgutter-open, .CodeMirror-foldgutter-folded { color: var(--s21-text-soft); }
   #tryFrame { transition: width .2s; background: #fff; }
-  .floating-stack { display: none; } #s21-ai-panel { z-index: 2100; }
+  .floating-stack { display: none; }
+  #s21-ai-panel { z-index: 2100; right: calc(.9rem + env(safe-area-inset-right, 0px)); bottom: calc(10.6rem + env(safe-area-inset-bottom, 0px)); max-height: min(480px, calc(100dvh - 12rem)); }
+  /* Round floating buttons: "+" (new tab / choose a language) with the Smart21Brain AI button under it */
+  #edTabs #edNew { display: none; }
+  .ed-fabs { position: fixed; z-index: 2400; right: calc(.9rem + env(safe-area-inset-right, 0px)); bottom: calc(2.6rem + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: .7rem; }
+  .ed-fab { width: 54px; height: 54px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 26px rgba(0,0,0,.28); transition: transform .25s; }
+  .ed-fab:hover { transform: scale(1.08); }
+  .ed-fab.add { border: 0; background: var(--s21-primary); color: #fff; font-size: 1.35rem; }
+  .ed-fab.ai { border: 3px solid var(--s21-secondary); background: var(--s21-white); overflow: hidden; }
+  .ed-fab.ai img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ed-toast { position: fixed; left: 50%; bottom: 46px; transform: translateX(-50%); background: #12352A; color: #fff; padding: .55rem 1rem; border-radius: 10px; z-index: 3500; font: 700 .85rem var(--font-body, sans-serif); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
   .ed-modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 3400; display: flex; align-items: center; justify-content: center; padding: 1rem; }
   .ed-modal > div { background: var(--s21-white); color: var(--s21-text); border-radius: 14px; padding: 1.2rem 1.4rem; max-width: 460px; width: 100%; max-height: 85vh; overflow: auto; }
   .ed-modal table { width: 100%; border-collapse: collapse; font-size: .88rem; } .ed-modal td { padding: .3rem .2rem; border-bottom: 1px solid var(--s21-border); } .ed-modal kbd { background: var(--s21-bg); border: 1px solid var(--s21-border); border-radius: 5px; padding: 1px 6px; font-size: .8rem; }
   @media (max-width: 700px) { .c-hint, .c-try-bar .brand span { display: none; } }
+  @media (max-width: 700px) { .ed-fab { width: 48px; height: 48px; } .ed-fab.add { font-size: 1.2rem; } .ed-fabs { bottom: calc(2.4rem + env(safe-area-inset-bottom, 0px)); } }
 
   /* Mobile: the second toolbar (.ed-tools) becomes a slide-in side menu, opened by the hamburger button in the top bar */
   .c-try-bar .ed-burger, .ed-tools-head, .ed-scrim { display: none; }
@@ -79,6 +89,10 @@
     <a class="c-btn ghost" href="courses.html" id="edClose" aria-label="Back to courses" title="Back to courses"><i class="fa-solid fa-xmark"></i></a>
   </div>
   <div class="ed-scrim" id="edScrim"></div>
+  <div class="ed-fabs" id="edFabs">
+    <button type="button" class="ed-fab add" id="edFabAdd" aria-label="New tab — choose a language" title="New tab — choose a language"><i class="fa-solid fa-plus"></i></button>
+    <button type="button" class="ed-fab ai" id="edFabAI" aria-label="Open Smart21brain AI assistant" title="Smart21brain AI"><img src="images/logo/coool.png" alt=""></button>
+  </div>
   <div class="c-try-tabs" id="tryTabs"><button class="active" data-p="code">Code</button><button data-p="result">Result</button></div>
   <div class="c-try-body" id="tryBody">
     <section class="c-pane c-pane-code" id="paneCode" aria-label="Code">
@@ -149,6 +163,14 @@
 <script src="js/s21-editor-pro.js?v=2"></script>
 <script src="js/s21-editor-more.js?v=1"></script>
 <script src="js/ai-assistant.js"></script>
+<script>
+/* Round floating buttons: "+" opens the same language chooser as the (now hidden) tab-bar "+", the logo button toggles the AI panel */
+(function () {
+  var add = document.getElementById('edFabAdd'), ai = document.getElementById('edFabAI'), panel = document.getElementById('s21-ai-panel');
+  if (add) add.addEventListener('click', function () { var n = document.getElementById('edNew'); if (n) n.click(); });
+  if (ai && panel) ai.addEventListener('click', function () { var o = panel.classList.toggle('open'); panel.setAttribute('aria-hidden', o ? 'false' : 'true'); });
+})();
+</script>
 <script>
 /* Mobile side menu for the editor toolbar (.ed-tools, built by s21-editor-pro.js) */
 (function () {
