@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart21Editor — Pro Online Code Editor for HTML, CSS, JavaScript, Python, C++, SQL, React &amp; more | Smart21Brain</title>
+<meta name="description" content="Smart21Editor: a free online code editor. Write and run HTML, CSS, JavaScript, Python, C++, SQL, Bootstrap, jQuery and React, all in one place.">
+<link rel="canonical" href="https://smart21brain.com/smart21editor.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/s21c.css?v=3">
+<style>
+  body.s21c { padding-top: 0 !important; overflow: hidden; }
+  .c-try-bar .brand { display: inline-flex; align-items: center; gap: .45rem; color: #fff; }
+  .c-try-bar .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  .c-try-bar .brand span em { font-style: normal; color: #7EE0A9; }
+  .c-try-bar select { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 10px; padding: .5rem .6rem; font: 800 .9rem var(--font-body, sans-serif); min-height: 40px; cursor: pointer; max-width: 46vw; }
+  .c-try-bar select option { color: #111; background: #fff; }
+  .c-try-bar a.c-btn { display: inline-flex; align-items: center; gap: .35rem; }
+  .c-hint { font-size: .78rem; color: rgba(255,255,255,.7); white-space: nowrap; }
+  .ed-tools { display: flex; gap: .35rem; align-items: center; overflow-x: auto; padding: .35rem .6rem; background: var(--s21-white); border-bottom: 1px solid var(--s21-border); flex-shrink: 0; scrollbar-width: thin; }
+  .ed-tools button, .ed-tools select { flex: none; border: 1px solid var(--s21-border); background: var(--s21-bg); color: var(--s21-text); border-radius: 8px; padding: .3rem .6rem; font: 700 .8rem var(--font-body, sans-serif); cursor: pointer; min-height: 32px; }
+  .ed-tools button:hover { border-color: var(--s21-primary); } .ed-tools button.on { background: var(--s21-primary); color: #fff; border-color: var(--s21-primary); }
+  .ed-tools [hidden] { display: none !important; }
+  .ed-files { display: flex; background: var(--s21-white); border-bottom: 1px solid var(--s21-border); flex-shrink: 0; } .ed-files[hidden] { display: none; }
+  .ed-files button { border: 0; background: transparent; color: var(--s21-text-soft); padding: .5rem .9rem; font: 800 .82rem var(--font-body, sans-serif); border-bottom: 3px solid transparent; cursor: pointer; }
+  .ed-files button.active { color: var(--s21-primary); border-bottom-color: var(--s21-primary); }
+  .ed-status { display: flex; gap: 1rem; padding: .25rem .8rem; font-size: .74rem; color: var(--s21-text-soft); background: var(--s21-white); border-top: 1px solid var(--s21-border); flex-shrink: 0; } .ed-status .sp { flex: 1; }
+  .ed-errline { background: rgba(255, 70, 70, .18); } .ed-dot { color: #ff4646; padding-left: 4px; }
+  .ed-err { width: 14px; } .CodeMirror-hints { z-index: 3000; } .CodeMirror-activeline-background { background: rgba(127,127,127,.12); }
+  .CodeMirror-foldgutter-open, .CodeMirror-foldgutter-folded { color: var(--s21-text-soft); }
+  #tryFrame { transition: width .2s; background: #fff; }
+  .floating-stack { display: none; } #s21-ai-panel { z-index: 2100; }
+  .ed-toast { position: fixed; left: 50%; bottom: 46px; transform: translateX(-50%); background: #12352A; color: #fff; padding: .55rem 1rem; border-radius: 10px; z-index: 3500; font: 700 .85rem var(--font-body, sans-serif); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+  .ed-modal { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 3400; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .ed-modal > div { background: var(--s21-white); color: var(--s21-text); border-radius: 14px; padding: 1.2rem 1.4rem; max-width: 460px; width: 100%; max-height: 85vh; overflow: auto; }
+  .ed-modal table { width: 100%; border-collapse: collapse; font-size: .88rem; } .ed-modal td { padding: .3rem .2rem; border-bottom: 1px solid var(--s21-border); } .ed-modal kbd { background: var(--s21-bg); border: 1px solid var(--s21-border); border-radius: 5px; padding: 1px 6px; font-size: .8rem; }
+  @media (max-width: 700px) { .c-hint, .c-try-bar .brand span { display: none; } }
+</style>
+<script src="js/darkmode.js"></script>
+</head>
+<body class="s21c">
+
+<div class="c-try" id="cTry" data-layout="h" data-panel="code" aria-label="Smart21Editor">
+  <div class="c-try-bar">
+    <a class="brand" href="smart21code.html" aria-label="Smart21Code home"><img src="images/logo/coool.png" alt="Smart21Brain logo"><strong><span>Smart<em>21</em>Editor</span></strong></a>
+    <select id="edLang" aria-label="Programming language"></select>
+    <span class="sp"></span>
+    <span class="c-hint hide-sm" id="edHint">Ctrl + Enter to run</span>
+    <button class="c-btn run" id="tryRun"><i class="fa-solid fa-play"></i> Run</button>
+    <button class="c-btn ghost" id="tryRestore" hidden><i class="fa-solid fa-database"></i> <span class="hide-sm">Restore DB</span></button>
+    <button class="c-btn ghost" id="tryReset" title="Reset to the starter code"><i class="fa-solid fa-rotate-left"></i> <span class="hide-sm">Reset</span></button>
+    <button class="c-btn ghost" id="edDownload" title="Download your code"><i class="fa-solid fa-download"></i> <span class="hide-sm">Save</span></button>
+    <button class="c-btn ghost hide-sm" id="tryLayout" title="Switch layout"><i class="fa-solid fa-table-columns"></i></button>
+    <button class="c-btn ghost" data-theme-toggle title="Light / dark" aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    <a class="c-btn ghost" href="courses.html" id="edClose" aria-label="Back to courses" title="Back to courses"><i class="fa-solid fa-xmark"></i></a>
+  </div>
+  <div class="c-try-tabs" id="tryTabs"><button class="active" data-p="code">Code</button><button data-p="result">Result</button></div>
+  <div class="c-try-body" id="tryBody">
+    <section class="c-pane c-pane-code" id="paneCode" aria-label="Code">
+      <div id="tryEditorHost"></div>
+      <div class="c-stdin" id="tryStdinWrap" hidden><label for="tryStdin" id="tryStdinLabel">Input</label><textarea id="tryStdin" spellcheck="false" placeholder="Amina&#10;12"></textarea></div>
+    </section>
+    <div class="c-split" id="trySplit" role="separator" aria-label="Resize panels"></div>
+    <section class="c-pane c-pane-result" aria-label="Result">
+      <div class="c-result-head"><span>Result</span><span id="tryStatus" role="status"></span></div>
+      <iframe id="tryFrame" title="Result" sandbox="allow-scripts allow-modals allow-forms allow-popups"></iframe>
+      <pre id="tryOut" hidden></pre>
+      <div id="trySql" hidden></div>
+      <div class="c-console" id="tryConsole" hidden>
+        <div class="c-console-head"><span>Console</span><button id="tryClearConsole">Clear</button></div>
+        <div id="tryConsoleBody"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> Smart21brain AI</span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai">Hi! Ask me to explain a lesson, fix your code, or suggest what to build next.</div></div>
+  <p class="ai-disclaimer">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" aria-label="Ask the AI">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<noscript><p style="padding:2rem;text-align:center">Smart21Editor needs JavaScript to run.</p></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/css-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/sql-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/foldgutter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/brace-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/xml-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/fold/indent-fold.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/dialog/dialog.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/searchcursor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/search.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/jump-to-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/match-highlighter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+<script src="js/s21c-runner.js?v=2"></script>
+<script src="js/s21-editor.js?v=2"></script>
+<script src="js/s21-editor-pro.js?v=1"></script>
+<script src="js/ai-assistant.js"></script>
+</body>
+</html>

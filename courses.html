@@ -110,7 +110,7 @@
   </section>
 
   <!-- ================= Smart21Code — learn to code, W3Schools-style ================= -->
-  <section class="section s21code-section s21code-collapsed" id="smart21code" aria-labelledby="s21code-heading">
+  <section class="section s21code-section" id="smart21code" aria-labelledby="s21code-heading">
     <div class="container">
       <div class="s21code-head">
         <div>
@@ -119,24 +119,8 @@
           <p class="text-soft mb-0" style="max-width:640px">Learn code, use our Editor and get more advance with our smart21brain AI</p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-          <button type="button" class="btn-s21 btn-s21-outline" id="s21code-toggle"><i class="fa-solid fa-chevron-down"></i> Show Smart21Code</button>
+          <a href="smart21editor.html" class="btn-s21 btn-s21-outline" id="smart21editor-link"><i class="fa-solid fa-laptop-code"></i> Smart21Editor</a>
           <a href="smart21code.html" class="btn-s21 btn-s21-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open Smart21Code</a>
-        </div>
-      </div>
-
-      <div class="s21code-collapsible">
-        <div class="s21code-lang-tabs" id="s21code-lang-tabs" role="tablist" aria-label="Programming language"></div>
-
-        <div class="s21code-body">
-          <aside class="s21code-sidebar">
-            <div class="s21code-search-wrap">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="search" id="s21code-search" placeholder="Filter topics…" aria-label="Filter Smart21Code topics">
-            </div>
-            <div id="s21code-sidebar-list" role="tablist" aria-label="Topics"></div>
-          </aside>
-
-          <div class="s21code-lesson" id="s21code-lesson"></div>
         </div>
       </div>
     </div>
@@ -415,8 +399,6 @@
 <script src="js/nav-account.js"></script>
 
 <script>AOS.init({duration:650,once:true,offset:60});</script>
-<script src="js/smart21code-data.js"></script>
-<script src="js/smart21code.js"></script>
 <script>
 document.getElementById('viewAllCoursesBtn')?.addEventListener('click', function () {
   var all = document.querySelector('#courseLevelFilters [data-course-level="all"]');
