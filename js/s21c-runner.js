@@ -1,7 +1,8 @@
 /* Smart21Code — runner.
    web    : HTML / CSS / JavaScript in a sandboxed iframe (console captured)
    python : real CPython (Pyodide) in a Web Worker, loaded on first use
-   sql    : real SQLite (sql.js), with a sample school database             */
+   sql    : real SQLite (sql.js), with a sample school database
+   cpp    : real g++ compiler, reached through the free Wandbox web service  */
 (function () {
   'use strict';
 
@@ -151,10 +152,65 @@
     });
   }
 
+
+  /* ------------------------------------------------------------- cpp */
+  var WANDBOX = 'https://wandbox.org/api/compile.json';
+  var cppCtl = null;
+
+  function stopCpp() { if (cppCtl) { try { cppCtl.abort(); } catch (e) { /* ignore */ } cppCtl = null; } }
+
+  /* opts: { stdin, onStatus(text), onOut(text, isErr) }  ->  Promise (always resolves) */
+  function runCpp(code, opts) {
+    opts = opts || {};
+    stopCpp();
+    var ctl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    cppCtl = ctl;
+    var timedOut = false;
+    var timer = setTimeout(function () { timedOut = true; if (ctl) ctl.abort(); }, 40000);
+    if (opts.onStatus) opts.onStatus('Compiling…');
+    var stdin = opts.stdin || '';
+    if (stdin && stdin.slice(-1) !== '\n') stdin += '\n';
+    return fetch(WANDBOX, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code, compiler: 'gcc-head', 'compiler-option-raw': '-std=c++17\n-Wall', stdin: stdin, save: false }),
+      signal: ctl ? ctl.signal : undefined
+    }).then(function (r) {
+      if (!r.ok) throw new Error('The C++ compiler service answered with an error (' + r.status + ').');
+      return r.json();
+    }).then(function (d) {
+      clearTimeout(timer);
+      if (cppCtl !== ctl) return;               // stopped by the user
+      cppCtl = null;
+      var ok = String(d.status) === '0';
+      var cErr = (d.compiler_error || '').trim();
+      var cMsg = (d.compiler_message || '').trim();
+      var out = d.program_output || '';
+      var err = d.program_error || '';
+      if (!out && !err && d.program_message) { out = d.program_message; }
+      if (cErr || (!ok && !out && cMsg)) {
+        opts.onOut((cErr || cMsg), true);        // compile errors (and warnings)
+      } else if (cMsg && /warning/i.test(cMsg)) {
+        opts.onOut(cMsg, true);
+      }
+      if (out) opts.onOut(out.replace(/\n$/, ''), false);
+      if (err) opts.onOut(err.replace(/\n$/, ''), true);
+      if (!ok && (out || err) && !cErr) opts.onOut('[program ended with exit code ' + d.status + ']', true);
+    }).catch(function (e) {
+      clearTimeout(timer);
+      if (cppCtl === ctl) cppCtl = null;
+      else if (!timedOut) return;              // stopped by the user
+      if (timedOut) opts.onOut('The compiler took too long to answer (over 40 seconds). Check your code for an endless loop and try again.', true);
+      else opts.onOut('Could not reach the C++ compiler. Check your internet connection and try again.\n(' + (e && e.message || e) + ')', true);
+    });
+  }
+
   window.S21CRunner = {
     buildWeb: buildWeb,
     runPython: runPython,
     stopPython: function () { if (pyWorker) { try { pyWorker.terminate(); } catch (e) { /* ignore */ } pyWorker = null; pyReady = false; if (pyJob) { clearTimeout(pyJob.timer); pyJob.resolve(); pyJob = null; } } },
+    runCpp: runCpp,
+    stopCpp: stopCpp,
     runSql: runSql,
     restoreDb: restoreDb,
     dbSchema: dbSchema

@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Smart21Code — Learn HTML, CSS, JavaScript, Python, SQL, Bootstrap, jQuery & React | Smart21Brain</title>
-<meta name="description" content="Smart21Code: free tutorials with a real Try it Yourself editor for HTML, CSS, JavaScript, Python, SQL, Bootstrap, jQuery and React. Everything runs in your browser.">
+<title>Smart21Code — Learn HTML, CSS, JavaScript, Python, C++, SQL, Bootstrap, jQuery & React | Smart21Brain</title>
+<meta name="description" content="Smart21Code: free tutorials with a real Try it Yourself editor for HTML, CSS, JavaScript, Python, C++, SQL, Bootstrap, jQuery and React. Most languages run in your browser; C++ is compiled online.">
 <link rel="canonical" href="https://smart21brain.com/smart21code.html">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
 <link rel="apple-touch-icon" href="images/logo/coool.png">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=10">
-<link rel="stylesheet" href="css/s21c.css?v=2">
+<link rel="stylesheet" href="css/s21c.css?v=3">
 <script src="js/darkmode.js"></script>
 </head>
 <body class="s21c">
@@ -19,7 +19,7 @@
 <header class="c-head">
   <div class="c-top">
     <button class="c-iconbtn" id="cMenu" aria-label="Open tutorial menu"><i class="fa-solid fa-bars"></i></button>
-    <a class="c-brand" href="#/" aria-label="Smart21Code home"><span class="mark">21</span><span class="txt">Smart<em>21</em>Code</span></a>
+    <a class="c-brand" href="#/" aria-label="Smart21Code home"><img class="logo" src="images/logo/coool.png" alt="Smart21Brain logo" width="40" height="40"><span class="txt">Smart<em>21</em>Code</span></a>
     <div class="c-search" role="search">
       <i class="fa-solid fa-magnifying-glass"></i>
       <input id="cSearch" type="search" placeholder="Search tutorials…  ( / )" aria-label="Search tutorials" autocomplete="off">
@@ -44,7 +44,7 @@
 
 <footer class="c-foot">
   <div><a href="index.html">Smart21Brain</a><a href="courses.html">Courses</a><a href="earth21.html">Earth21</a><a href="contact.html">Contact</a></div>
-  <p style="margin:.7rem 0 0">© <span id="cYear"></span> Smart21Brain · Free tutorials with original lessons. Python runs with Pyodide and SQL with SQLite, right in your browser.</p>
+  <p style="margin:.7rem 0 0">© <span id="cYear"></span> Smart21Brain · Free tutorials with original lessons. Python runs with Pyodide and SQL with SQLite in your browser; C++ is compiled by g++ through Wandbox.</p>
 </footer>
 
 <!-- Try it Yourself — full-screen editor -->
@@ -62,7 +62,7 @@
   <div class="c-try-body" id="tryBody">
     <section class="c-pane c-pane-code" id="paneCode" aria-label="Code">
       <div id="tryEditorHost"></div>
-      <div class="c-stdin" id="tryStdinWrap" hidden><label for="tryStdin">Input (one line for each input() call)</label><textarea id="tryStdin" spellcheck="false" placeholder="Amina&#10;12"></textarea></div>
+      <div class="c-stdin" id="tryStdinWrap" hidden><label for="tryStdin" id="tryStdinLabel">Input (one line for each input() call)</label><textarea id="tryStdin" spellcheck="false" placeholder="Amina&#10;12"></textarea></div>
     </section>
     <div class="c-split" id="trySplit" role="separator" aria-label="Resize panels"></div>
     <section class="c-pane c-pane-result" aria-label="Result">
@@ -105,6 +105,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/runmode/runmode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closetag.min.js"></script>
@@ -113,9 +114,10 @@
 <script src="js/s21c-data-py.js?v=1"></script>
 <script src="js/s21c-data-frameworks.js?v=1"></script>
 <script src="js/s21c-data-extra.js?v=1"></script>
+<script src="js/s21c-data-cpp.js?v=1"></script>
 <script src="js/s21c-refs.js?v=2"></script>
-<script src="js/s21c-runner.js?v=1"></script>
+<script src="js/s21c-runner.js?v=2"></script>
 <script src="js/ai-assistant.js"></script>
-<script src="js/s21c-app.js?v=2"></script>
+<script src="js/s21c-app.js?v=3"></script>
 </body>
 </html>

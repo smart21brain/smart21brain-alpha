@@ -5,7 +5,7 @@
   var S = window.S21C, R = window.S21CRunner;
   if (!S) return;
 
-  var ICON = { html: 'fa-brands fa-html5', css: 'fa-brands fa-css3-alt', javascript: 'fa-brands fa-js', python: 'fa-brands fa-python', sql: 'fa-solid fa-database', bootstrap: 'fa-brands fa-bootstrap', jquery: 'fa-solid fa-bolt', react: 'fa-brands fa-react' };
+  var ICON = { html: 'fa-brands fa-html5', css: 'fa-brands fa-css3-alt', javascript: 'fa-brands fa-js', python: 'fa-brands fa-python', sql: 'fa-solid fa-database', cpp: 'fa-solid fa-code', bootstrap: 'fa-brands fa-bootstrap', jquery: 'fa-solid fa-bolt', react: 'fa-brands fa-react' };
   var STARTER = {
     bootstrap: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n<div class="container mt-4">\n  <h1 class="text-primary">My Bootstrap page</h1>\n  <p class="lead">Add classes to style things.</p>\n  <button class="btn btn-success">Click me</button>\n</div>\n<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>',
     jquery: '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"><\/script>\n</head>\n<body>\n<h2 id="title">Hello!</h2>\n<button id="btn">Click me</button>\n\n<script>\n$(function () {\n  $("#btn").click(function () {\n    $("#title").text("jQuery works!").css("color", "crimson");\n  });\n});\n<\/script>\n</body>\n</html>',
@@ -13,6 +13,7 @@
     html: '<!DOCTYPE html>\n<html>\n<head>\n  <title>My page</title>\n  <style>\n    body { font-family: sans-serif; padding: 16px; }\n    h1 { color: #0B6E4F; }\n  </style>\n</head>\n<body>\n  <h1>Hello, world!</h1>\n  <p>Edit me and press Run.</p>\n</body>\n</html>',
     javascript: '// Write JavaScript here and press Run\nconst name = "Smart21Code";\nconsole.log("Hello from " + name);\n\nfor (let i = 1; i <= 3; i++) {\n  console.log("Loop number " + i);\n}',
     python: '# Write Python here and press Run\nname = "Smart21Code"\nprint("Hello from", name)\n\nfor i in range(1, 4):\n    print("Loop number", i)',
+    cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << "Hello from Smart21Code!" << endl;\n\n  for (int i = 1; i <= 3; i++) {\n    cout << "Loop number " << i << endl;\n  }\n  return 0;\n}',
     sql: '-- Try a query on the school database\nSELECT name, city, score\nFROM students\nORDER BY score DESC\nLIMIT 5;'
   };
 
@@ -37,6 +38,7 @@
   function modeFor(langId, code) {
     if (langId === 'python') return 'python';
     if (langId === 'sql') return 'text/x-sqlite';
+    if (langId === 'cpp') return 'text/x-c++src';
     if (langId === 'javascript') return looksHtml(code) ? 'htmlmixed' : 'javascript';
     return 'htmlmixed';
   }
@@ -103,7 +105,7 @@
   }
 
   function viewHome() {
-    document.title = 'Smart21Code — Learn HTML, CSS, JavaScript, Python, SQL, Bootstrap, jQuery & React | Smart21Brain';
+    document.title = 'Smart21Code — Learn HTML, CSS, JavaScript, Python, C++, SQL, Bootstrap, jQuery & React | Smart21Brain';
     setLayout(false, false, true);
     var last = (store('s21c-last') || '').split('/');
     var cont = '';
@@ -113,7 +115,7 @@
     }
     var total = S.langs.reduce(function (n, l) { return n + list(l.id).length; }, 0);
     var h = '<section class="c-hero"><h1>Learn to code. Try it. Build it.</h1>' +
-      '<p>Free, hands-on tutorials in HTML, CSS, JavaScript, Python, SQL, Bootstrap, jQuery and React. Every example opens in a real editor — change the code and run it right in your browser.</p>' +
+      '<p>Free, hands-on tutorials in HTML, CSS, JavaScript, Python, C++, SQL, Bootstrap, jQuery and React. Every example opens in a real editor — change the code and run it right in your browser.</p>' +
       '<div class="btns"><a class="c-btn" href="#/html"><i class="fa-solid fa-play"></i> Start with HTML</a>' +
       '<a class="c-btn alt" href="#/playground"><i class="fa-solid fa-flask"></i> Open the Playground</a>' + cont + '</div></section>';
     h += '<h2 class="c-h2">Choose a tutorial</h2><div class="c-cards">';
@@ -124,7 +126,7 @@
     });
     h += '</div><h2 class="c-h2">How it works</h2><div class="c-steps">' +
       '<div class="c-step"><b>1</b><h4>Read a short lesson</h4><p>Plain-English explanations, one idea at a time.</p></div>' +
-      '<div class="c-step"><b>2</b><h4>Try it Yourself</h4><p>Edit any example and run it. Web frameworks, Python and SQL all really run in your browser.</p></div>' +
+      '<div class="c-step"><b>2</b><h4>Try it Yourself</h4><p>Edit any example and run it. Web frameworks, Python and SQL run in your browser, and C++ is compiled by a real g++ compiler.</p></div>' +
       '<div class="c-step"><b>3</b><h4>Practise with exercises</h4><p>Fill in the blank to check what you learned — ' + total + ' lessons in all.</p></div></div>';
     h += '<div class="c-panel" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between"><div><h4 style="margin:0 0 .2rem"><i class="fa-solid fa-robot" style="color:var(--s21-primary)"></i> Get more advanced with Smart21brain AI</h4><p style="margin:0">Ask the AI to explain a lesson, debug your code, or suggest what to build next.</p></div><button class="c-btn" data-ai-ask="1">Ask the AI</button></div>';
     $('#cMain').innerHTML = h;
@@ -172,7 +174,7 @@
       var t = ev.target.closest('button, a'); if (!t) return;
       if (t.hasAttribute('data-try')) {
         var ex = x.e[+t.getAttribute('data-try')];
-        openTry({ lang: L.id, code: ex[1], title: x.t + ' — Try it Yourself', reset: ex[1] });
+        openTry({ lang: L.id, code: ex[1], stdin: ex[2], title: x.t + ' — Try it Yourself', reset: ex[1] });
       } else if (t.hasAttribute('data-copy')) {
         var txt = x.e[+t.getAttribute('data-copy')][1];
         (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { t.textContent = 'Copied!'; }, function () { t.textContent = 'Press Ctrl+C'; });
@@ -223,9 +225,9 @@
   function viewPlay(route) {
     document.title = 'Playground | Smart21Code';
     setLayout(false, false, true);
-    var opts = ['html', 'javascript', 'python', 'sql', 'bootstrap', 'jquery', 'react'];
+    var opts = ['html', 'javascript', 'python', 'cpp', 'sql', 'bootstrap', 'jquery', 'react'];
     var h = '<div class="c-crumb"><a href="#/">Smart21Code</a> › <span>Playground</span></div><h1><i class="fa-solid fa-flask" style="color:var(--s21-primary)"></i> Playground</h1>' +
-      '<p class="c-body">A full-screen editor with syntax colours. HTML, CSS, JavaScript, Bootstrap, jQuery and React run instantly; Python and SQL run for real too. Your code is saved on this device.</p><div class="c-cards">';
+      '<p class="c-body">A full-screen editor with syntax colours. HTML, CSS, JavaScript, Bootstrap, jQuery and React run instantly; Python, C++ and SQL run for real too. Your code is saved on this device.</p><div class="c-cards">';
     opts.forEach(function (id) {
       var l = lang(id);
       h += '<a class="c-card" href="#/playground/' + id + '" style="--lc:' + l.color + '"><div class="ic"><i class="' + ICON[id] + '"></i></div><h3>' + (id === 'html' ? 'HTML / CSS' : esc(l.name)) + '</h3><p>' + esc(l.tag) + '</p><div class="meta"><span>Open editor</span><span class="go">Go ›</span></div></a>';
@@ -326,7 +328,7 @@
 
   function showResult(kind) {
     $('#tryFrame').style.display = kind === 'web' ? '' : 'none';
-    $('#tryOut').hidden = kind !== 'python';
+    $('#tryOut').hidden = kind !== 'python' && kind !== 'cpp';
     $('#trySql').hidden = kind !== 'sql';
     $('#tryConsole').hidden = true;
   }
@@ -342,7 +344,9 @@
     t.hidden = false; document.body.classList.add('c-lock');
     var mode = modeFor(o.lang, o.code);
     setVal(o.code, mode);
-    $('#tryStdinWrap').hidden = o.lang !== 'python';
+    $('#tryStdinWrap').hidden = o.lang !== 'python' && o.lang !== 'cpp';
+    if (o.lang === 'cpp') { $('#tryStdin').value = o.stdin || ''; $('#tryStdinLabel').textContent = 'Input (what the user would type for cin, one value per line)'; }
+    else if (o.lang === 'python') { $('#tryStdinLabel').textContent = 'Input (one line for each input() call)'; }
     $('#tryRestore').hidden = o.lang !== 'sql';
     var kind = L.run;
     showResult(kind);
@@ -357,6 +361,7 @@
     $('#cTry').hidden = true;
     $('#tryFrame').srcdoc = '';
     if (R && R.stopPython) R.stopPython();
+    if (R && R.stopCpp) R.stopCpp();
     running = false;
     if (!$('#cSide').classList.contains('open')) document.body.classList.remove('c-lock');
     var cb = cur && cur.onClose; cur = null;
@@ -379,13 +384,30 @@
   function runTry(auto) {
     if (!cur) return;
     var L = lang(cur.lang), code = getVal(), btn = $('#tryRun');
-    if (running) { if (R.stopPython) R.stopPython(); running = false; btn.className = 'c-btn run'; btn.innerHTML = '<i class="fa-solid fa-play"></i> Run'; setStatus('Stopped'); return; }
+    if (running) { if (R.stopPython) R.stopPython(); if (R.stopCpp) R.stopCpp(); running = false; btn.className = 'c-btn run'; btn.innerHTML = '<i class="fa-solid fa-play"></i> Run'; setStatus('Stopped'); return; }
     if (L.run === 'web') {
       showResult('web');
       consoleCount = 0; $('#tryConsoleBody').innerHTML = ''; $('#tryConsole').hidden = true;
       $('#tryFrame').srcdoc = R.buildWeb(code);
       setStatus('');
       if (isMobile() && !auto) setPanel('result');
+    } else if (L.run === 'cpp') {
+      showResult('cpp');
+      var cout_ = $('#tryOut'); cout_.textContent = '';
+      running = true; btn.className = 'c-btn stop'; btn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop'; setStatus('Compiling…');
+      if (isMobile()) setPanel('result');
+      R.runCpp(code, {
+        stdin: $('#tryStdin').value,
+        onStatus: function (s) { setStatus(s); },
+        onOut: function (text, isErr) {
+          var span = document.createElement('span'); if (isErr) span.className = 'err'; span.textContent = text + '\n'; cout_.appendChild(span); cout_.scrollTop = cout_.scrollHeight;
+        }
+      }).then(function () {
+        if (!running) return;
+        running = false; btn.className = 'c-btn run'; btn.innerHTML = '<i class="fa-solid fa-play"></i> Run';
+        setStatus(cout_.textContent.trim() ? 'Finished' : 'Finished (no output)');
+        if (!cout_.textContent.trim()) cout_.innerHTML = '<span style="opacity:.6">Your program ran but did not print anything. Use cout to show a result.</span>';
+      });
     } else if (L.run === 'python') {
       showResult('python');
       var out = $('#tryOut'); out.textContent = '';
