@@ -202,3 +202,15 @@ smart21brain/
 - `POST /chopaai` `{prompt, mode}` — mode: general|machine|photo|business|sales_summary
 - `GET  /notifications` · `PUT /notifications/:id/read` · `PUT /notifications/read-all`
 - `GET  /audit-log` (owner) · `GET /backup/export` (owner) · `POST /backup/restore` (owner)
+
+## Smart21Institution (library, e-library, students, academics)
+
+```bash
+# 1. add its tables (safe to run more than once)
+wrangler d1 execute smart21brain-db --file=./institution-schema.sql --remote
+# 2. deploy — wrangler.toml now includes a daily cron ([triggers]) that makes weekly automatic backups
+wrangler deploy
+```
+
+It uses the same `DB` and `MATERIALS` (R2) bindings as the School System. Full documentation, manuals and the
+testing checklist are in `INSTITUTION_SYSTEM.md`.

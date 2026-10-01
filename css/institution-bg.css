@@ -1,0 +1,14 @@
+/* Hero background for the Smart21Institution page and its section on the home page
+   (images/institution/bg-institution.svg). The app itself uses the lighter pattern
+   defined at the bottom of css/institution-app.css. */
+.s21-inst-bg{position:relative;isolation:isolate;background:#042F2E url("../images/institution/bg-institution.svg") center/cover no-repeat;color:#fff}
+.s21-inst-bg::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(4,47,46,.84) 0%,rgba(4,47,46,.55) 55%,rgba(4,47,46,.2) 100%)}
+@media(max-width:991px){.s21-inst-bg::before{background:rgba(4,47,46,.68)}}
+.s21-inst-bg h1,.s21-inst-bg h2,.s21-inst-bg h3,.s21-inst-bg .h4{color:#fff}
+.s21-inst-bg .text-soft,.s21-inst-bg li,.s21-inst-bg p{color:rgba(255,255,255,.88)}
+.s21-inst-bg .eyebrow{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.25)}
+.s21-inst-bg .btn-s21-outline{color:#fff;border-color:rgba(255,255,255,.75);background:transparent}
+.s21-inst-bg .btn-s21-outline:hover{background:rgba(255,255,255,.14);color:#fff}
+.s21-inst-bg .fa-circle-check{color:#5EEAD4 !important}
+.s21-inst-bg .s21-card,.s21-inst-bg .s21-card *{color:inherit}
+.s21-inst-bg .s21-card .text-soft{color:var(--s21-text-soft,#64736C)}

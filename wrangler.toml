@@ -57,3 +57,8 @@ binding = "AI"
 # https://developers.cloudflare.com/workers-ai/models/
 # [vars]
 # AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+
+# Smart21Institution: daily check that creates a weekly automatic backup for every
+# institution whose last backup is older than 7 days (see src/handlers/institution/tools.js).
+[triggers]
+crons = ["0 2 * * *"]

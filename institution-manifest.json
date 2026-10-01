@@ -1,0 +1,23 @@
+{
+  "id": "/institution-app.html",
+  "name": "Smart21Institution",
+  "short_name": "Institution",
+  "description": "Library catalogue, e-library, students, academic records and reports — run your institution from one app.",
+  "start_url": "/institution-app.html?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0B1F1E",
+  "theme_color": "#0F766E",
+  "orientation": "any",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "/icons/institution-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/institution-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/institution-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Library catalogue", "url": "/institution-app.html#catalogue" },
+    { "name": "Lending & returns", "url": "/institution-app.html#loans" },
+    { "name": "Students", "url": "/institution-app.html#students" }
+  ]
+}

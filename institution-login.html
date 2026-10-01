@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-institution-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Smart21Institution</title>
+<meta name="description" content="Sign in to Smart21Institution, or register your institution in a minute.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0F766E">
+<link rel="manifest" href="institution-manifest.json">
+<link rel="apple-touch-icon" href="icons/institution-apple-touch.png">
+<link rel="icon" href="images/institution/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/institution-app.css?v=1">
+</head>
+<body class="in-body">
+<div class="in-auth">
+  <aside class="in-auth-art">
+    <div class="in-row" style="gap:.8rem"><img src="images/institution/logo.svg" width="46" height="46" alt="" style="border-radius:14px"><b style="font-family:var(--in-font-display);font-size:1.15rem">Smart21Institution</b></div>
+    <div>
+      <h1>Run your whole institution from one place.</h1>
+      <p>Library, digital resources, students, academic records and reports — connected, secure and easy enough for every teacher, librarian and student to use.</p>
+      <ul>
+        <li><i class="fa-solid fa-book"></i> A complete library: public catalogue, lending, returns, reservations and fines</li>
+        <li><i class="fa-solid fa-laptop"></i> A secure e-library for PDFs, notes, journals and publications</li>
+        <li><i class="fa-solid fa-user-graduate"></i> Student records, courses, marks and results in one place</li>
+        <li><i class="fa-solid fa-shield-halved"></i> Roles and permissions you control, with a full audit trail</li>
+      </ul>
+    </div>
+    <a href="institution.html" style="color:#fff;font-weight:700"><i class="fa-solid fa-circle-play"></i> See how it works</a>
+  </aside>
+
+  <main class="in-auth-form">
+    <div class="in-auth-box">
+      <div class="in-row" style="margin-bottom:1.2rem;gap:.7rem"><span class="in-logo" id="lgLogo"><i class="fa-solid fa-building-columns"></i></span><div><div class="in-brand-name" id="lgName">Smart21Institution</div><div class="in-brand-sub">Secure sign in</div></div></div>
+      <div class="in-tabs" role="tablist"><button class="on" data-tab="in" role="tab">Sign in</button><button data-tab="up" role="tab">Register your institution</button></div>
+
+      <form class="in-form" id="inForm" novalidate>
+        <div class="in-form-error" role="alert"></div>
+        <div class="in-field" data-field="email"><label for="f_email">Email<span class="req">*</span></label><input class="in-input" id="f_email" name="email" type="email" autocomplete="username" required data-label="your email" placeholder="you@institution.org"><span class="err"></span></div>
+        <div class="in-field" data-field="password"><label for="f_password">Password<span class="req">*</span></label><div style="position:relative"><input class="in-input" id="f_password" name="password" type="password" autocomplete="current-password" required data-label="your password" style="padding-right:3rem"><button type="button" class="in-icon-btn" id="eye" style="position:absolute;right:4px;top:3px;width:36px;height:36px;border:0;background:none" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err"></span></div>
+        <div class="in-spread"><label class="in-check"><input type="checkbox" name="remember" checked> Remember me</label><a href="forgot-password.html" class="in-small in-strong">Forgot password?</a></div>
+        <button class="in-btn primary block lg" type="submit">Login</button>
+        <p class="in-small in-muted in-center" style="margin:0">Staff and students: use the email and password your institution gave you.</p>
+      </form>
+
+      <form class="in-form in-hide" id="upForm" novalidate>
+        <div class="in-form-error" role="alert"></div>
+        <p class="in-muted" style="margin:0">Register in under a minute. You become the Super Administrator and get ready-made roles, categories and an academic year that you can change anytime.</p>
+        <div class="in-field" data-field="institution_name"><label for="f_institution_name">Institution name<span class="req">*</span></label><input class="in-input" id="f_institution_name" name="institution_name" required data-label="the institution name" placeholder="e.g. Kilimani Technical College" maxlength="140"><span class="err"></span></div>
+        <div class="in-field" data-field="inst_type"><label for="f_inst_type">Type of institution</label><select class="in-select" id="f_inst_type" name="inst_type"><option value="school">School</option><option value="college">College</option><option value="university">University</option><option value="library">Library</option><option value="training_center">Training centre</option><option value="organization">Organization</option></select></div>
+        <div class="cols"><div class="in-field" data-field="name"><label for="f_name">Your name<span class="req">*</span></label><input class="in-input" id="f_name" name="name" required data-label="your name" autocomplete="name"><span class="err"></span></div>
+        <div class="in-field" data-field="phone"><label for="f_phone">Phone (optional)</label><input class="in-input" id="f_phone" name="phone" type="tel" data-kind="phone" autocomplete="tel" placeholder="+255 …"><span class="err"></span></div></div>
+        <div class="in-field" data-field="remail"><label for="f_remail">Email<span class="req">*</span></label><input class="in-input" id="f_remail" name="email" type="email" required data-label="your email" autocomplete="email"><span class="err"></span></div>
+        <div class="in-field" data-field="rpass"><label for="f_rpass">Password<span class="req">*</span></label><input class="in-input" id="f_rpass" name="password" type="password" required minlength="8" data-label="a password" autocomplete="new-password"><span class="hint">At least 8 characters.</span><span class="err"></span></div>
+        <button class="in-btn primary block lg" type="submit">Register my institution</button>
+      </form>
+
+      <p class="in-small in-center" style="margin-top:1.4rem"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to Smart21Brain</a> &nbsp;·&nbsp; <a href="institution.html">About Smart21Institution</a></p>
+    </div>
+  </main>
+</div>
+<script src="js/institution/core.js?v=1"></script>
+<script>
+(function () {
+  var IN = window.IN;
+  // Already signed in to a shop? Go straight in.
+  IN.api.get('/context').then(function (c) { if (c && c.institution) location.replace('institution-app.html'); }).catch(function () {});
+  var params = new URLSearchParams(location.search);
+  if (params.get('i')) { // optional co-branding: institution-login.html?i=12
+    var img = new Image(); img.onload = function () { document.getElementById('lgLogo').innerHTML = '<img src="' + img.src + '" alt="">'; }; img.src = '/api/institution/public/logo/' + encodeURIComponent(params.get('i'));
+  }
+  var inForm = document.getElementById('inForm'), upForm = document.getElementById('upForm');
+  function show(tab) {
+    document.querySelectorAll('.in-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === tab); });
+    inForm.classList.toggle('in-hide', tab !== 'in'); upForm.classList.toggle('in-hide', tab !== 'up');
+  }
+  document.querySelector('.in-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) show(b.dataset.tab); });
+  if (location.hash === '#register') show('up');
+  document.getElementById('eye').addEventListener('click', function () {
+    var p = document.getElementById('f_password'); var on = p.type === 'password'; p.type = on ? 'text' : 'password';
+    this.innerHTML = '<i class="fa-solid ' + (on ? 'fa-eye-slash' : 'fa-eye') + '"></i>'; this.setAttribute('aria-label', on ? 'Hide password' : 'Show password');
+  });
+  function submit(form, path, label) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = form.querySelector('.in-form-error'); err.classList.remove('show');
+      if (!IN.validate(form)) return;
+      var btn = form.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<span class="in-spin"></span> Please wait…';
+      IN.api.post(path, IN.formData(form)).then(function () {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Success';
+        location.href = 'institution-app.html';
+      }).catch(function (ex) {
+        err.textContent = ex.message; err.classList.add('show'); btn.disabled = false; btn.textContent = label;
+      });
+    });
+  }
+  submit(inForm, '/login', 'Login'); submit(upForm, '/register', 'Register my institution');
+})();
+</script>
+<script src="js/institution-install.js?v=1"></script>
+</body>
+</html>

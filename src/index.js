@@ -58,6 +58,16 @@ import * as shpInsights from './handlers/shop/insights.js';
 import * as shpDemo from './handlers/shop/demo.js';
 import * as shpQr from './handlers/shop/qr.js';
 
+// Smart21Institution — library, e-library, students, academics, reports
+import * as insCore from './handlers/institution/core.js';
+import * as insLib from './handlers/institution/library.js';
+import * as insEl from './handlers/institution/elibrary.js';
+import * as insPeople from './handlers/institution/people.js';
+import * as insAcad from './handlers/institution/academics.js';
+import * as insInsights from './handlers/institution/insights.js';
+import * as insTools from './handlers/institution/tools.js';
+import * as insDemo from './handlers/institution/demo.js';
+
 const router = new Router();
 
 // ---- Auth ----
@@ -462,6 +472,144 @@ router.get('/api/shop/reports', shpInsights.reportCatalogue);
 router.get('/api/shop/reports/:key', shpInsights.runReport);
 router.get('/api/shop/audit', shpInsights.listAudit);
 
+
+// ---------------------------------------------------------------------
+// Smart21Institution  (/api/institution/*)
+// ---------------------------------------------------------------------
+// Accounts & context
+router.post('/api/institution/register', insCore.registerInstitution);
+router.post('/api/institution/login', insCore.login);
+router.post('/api/institution/logout', insCore.logout);
+router.get('/api/institution/context', insCore.context);
+router.post('/api/institution/institutions', insCore.createInstitution);
+router.get('/api/institution/lookups', insCore.lookups);
+router.get('/api/institution/public/logo/:id', insCore.publicLogo);
+// Public (no sign-in): institution card, catalogue, public resources
+router.get('/api/institution/public/:slug', insCore.publicInfo);
+router.get('/api/institution/public/:slug/books', insLib.publicOpac);
+router.get('/api/institution/public/:slug/books/:id', insLib.publicBook);
+router.get('/api/institution/public/:slug/resources', insLib.publicResources);
+router.get('/api/institution/public/:slug/resources/:id/file', insEl.publicResourceFile);
+// Settings, roles & permissions, logins
+router.get('/api/institution/info', insCore.getInstInfo);
+router.put('/api/institution/info', insCore.updateInstInfo);
+router.post('/api/institution/info/logo', insCore.uploadLogo);
+router.put('/api/institution/settings', insCore.saveSettings);
+router.get('/api/institution/permissions', insCore.getPermissions);
+router.put('/api/institution/permissions', insCore.savePermissions);
+router.get('/api/institution/users', insCore.listUsers);
+router.post('/api/institution/users', insCore.addUser);
+router.put('/api/institution/users/:id', insCore.updateUser);
+router.post('/api/institution/demo-data', insDemo.loadDemoData);
+// Announcements & notifications
+router.get('/api/institution/announcements', insCore.listAnnouncements);
+router.post('/api/institution/announcements', insCore.createAnnouncement);
+router.delete('/api/institution/announcements/:id', insCore.deleteAnnouncement);
+router.get('/api/institution/notifications', insCore.listNotifications);
+router.post('/api/institution/notifications/read', insCore.readNotifications);
+// Library: catalogue (OPAC), books, copies, categories
+router.get('/api/institution/opac', insLib.opac);
+router.get('/api/institution/opac/suggest', insLib.suggest);
+router.get('/api/institution/opac/book/:id', insLib.opacBook);
+router.get('/api/institution/books/:id', insLib.getBook);
+router.post('/api/institution/books', insLib.createBook);
+router.put('/api/institution/books/:id', insLib.updateBook);
+router.delete('/api/institution/books/:id', insLib.deleteBook);
+router.post('/api/institution/books/:id/archive', insLib.archiveBook);
+router.post('/api/institution/books/:id/cover', insLib.uploadCover);
+router.get('/api/institution/books/:id/cover', insLib.bookCover);
+router.post('/api/institution/books/:id/copies', insLib.addBookCopies);
+router.put('/api/institution/copies/:id', insLib.setCopyStatus);
+router.get('/api/institution/categories', insLib.listCategories);
+router.post('/api/institution/categories', insLib.saveCategory);
+router.put('/api/institution/categories/:id', insLib.saveCategory);
+router.delete('/api/institution/categories/:id', insLib.deleteCategory);
+// Library: circulation
+router.get('/api/institution/borrowers', insLib.searchBorrowers);
+router.get('/api/institution/loans', insLib.listLoans);
+router.post('/api/institution/loans/issue', insLib.issueBook);
+router.post('/api/institution/loans/return', insLib.returnBook);
+router.post('/api/institution/loans/:id/renew', insLib.renewLoan);
+router.get('/api/institution/reservations', insLib.listReservations);
+router.post('/api/institution/reservations', insLib.createReservation);
+router.delete('/api/institution/reservations/:id', insLib.cancelReservation);
+router.get('/api/institution/fines', insLib.listFines);
+router.post('/api/institution/fines/:id/settle', insLib.settleFine);
+router.get('/api/institution/my-library', insLib.myLibrary);
+// E-Library
+router.get('/api/institution/resources', insEl.listResources);
+router.post('/api/institution/resources', insEl.uploadResource);
+router.put('/api/institution/resources/:id', insEl.updateResource);
+router.post('/api/institution/resources/:id', insEl.updateResource);
+router.delete('/api/institution/resources/:id', insEl.deleteResource);
+router.get('/api/institution/resources/:id/file', insEl.resourceFile);
+router.get('/api/institution/resources/:id/thumb', insEl.resourceThumb);
+router.get('/api/institution/resource-categories', insEl.listResourceCategories);
+router.post('/api/institution/resource-categories', insEl.saveResourceCategory);
+router.put('/api/institution/resource-categories/:id', insEl.saveResourceCategory);
+router.delete('/api/institution/resource-categories/:id', insEl.deleteResourceCategory);
+// People
+router.get('/api/institution/students', insPeople.listStudents);
+router.post('/api/institution/students', insPeople.createStudent);
+router.get('/api/institution/students/:id', insPeople.getStudent);
+router.put('/api/institution/students/:id', insPeople.updateStudent);
+router.delete('/api/institution/students/:id', insPeople.deleteStudent);
+router.post('/api/institution/students/:id/photo', insPeople.uploadStudentPhoto);
+router.get('/api/institution/students/:id/photo', insPeople.studentPhoto);
+router.get('/api/institution/students/:id/results', insAcad.studentResults);
+router.get('/api/institution/staff', insPeople.listStaff);
+router.post('/api/institution/staff', insPeople.createStaff);
+router.get('/api/institution/staff/:id', insPeople.getStaff);
+router.put('/api/institution/staff/:id', insPeople.updateStaff);
+router.delete('/api/institution/staff/:id', insPeople.deleteStaff);
+router.get('/api/institution/me', insPeople.myProfile);
+router.get('/api/institution/me/results', insAcad.myResults);
+router.get('/api/institution/departments', insPeople.listDepartments);
+router.post('/api/institution/departments', insPeople.saveDepartment);
+router.put('/api/institution/departments/:id', insPeople.saveDepartment);
+router.delete('/api/institution/departments/:id', insPeople.deleteDepartment);
+router.get('/api/institution/programmes', insPeople.listProgrammes);
+router.post('/api/institution/programmes', insPeople.saveProgramme);
+router.put('/api/institution/programmes/:id', insPeople.saveProgramme);
+router.delete('/api/institution/programmes/:id', insPeople.deleteProgramme);
+// Academics
+router.get('/api/institution/academic-years', insAcad.listYears);
+router.post('/api/institution/academic-years', insAcad.saveYear);
+router.put('/api/institution/academic-years/:id', insAcad.saveYear);
+router.post('/api/institution/terms', insAcad.saveTerm);
+router.put('/api/institution/terms/:id', insAcad.saveTerm);
+router.delete('/api/institution/terms/:id', insAcad.deleteTerm);
+router.get('/api/institution/courses', insAcad.listCourses);
+router.post('/api/institution/courses', insAcad.saveCourse);
+router.put('/api/institution/courses/:id', insAcad.saveCourse);
+router.delete('/api/institution/courses/:id', insAcad.deleteCourse);
+router.get('/api/institution/teaching', insAcad.listTeaching);
+router.post('/api/institution/teaching', insAcad.assignTeacher);
+router.delete('/api/institution/teaching/:id', insAcad.removeTeacher);
+router.get('/api/institution/enrollments', insAcad.listEnrollments);
+router.post('/api/institution/enrollments', insAcad.enroll);
+router.delete('/api/institution/enrollments/:id', insAcad.unenroll);
+router.get('/api/institution/results/sheet', insAcad.resultSheet);
+router.post('/api/institution/results/sheet', insAcad.saveResults);
+// Dashboard, search, reports, audit, health
+router.get('/api/institution/dashboard', insInsights.dashboard);
+router.get('/api/institution/search', insInsights.globalSearch);
+router.get('/api/institution/reports', insInsights.reportCatalogue);
+router.get('/api/institution/reports/:key', insInsights.runReport);
+router.get('/api/institution/audit', insInsights.auditLog);
+router.get('/api/institution/health', insInsights.health);
+// Import & backup
+router.get('/api/institution/import/fields', insTools.importFields);
+router.post('/api/institution/import/validate', insTools.importValidate);
+router.post('/api/institution/import/commit', insTools.importCommit);
+router.get('/api/institution/import/history', insTools.importHistory);
+router.get('/api/institution/backups', insTools.listBackups);
+router.post('/api/institution/backups', insTools.makeBackup);
+router.post('/api/institution/backups/:id/verify', insTools.verifyBackup);
+router.get('/api/institution/backups/:id/download', insTools.downloadBackup);
+router.post('/api/institution/backups/:id/restore', insTools.restoreBackup);
+router.delete('/api/institution/backups/:id', insTools.deleteBackup);
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -495,6 +643,10 @@ export default {
       // they can do inside is decided per shop (role + permissions) by /api/shop/*.
       '/shop-app.html': ['user', 'admin', 'teacher', 'parent'],
       '/shop-app': ['user', 'admin', 'teacher', 'parent'],
+      // Smart21Institution: same model — any signed-in account may open the app;
+      // what they can do inside is decided per institution by /api/institution/*.
+      '/institution-app.html': ['user', 'admin', 'teacher', 'parent'],
+      '/institution-app': ['user', 'admin', 'teacher', 'parent'],
     };
 
     const allowedRoles = protectedPages[normalizedPath];
@@ -502,7 +654,8 @@ export default {
       const user = await getSessionUser(request, env.DB);
       if (!user) {
         const loginPage = normalizedPath.startsWith('/school-') ? '/school-login.html'
-          : normalizedPath.startsWith('/shop-') ? '/shop-login.html' : '/login.html';
+          : normalizedPath.startsWith('/shop-') ? '/shop-login.html'
+          : normalizedPath.startsWith('/institution-') ? '/institution-login.html' : '/login.html';
         return Response.redirect(new URL(loginPage, request.url), 302);
       }
       if (!allowedRoles.includes(user.role)) {
@@ -532,5 +685,10 @@ export default {
 
     // Everything else: serve the static site from the assets binding.
     return env.ASSETS.fetch(request);
+  },
+
+  // Daily cron (see [triggers] in wrangler.toml): Smart21Institution weekly automatic backups.
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(insTools.runScheduledBackups(env));
   },
 };
