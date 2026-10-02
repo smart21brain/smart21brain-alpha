@@ -239,3 +239,48 @@ export async function resourceThumb({ request, env, params }) {
     return imageResponse(env, r.thumb_key);
   } catch (e) { return new Response('Not found', { status: 404 }); }
 }
+
+// ---------------------------------------------------------------------
+// Reading progress: "continue where I stopped"
+// ---------------------------------------------------------------------
+const pageNo = (v, label) => {
+  if (v == null || v === '') return null;
+  const n = Math.floor(Number(v));
+  if (!Number.isFinite(n) || n < 1 || n > 100000) fail(400, `${label} must be a number from 1 to 100000.`);
+  return n;
+};
+const READ_PERM = ['resources.view', 'resources.manage'];
+
+export const myReading = secure({ perm: READ_PERM }, async ({ env, ctx }) => {
+  const { results } = await env.DB.prepare(
+    `SELECT p.resource_id, p.last_page, p.total_pages, p.status, p.opened_count, p.last_opened_at, r.title, r.author, r.file_name, r.access_level, r.allow_view, (r.thumb_key IS NOT NULL) AS has_thumb
+     FROM ins_reading_progress p JOIN ins_resources r ON r.id = p.resource_id AND r.institution_id = p.institution_id
+     WHERE p.institution_id = ? AND p.user_id = ? AND r.deleted_at IS NULL ORDER BY p.last_opened_at DESC LIMIT 100`
+  ).bind(ctx.inst.id, ctx.user.id).all();
+  return json({ items: results.filter((r) => levelAllowed(ctx, r.access_level)) });
+});
+
+// body: { open?: true, page?: n, total_pages?: n, status?: 'reading'|'finished' }
+export const saveReading = secure({ perm: READ_PERM }, async ({ request, env, params, ctx }) => {
+  const b = await readJson(request);
+  const r = await env.DB.prepare('SELECT id, access_level FROM ins_resources WHERE id = ? AND institution_id = ? AND deleted_at IS NULL').bind(Number(params.id), ctx.inst.id).first();
+  if (!r || !levelAllowed(ctx, r.access_level)) fail(404, 'The resource could not be found.');
+  const page = pageNo(b.page, 'Page'); const total = pageNo(b.total_pages, 'Total pages');
+  if (page && total && page > total) fail(400, 'The page you are on cannot be more than the total number of pages.');
+  const status = b.status == null ? null : (['reading', 'finished'].includes(b.status) ? b.status : fail(400, 'Status must be reading or finished.'));
+  const open = b.open ? 1 : 0;
+  await env.DB.prepare(
+    `INSERT INTO ins_reading_progress (institution_id, user_id, resource_id, last_page, total_pages, status, opened_count)
+     VALUES (?1, ?2, ?3, COALESCE(?4, 1), ?5, COALESCE(?6, 'reading'), ?7)
+     ON CONFLICT(user_id, resource_id) DO UPDATE SET
+       last_page = COALESCE(?4, last_page), total_pages = COALESCE(?5, total_pages), status = COALESCE(?6, status),
+       opened_count = opened_count + ?7, last_opened_at = datetime('now'), updated_at = datetime('now')`
+  ).bind(ctx.inst.id, ctx.user.id, r.id, page, total, status, open).run();
+  const row = await env.DB.prepare('SELECT resource_id, last_page, total_pages, status, opened_count, last_opened_at FROM ins_reading_progress WHERE user_id = ? AND resource_id = ?').bind(ctx.user.id, r.id).first();
+  return json({ ok: true, progress: row });
+});
+
+export const deleteReading = secure({ perm: READ_PERM }, async ({ env, params, ctx }) => {
+  await env.DB.prepare('DELETE FROM ins_reading_progress WHERE user_id = ? AND resource_id = ? AND institution_id = ?').bind(ctx.user.id, Number(params.id), ctx.inst.id).run();
+  return json({ ok: true });
+});

@@ -14,6 +14,7 @@
     reservations: { mod: 'reservations', nav: 'loans', title: IN.t('Reservations', 'Uhifadhi') },
     fines: { mod: 'fines', nav: 'loans', title: IN.t('Fines', 'Faini') },
     'my-library': { mod: 'myLibrary', nav: 'my-library', title: IN.t('My library', 'Maktaba yangu') },
+    'my-reading': { mod: 'myReading', nav: 'my-reading', title: IN.t('My reading', 'Kusoma kwangu') },
     elibrary: { mod: 'elibrary', nav: 'elibrary', title: IN.t('E-Library', 'Maktaba Mtandao') },
     students: { mod: 'students', nav: 'students', title: IN.t('Students', 'Wanafunzi') },
     student: { mod: 'student', nav: 'students', title: IN.t('Student', 'Mwanafunzi') },
@@ -52,6 +53,7 @@
         { r: 'my-library', i: 'fa-book-bookmark', l: IN.t('My library', 'Maktaba yangu'), show: linked },
         { r: 'loans', i: 'fa-right-left', l: IN.t('Lending & returns', 'Kukopesha na kurudisha'), show: c('loans.view') },
         { r: 'books', i: 'fa-books', l: IN.t('Manage books', 'Simamia vitabu'), show: c('books.view') },
+        { r: 'my-reading', i: 'fa-book-open-reader', l: IN.t('My reading', 'Kusoma kwangu'), show: c('resources.view') },
         { r: 'elibrary', i: 'fa-laptop-file', l: IN.t('E-Library', 'Maktaba Mtandao'), show: c('resources.view') || c('resources.manage') },
       ] },
       { group: IN.t('Students & academics', 'Wanafunzi na masomo'), items: [

@@ -101,7 +101,8 @@
     const d = { type, id: Math.random().toString(36).slice(2, 9) };
     const f = (S.BLOCKS[type] || { fields: [] }).fields;
     f.forEach((x) => { if (x.type === 'list') d[x.k] = []; else if (x.type === 'check') d[x.k] = x.k !== 'ask_organisation' ? true : false; else if (x.type === 'number') d[x.k] = x.k === 'limit' ? 6 : x.k === 'interval' ? 6 : 0; else if (x.type === 'select') d[x.k] = String(x.options[0][0]); else d[x.k] = ''; });
-    if (type === 'slider') d.items = [{ image: '', title: '', subtitle: '', button_label: '', button_link: '' }];
+    if (type === 'hero') d.image = DEFAULT_HERO;
+    if (type === 'slider') d.items = [{ image: DEFAULT_HERO, title: '', subtitle: '', button_label: '', button_link: '' }];
     if (type === 'cards') d.items = [{ title: '', text: '', image: '', link: '', link_label: '' }];
     return d;
   };
@@ -109,6 +110,15 @@
   // ---------------------------------------------------------------- runtime context
   // ctx: { slug, sw, preview, inst, programmes }
   const T = (ctx) => (en, sw) => (ctx.sw ? sw : en);
+  // Stock photos (Unsplash) used when a banner has no picture yet, and offered in the builder's picture chooser.
+  const UN = (id, w = 1600) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
+  S.STOCK = [
+    ['1523050854058-8df90110c9f1', 'Graduation'], ['1541339907198-e08756dedf3f', 'Campus'], ['1481627834876-b7833e8f5570', 'Library'],
+    ['1523240795612-9a054b0db644', 'Students'], ['1522202176988-66273c2fd55f', 'Study group'], ['1524178232363-1fb2b075b655', 'Lecture'],
+    ['1427504494785-3a9ca7044f45', 'Classroom'], ['1513258496099-48168024aec0', 'Laptop'], ['1456513080510-7bf3a84b82f8', 'Reading'],
+    ['1507842217343-583bb7270b66', 'Books'], ['1497633762265-9d179a990aa6', 'Bookshelves'], ['1562774053-701939374585', 'University'],
+  ].map(([id, label]) => ({ url: UN(id), thumb: UN(id, 400), label }));
+  const DEFAULT_HERO = UN('1541339907198-e08756dedf3f');
   const imgUrl = (ctx, ref) => {
     const r = String(ref || '');
     if (/^https:\/\//i.test(r)) return r;
@@ -123,7 +133,7 @@
 
   const R = {
     hero(b, ctx) {
-      const bg = imgUrl(ctx, b.image);
+      const bg = imgUrl(ctx, b.image) || DEFAULT_HERO;
       return `<section class="sx-hero ${b.height === 'tall' ? 'tall' : b.height === 'short' ? 'short' : ''}" ${bg ? `style="background-image:url('${esc(bg)}')"` : ''}><div class="sx-wrap"><div class="in"><h1>${esc(b.title)}</h1>${b.subtitle ? `<p>${esc(b.subtitle)}</p>` : ''}<div class="sx-btns">${btn(b.button1_label, b.button1_link, 'primary')}${btn(b.button2_label, b.button2_link, 'light')}</div></div></div></section>`;
     },
     text(b, ctx) {
@@ -155,7 +165,7 @@
       const items = (b.items || []).filter((x) => x && (x.title || x.image)); if (!items.length) return '';
       const sec = num(b.interval, 6, 3, 15);
       return `<section class="sx-slider ${b.height === 'normal' ? '' : 'tall'}" data-slider data-interval="${sec}" aria-roledescription="carousel"><div class="slides">${items.map((x, n) => {
-        const bg = imgUrl(ctx, x.image); const H = n === 0 ? 'h1' : 'h2';
+        const bg = imgUrl(ctx, x.image) || DEFAULT_HERO; const H = n === 0 ? 'h1' : 'h2';
         return `<div class="slide ${n === 0 ? 'on' : ''}" ${bg ? `style="background-image:url('${esc(bg)}')"` : ''}><div class="sx-wrap"><div class="in"><${H}>${esc(x.title)}</${H}>${x.subtitle ? `<p>${esc(x.subtitle)}</p>` : ''}<div class="sx-btns">${btn(x.button_label, x.button_link, 'accent')}</div></div></div></div>`;
       }).join('')}</div>${items.length > 1 ? `<button type="button" class="nav prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button><button type="button" class="nav next" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button><div class="dots">${items.map((x, n) => `<button type="button" class="${n === 0 ? 'on' : ''}" data-dot="${n}" aria-label="Slide ${n + 1}"></button>`).join('')}</div>` : ''}</section>`;
     },

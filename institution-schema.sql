@@ -454,3 +454,23 @@ CREATE TABLE IF NOT EXISTS ins_login_attempts (
 );
 CREATE INDEX IF NOT EXISTS idx_ins_attempts_email ON ins_login_attempts(email, created_at);
 CREATE INDEX IF NOT EXISTS idx_ins_attempts_ip    ON ins_login_attempts(ip, created_at);
+
+-- ---------------------------------------------------------------------
+-- Reading progress (students and staff can continue a book where they stopped)
+-- Safe to re-run.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ins_reading_progress (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  institution_id INTEGER NOT NULL REFERENCES ins_institutions(id) ON DELETE CASCADE,
+  user_id        INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  resource_id    INTEGER NOT NULL REFERENCES ins_resources(id) ON DELETE CASCADE,
+  last_page      INTEGER NOT NULL DEFAULT 1 CHECK (last_page BETWEEN 1 AND 100000),
+  total_pages    INTEGER CHECK (total_pages IS NULL OR total_pages BETWEEN 1 AND 100000),
+  status         TEXT NOT NULL DEFAULT 'reading' CHECK (status IN ('reading','finished')),
+  opened_count   INTEGER NOT NULL DEFAULT 0,
+  last_opened_at TEXT NOT NULL DEFAULT (datetime('now')),
+  created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (user_id, resource_id)
+);
+CREATE INDEX IF NOT EXISTS idx_ins_reading_user ON ins_reading_progress(institution_id, user_id, last_opened_at DESC);

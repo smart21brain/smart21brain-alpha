@@ -8,7 +8,7 @@
 //  - /api/* is NEVER intercepted: institution data is always live from the network.
 //  - Pages/CSS/JS: network first, fall back to the last good copy, so the app
 //    shell still opens when the connection drops.
-const CACHE = 'institution-shell-v1';
+const CACHE = 'institution-shell-v2';
 const OFFLINE_HTML = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline</title><body style="font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;background:#0B1F1E;color:#fff;text-align:center"><div><h2>You are offline</h2><p>Connect to the internet and try again. Smart21Institution needs a connection to load your institution\'s data.</p><button onclick="location.reload()" style="padding:.7rem 1.4rem;border:0;border-radius:10px;background:#0F766E;color:#fff;font-size:1rem">Try again</button></div></body>';
 
 self.addEventListener('install', () => self.skipWaiting());

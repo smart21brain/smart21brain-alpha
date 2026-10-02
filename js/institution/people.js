@@ -109,11 +109,41 @@
   IN.modules.myProfile = async (el) => {
     const d = await IN.api.get('/me');
     if (!d.linked) { el.innerHTML = `<div class="in-card">${IN.empty('fa-link-slash', IN.t('No record linked', 'Hakuna rekodi iliyounganishwa'), IN.t('Ask the administration to link your login to your student record.', 'Mwombe msimamizi aunganishe akaunti yako na rekodi yako.'))}</div>`; return; }
-    const p = d.profile; const s = d.summary;
-    el.innerHTML = `${IN.pageHead(IN.t('My profile', 'Wasifu wangu'), IN.t('Your details as the institution has them.', 'Taarifa zako jinsi taasisi inavyozihifadhi.'))}
-      <div class="in-grid cols-2"><div class="in-card"><div class="in-row" style="gap:1rem;margin-bottom:.8rem">${IN.avatar('student', p.id, p.full_name, p.has_photo, 'lg')}<div><h3>${esc(p.full_name)}</h3>${IN.chip(p.status)}</div></div>
-        <dl class="in-kv"><dt>${IN.t('Student ID', 'Namba')}</dt><dd>${esc(p.student_no)}</dd><dt>${IN.t('Registration no.', 'Namba ya usajili')}</dt><dd>${esc(p.reg_no || '—')}</dd><dt>${IN.t('Programme', 'Programu')}</dt><dd>${esc(p.programme || '—')}</dd><dt>${IN.t('Department', 'Idara')}</dt><dd>${esc(p.department || '—')}</dd><dt>${IN.t('Class / level', 'Darasa / ngazi')}</dt><dd>${esc(p.class_name || '—')}${p.level ? ' · ' + esc(p.level) : ''}</dd><dt>${IN.t('Phone', 'Simu')}</dt><dd>${esc(p.phone || '—')}</dd><dt>Email</dt><dd>${esc(p.email || '—')}</dd></dl>
-        <p class="in-small in-muted">${IN.t('To correct any detail, please ask the administration office.', 'Kusahihisha taarifa yoyote, tafadhali wasiliana na ofisi ya utawala.')}</p></div>
+    const p = d.profile; const s = d.summary; const isStu = d.type === 'student';
+    const dash = (v) => esc(v || '—');
+    const actions = isStu ? `<button class="in-btn ghost" data-act="pw"><i class="fa-solid fa-key"></i> ${IN.t('Change password', 'Badilisha nenosiri')}</button><button class="in-btn primary" data-act="edit"><i class="fa-solid fa-pen"></i> ${IN.t('Edit profile', 'Hariri wasifu')}</button>` : '';
+    el.innerHTML = `${IN.pageHead(IN.t('My profile', 'Wasifu wangu'), IN.t('Your details as the institution has them.', 'Taarifa zako jinsi taasisi inavyozihifadhi.'), actions)}
+      <div class="in-grid cols-2"><div class="in-card"><div class="in-row" style="gap:1rem;margin-bottom:.8rem;flex-wrap:wrap">${IN.avatar('student', p.id, p.full_name, p.has_photo, 'lg')}<div><h3>${esc(p.full_name)}</h3>${IN.chip(p.status)}${isStu ? `<div style="margin-top:.5rem"><label class="in-btn ghost sm" for="myPhoto"><i class="fa-solid fa-camera"></i> ${IN.t('Change photo', 'Badilisha picha')}</label><input type="file" id="myPhoto" accept="image/png,image/jpeg,image/webp" class="in-sr"></div>` : ''}</div></div>
+        <dl class="in-kv"><dt>${IN.t('Student ID', 'Namba')}</dt><dd>${esc(p.student_no || p.staff_no || '')}</dd>${isStu ? `<dt>${IN.t('Registration no.', 'Namba ya usajili')}</dt><dd>${dash(p.reg_no)}</dd><dt>${IN.t('Programme', 'Programu')}</dt><dd>${dash(p.programme)}</dd>` : ''}<dt>${IN.t('Department', 'Idara')}</dt><dd>${dash(p.department)}</dd>${isStu ? `<dt>${IN.t('Class / level', 'Darasa / ngazi')}</dt><dd>${esc(p.class_name || '—')}${p.level ? ' · ' + esc(p.level) : ''}</dd>` : ''}<dt>${IN.t('Phone', 'Simu')}</dt><dd>${dash(p.phone)}</dd><dt>${IN.t('Email (used to sign in)', 'Barua pepe (ya kuingia)')}</dt><dd>${dash(p.email)}</dd>
+        ${isStu ? `<dt>${IN.t('Date of birth', 'Kuzaliwa')}</dt><dd>${p.dob ? IN.date(p.dob) : '—'}</dd><dt>${IN.t('Address', 'Anwani')}</dt><dd>${dash(p.address)}</dd><dt>${IN.t('Guardian', 'Mlezi')}</dt><dd>${dash(p.guardian_name)}${p.guardian_relation ? ` (${esc(p.guardian_relation)})` : ''}${p.guardian_phone ? ' · ' + esc(p.guardian_phone) : ''}</dd>` : ''}</dl>
+        <p class="in-small in-muted">${isStu ? IN.t('You can change your phone, address, date of birth, guardian details, photo and password. Your name, programme, class and sign-in email are managed by the administration office.', 'Unaweza kubadilisha simu, anwani, tarehe ya kuzaliwa, taarifa za mlezi, picha na nenosiri. Jina, programu, darasa na barua pepe ya kuingia vinasimamiwa na ofisi ya utawala.') : IN.t('To correct any detail, please ask the administration office.', 'Kusahihisha taarifa yoyote, tafadhali wasiliana na ofisi ya utawala.')}</p></div>
         <div class="in-stack">${s ? `${IN.stat('fa-book', s.loans_active, IN.t('Books I have', 'Vitabu nilivyonavyo'))}${IN.stat('fa-graduation-cap', s.gpa == null ? '—' : s.gpa, 'GPA')}${s.fines_unpaid ? IN.stat('fa-coins', IN.moneyHtml(s.fines_unpaid), IN.t('Unpaid fines', 'Faini'), '', 'amber') : ''}` : ''}</div></div>`;
+    if (!isStu) return;
+    const ph = el.querySelector('#myPhoto');
+    ph.addEventListener('change', async () => {
+      const f = ph.files[0]; if (!f) return;
+      try { const fd = new FormData(); fd.append('photo', await IN.resizeImage(f)); await IN.api.upload('/me/photo', fd); IN.state.photoV = Date.now(); IN.toast(IN.t('Photo updated.', 'Picha imebadilishwa.')); IN.route(); } catch (e) { IN.fail(e); }
+    });
+    IN.delegate(el, {
+      edit: () => IN.formModal({
+        title: IN.t('Edit my profile', 'Hariri wasifu wangu'), size: 'lg',
+        body: `<div class="cols">${IN.f.input('phone', IN.t('Phone', 'Simu'), { type: 'tel', value: p.phone })}${IN.f.input('dob', IN.t('Date of birth', 'Tarehe ya kuzaliwa'), { type: 'date', value: p.dob })}</div>
+          ${IN.f.input('address', IN.t('Address', 'Anwani'), { value: p.address })}
+          ${IN.f.section('fa-user-shield', IN.t('Guardian', 'Mlezi'))}
+          <div class="cols-3 cols">${IN.f.input('guardian_name', IN.t('Name', 'Jina'), { value: p.guardian_name })}${IN.f.input('guardian_phone', IN.t('Phone', 'Simu'), { type: 'tel', value: p.guardian_phone })}${IN.f.input('guardian_relation', IN.t('Relationship', 'Uhusiano'), { value: p.guardian_relation })}</div>`,
+        onSubmit: async (data) => { await IN.api.put('/me/profile', data); IN.closeModal(); IN.toast(IN.t('Profile saved.', 'Wasifu umehifadhiwa.')); IN.route(); },
+      }),
+      pw: () => IN.formModal({
+        title: IN.t('Change password', 'Badilisha nenosiri'),
+        body: `${IN.f.input('current_password', IN.t('Current password', 'Nenosiri la sasa'), { type: 'password', required: true, attr: { autocomplete: 'current-password' } })}
+          ${IN.f.input('new_password', IN.t('New password', 'Nenosiri jipya'), { type: 'password', required: true, attr: { autocomplete: 'new-password', minlength: 8 } })}
+          ${IN.f.input('confirm_password', IN.t('Repeat new password', 'Rudia nenosiri jipya'), { type: 'password', required: true, attr: { autocomplete: 'new-password' } })}`,
+        onSubmit: async (data) => {
+          if (data.new_password !== data.confirm_password) throw new Error(IN.t('The two new passwords do not match.', 'Manenosiri mapya mawili hayafanani.'));
+          await IN.api.post('/me/password', { current_password: data.current_password, new_password: data.new_password });
+          IN.closeModal(); IN.toast(IN.t('Password changed.', 'Nenosiri limebadilishwa.'));
+        },
+      }),
+    });
   };
 })();

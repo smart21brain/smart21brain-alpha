@@ -1,5 +1,5 @@
 // Smart21Institution — students, staff, departments and programmes.
-import { json } from '../../lib/auth.js';
+import { json, hashPassword, verifyPassword } from '../../lib/auth.js';
 import {
   fail, secure, readJson, V, audit, getSettings, likeTerm, paging, can, nextNumber, storeImage, imageResponse, getInstContext, round2,
 } from '../../lib/institution-auth.js';
@@ -323,7 +323,7 @@ export const deleteProgramme = secure({ perm: 'academics.manage' }, async ({ req
 // ---------------------------------------------------------------------
 export const myProfile = secure(async ({ env, ctx }) => {
   if (ctx.studentId) {
-    const s = await env.DB.prepare(`SELECT s.id, s.student_no, s.reg_no, s.full_name, s.gender, s.phone, s.email, s.class_name, s.level, s.status, s.admission_date, (s.photo_key IS NOT NULL) AS has_photo, p.name AS programme, d.name AS department
+    const s = await env.DB.prepare(`SELECT s.id, s.student_no, s.reg_no, s.full_name, s.gender, s.dob, s.address, s.guardian_name, s.guardian_phone, s.guardian_relation, s.phone, s.email, s.class_name, s.level, s.status, s.admission_date, (s.photo_key IS NOT NULL) AS has_photo, p.name AS programme, d.name AS department
       FROM ins_students s LEFT JOIN ins_programmes p ON p.id = s.programme_id LEFT JOIN ins_departments d ON d.id = s.department_id WHERE s.id = ? AND s.institution_id = ? AND s.deleted_at IS NULL`).bind(ctx.studentId, ctx.inst.id).first();
     return json({ linked: !!s, type: 'student', profile: s || null, summary: s ? await studentSummary(env, ctx.inst.id, s.id) : null });
   }
@@ -332,4 +332,51 @@ export const myProfile = secure(async ({ env, ctx }) => {
     return json({ linked: !!f, type: 'staff', profile: f || null });
   }
   return json({ linked: false, profile: null });
+});
+
+// ---------------------------------------------------------------------
+// Students edit their OWN contact details, photo and password.
+// Name, programme, class, status and the sign-in email stay with the administration.
+// ---------------------------------------------------------------------
+export const updateMyProfile = secure(async ({ request, env, ctx }) => {
+  if (!ctx.studentId) fail(403, 'Only students with a linked student record can edit their profile here.');
+  const cur = await env.DB.prepare('SELECT id, full_name FROM ins_students WHERE id = ? AND institution_id = ? AND deleted_at IS NULL').bind(ctx.studentId, ctx.inst.id).first();
+  if (!cur) fail(404, 'Your student record could not be found.');
+  const b = await readJson(request);
+  const p = {
+    phone: V.phone(b.phone, 'Phone number'), dob: V.date(b.dob, 'Date of birth'), address: V.str(b.address, 'Address', { max: 300 }),
+    guardian_name: V.str(b.guardian_name, 'Guardian name', { max: 120 }), guardian_phone: V.phone(b.guardian_phone, 'Guardian phone'),
+    guardian_relation: V.str(b.guardian_relation, 'Guardian relationship', { max: 60 }),
+  };
+  await env.DB.prepare(
+    `UPDATE ins_students SET phone=?, dob=?, address=?, guardian_name=?, guardian_phone=?, guardian_relation=?, updated_at=datetime('now') WHERE id = ? AND institution_id = ?`
+  ).bind(p.phone, p.dob, p.address, p.guardian_name, p.guardian_phone, p.guardian_relation, cur.id, ctx.inst.id).run();
+  await audit(env, request, ctx, 'students', 'profile.update', 'student', cur.id, cur.full_name);
+  return json({ ok: true });
+});
+
+export const uploadMyPhoto = secure(async ({ request, env, ctx }) => {
+  if (!ctx.studentId) fail(403, 'Only students with a linked student record can change their photo here.');
+  const s = await env.DB.prepare('SELECT id, photo_key FROM ins_students WHERE id = ? AND institution_id = ? AND deleted_at IS NULL').bind(ctx.studentId, ctx.inst.id).first();
+  if (!s) fail(404, 'Your student record could not be found.');
+  const form = await request.formData().catch(() => null);
+  if (!form) fail(400, 'Please choose a photo.');
+  const key = await storeImage(env, form.get('photo'), `institution/${ctx.inst.id}/student`);
+  await env.DB.prepare("UPDATE ins_students SET photo_key = ?, updated_at = datetime('now') WHERE id = ?").bind(key, s.id).run();
+  if (s.photo_key && env.MATERIALS) await env.MATERIALS.delete(s.photo_key).catch(() => {});
+  await audit(env, request, ctx, 'students', 'student.photo', 'student', s.id, 'own photo');
+  return json({ ok: true });
+});
+
+export const changeMyPassword = secure(async ({ request, env, ctx }) => {
+  const b = await readJson(request);
+  const u = await env.DB.prepare('SELECT id, password_hash, password_salt FROM users WHERE id = ?').bind(ctx.user.id).first();
+  const ok = u && await verifyPassword(String(b.current_password || ''), u.password_hash, u.password_salt);
+  if (!ok) fail(400, 'Your current password is not correct.');
+  const pw = V.password(b.new_password, 'New password');
+  if (pw === String(b.current_password)) fail(400, 'Please choose a password that is different from the current one.');
+  const { hash, salt } = await hashPassword(pw);
+  await env.DB.prepare('UPDATE users SET password_hash = ?, password_salt = ? WHERE id = ?').bind(hash, salt, u.id).run();
+  await audit(env, request, ctx, 'auth', 'user.password', 'user', u.id, null);
+  return json({ ok: true });
 });

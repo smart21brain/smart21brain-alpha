@@ -322,3 +322,25 @@ Every button that registers or opens an account (admin or student) first opens `
 * Direct links are guarded too: opening `institution-login.html` or a page with the student registration form without having passed the entry page sends the visitor to it first. Passing it is remembered for 30 minutes (`in-gate`), or granted by `?via=start`, so sign-in retries never loop.
 * This is a navigation rule, not a security control: sign-in and registration are still protected by the server (passwords, limits, honeypot).
 * The Smart21Brain "Log In / Get Started" links in the product page header belong to the main Smart21Brain site and were left as they are.
+
+---
+
+## Student portal: profile, results and "continue reading"
+
+A student who registers on the website (or whose login an administrator creates) signs in and gets a student dashboard.
+
+| Screen | Route | What the student can do |
+|---|---|---|
+| Dashboard | `#dashboard` | Search books, open E-Library, **Continue reading** (last 3 unfinished books), borrowed books, results, profile |
+| My reading | `#my-reading` | Every book they opened: continue at the saved page, update the page, mark finished, remove from the list |
+| E-Library | `#elibrary` | **Read** becomes **Continue** at the saved page; the bookmark button saves "the page I am on" |
+| My results | `#my-results` | Marks, grades, term averages and GPA (own results only) |
+| My profile | `#my-profile` | Edit phone, date of birth, address and guardian details; change photo; change password |
+
+Name, programme, class, status and the sign-in email stay with the administration.
+
+API (all require sign-in and only ever touch the caller's own data): `PUT /api/institution/me/profile`, `POST /api/institution/me/photo`, `POST /api/institution/me/password`, `GET /api/institution/me/reading`, `POST|DELETE /api/institution/me/reading/:resourceId`.
+
+Reading progress is stored per person and book in `ins_reading_progress` (one row per user and resource). The page opens with `#page=N`, which PDF viewers honour; the page number itself is saved by the student with the bookmark button, because a browser tab showing a PDF cannot report which page is visible.
+
+**Deploy:** `wrangler d1 execute smart21brain-db --file=./institution-schema.sql --remote` (safe to re-run; it creates the new table) then `wrangler deploy`.

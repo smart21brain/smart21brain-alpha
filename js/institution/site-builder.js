@@ -15,7 +15,8 @@
       back.innerHTML = `<div class="in-modal lg" role="dialog" aria-modal="true"><div class="in-modal-head"><h3>${IN.t('Choose a picture', 'Chagua picha')}</h3><button class="in-icon-btn" data-x aria-label="${IN.t('Close', 'Funga')}"><i class="fa-solid fa-xmark"></i></button></div>
         <div class="in-modal-body"><div class="in-row" style="gap:.6rem;flex-wrap:wrap;margin-bottom:.9rem"><label class="in-btn primary sm" for="pkFile"><i class="fa-solid fa-upload"></i> ${IN.t('Upload new picture', 'Pakia picha mpya')}</label><input type="file" id="pkFile" accept="image/png,image/jpeg,image/webp" class="in-sr">
         <input class="in-input" id="pkUrl" placeholder="${IN.t('…or paste a picture address (https://)', '…au bandika anwani ya picha (https://)')}" style="flex:1;min-width:220px"><button class="in-btn ghost sm" id="pkUse">${IN.t('Use address', 'Tumia anwani')}</button></div>
-        <div id="pkGrid" class="in-pick-grid">${IN.t('Loading…', 'Inapakia…')}</div></div></div>`;
+        <div class="in-muted in-small" style="margin-bottom:.4rem">${IN.t('Free photos (Unsplash)', 'Picha za bure (Unsplash)')}</div><div id="pkStock" class="in-pick-grid" style="margin-bottom:1rem">${(S.STOCK || []).map((x) => `<button type="button" class="in-pick" data-ref="${esc(x.url)}" title="${esc(x.label)}"><img src="${esc(x.thumb)}" alt="${esc(x.label)}" loading="lazy"></button>`).join('')}</div>
+        <div class="in-muted in-small" style="margin-bottom:.4rem">${IN.t('Your uploaded pictures', 'Picha ulizopakia')}</div><div id="pkGrid" class="in-pick-grid">${IN.t('Loading…', 'Inapakia…')}</div></div></div>`;
       document.body.appendChild(back);
       const done = (v) => { back.remove(); resolve(v); };
       back.addEventListener('mousedown', (e) => { if (e.target === back) done(null); });
@@ -26,7 +27,7 @@
         grid.innerHTML = media.length ? media.map((m) => `<button type="button" class="in-pick ${current === 'm:' + m.id ? 'on' : ''}" data-ref="m:${m.id}"><img src="/api/institution/site/media/${m.id}/file" alt="${esc(m.alt || '')}" loading="lazy"></button>`).join('') : `<div class="in-muted">${IN.t('No pictures yet. Upload your first one.', 'Hakuna picha bado. Pakia ya kwanza.')}</div>`;
       };
       load().catch(IN.fail);
-      grid.addEventListener('click', (e) => { const b = e.target.closest('[data-ref]'); if (b) done(b.dataset.ref); });
+      back.addEventListener('click', (e) => { const b = e.target.closest('[data-ref]'); if (b) done(b.dataset.ref); });
       back.querySelector('#pkUse').addEventListener('click', () => { const v = back.querySelector('#pkUrl').value.trim(); if (!/^https:\/\//i.test(v)) { IN.toast(IN.t('The address must start with https://', 'Anwani lazima ianze na https://'), 'error'); return; } done(v); });
       back.querySelector('#pkFile').addEventListener('change', async (e) => {
         const f = e.target.files[0]; if (!f) return;
