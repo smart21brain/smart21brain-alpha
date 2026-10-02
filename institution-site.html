@@ -33,6 +33,8 @@
   var slug = (parts[0] === 's' && parts[1]) || qs.get('i') || '';
   var pageSlug = ((parts[0] === 's' && parts[2]) || qs.get('p') || 'home').toLowerCase();
   var root = document.getElementById('site');
+  var startUrl = function (go) { return '/institution-start.html?go=' + go + '&i=' + encodeURIComponent(slug); };
+  var gateOk = function () { var ok = qs.get('via') === 'start'; try { var g = +localStorage.getItem('in-gate'); if (g && Date.now() - g < 1800000) ok = true; if (qs.get('via') === 'start') localStorage.setItem('in-gate', String(Date.now())); } catch (e) {} return ok; };
   var href = function (p) { return '/s/' + encodeURIComponent(slug) + (p === 'home' ? '' : '/' + encodeURIComponent(p)); };
 
   function fail(title, text) {
@@ -62,7 +64,7 @@
       }
       return '<a href="' + href(m.slug) + '" class="' + (m.slug === pageSlug ? 'on' : '') + '">' + esc(m.title) + '</a>';
     }).join('');
-    var applyLink = S.safeLink(h.apply_link) || href('register');
+    var applyLink = S.safeLink(h.apply_link) || startUrl('register');
     if (h.show_library !== false) nav += '<a href="/institution-opac.html?i=' + encodeURIComponent(slug) + '">' + t('Catalogue', 'Katalogi') + '</a>';
     if (h.show_apply) nav += '<a class="sx-btn primary" style="margin-left:.4rem;padding:.5rem 1rem" href="' + esc(applyLink) + '">' + esc(h.apply_label || t('Apply', 'Omba nafasi')) + '</a>';
     return '<div class="sx-top"><div class="sx-wrap"><span>' + esc(h.topbar_text || [i.phone, i.email].filter(Boolean).join(' · ')) + '</span><span><button id="lang" type="button">' + (sw ? 'English' : 'Kiswahili') + '</button> <button id="themeBtn" class="sx-theme" type="button" aria-label="' + t('Switch light / dark mode', 'Badilisha mwanga / giza') + '"><i class="fa-solid ' + (document.documentElement.dataset.theme === 'dark' ? 'fa-sun' : 'fa-moon') + '"></i></button> · <a href="/institution-start.html?i=' + encodeURIComponent(slug) + '"><i class="fa-solid fa-gauge"></i> ' + t('Dashboard', 'Dashibodi') + '</a></span></div></div>' +
@@ -83,6 +85,7 @@
   fetch('/api/institution/public/' + encodeURIComponent(slug) + '/site?page=' + encodeURIComponent(pageSlug)).then(function (r) {
     return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) { var e = new Error(d.error || 'Error'); e.status = r.status; throw e; } return d; });
   }).then(function (d) {
+    if (d.page && (d.page.blocks || []).some(function (b) { return b.type === 'register'; }) && !gateOk()) { location.replace(startUrl('register')); return; }
     applyTheme(d.theme || {}, d.institution);
     var ctx = { slug: slug, sw: sw, preview: false, inst: d.institution, programmes: d.programmes || [] };
     var body;
@@ -99,6 +102,14 @@
     var up = document.createElement('button'); up.className = 'sx-top-btn'; up.setAttribute('aria-label', 'Top'); up.innerHTML = '<i class="fa-solid fa-chevron-up"></i>'; document.body.appendChild(up);
     up.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
     window.addEventListener('scroll', function () { up.classList.toggle('show', window.scrollY > 600); }, { passive: true });
+    // Every "register" or "sign in" link on the website goes through the entry page first.
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]'); if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
+      var u; try { u = new URL(a.href, location.href); } catch (x) { return; }
+      if (u.origin !== location.origin || u.searchParams.get('via') === 'start') return;
+      if (/^\/s\/[a-z0-9-]+\/register\/?$/i.test(u.pathname)) { e.preventDefault(); location.href = startUrl('register'); }
+      else if (/\/institution-login\.html$/.test(u.pathname)) { e.preventDefault(); location.href = startUrl(u.hash === '#register' ? 'admin-register' : 'login'); }
+    });
     document.getElementById('themeBtn').addEventListener('click', function () {
       var dark = document.documentElement.dataset.theme !== 'dark';
       document.documentElement.dataset.theme = dark ? 'dark' : 'light';

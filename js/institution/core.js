@@ -71,7 +71,7 @@
     try { res = await fetch('/api/institution' + path, opts); } catch (e) { throw new Error('Cannot reach the server. Please check your internet connection and try again.'); }
     let data = null;
     try { data = await res.json(); } catch (e) { /* not JSON */ }
-    if (res.status === 401 && !/^\/(login|register)/.test(path)) { if (!/institution-login/.test(location.pathname)) location.href = 'institution-login.html'; throw new Error('Please sign in again.'); }
+    if (res.status === 401 && !/^\/(login|register)/.test(path)) { if (!/institution-(login|start)/.test(location.pathname)) location.href = 'institution-start.html?go=login'; throw new Error('Please sign in again.'); }
     if (!res.ok) { const err = new Error((data && data.error) || `Something went wrong (${res.status}).`); err.status = res.status; err.data = data; throw err; }
     return data;
   }

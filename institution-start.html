@@ -34,6 +34,7 @@
   .links a, .links button { color: #fff; opacity: .85; text-decoration: none; background: none; border: 0; font: inherit; cursor: pointer; } .links a:hover, .links button:hover { opacity: 1; text-decoration: underline; }
   .pick { display: grid; gap: .7rem; max-width: 520px; margin: 0 auto; }
   .pick a { padding: 1rem 1.2rem; border-radius: 16px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: #fff; text-decoration: none; font-weight: 700; display: flex; justify-content: space-between; } .pick a:hover { border-color: var(--a); background: rgba(255,255,255,.2); }
+  .continue { display: inline-flex; align-items: center; gap: .7rem; margin: 0 auto 1.1rem; padding: .95rem 1.6rem; border-radius: 999px; background: var(--a); color: #111; font-weight: 800; text-decoration: none; box-shadow: 0 12px 30px rgba(0,0,0,.4); transition: transform .15s; } .continue:hover, .continue:focus-visible { transform: translateY(-2px); outline: none; }
   .hello { display: inline-block; margin-bottom: 1.2rem; padding: .4rem .9rem; border-radius: 999px; background: rgba(255,255,255,.14); font-size: .9rem; }
   @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } .card { padding: 1.4rem 1rem; } }
   @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
@@ -50,21 +51,28 @@
   var t = function (en, s) { return sw ? s : en; };
   var box = document.getElementById('box');
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
-  var want = new URLSearchParams(location.search).get('i') || '';
+  var qs0 = new URLSearchParams(location.search);
+  var want = qs0.get('i') || '';
+  var go = ['login', 'admin-register', 'register'].indexOf(qs0.get('go')) > -1 ? qs0.get('go') : '';
+  try { localStorage.setItem('in-gate', String(Date.now())); } catch (e) {}   // "passed through the entry page" (valid 30 min; login/registration pages check it)
   var getJson = function (u) { return fetch(u, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
 
   function show(site, me) {
     var sl = encodeURIComponent(site.slug);
     document.title = site.name + ' — Smart21Institution';
     var logo = '<span class="logo">' + esc((site.name || 'S').slice(0, 2).toUpperCase()) + '<img src="/api/institution/public/logo/' + site.id + '" alt="" onerror="this.remove()"></span>';
-    var dashHref = me && me.institution ? 'institution-app.html' : 'institution-login.html?i=' + site.id + '&s=' + sl;
+    var loginUrl = 'institution-login.html?via=start&i=' + site.id + '&s=' + sl;
+    var dashHref = me && me.institution ? 'institution-app.html' : loginUrl;
+    var target = go === 'register' ? '/s/' + sl + '/register?via=start' : go === 'admin-register' ? loginUrl + '#register' : go === 'login' ? dashHref : '';
+    var goText = go === 'register' ? t('Continue to student registration', 'Endelea kujisajili kama mwanafunzi') : go === 'admin-register' ? t('Continue to register your institution', 'Endelea kusajili taasisi yako') : t('Continue to sign in', 'Endelea kuingia');
+    var goIcon = go === 'register' ? 'fa-user-plus' : go === 'admin-register' ? 'fa-building-columns' : 'fa-right-to-bracket';
     var dashText = me && me.institution ? t('Continue to your dashboard', 'Endelea kwenye dashibodi yako') : t('Sign in with your email and password', 'Ingia kwa barua pepe na nenosiri');
     box.innerHTML = logo + '<h1>' + esc(site.name) + '</h1>' +
       (me && me.user ? '<div class="hello"><i class="fa-solid fa-circle-user"></i> ' + t('Signed in as', 'Umeingia kama') + ' ' + esc(me.user.name) + '</div>' : '') +
-      '<p class="sub">' + t('Where would you like to go?', 'Ungependa kwenda wapi?') + '</p>' +
+      (target ? '<a class="continue" href="' + target + '"><i class="fa-solid ' + goIcon + '"></i> ' + goText + ' <i class="fa-solid fa-arrow-right"></i></a><p class="sub" style="margin-top:.2rem">' + t('or choose where to go:', 'au chagua unakotaka kwenda:') + '</p>' : '<p class="sub">' + t('Where would you like to go?', 'Ungependa kwenda wapi?') + '</p>') +
       '<div class="cards"><a class="card" href="/s/' + sl + '"><i class="big fa-solid fa-house"></i><b>' + t('Home page', 'Home page') + '</b><span>' + t('Our website: programmes, library catalogue, e-books, news and student registration.', 'Tovuti yetu: programu, katalogi ya maktaba, vitabu vya kidijitali, habari na usajili wa wanafunzi.') + '</span><span class="go">' + t('Open the website', 'Fungua tovuti') + ' →</span></a>' +
       '<a class="card dash" href="' + dashHref + '"><i class="big fa-solid fa-gauge"></i><b>' + t('Dashboard', 'Dashibodi') + '</b><span>' + dashText + '. ' + t('For students, teachers, librarians and administrators.', 'Kwa wanafunzi, walimu, wasimamizi wa maktaba na wasimamizi.') + '</span><span class="go">' + (me && me.institution ? t('Continue', 'Endelea') : t('Sign in', 'Ingia')) + ' →</span></a></div>' +
-      '<div class="links"><a href="/s/' + sl + '/register"><i class="fa-solid fa-user-plus"></i> ' + t('New student? Register', 'Mwanafunzi mpya? Jisajili') + '</a><a href="/institution-opac.html?i=' + sl + '"><i class="fa-solid fa-book"></i> ' + t('Library catalogue', 'Katalogi ya maktaba') + '</a><button id="lang" type="button"><i class="fa-solid fa-language"></i> ' + (sw ? 'English' : 'Kiswahili') + '</button></div>';
+      '<div class="links"><a href="/s/' + sl + '/register?via=start"><i class="fa-solid fa-user-plus"></i> ' + t('New student? Register', 'Mwanafunzi mpya? Jisajili') + '</a><a href="/institution-opac.html?i=' + sl + '"><i class="fa-solid fa-book"></i> ' + t('Library catalogue', 'Katalogi ya maktaba') + '</a><button id="lang" type="button"><i class="fa-solid fa-language"></i> ' + (sw ? 'English' : 'Kiswahili') + '</button></div>';
     document.getElementById('lang').addEventListener('click', function () { try { localStorage.setItem('s21-lang', sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
     // Background photo = first picture of the website's home slider, if any.
     getJson('/api/institution/public/' + sl + '/site?page=home').then(function (d) {
@@ -79,11 +87,11 @@
 
   function chooser(sites) {
     box.innerHTML = '<span class="logo"><i class="fa-solid fa-building-columns"></i></span><h1>Smart21Institution</h1><p class="sub">' + t('Choose your institution', 'Chagua taasisi yako') + '</p><div class="pick">' +
-      sites.map(function (s) { return '<a href="?i=' + encodeURIComponent(s.slug) + '">' + esc(s.name) + '<i class="fa-solid fa-arrow-right"></i></a>'; }).join('') + '</div>' +
-      '<div class="links"><a href="institution-login.html">' + t('Staff sign in', 'Wafanyakazi: ingia') + '</a></div>';
+      sites.map(function (s) { return '<a href="?i=' + encodeURIComponent(s.slug) + (go ? '&go=' + go : '') + '">' + esc(s.name) + '<i class="fa-solid fa-arrow-right"></i></a>'; }).join('') + '</div>' +
+      '<div class="links"><a href="institution-login.html?via=start">' + t('Staff sign in', 'Wafanyakazi: ingia') + '</a></div>';
   }
   function none() {
-    box.innerHTML = '<span class="logo"><i class="fa-solid fa-building-columns"></i></span><h1>Smart21Institution</h1><p class="sub">' + t('No institution website is live yet. Staff can sign in to set one up.', 'Hakuna tovuti ya taasisi iliyo hewani bado. Wafanyakazi wanaweza kuingia kuiandaa.') + '</p><div class="cards"><a class="card dash" href="institution-login.html"><i class="big fa-solid fa-gauge"></i><b>' + t('Dashboard', 'Dashibodi') + '</b><span class="go">' + t('Sign in', 'Ingia') + ' →</span></a><a class="card" href="institution-login.html#register"><i class="big fa-solid fa-building-columns"></i><b>' + t('Register your institution', 'Sajili taasisi yako') + '</b><span class="go">' + t('Start', 'Anza') + ' →</span></a></div>';
+    box.innerHTML = '<span class="logo"><i class="fa-solid fa-building-columns"></i></span><h1>Smart21Institution</h1><p class="sub">' + t('No institution website is live yet. Staff can sign in to set one up.', 'Hakuna tovuti ya taasisi iliyo hewani bado. Wafanyakazi wanaweza kuingia kuiandaa.') + '</p><div class="cards"><a class="card dash" href="institution-login.html?via=start"><i class="big fa-solid fa-gauge"></i><b>' + t('Dashboard', 'Dashibodi') + '</b><span class="go">' + t('Sign in', 'Ingia') + ' →</span></a><a class="card" href="institution-login.html?via=start#register"><i class="big fa-solid fa-building-columns"></i><b>' + t('Register your institution', 'Sajili taasisi yako') + '</b><span class="go">' + t('Start', 'Anza') + ' →</span></a></div>';
   }
 
   Promise.all([getJson('/api/institution/public-sites'), getJson('/api/institution/context')]).then(function (r) {

@@ -307,3 +307,10 @@ New permissions: `site.manage` (build & publish), `applications.manage` (review 
 
 ### Dark mode is the default
 Every Smart21Institution page opens in **dark mode**: dashboard (`institution-app.html`), sign-in, OPAC, the entry page and the public website. The sun/moon button (dashboard top bar, and the top strip of the website) switches to light and the choice is remembered in the browser (`in-theme`) and shared by all these pages. Browsers that had saved "light" before this update are reset to dark once (`in-theme-v2`); after that their own choice sticks. The website has a full dark palette (cards, forms, menu, modals, e-library), so the Website builder preview also shows it the way visitors see it.
+
+### Entry rule: register / sign in always goes through the entry page
+Every button that registers or opens an account (admin or student) first opens `institution-start.html`, which then offers **Continue to student registration / sign in / register your institution** plus the Home page and Dashboard choices (`?go=login | admin-register | register`, optional `&i=<slug>`).
+* Product page buttons, the website's "Register" button, quick links, slider and card buttons, the top "Dashboard" link, the dashboard's sign-out and an expired session all point to the entry page.
+* Direct links are guarded too: opening `institution-login.html` or a page with the student registration form without having passed the entry page sends the visitor to it first. Passing it is remembered for 30 minutes (`in-gate`), or granted by `?via=start`, so sign-in retries never loop.
+* This is a navigation rule, not a security control: sign-in and registration are still protected by the server (passwords, limits, honeypot).
+* The Smart21Brain "Log In / Get Started" links in the product page header belong to the main Smart21Brain site and were left as they are.

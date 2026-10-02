@@ -128,7 +128,7 @@
     document.getElementById('inMenu').addEventListener('click', () => toggle(!side.classList.contains('open')));
     back.addEventListener('click', () => toggle(false));
     document.getElementById('inNav').addEventListener('click', () => toggle(false));
-    document.getElementById('inLogout').addEventListener('click', async () => { await IN.api.post('/logout').catch(() => {}); localStorage.removeItem('in-inst-id'); location.href = 'institution-login.html'; });
+    document.getElementById('inLogout').addEventListener('click', async () => { await IN.api.post('/logout').catch(() => {}); localStorage.removeItem('in-inst-id'); location.href = 'institution-start.html?go=login'; });
     document.getElementById('inLangToggle').addEventListener('click', () => IN.toggleLang());
     const swc = document.getElementById('inSwitch');
     if (swc) swc.addEventListener('change', () => { localStorage.setItem('in-inst-id', swc.value); location.hash = 'dashboard'; location.reload(); });
@@ -236,7 +236,7 @@
       <button class="in-btn primary block lg" type="submit">${IN.t('Register my institution', 'Sajili taasisi yangu')}</button></form>
       <p class="in-small" style="margin:.4rem 0 0"><a href="#" id="inOut">${IN.t('Sign out', 'Toka')}</a></p></div></div></div></div>`;
     document.querySelector('#inSetup [name=phone]').dataset.kind = 'phone';
-    document.getElementById('inOut').addEventListener('click', async (e) => { e.preventDefault(); await IN.api.post('/logout').catch(() => {}); location.href = 'institution-login.html'; });
+    document.getElementById('inOut').addEventListener('click', async (e) => { e.preventDefault(); await IN.api.post('/logout').catch(() => {}); location.href = 'institution-start.html?go=login'; });
     const lb = document.getElementById('inLangToggle'); if (lb) lb.addEventListener('click', () => IN.toggleLang());
     const form = document.getElementById('inSetup'); const label = IN.t('Register my institution', 'Sajili taasisi yangu');
     form.addEventListener('submit', async (e) => {

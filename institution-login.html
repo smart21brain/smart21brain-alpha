@@ -16,6 +16,12 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="css/institution-app.css?v=1">
 <script>try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}</script>
+<script>
+/* Entry rule: sign in / register is reached through the entry page (institution-start.html). */
+(function(){var q=new URLSearchParams(location.search),ok=q.get('via')==='start';
+try{var t=+localStorage.getItem('in-gate');if(t&&Date.now()-t<1800000)ok=true;if(q.get('via')==='start')localStorage.setItem('in-gate',String(Date.now()));}catch(e){}
+if(!ok){var p=new URLSearchParams();p.set('go',location.hash==='#register'?'admin-register':'login');var i=q.get('s')||q.get('i');if(i)p.set('i',i);location.replace('institution-start.html?'+p.toString());}})();
+</script>
 </head>
 <body class="in-body">
 <div class="in-auth">
