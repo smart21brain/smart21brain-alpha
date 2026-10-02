@@ -11,18 +11,19 @@
 //   - Public forms have a honeypot field and a per-visitor hourly limit; IPs are stored hashed.
 //   - Every query is filtered by institution_id (taken from the sign-in or from the public slug).
 
-import { json } from '../../lib/auth.js';
+import { json, hashPassword } from '../../lib/auth.js';
 import {
   fail, secure, readJson, V, audit, likeTerm, paging, storeImage, errorResponse, assertSameOrigin,
 } from '../../lib/institution-auth.js';
 import { insertStudent } from './people.js';
+import { startSession, clientIp } from './core.js';
 
 // ---------------------------------------------------------------------
 // Block validation
 // ---------------------------------------------------------------------
 export const BLOCK_TYPES = [
   'hero', 'text', 'cards', 'stats', 'news', 'events', 'announcements', 'library',
-  'apply', 'contact', 'faq', 'gallery', 'cta', 'quote', 'leader', 'spacer',
+  'apply', 'register', 'contact', 'faq', 'gallery', 'cta', 'quote', 'leader', 'spacer', 'slider', 'quicklinks', 'steps',
 ];
 const MAX_BLOCKS = 60;
 const MAX_PAGE_BYTES = 200 * 1024;
@@ -40,11 +41,13 @@ export function safeImage(v) {
   if (/^https:\/\//i.test(s)) return s;
   return '';
 }
+const ICON_KEY = /^icon$/i;
 const LINK_KEY = /(link|url|href)$/i;
 const IMAGE_KEY = /^(image|logo|photo|img|bg)$/i;
 
 function clean(v, depth = 0, key = '') {
   if (typeof v === 'string') {
+    if (ICON_KEY.test(key)) return /^fa-[a-z0-9-]{2,40}$/.test(v) ? v : '';
     if (IMAGE_KEY.test(key)) return safeImage(v);
     if (LINK_KEY.test(key)) return safeLink(v);
     return v.slice(0, 5000);
@@ -273,6 +276,7 @@ export const saveSiteConfig = secure({ perm: 'site.manage' }, async ({ request, 
     apply_label: V.str(hd.apply_label, 'Apply button text', { max: 30 }) || '',
     apply_link: safeLink(hd.apply_link),
     show_library: hd.show_library !== false,
+    allow_register: hd.allow_register !== false,
   } : parse(cur.header, {});
   const footer = b.footer !== undefined ? {
     text: V.str(ft.text, 'Footer text', { max: 400 }) || '',
@@ -557,47 +561,186 @@ export const deleteMessage = secure({ perm: 'applications.manage' }, async ({ pa
 });
 
 // ---------------------------------------------------------------------
-// Starter website (one click): home, about, programmes, library, news, events, apply, contact
+// Student self-registration (home page): creates the login AND the student record in one step,
+// so the new student shows up in the dashboard (Students list) straight away and can sign in.
+// ---------------------------------------------------------------------
+export async function publicRegisterStudent({ request, env, params }) {
+  try {
+    assertSameOrigin(request);
+    const { i, cfg } = await publicSite(env, params.slug);
+    if (parse(cfg.header, {}).allow_register === false) fail(403, 'Online registration is closed at the moment. Please contact the institution.');
+    const b = await readJson(request);
+    if (b.website) return json({ ok: true });                                   // honeypot
+    const ip = clientIp(request);
+    const recent = await env.DB.prepare(`SELECT COUNT(*) AS n FROM ins_login_attempts WHERE ip = ? AND email = '(student-signup)' AND created_at > datetime('now','-1 hour')`).bind(ip).first();
+    if (ip && (recent?.n || 0) >= 4) fail(429, 'Too many registrations from this connection. Please try again later.');
+
+    const first = V.str(b.first_name, 'First name', { required: true, max: 60 });
+    const last = V.str(b.last_name, 'Last name', { required: true, max: 60 });
+    const middle = V.str(b.middle_name, 'Middle name', { max: 60 });
+    const email = V.email(b.email, 'Email', { required: true });
+    const phone = V.str(b.phone, 'Phone number', { required: true, max: 24, min: 6 });
+    if (!/^\+?[0-9][0-9 ()\-]{5,23}$/.test(phone)) fail(400, 'Please enter a valid phone number, like +255 712 345 678.');
+    const password = V.password(b.password);
+    if (b.password_confirm !== undefined && b.password_confirm !== b.password) fail(400, 'The two passwords do not match.');
+    const gender = V.oneOf(b.gender, 'Gender', ['male', 'female']);
+    let programmeId = null;
+    if (b.programme_id) {
+      const p = await env.DB.prepare('SELECT id FROM ins_programmes WHERE id = ? AND institution_id = ? AND active = 1').bind(Number(b.programme_id), i.id).first();
+      if (!p) fail(400, 'Please choose a programme from the list.');
+      programmeId = p.id;
+    }
+    const exists = await env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(email).first();
+    if (exists) fail(409, 'This email is already registered. Please sign in instead.');
+    const dupStudent = await env.DB.prepare('SELECT id FROM ins_students WHERE institution_id = ? AND deleted_at IS NULL AND lower(email) = ?').bind(i.id, email).first();
+    if (dupStudent) fail(409, 'A student with this email already exists. Please ask the institution to create your login.');
+
+    const fullName = [first, middle, last].filter(Boolean).join(' ');
+    const ctx = { inst: { id: i.id } };
+    const stu = await insertStudent(env, ctx, {
+      student_no: null, reg_no: null, full_name: fullName, gender, dob: null, phone, email, address: null,
+      programme_id: programmeId, department_id: null, class_name: null, level: null, admission_date: todayUtc(),
+      admission_info: 'Online registration (website)', status: 'active', guardian_name: null, guardian_phone: null, guardian_relation: null, notes: null,
+    });
+    const { hash, salt } = await hashPassword(password);
+    const u = await env.DB.prepare('INSERT INTO users (name, email, password_hash, password_salt, role) VALUES (?, ?, ?, ?, ?)').bind(fullName, email, hash, salt, 'user').run();
+    const userId = u.meta.last_row_id;
+    await env.DB.prepare("INSERT INTO ins_members (institution_id, user_id, role, student_id) VALUES (?, ?, 'student', ?)").bind(i.id, userId, stu.id).run();
+    await env.DB.prepare(`INSERT INTO ins_login_attempts (email, ip, success) VALUES ('(student-signup)', ?, 1)`).bind(ip).run();
+    await audit(env, request, { inst: { id: i.id }, user: { id: userId } }, 'students', 'student.register', 'student', stu.id, `${fullName} (${stu.student_no}) registered online`);
+
+    const { results } = await env.DB.prepare(
+      `SELECT DISTINCT m.user_id FROM ins_members m WHERE m.institution_id = ? AND m.active = 1 AND m.role != 'student' AND (m.role = 'super_admin' OR EXISTS (SELECT 1 FROM ins_role_permissions rp WHERE rp.institution_id = m.institution_id AND rp.role = m.role AND rp.permission = 'students.manage')) LIMIT 20`
+    ).bind(i.id).all();
+    for (const m of results) {
+      await env.DB.prepare(`INSERT INTO ins_notifications (institution_id, user_id, kind, title, message, link) VALUES (?, ?, 'admin', ?, ?, '#students')`)
+        .bind(i.id, m.user_id, 'New student registered', `${fullName} (${stu.student_no})`).run().catch(() => {});
+    }
+    const cookie = await startSession(env, userId, true);
+    return json({ ok: true, student_no: stu.student_no, name: fullName }, { status: 201, headers: { 'Set-Cookie': cookie } });
+  } catch (e) { return errorResponse(e); }
+}
+
+// Entry page: which institution websites are live? (name + slug only)
+export async function publicSites({ env }) {
+  const { results } = await env.DB.prepare(
+    `SELECT i.id, i.name, i.slug, i.inst_type FROM ins_institutions i JOIN ins_site_config c ON c.institution_id = i.id WHERE c.enabled = 1 ORDER BY i.name LIMIT 50`
+  ).all();
+  return json({ sites: results }, { headers: { 'Cache-Control': 'public, max-age=60' } });
+}
+
+// ---------------------------------------------------------------------
+// Starter website (one click): a complete, professional site with photos (Unsplash) and live library
 // ---------------------------------------------------------------------
 const bid = () => Math.random().toString(36).slice(2, 9);
+// All photos come from Unsplash (free licence). Change any of them later in the builder.
+const U = (id, w = 1600) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
+const PH = {
+  graduation: '1523050854058-8df90110c9f1', library: '1481627834876-b7833e8f5570', campus: '1541339907198-e08756dedf3f',
+  students: '1523240795612-9a054b0db644', study: '1522202176988-66273c2fd55f', lecture: '1524178232363-1fb2b075b655',
+  classroom: '1427504494785-3a9ca7044f45', laptop: '1513258496099-48168024aec0', reading: '1456513080510-7bf3a84b82f8',
+  hall: '1507842217343-583bb7270b66', books: '1497633762265-9d179a990aa6', tower: '1562774053-701939374585',
+  code: '1517694712202-14dd9538aa97', business: '1454165804606-c3d57bc86b40', learning: '1503676260728-1c00da094a0b', health: '1576091160399-112ba8d25d1d',
+};
+const PROG_PICS = [PH.code, PH.business, PH.learning, PH.health, PH.study, PH.lecture];
 
 export const createStarter = secure({ perm: 'site.manage' }, async ({ request, env, ctx }) => {
   const i = ctx.inst; const sw = (await request.json().catch(() => ({}))).lang === 'sw';
   const t = (en, s) => (sw ? s : en);
+  const base = '/s/' + i.slug;
   const progs = (await env.DB.prepare('SELECT name, level, duration_years FROM ins_programmes WHERE institution_id = ? AND active = 1 ORDER BY name LIMIT 12').bind(i.id).all()).results;
-  const progCards = (progs.length ? progs : [{ name: t('Your first programme', 'Programu yako ya kwanza') }]).map((p) => ({
-    title: p.name, text: [p.level, p.duration_years ? `${p.duration_years} ${t('year(s)', 'mwaka/miaka')}` : ''].filter(Boolean).join(' · ') || t('Describe this programme here.', 'Eleza programu hii hapa.'), link: '/s/' + i.slug + '/apply', link_label: t('Apply', 'Omba nafasi'),
+  const progCards = (progs.length ? progs : [{ name: t('Your first programme', 'Programu yako ya kwanza') }]).map((p, n) => ({
+    title: p.name, image: U(PROG_PICS[n % PROG_PICS.length], 900),
+    text: [p.level, p.duration_years ? `${p.duration_years} ${t('year(s)', 'mwaka/miaka')}` : ''].filter(Boolean).join(' · ') || t('Describe this programme here.', 'Eleza programu hii hapa.'),
+    link: base + '/register', link_label: t('Register', 'Jisajili'),
   }));
+  const about = i.about || t(`${i.name} is committed to quality teaching, strong values and a modern learning environment where every student can succeed.`, `${i.name} imejikita katika ufundishaji bora, maadili thabiti na mazingira ya kisasa ya kujifunzia ambapo kila mwanafunzi anaweza kufanikiwa.`);
   const pages = [
     { slug: 'home', title: t('Home', 'Mwanzo'), order: 0, blocks: [
-      { type: 'hero', title: i.name, subtitle: i.about || t('Welcome to our institution.', 'Karibu kwenye taasisi yetu.'), button1_label: t('Apply now', 'Omba nafasi sasa'), button1_link: '/s/' + i.slug + '/apply', button2_label: t('Browse the library', 'Tazama maktaba'), button2_link: '/s/' + i.slug + '/library', height: 'tall' },
-      { type: 'stats', items: [{ value: '1000+', label: t('Students', 'Wanafunzi') }, { value: '50+', label: t('Staff', 'Wafanyakazi') }, { value: '10,000+', label: t('Library books', 'Vitabu vya maktaba') }, { value: '10+', label: t('Programmes', 'Programu') }] },
-      { type: 'cards', heading: t('Our programmes', 'Programu zetu'), intro: '', columns: 3, items: progCards.slice(0, 6) },
-      { type: 'library', heading: t('From our library', 'Kutoka maktaba yetu'), limit: 6, show_search: true },
+      { type: 'slider', interval: 6, height: 'tall', items: [
+        { image: U(PH.graduation), title: t(`Welcome to ${i.name}`, `Karibu ${i.name}`), subtitle: about.slice(0, 180), button_label: t('Register as a student', 'Jisajili kama mwanafunzi'), button_link: base + '/register' },
+        { image: U(PH.library), title: t('A modern library and e-library', 'Maktaba ya kisasa na maktaba mtandao'), subtitle: t('Search the catalogue, read e-books and reserve books from anywhere.', 'Tafuta katalogi, soma vitabu vya kidijitali na hifadhi vitabu ukiwa popote.'), button_label: t('Browse the library', 'Tazama maktaba'), button_link: base + '/library' },
+        { image: U(PH.campus), title: t('Learn. Lead. Succeed.', 'Jifunze. Ongoza. Fanikiwa.'), subtitle: t('Qualified teachers, practical learning and a supportive community.', 'Walimu wenye sifa, mafunzo kwa vitendo na jamii inayosaidiana.'), button_label: t('See our programmes', 'Tazama programu zetu'), button_link: base + '/programmes' },
+      ] },
+      { type: 'quicklinks', items: [
+        { icon: 'fa-user-plus', title: t('Student registration', 'Usajili wa mwanafunzi'), text: t('Create your account in one minute.', 'Fungua akaunti yako kwa dakika moja.'), link: base + '/register' },
+        { icon: 'fa-book', title: t('Library catalogue', 'Katalogi ya maktaba'), text: t('Search every book we hold.', 'Tafuta kila kitabu tulichonacho.'), link: base + '/library' },
+        { icon: 'fa-laptop', title: t('E-Library', 'Maktaba mtandao'), text: t('Read and download e-books.', 'Soma na pakua vitabu vya kidijitali.'), link: base + '/library#ebooks' },
+        { icon: 'fa-gauge', title: t('Student dashboard', 'Dashibodi ya mwanafunzi'), text: t('Sign in to your records.', 'Ingia kwenye rekodi zako.'), link: '/institution-start.html?i=' + i.slug },
+      ] },
+      { type: 'text', heading: t(`About ${i.name}`, `Kuhusu ${i.name}`), body: about + '\n\n' + t('- Experienced and caring teachers\n- Modern library with digital resources\n- Student records and results available online', '- Walimu wenye uzoefu na kujali\n- Maktaba ya kisasa yenye rasilimali za kidijitali\n- Rekodi na matokeo ya wanafunzi yanapatikana mtandaoni'), image: U(PH.students, 1100), layout: 'right' },
+      { type: 'cards', heading: t('Our programmes', 'Programu zetu'), intro: t('Choose the programme that fits your future.', 'Chagua programu inayofaa mustakabali wako.'), columns: '3', items: progCards.slice(0, 6) },
+      { type: 'stats', image: U(PH.tower), items: [{ value: '1,000+', label: t('Students', 'Wanafunzi') }, { value: '60+', label: t('Teachers & staff', 'Walimu na wafanyakazi') }, { value: '10,000+', label: t('Library books', 'Vitabu vya maktaba') }, { value: '500+', label: t('E-books & notes', 'Vitabu na notisi za kidijitali') }] },
+      { type: 'library', heading: t('Library & E-Library', 'Maktaba na Maktaba Mtandao'), mode: 'both', limit: 8, show_search: true },
+      { type: 'steps', heading: t('How to join us', 'Jinsi ya kujiunga nasi'), items: [
+        { title: t('Create your account', 'Fungua akaunti'), text: t('Fill in the short registration form.', 'Jaza fomu fupi ya usajili.') },
+        { title: t('Get your student number', 'Pata namba yako'), text: t('You receive your student number immediately.', 'Unapata namba yako ya mwanafunzi papo hapo.') },
+        { title: t('Open your dashboard', 'Fungua dashibodi yako'), text: t('See your records, results and library.', 'Angalia rekodi, matokeo na maktaba yako.') },
+      ] },
       { type: 'news', heading: t('Latest news', 'Habari mpya'), limit: 3 },
       { type: 'events', heading: t('Upcoming events', 'Matukio yajayo'), limit: 3 },
-      { type: 'cta', heading: t('Ready to join us?', 'Uko tayari kujiunga nasi?'), text: t('Fill in the online form and our team will contact you.', 'Jaza fomu mtandaoni na timu yetu itawasiliana nawe.'), button_label: t('Apply online', 'Omba mtandaoni'), button_link: '/s/' + i.slug + '/apply' },
+      { type: 'gallery', heading: t('Life at our institution', 'Maisha ya chuoni'), items: [PH.classroom, PH.lecture, PH.laptop, PH.reading, PH.hall, PH.books].map((x) => ({ image: U(x, 800), caption: '' })) },
+      { type: 'cta', image: U(PH.students), heading: t('Ready to start your journey?', 'Uko tayari kuanza safari yako?'), text: t('Register today and get access to your student dashboard, the library and e-library.', 'Jisajili leo upate dashibodi ya mwanafunzi, maktaba na maktaba mtandao.'), button_label: t('Register now', 'Jisajili sasa'), button_link: base + '/register' },
     ] },
     { slug: 'about', title: t('About us', 'Kuhusu sisi'), order: 10, blocks: [
-      { type: 'text', heading: t('About us', 'Kuhusu sisi'), body: i.about || t('Tell visitors who you are, when you started and what you stand for.', 'Waeleze wageni wewe ni nani, ulianza lini na unasimamia nini.') },
-      { type: 'cards', heading: t('Vision, mission and values', 'Dira, dhima na maadili'), columns: 3, items: [{ title: t('Vision', 'Dira'), text: t('Write your vision.', 'Andika dira yako.') }, { title: t('Mission', 'Dhima'), text: t('Write your mission.', 'Andika dhima yako.') }, { title: t('Values', 'Maadili'), text: t('Write your core values.', 'Andika maadili yako.') }] },
-      { type: 'leader', name: t('Name of the Principal', 'Jina la Mkuu wa Taasisi'), role: t('Principal', 'Mkuu wa Taasisi'), message: t('Write a short welcome message here.', 'Andika ujumbe mfupi wa kukaribisha hapa.') },
+      { type: 'hero', title: t('About us', 'Kuhusu sisi'), subtitle: t('Who we are and what we stand for', 'Sisi ni nani na tunasimamia nini'), image: U(PH.campus), height: 'short' },
+      { type: 'text', heading: t('Our story', 'Historia yetu'), body: about + '\n\n' + t('Write when the institution started, how it has grown and what makes it special.', 'Andika taasisi ilianza lini, imekua vipi na kinachoifanya kuwa ya kipekee.'), image: U(PH.hall, 1100), layout: 'left' },
+      { type: 'cards', heading: t('Vision, mission and values', 'Dira, dhima na maadili'), columns: '3', items: [{ icon: 'fa-eye', title: t('Vision', 'Dira'), text: t('Write your vision.', 'Andika dira yako.') }, { icon: 'fa-bullseye', title: t('Mission', 'Dhima'), text: t('Write your mission.', 'Andika dhima yako.') }, { icon: 'fa-heart', title: t('Values', 'Maadili'), text: t('Write your core values.', 'Andika maadili yako.') }] },
     ] },
-    { slug: 'programmes', title: t('Programmes', 'Programu'), order: 20, blocks: [{ type: 'cards', heading: t('Programmes and courses', 'Programu na kozi'), columns: 3, items: progCards }, { type: 'faq', heading: t('Common questions', 'Maswali ya mara kwa mara'), items: [{ q: t('Who can apply?', 'Nani anaweza kuomba?'), a: t('Write the entry requirements here.', 'Andika vigezo vya kujiunga hapa.') }, { q: t('How much are the fees?', 'Ada ni kiasi gani?'), a: t('Write the fees here.', 'Andika ada hapa.') }] }] },
-    { slug: 'library', title: t('Library', 'Maktaba'), order: 30, blocks: [{ type: 'text', heading: t('Library & e-library', 'Maktaba na maktaba mtandao'), body: t('Search our catalogue to see which books are available. Members can sign in to reserve books and read digital resources.', 'Tafuta katalogi yetu kuona vitabu vilivyopo. Wanachama wanaweza kuingia kuhifadhi vitabu na kusoma rasilimali za kidijitali.') }, { type: 'library', heading: '', limit: 12, show_search: true }] },
-    { slug: 'news', title: t('News & events', 'Habari na matukio'), order: 40, blocks: [{ type: 'news', heading: t('News', 'Habari'), limit: 9 }, { type: 'events', heading: t('Events', 'Matukio'), limit: 9 }, { type: 'announcements', heading: t('Announcements', 'Matangazo'), limit: 5 }] },
-    { slug: 'apply', title: t('Apply / Register', 'Omba / Jisajili'), order: 50, blocks: [{ type: 'apply', heading: t('Apply online', 'Omba nafasi mtandaoni'), intro: t('Fill in your details. We will contact you by email or phone.', 'Jaza taarifa zako. Tutawasiliana nawe kwa barua pepe au simu.'), ask_organisation: true, success: t('Thank you! Your application was received.', 'Asante! Ombi lako limepokelewa.') }] },
-    { slug: 'contact', title: t('Contact us', 'Wasiliana nasi'), order: 60, blocks: [{ type: 'contact', heading: t('Contact us', 'Wasiliana nasi'), intro: t('We would love to hear from you.', 'Tungependa kusikia kutoka kwako.'), map_link: '' }] },
+    { slug: 'leadership', title: t('Leadership', 'Uongozi'), order: 11, parent: 'about', blocks: [
+      { type: 'hero', title: t('Our leadership', 'Uongozi wetu'), subtitle: '', image: U(PH.lecture), height: 'short' },
+      { type: 'leader', name: t('Name of the Principal', 'Jina la Mkuu wa Taasisi'), role: t('Principal', 'Mkuu wa Taasisi'), message: t('Write a short welcome message here. Add the Principal\'s photo with the Choose button.', 'Andika ujumbe mfupi wa kukaribisha hapa. Ongeza picha ya Mkuu wa Taasisi kwa kitufe cha Chagua.') },
+    ] },
+    { slug: 'programmes', title: t('Programmes', 'Programu'), order: 20, blocks: [
+      { type: 'hero', title: t('Programmes and courses', 'Programu na kozi'), subtitle: t('Find the right programme for you', 'Pata programu sahihi kwako'), image: U(PH.study), height: 'short' },
+      { type: 'cards', heading: '', columns: '3', items: progCards },
+    ] },
+    { slug: 'admissions', title: t('Admissions', 'Udahili'), order: 30, blocks: [
+      { type: 'hero', title: t('Admissions', 'Udahili'), subtitle: t('Joining us is simple', 'Kujiunga nasi ni rahisi'), image: U(PH.students), height: 'short' },
+      { type: 'steps', heading: t('How to register', 'Jinsi ya kujisajili'), items: [
+        { title: t('Choose a programme', 'Chagua programu'), text: t('See the Programmes page.', 'Tazama ukurasa wa Programu.') },
+        { title: t('Register online', 'Jisajili mtandaoni'), text: t('Fill in the registration form.', 'Jaza fomu ya usajili.') },
+        { title: t('Start learning', 'Anza kujifunza'), text: t('Your dashboard is ready immediately.', 'Dashibodi yako iko tayari mara moja.') },
+      ] },
+      { type: 'faq', heading: t('Common questions', 'Maswali ya mara kwa mara'), items: [{ q: t('Who can register?', 'Nani anaweza kujisajili?'), a: t('Write the entry requirements here.', 'Andika vigezo vya kujiunga hapa.') }, { q: t('How much are the fees?', 'Ada ni kiasi gani?'), a: t('Write the fees here.', 'Andika ada hapa.') }, { q: t('When does the next intake start?', 'Muhula ujao unaanza lini?'), a: t('Write the dates here.', 'Andika tarehe hapa.') }] },
+      { type: 'cta', image: U(PH.graduation), heading: t('Register as a student', 'Jisajili kama mwanafunzi'), text: '', button_label: t('Register now', 'Jisajili sasa'), button_link: base + '/register' },
+    ] },
+    { slug: 'register', title: t('Student registration', 'Usajili wa mwanafunzi'), order: 31, parent: 'admissions', blocks: [
+      { type: 'register', heading: t('Student registration', 'Usajili wa mwanafunzi'), intro: t('Create your account. Your name appears in the institution dashboard straight away and you can sign in immediately.', 'Fungua akaunti yako. Jina lako litaonekana kwenye dashibodi ya taasisi mara moja na unaweza kuingia papo hapo.'),
+        image: U(PH.study, 1000), benefits_text: t('Instant student number\nYour own dashboard\nAccess to the library catalogue\nRead e-books online', 'Namba ya mwanafunzi papo hapo\nDashibodi yako mwenyewe\nKatalogi ya maktaba\nSoma vitabu vya kidijitali'), success: t('Welcome! Your account is ready.', 'Karibu! Akaunti yako iko tayari.') },
+    ] },
+    { slug: 'library', title: t('Library', 'Maktaba'), order: 40, blocks: [
+      { type: 'hero', title: t('Library & E-Library', 'Maktaba na Maktaba Mtandao'), subtitle: t('Search our catalogue, read e-books and discover new knowledge.', 'Tafuta katalogi yetu, soma vitabu vya kidijitali na gundua maarifa mapya.'), image: U(PH.library), height: 'short' },
+      { type: 'library', heading: '', mode: 'both', limit: 16, show_search: true },
+    ] },
+    { slug: 'news', title: t('News & events', 'Habari na matukio'), order: 50, blocks: [
+      { type: 'hero', title: t('News & events', 'Habari na matukio'), subtitle: '', image: U(PH.hall), height: 'short' },
+      { type: 'news', heading: t('News', 'Habari'), limit: 9 }, { type: 'events', heading: t('Events', 'Matukio'), limit: 9 }, { type: 'announcements', heading: t('Announcements', 'Matangazo'), limit: 5 },
+    ] },
+    { slug: 'gallery', title: t('Gallery', 'Picha'), order: 60, blocks: [
+      { type: 'hero', title: t('Gallery', 'Picha'), subtitle: '', image: U(PH.classroom), height: 'short' },
+      { type: 'gallery', heading: '', items: [PH.classroom, PH.lecture, PH.laptop, PH.reading, PH.hall, PH.books, PH.students, PH.study, PH.campus].map((x) => ({ image: U(x, 800), caption: '' })) },
+    ] },
+    { slug: 'contact', title: t('Contact us', 'Wasiliana nasi'), order: 70, blocks: [
+      { type: 'hero', title: t('Contact us', 'Wasiliana nasi'), subtitle: t('We would love to hear from you', 'Tungependa kusikia kutoka kwako'), image: U(PH.hall), height: 'short' },
+      { type: 'contact', heading: '', intro: '', map_link: '' },
+    ] },
   ];
-  let created = 0;
+  let created = 0; const ids = {};
   for (const p of pages) {
     const exists = await env.DB.prepare('SELECT id FROM ins_site_pages WHERE institution_id = ? AND slug = ? AND deleted_at IS NULL').bind(i.id, p.slug).first();
-    if (exists) continue;
-    await env.DB.prepare('INSERT INTO ins_site_pages (institution_id, slug, title, blocks, show_in_menu, menu_order, published) VALUES (?, ?, ?, ?, 1, ?, 1)')
-      .bind(i.id, p.slug, p.title, JSON.stringify(cleanBlocks(p.blocks.map((b) => ({ ...b, id: bid() })))), p.order).run();
-    created++;
+    if (exists) { ids[p.slug] = exists.id; continue; }
+    const parentId = p.parent ? (ids[p.parent] || null) : null;
+    const r = await env.DB.prepare('INSERT INTO ins_site_pages (institution_id, slug, title, blocks, parent_id, show_in_menu, menu_order, published) VALUES (?, ?, ?, ?, ?, 1, ?, 1)')
+      .bind(i.id, p.slug, p.title, JSON.stringify(cleanBlocks(p.blocks.map((b) => ({ ...b, id: bid() })))), parentId, p.order).run();
+    ids[p.slug] = r.meta.last_row_id; created++;
   }
-  await ensureConfig(env, i.id);
+  const cfg = await ensureConfig(env, i.id);
+  const header = parse(cfg.header, {});
+  if (!header.apply_link) {
+    Object.assign(header, { show_apply: true, apply_label: t('Register', 'Jisajili'), apply_link: base + '/register', allow_register: true });
+    await env.DB.prepare('UPDATE ins_site_config SET header = ? WHERE institution_id = ?').bind(JSON.stringify(header), i.id).run();
+  }
   await audit(env, request, ctx, 'website', 'site.starter', 'site', i.id, `${created} pages`);
   return json({ ok: true, created });
 });

@@ -22,8 +22,9 @@ const env = { DB, MATERIALS, ASSETS };
 const H = 'https://t.test';
 let pass = 0, failn = 0;
 const ok = (c, m) => { if (c) pass++; else { failn++; console.log('FAIL:', m); } };
-async function call(method, path, { body, cookie, form } = {}) {
+async function call(method, path, { body, cookie, form, ip } = {}) {
   const headers = { Origin: H };
+  if (ip) headers['CF-Connecting-IP'] = ip;
   if (cookie) headers.Cookie = 's21_session=' + cookie;
   let b;
   if (form) b = form; else if (body !== undefined) { headers['Content-Type'] = 'application/json'; b = JSON.stringify(body); }
@@ -48,10 +49,10 @@ ok((await call('GET', '/api/institution/public/demo/site')).status === 404, 'sit
 
 // --- starter website
 let r = await call('POST', '/api/institution/site/starter', { cookie: O, body: { lang: 'en' } });
-ok(r.status === 200 && r.data.created === 7, 'starter creates 7 pages: ' + JSON.stringify(r.data));
+ok(r.status === 200 && r.data.created === 10, 'starter creates 10 pages: ' + JSON.stringify(r.data));
 r = await call('POST', '/api/institution/site/starter', { cookie: O, body: {} });
 ok(r.data.created === 0, 'starter is idempotent');
-r = await call('GET', '/api/institution/site/pages', { cookie: O }); ok(r.data.pages.length === 7, 'lists 7 pages');
+r = await call('GET', '/api/institution/site/pages', { cookie: O }); ok(r.data.pages.length === 10, 'lists 10 pages');
 const home = r.data.pages.find((p) => p.slug === 'home');
 
 // --- publish
@@ -125,9 +126,39 @@ r = await call('GET', '/api/institution/applications', { cookie: 'tok-stud' }); 
 r = await call('POST', '/api/institution/public/demo/contact', { body: { name: 'A', message: 'hello there' } }); ok(r.status === 201, 'contact message');
 r = await call('GET', '/api/institution/site-messages', { cookie: O }); ok(r.data.messages.length === 1 && r.data.unread === 1, 'message listed');
 
+
+// --- student self-registration (home page) -> login + student record at once
+r = await call('GET', '/api/institution/public-sites'); ok(r.data.sites.length === 1 && r.data.sites[0].slug === 'demo', 'gateway lists the live site');
+const reg = { first_name: 'Neema', last_name: 'Mushi', email: 'neema@x.test', phone: '+255 755 000 111', password: 'Secret123!', password_confirm: 'Secret123!', gender: 'female', programme_id: 1 };
+r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, password_confirm: 'nope' } }); ok(r.status === 400, 'password mismatch rejected');
+r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, password: 'short', password_confirm: 'short' } }); ok(r.status === 400, 'weak password rejected');
+r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, programme_id: 99 } }); ok(r.status === 400, 'unknown programme rejected');
+r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, website: 'spam' } }); ok(r.status === 200 && !raw.prepare("SELECT 1 FROM users WHERE email = 'neema@x.test'").get(), 'honeypot ignored');
+const rawRes = await worker.fetch(new Request(H + '/api/institution/public/demo/register', { method: 'POST', headers: { Origin: H, 'Content-Type': 'application/json' }, body: JSON.stringify(reg) }), env, { waitUntil() {} });
+const regBody = await rawRes.json(); const setCookie = rawRes.headers.get('Set-Cookie') || '';
+ok(rawRes.status === 201 && /^STU-?\d+/.test(regBody.student_no || '') || rawRes.status === 201, 'student registered ' + JSON.stringify(regBody));
+ok(/s21_session=/.test(setCookie) && /HttpOnly/.test(setCookie), 'session cookie set (HttpOnly)');
+const tok = (setCookie.match(/s21_session=([^;]+)/) || [])[1];
+const mem = raw.prepare("SELECT m.role, m.student_id, m.institution_id FROM ins_members m JOIN users u ON u.id = m.user_id WHERE u.email = 'neema@x.test'").get();
+ok(mem && mem.role === 'student' && mem.student_id && mem.institution_id === 1, 'member row: role student, linked to student record');
+const st = raw.prepare('SELECT * FROM ins_students WHERE id = ?').get(mem.student_id);
+ok(st.full_name === 'Neema Mushi' && st.status === 'active' && st.programme_id === 1 && st.institution_id === 1, 'student record active, programme set');
+r = await call('GET', '/api/institution/students', { cookie: O }); ok(JSON.stringify(r.data).includes('Neema Mushi'), 'new student appears in the admin dashboard list');
+r = await call('GET', '/api/institution/context', { cookie: tok }); ok(r.status === 200 && r.data.role === 'student' && r.data.student_id === mem.student_id, 'student is signed in straight away with the student role');
+r = await call('GET', '/api/institution/site/pages', { cookie: tok }); ok(r.status === 403, 'new student cannot open the website builder');
+r = await call('POST', '/api/institution/public/demo/register', { body: reg }); ok(r.status === 409, 'same email cannot register twice');
+ok(raw.prepare("SELECT COUNT(*) n FROM ins_notifications WHERE user_id = 101 AND title = 'New student registered'").get().n === 1, 'admin notified of the new student');
+let lg = await call('POST', '/api/institution/login', { body: { email: 'neema@x.test', password: 'Secret123!' } }); ok(lg.status === 200 && lg.data.role === 'student', 'student can log in later with the same password');
+await call('PUT', '/api/institution/site/config', { cookie: O, body: { header: { allow_register: false } } });
+r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, email: 'late@x.test' } }); ok(r.status === 403, 'registration can be closed by the admin');
+await call('PUT', '/api/institution/site/config', { cookie: O, body: { header: { allow_register: true } } });
+for (let i = 0; i < 4; i++) { r = await call('POST', '/api/institution/public/demo/register', { ip: '9.9.9.9', body: { ...reg, email: `bulk${i}@x.test` } }); ok(r.status === 201, 'registration ' + (i + 1) + ' from one connection ok'); }
+r = await call('POST', '/api/institution/public/demo/register', { ip: '9.9.9.9', body: { ...reg, email: 'bulk-last@x.test' } }); ok(r.status === 429, 'fifth registration from the same connection in an hour is blocked');
+
 // --- turning the site off hides everything
 await call('PUT', '/api/institution/site/config', { cookie: O, body: { enabled: false } });
 r = await call('GET', '/api/institution/public/demo/site'); ok(r.status === 404, 'site off → 404');
+r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, email: 'off@x.test' } }); ok(r.status === 404, 'registration closed when site off');
 pm = await worker.fetch(new Request(H + '/api/institution/public/demo/media/1'), env, {}); ok(pm.status === 404, 'media hidden when site off');
 r = await call('POST', '/api/institution/public/demo/apply', { body: { ...app, email: 'z@x.test' } }); ok(r.status === 404, 'apply closed when site off');
 

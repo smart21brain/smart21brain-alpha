@@ -497,6 +497,8 @@ router.get('/api/institution/public/:slug/posts', insSite.publicPosts);
 router.get('/api/institution/public/:slug/media/:id', insSite.publicMedia);
 router.post('/api/institution/public/:slug/apply', insSite.publicApply);
 router.post('/api/institution/public/:slug/contact', insSite.publicContact);
+router.post('/api/institution/public/:slug/register', insSite.publicRegisterStudent);
+router.get('/api/institution/public-sites', insSite.publicSites);
 // Website builder (needs sign-in + site.manage / applications.manage)
 router.get('/api/institution/site/config', insSite.getSiteConfig);
 router.put('/api/institution/site/config', insSite.saveSiteConfig);

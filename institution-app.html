@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-institution-install-popup>
+<html lang="en" data-theme="dark" data-institution-install-popup>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -15,8 +15,8 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="css/institution-app.css?v=1">
 <script>
-  // Apply the saved light/dark choice before the page paints (no flash).
-  try { var t = localStorage.getItem('in-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  // Dark mode is the default. A saved choice is used after the first visit (no flash before paint).
+  try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}
 </script>
 </head>
 <body class="in-body">

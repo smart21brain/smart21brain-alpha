@@ -292,3 +292,18 @@ New permissions: `site.manage` (build & publish), `applications.manage` (review 
 **Tests:** `node --no-warnings tests/site.test.mjs` (57 checks: permissions, tenant isolation, sanitising, uploads, applications, enrol, limits, routes) and `node --no-warnings tests/site-render.test.mjs` (27 checks: escaping of every block type).
 
 **Not built yet (honest list):** custom domain per institution (sites live under `/s/<slug>`; a domain can be pointed at it with a Cloudflare rule), e-mail/SMS notice to applicants, online payment of application fees, drag-and-drop (blocks move with arrow buttons), multi-language page content (one language per page; the menu/labels switch).
+
+
+---
+
+## Update: entry page, student self-registration, e-library on the home page, Unsplash design
+
+* **Entry page** `institution-start.html` — the first screen of the system. Two big choices: **Home page** (the website) or **Dashboard** (sign in; if already signed in it says "Continue to your dashboard"). Works with `?i=<slug>`; with one live website it opens that one, with several it shows a list. The PWA start page, the product page buttons and the website's "Dashboard" link all point here.
+* **Student self-registration** — block *Student registration* (page `/s/<slug>/register`, also the "Register" button in the menu). One submit creates the **login**, the **student record** (next student number, status active, programme) and the **student membership**, signs the student in, and opens the dashboard. The name is in *Students* immediately, and admins who can manage students get a notification. Protections: honeypot, 4 registrations per connection per hour, passwords checked (8+), duplicate email refused, an admin switch *"Let students register online"* in Website → Design & settings, and everything closes when the website is switched off.
+* **Library on the home page** — the *Library* block has two tabs: **Library books (OPAC)** and **E-Library (e-books)**, one search box for both. E-books show Read / Download buttons according to each resource's permissions; "Sign in to read" otherwise. Needs *Public catalogue* on, and e-books set to "public" access.
+* **New design blocks** — photo slider (home banner), quick-link buttons, steps, numbers/CTA with photo backgrounds, short page banners, icon cards, fade-in on scroll, back-to-top, mobile menu from 1120px.
+* **Starter website (10 pages)** — Home, About ▸ Leadership, Programmes, Admissions ▸ Student registration, Library, News & events, Gallery, Contact. All photos are hotlinked from **Unsplash** (free licence) and can be replaced in the builder. No AI features or AI wording anywhere on the site.
+* **Tests** — `node --no-warnings tests/site.test.mjs` (79 checks) and `tests/site-render.test.mjs` (31 checks).
+
+### Dark mode is the default
+Every Smart21Institution page opens in **dark mode**: dashboard (`institution-app.html`), sign-in, OPAC, the entry page and the public website. The sun/moon button (dashboard top bar, and the top strip of the website) switches to light and the choice is remembered in the browser (`in-theme`) and shared by all these pages. Browsers that had saved "light" before this update are reset to dark once (`in-theme-v2`); after that their own choice sticks. The website has a full dark palette (cards, forms, menu, modals, e-library), so the Website builder preview also shows it the way visitors see it.

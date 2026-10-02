@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="sx-html" data-font="sans" data-radius="soft">
+<html lang="en" class="sx-html" data-theme="dark" data-font="sans" data-radius="soft">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/institution-site.css?v=1">
+<script>try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}</script>
 </head>
 <body class="sx-body">
 <noscript><p style="padding:2rem;font-family:sans-serif">This website needs JavaScript. Please turn it on in your browser.</p></noscript>
@@ -61,10 +62,10 @@
       }
       return '<a href="' + href(m.slug) + '" class="' + (m.slug === pageSlug ? 'on' : '') + '">' + esc(m.title) + '</a>';
     }).join('');
-    var applyLink = S.safeLink(h.apply_link) || href('apply');
+    var applyLink = S.safeLink(h.apply_link) || href('register');
     if (h.show_library !== false) nav += '<a href="/institution-opac.html?i=' + encodeURIComponent(slug) + '">' + t('Catalogue', 'Katalogi') + '</a>';
     if (h.show_apply) nav += '<a class="sx-btn primary" style="margin-left:.4rem;padding:.5rem 1rem" href="' + esc(applyLink) + '">' + esc(h.apply_label || t('Apply', 'Omba nafasi')) + '</a>';
-    return '<div class="sx-top"><div class="sx-wrap"><span>' + esc(h.topbar_text || [i.phone, i.email].filter(Boolean).join(' · ')) + '</span><span><button id="lang" type="button">' + (sw ? 'English' : 'Kiswahili') + '</button> · <a href="/institution-login.html?i=' + i.id + '"><i class="fa-solid fa-right-to-bracket"></i> ' + t('Sign in', 'Ingia') + '</a></span></div></div>' +
+    return '<div class="sx-top"><div class="sx-wrap"><span>' + esc(h.topbar_text || [i.phone, i.email].filter(Boolean).join(' · ')) + '</span><span><button id="lang" type="button">' + (sw ? 'English' : 'Kiswahili') + '</button> <button id="themeBtn" class="sx-theme" type="button" aria-label="' + t('Switch light / dark mode', 'Badilisha mwanga / giza') + '"><i class="fa-solid ' + (document.documentElement.dataset.theme === 'dark' ? 'fa-sun' : 'fa-moon') + '"></i></button> · <a href="/institution-start.html?i=' + encodeURIComponent(slug) + '"><i class="fa-solid fa-gauge"></i> ' + t('Dashboard', 'Dashibodi') + '</a></span></div></div>' +
       '<header class="sx-header"><div class="sx-wrap"><a class="sx-brand" href="' + href('home') + '">' + logo + '<span>' + esc(i.name) + '</span></a><button class="sx-burger" id="burger" aria-label="Menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><nav class="sx-nav" id="nav" aria-label="Main">' + nav + '</nav></div></header>';
   }
 
@@ -95,6 +96,15 @@
     }
     root.innerHTML = header(d) + '<main id="main">' + body + '</main>' + footer(d);
     S.hydrate(root, ctx);
+    var up = document.createElement('button'); up.className = 'sx-top-btn'; up.setAttribute('aria-label', 'Top'); up.innerHTML = '<i class="fa-solid fa-chevron-up"></i>'; document.body.appendChild(up);
+    up.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () { up.classList.toggle('show', window.scrollY > 600); }, { passive: true });
+    document.getElementById('themeBtn').addEventListener('click', function () {
+      var dark = document.documentElement.dataset.theme !== 'dark';
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      try { localStorage.setItem('in-theme', dark ? 'dark' : 'light'); } catch (e) {}
+      this.firstChild.className = 'fa-solid ' + (dark ? 'fa-sun' : 'fa-moon');
+    });
     document.getElementById('lang').addEventListener('click', function () { try { localStorage.setItem('s21-lang', sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
     var nav = document.getElementById('nav'), bg = document.getElementById('burger');
     bg.addEventListener('click', function () { var o = nav.classList.toggle('open'); bg.setAttribute('aria-expanded', o ? 'true' : 'false'); });

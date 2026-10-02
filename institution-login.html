@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-institution-install-popup>
+<html lang="en" data-theme="dark" data-institution-install-popup>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="css/institution-app.css?v=1">
+<script>try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}</script>
 </head>
 <body class="in-body">
 <div class="in-auth">
@@ -44,7 +45,7 @@
         <div class="in-field" data-field="password"><label for="f_password">Password<span class="req">*</span></label><div style="position:relative"><input class="in-input" id="f_password" name="password" type="password" autocomplete="current-password" required data-label="your password" style="padding-right:3rem"><button type="button" class="in-icon-btn" id="eye" style="position:absolute;right:4px;top:3px;width:36px;height:36px;border:0;background:none" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err"></span></div>
         <div class="in-spread"><label class="in-check"><input type="checkbox" name="remember" checked> Remember me</label><a href="forgot-password.html" class="in-small in-strong">Forgot password?</a></div>
         <button class="in-btn primary block lg" type="submit">Login</button>
-        <p class="in-small in-muted in-center" style="margin:0">Staff and students: use the email and password your institution gave you.</p>
+        <p class="in-small in-muted in-center" style="margin:0">Staff and students: use your email and password. New student? <a href="institution-start.html" class="in-strong">Register on the home page</a>.</p>
       </form>
 
       <form class="in-form in-hide" id="upForm" novalidate>
@@ -59,7 +60,7 @@
         <button class="in-btn primary block lg" type="submit">Register my institution</button>
       </form>
 
-      <p class="in-small in-center" style="margin-top:1.4rem"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to Smart21Brain</a> &nbsp;·&nbsp; <a href="institution.html">About Smart21Institution</a></p>
+      <p class="in-small in-center" style="margin-top:1.4rem" id="homeLinks"><a href="institution-start.html" id="homeLink"><i class="fa-solid fa-house"></i> Home page</a> &nbsp;·&nbsp; <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to Smart21Brain</a> &nbsp;·&nbsp; <a href="institution.html">About Smart21Institution</a></p>
     </div>
   </main>
 </div>
@@ -70,6 +71,7 @@
   // Already signed in to a shop? Go straight in.
   IN.api.get('/context').then(function (c) { if (c && c.institution) location.replace('institution-app.html'); }).catch(function () {});
   var params = new URLSearchParams(location.search);
+  if (params.get('s')) { var hl = document.getElementById('homeLink'); hl.href = '/s/' + encodeURIComponent(params.get('s')); }
   if (params.get('i')) { // optional co-branding: institution-login.html?i=12
     var img = new Image(); img.onload = function () { document.getElementById('lgLogo').innerHTML = '<img src="' + img.src + '" alt="">'; }; img.src = '/api/institution/public/logo/' + encodeURIComponent(params.get('i'));
   }

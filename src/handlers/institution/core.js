@@ -59,7 +59,7 @@ export async function provisionInstitution(env, user, info) {
   return id;
 }
 
-async function startSession(env, userId, remember) {
+export async function startSession(env, userId, remember) {
   const token = randomToken(32);
   const days = remember ? 30 : 1;
   const expires = new Date(Date.now() + days * 86400000).toISOString();
@@ -67,7 +67,7 @@ async function startSession(env, userId, remember) {
   return `s21_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax` + (remember ? `; Expires=${new Date(expires).toUTCString()}` : '');
 }
 
-const clientIp = (request) => request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || null;
+export const clientIp = (request) => request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || null;
 
 async function tooManyAttempts(env, email, ip) {
   const a = await env.DB.prepare(`SELECT COUNT(*) AS n FROM ins_login_attempts WHERE success = 0 AND email = ? AND created_at > datetime('now','-15 minutes')`).bind(email).first();

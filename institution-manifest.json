@@ -3,7 +3,7 @@
   "name": "Smart21Institution",
   "short_name": "Institution",
   "description": "Library catalogue, e-library, students, academic records and reports — run your institution from one app.",
-  "start_url": "/institution-app.html?source=pwa",
+  "start_url": "/institution-start.html?source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0B1F1E",

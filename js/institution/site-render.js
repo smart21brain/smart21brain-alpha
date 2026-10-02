@@ -40,13 +40,27 @@
   // ---------------------------------------------------------------- block catalogue (builder uses this too)
   // Field types: text, textarea, image, link, number, check, select (options), list (item fields)
   const L = (en, sw) => [en, sw];
+  const ICONS = ['fa-user-plus','fa-book','fa-laptop','fa-gauge','fa-graduation-cap','fa-calendar-days','fa-newspaper','fa-building-columns','fa-file-lines','fa-envelope','fa-phone','fa-location-dot','fa-eye','fa-bullseye','fa-heart','fa-users','fa-flask','fa-computer','fa-stethoscope','fa-briefcase','fa-school','fa-award','fa-book-open','fa-lightbulb'].map((x) => [x, x.replace('fa-', '').replace(/-/g, ' ')]);
   S.BLOCKS = {
     hero: { icon: 'fa-image', label: L('Banner (hero)', 'Bango kuu'), fields: [
       { k: 'title', type: 'text', label: L('Headline', 'Kichwa kikuu') }, { k: 'subtitle', type: 'textarea', label: L('Sub-text', 'Maelezo mafupi') },
       { k: 'image', type: 'image', label: L('Background image', 'Picha ya nyuma') },
       { k: 'button1_label', type: 'text', label: L('Button 1 text', 'Maandishi ya kitufe 1') }, { k: 'button1_link', type: 'link', label: L('Button 1 link', 'Kiungo cha kitufe 1') },
       { k: 'button2_label', type: 'text', label: L('Button 2 text', 'Maandishi ya kitufe 2') }, { k: 'button2_link', type: 'link', label: L('Button 2 link', 'Kiungo cha kitufe 2') },
-      { k: 'height', type: 'select', label: L('Height', 'Urefu'), options: [['normal', L('Normal', 'Kawaida')], ['tall', L('Tall', 'Mrefu')]] }] },
+      { k: 'height', type: 'select', label: L('Height', 'Urefu'), options: [['normal', L('Normal', 'Kawaida')], ['tall', L('Tall', 'Mrefu')], ['short', L('Short (inner pages)', 'Fupi (kurasa za ndani)')]] }] },
+    slider: { icon: 'fa-images', label: L('Photo slider (home banner)', 'Bango la picha zinazobadilika'), fields: [
+      { k: 'height', type: 'select', label: L('Height', 'Urefu'), options: [['tall', L('Tall', 'Mrefu')], ['normal', L('Normal', 'Kawaida')]] }, { k: 'interval', type: 'number', min: 3, max: 15, label: L('Seconds per slide', 'Sekunde kwa kila picha') },
+      { k: 'items', type: 'list', label: L('Slides', 'Picha'), add: L('Add slide', 'Ongeza picha'), item: [
+        { k: 'image', type: 'image', label: L('Photo', 'Picha') }, { k: 'title', type: 'text', label: L('Headline', 'Kichwa') }, { k: 'subtitle', type: 'textarea', label: L('Sub-text', 'Maelezo') },
+        { k: 'button_label', type: 'text', label: L('Button text', 'Kitufe') }, { k: 'button_link', type: 'link', label: L('Button link', 'Kiungo') }] }] },
+    quicklinks: { icon: 'fa-grip', label: L('Quick links (big buttons)', 'Viungo vya haraka (vitufe vikubwa)'), fields: [
+      { k: 'items', type: 'list', label: L('Links', 'Viungo'), add: L('Add link', 'Ongeza kiungo'), item: [
+        { k: 'icon', type: 'select', label: L('Icon', 'Alama'), options: ICONS }, { k: 'title', type: 'text', label: L('Title', 'Kichwa') }, { k: 'text', type: 'text', label: L('Short text', 'Maelezo mafupi') }, { k: 'link', type: 'link', label: L('Link', 'Kiungo') }] }] },
+    steps: { icon: 'fa-list-ol', label: L('Steps (how it works)', 'Hatua (jinsi inavyofanya kazi)'), fields: [
+      { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'items', type: 'list', label: L('Steps', 'Hatua'), add: L('Add step', 'Ongeza hatua'), item: [{ k: 'title', type: 'text', label: L('Title', 'Kichwa') }, { k: 'text', type: 'textarea', label: L('Text', 'Maelezo') }] }] },
+    register: { icon: 'fa-user-graduate', label: L('Student registration (creates account)', 'Usajili wa mwanafunzi (huunda akaunti)'), fields: [
+      { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'intro', type: 'textarea', label: L('Intro', 'Utangulizi') }, { k: 'image', type: 'image', label: L('Side photo', 'Picha ya pembeni') },
+      { k: 'benefits_text', type: 'textarea', rows: 4, label: L('Benefits (one per line)', 'Faida (moja kwa mstari)') }, { k: 'success', type: 'text', label: L('Welcome message', 'Ujumbe wa kukaribisha') }] },
     text: { icon: 'fa-align-left', label: L('Text', 'Maandishi'), fields: [
       { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'body', type: 'textarea', rows: 7, label: L('Text', 'Maandishi'), hint: L('Blank line = new paragraph. "- " starts a bullet. **bold**, [link text](https://…)', 'Mstari mtupu = aya mpya. "- " huanzisha orodha. **nzito**, [maandishi](https://…)') },
       { k: 'image', type: 'image', label: L('Picture (optional)', 'Picha (si lazima)') }, { k: 'layout', type: 'select', label: L('Picture position', 'Mahali pa picha'), options: [['right', L('Right', 'Kulia')], ['left', L('Left', 'Kushoto')], ['top', L('Above', 'Juu')]] }] },
@@ -54,15 +68,16 @@
       { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'intro', type: 'textarea', label: L('Intro (optional)', 'Utangulizi (si lazima)') },
       { k: 'columns', type: 'select', label: L('Columns', 'Safu'), options: [['2', '2'], ['3', '3'], ['4', '4']] },
       { k: 'items', type: 'list', label: L('Cards', 'Kadi'), add: L('Add card', 'Ongeza kadi'), item: [
-        { k: 'title', type: 'text', label: L('Title', 'Kichwa') }, { k: 'text', type: 'textarea', label: L('Text', 'Maelezo') }, { k: 'image', type: 'image', label: L('Picture', 'Picha') },
+        { k: 'title', type: 'text', label: L('Title', 'Kichwa') }, { k: 'text', type: 'textarea', label: L('Text', 'Maelezo') }, { k: 'image', type: 'image', label: L('Picture', 'Picha') }, { k: 'icon', type: 'select', label: L('Icon (if no picture)', 'Alama (kama hakuna picha)'), options: [['', '—']].concat(ICONS) },
         { k: 'link', type: 'link', label: L('Link', 'Kiungo') }, { k: 'link_label', type: 'text', label: L('Link text', 'Maandishi ya kiungo') }] }] },
     stats: { icon: 'fa-chart-simple', label: L('Numbers', 'Takwimu'), fields: [
+      { k: 'image', type: 'image', label: L('Background photo (optional)', 'Picha ya nyuma (si lazima)') },
       { k: 'items', type: 'list', label: L('Numbers', 'Takwimu'), add: L('Add number', 'Ongeza takwimu'), item: [{ k: 'value', type: 'text', label: L('Number', 'Namba') }, { k: 'label', type: 'text', label: L('Label', 'Maelezo') }] }] },
     news: { icon: 'fa-newspaper', label: L('Latest news', 'Habari mpya'), fields: [{ k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'limit', type: 'number', min: 1, max: 12, label: L('How many', 'Ngapi') }] },
     events: { icon: 'fa-calendar-days', label: L('Events', 'Matukio'), fields: [{ k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'limit', type: 'number', min: 1, max: 12, label: L('How many', 'Ngapi') }] },
     announcements: { icon: 'fa-bullhorn', label: L('Announcements', 'Matangazo'), fields: [{ k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'limit', type: 'number', min: 1, max: 10, label: L('How many', 'Ngapi') }] },
-    library: { icon: 'fa-book-open', label: L('Library books (live)', 'Vitabu vya maktaba (moja kwa moja)'), fields: [
-      { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'limit', type: 'number', min: 3, max: 24, label: L('Books to show', 'Vitabu vya kuonyesha') },
+    library: { icon: 'fa-book-open', label: L('Library: books (OPAC) + e-books (live)', 'Maktaba: vitabu (OPAC) + vitabu vya kidijitali (moja kwa moja)'), fields: [
+      { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'mode', type: 'select', label: L('Show', 'Onyesha'), options: [['both', L('Books + E-books (tabs)', 'Vitabu + Vitabu vya kidijitali')], ['books', L('Printed books only', 'Vitabu vya karatasi tu')], ['ebooks', L('E-books only', 'Vitabu vya kidijitali tu')]] }, { k: 'limit', type: 'number', min: 3, max: 24, label: L('Items to show', 'Vipengee vya kuonyesha') },
       { k: 'show_search', type: 'check', label: L('Show search box', 'Onyesha kisanduku cha kutafuta') }] },
     apply: { icon: 'fa-user-plus', label: L('Application / registration form', 'Fomu ya maombi / usajili'), fields: [
       { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'intro', type: 'textarea', label: L('Intro', 'Utangulizi') },
@@ -75,7 +90,7 @@
     gallery: { icon: 'fa-images', label: L('Photo gallery', 'Picha'), fields: [
       { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'items', type: 'list', label: L('Photos', 'Picha'), add: L('Add photo', 'Ongeza picha'), item: [{ k: 'image', type: 'image', label: L('Photo', 'Picha') }, { k: 'caption', type: 'text', label: L('Caption', 'Maelezo') }] }] },
     cta: { icon: 'fa-bullseye', label: L('Call to action', 'Wito wa kuchukua hatua'), fields: [
-      { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'text', type: 'textarea', label: L('Text', 'Maelezo') }, { k: 'button_label', type: 'text', label: L('Button text', 'Maandishi ya kitufe') }, { k: 'button_link', type: 'link', label: L('Button link', 'Kiungo cha kitufe') }] },
+      { k: 'heading', type: 'text', label: L('Heading', 'Kichwa') }, { k: 'text', type: 'textarea', label: L('Text', 'Maelezo') }, { k: 'image', type: 'image', label: L('Background photo (optional)', 'Picha ya nyuma (si lazima)') }, { k: 'button_label', type: 'text', label: L('Button text', 'Maandishi ya kitufe') }, { k: 'button_link', type: 'link', label: L('Button link', 'Kiungo cha kitufe') }] },
     quote: { icon: 'fa-quote-left', label: L('Quote', 'Nukuu'), fields: [
       { k: 'text', type: 'textarea', label: L('Quote', 'Nukuu') }, { k: 'author', type: 'text', label: L('Who said it', 'Aliyesema') }, { k: 'role', type: 'text', label: L('Role', 'Wadhifa') }, { k: 'image', type: 'image', label: L('Photo (optional)', 'Picha (si lazima)') }] },
     leader: { icon: 'fa-user-tie', label: L('Leader message', 'Ujumbe wa kiongozi'), fields: [
@@ -85,7 +100,8 @@
   S.defaults = (type) => {
     const d = { type, id: Math.random().toString(36).slice(2, 9) };
     const f = (S.BLOCKS[type] || { fields: [] }).fields;
-    f.forEach((x) => { if (x.type === 'list') d[x.k] = []; else if (x.type === 'check') d[x.k] = x.k !== 'ask_organisation' ? true : false; else if (x.type === 'number') d[x.k] = x.k === 'limit' ? 3 : 0; else if (x.type === 'select') d[x.k] = String(x.options[0][0]); else d[x.k] = ''; });
+    f.forEach((x) => { if (x.type === 'list') d[x.k] = []; else if (x.type === 'check') d[x.k] = x.k !== 'ask_organisation' ? true : false; else if (x.type === 'number') d[x.k] = x.k === 'limit' ? 6 : x.k === 'interval' ? 6 : 0; else if (x.type === 'select') d[x.k] = String(x.options[0][0]); else d[x.k] = ''; });
+    if (type === 'slider') d.items = [{ image: '', title: '', subtitle: '', button_label: '', button_link: '' }];
     if (type === 'cards') d.items = [{ title: '', text: '', image: '', link: '', link_label: '' }];
     return d;
   };
@@ -108,7 +124,7 @@
   const R = {
     hero(b, ctx) {
       const bg = imgUrl(ctx, b.image);
-      return `<section class="sx-hero ${b.height === 'tall' ? 'tall' : ''}" ${bg ? `style="background-image:url('${esc(bg)}')"` : ''}><div class="sx-wrap"><div class="in"><h1>${esc(b.title)}</h1>${b.subtitle ? `<p>${esc(b.subtitle)}</p>` : ''}<div class="sx-btns">${btn(b.button1_label, b.button1_link, 'primary')}${btn(b.button2_label, b.button2_link, 'light')}</div></div></div></section>`;
+      return `<section class="sx-hero ${b.height === 'tall' ? 'tall' : b.height === 'short' ? 'short' : ''}" ${bg ? `style="background-image:url('${esc(bg)}')"` : ''}><div class="sx-wrap"><div class="in"><h1>${esc(b.title)}</h1>${b.subtitle ? `<p>${esc(b.subtitle)}</p>` : ''}<div class="sx-btns">${btn(b.button1_label, b.button1_link, 'primary')}${btn(b.button2_label, b.button2_link, 'light')}</div></div></div></section>`;
     },
     text(b, ctx) {
       const im = imgUrl(ctx, b.image); const lay = ['left', 'right', 'top'].includes(b.layout) ? b.layout : 'right';
@@ -118,18 +134,56 @@
       const cols = ['2', '3', '4'].includes(String(b.columns)) ? String(b.columns) : '3';
       return `<section class="sx-sec alt"><div class="sx-wrap">${head(b)}${b.intro ? `<p class="sx-intro">${esc(b.intro)}</p>` : ''}<div class="sx-grid c${cols}">${(b.items || []).map((c) => {
         const im = imgUrl(ctx, c.image); const u = safeLink(c.link);
-        return `<article class="sx-card">${im ? `<div class="im"><img src="${esc(im)}" alt="" loading="lazy"></div>` : ''}<div class="bd"><h3>${esc(c.title)}</h3>${c.text ? `<p>${esc(c.text)}</p>` : ''}${u ? `<a class="more" href="${esc(u)}"${ext(u)}>${esc(c.link_label || T(ctx)('Read more', 'Soma zaidi'))} →</a>` : ''}</div></article>`;
+        const ic = /^fa-[a-z0-9-]{2,40}$/.test(c.icon || '') ? c.icon : '';
+        return `<article class="sx-card">${im ? `<div class="im"><img src="${esc(im)}" alt="" loading="lazy" onerror="this.parentNode.remove()"></div>` : ic ? `<div class="ic"><i class="fa-solid ${esc(ic)}"></i></div>` : ''}<div class="bd"><h3>${esc(c.title)}</h3>${c.text ? `<p>${esc(c.text)}</p>` : ''}${u ? `<a class="more" href="${esc(u)}"${ext(u)}>${esc(c.link_label || T(ctx)('Read more', 'Soma zaidi'))} →</a>` : ''}</div></article>`;
       }).join('')}</div></div></section>`;
     },
-    stats(b) {
-      return `<section class="sx-stats"><div class="sx-wrap"><div class="row">${(b.items || []).map((s) => `<div><b>${esc(s.value)}</b><span>${esc(s.label)}</span></div>`).join('')}</div></div></section>`;
+    stats(b, ctx) {
+      const bg = imgUrl(ctx, b.image);
+      return `<section class="sx-stats ${bg ? 'has-bg' : ''}" ${bg ? `style="background-image:url('${esc(bg)}')"` : ''}><div class="sx-wrap"><div class="row">${(b.items || []).map((s) => `<div><b>${esc(s.value)}</b><span>${esc(s.label)}</span></div>`).join('')}</div></div></section>`;
     },
     news: (b) => `<section class="sx-sec"><div class="sx-wrap">${head(b)}<div class="sx-grid c3" data-load="news" data-limit="${num(b.limit, 3, 1, 12)}"><div class="sx-loading">…</div></div></div></section>`,
     events: (b) => `<section class="sx-sec alt"><div class="sx-wrap">${head(b)}<div class="sx-grid c3" data-load="event" data-limit="${num(b.limit, 3, 1, 12)}"><div class="sx-loading">…</div></div></div></section>`,
     announcements: (b) => `<section class="sx-sec"><div class="sx-wrap">${head(b)}<div class="sx-ann" data-load="announcements" data-limit="${num(b.limit, 5, 1, 10)}"><div class="sx-loading">…</div></div></div></section>`,
     library(b, ctx) {
-      const t = T(ctx);
-      return `<section class="sx-sec alt"><div class="sx-wrap">${head(b, `<a class="sx-link" href="/institution-opac.html?i=${encodeURIComponent(ctx.slug)}">${t('Full catalogue', 'Katalogi kamili')} →</a>`)}${b.show_search !== false ? `<form class="sx-search" data-lib-search><input type="search" placeholder="${esc(t('Search title, author, subject…', 'Tafuta kichwa, mwandishi, somo…'))}" aria-label="${esc(t('Search books', 'Tafuta vitabu'))}"><button class="sx-btn primary" type="submit">${t('Search', 'Tafuta')}</button></form>` : ''}<div class="sx-books" data-load="books" data-limit="${num(b.limit, 6, 3, 24)}"><div class="sx-loading">…</div></div></div></section>`;
+      const t = T(ctx); const mode = ['both', 'books', 'ebooks'].includes(b.mode) ? b.mode : 'both'; const lim = num(b.limit, 8, 3, 24);
+      const tabs = mode === 'both' ? `<div class="sx-tabs" role="tablist"><button type="button" class="on" role="tab" data-libtab="books"><i class="fa-solid fa-book"></i> ${t('Library books (OPAC)', 'Vitabu vya maktaba (OPAC)')}</button><button type="button" role="tab" data-libtab="ebooks"><i class="fa-solid fa-laptop"></i> ${t('E-Library (e-books)', 'Maktaba Mtandao (e-books)')}</button></div>` : '';
+      return `<section class="sx-sec alt" id="library"><div class="sx-wrap">${head(b, `<a class="sx-link" href="/institution-opac.html?i=${encodeURIComponent(ctx.slug)}">${t('Full catalogue', 'Katalogi kamili')} →</a>`)}<div class="sx-lib" data-lib data-mode="${mode}">${b.show_search !== false ? `<form class="sx-search" data-lib-search><input type="search" placeholder="${esc(t('Search title, author, subject…', 'Tafuta kichwa, mwandishi, somo…'))}" aria-label="${esc(t('Search the library', 'Tafuta maktaba'))}"><button class="sx-btn primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i> ${t('Search', 'Tafuta')}</button></form>` : ''}${tabs}
+        ${mode !== 'ebooks' ? `<div class="sx-books" data-load="books" data-limit="${lim}"><div class="sx-loading">…</div></div>` : ''}${mode !== 'books' ? `<div class="sx-ebooks" data-load="ebooks" data-limit="${lim}" ${mode === 'both' ? 'hidden' : ''}><div class="sx-loading">…</div></div>` : ''}</div></div></section>`;
+    },
+    slider(b, ctx) {
+      const items = (b.items || []).filter((x) => x && (x.title || x.image)); if (!items.length) return '';
+      const sec = num(b.interval, 6, 3, 15);
+      return `<section class="sx-slider ${b.height === 'normal' ? '' : 'tall'}" data-slider data-interval="${sec}" aria-roledescription="carousel"><div class="slides">${items.map((x, n) => {
+        const bg = imgUrl(ctx, x.image); const H = n === 0 ? 'h1' : 'h2';
+        return `<div class="slide ${n === 0 ? 'on' : ''}" ${bg ? `style="background-image:url('${esc(bg)}')"` : ''}><div class="sx-wrap"><div class="in"><${H}>${esc(x.title)}</${H}>${x.subtitle ? `<p>${esc(x.subtitle)}</p>` : ''}<div class="sx-btns">${btn(x.button_label, x.button_link, 'accent')}</div></div></div></div>`;
+      }).join('')}</div>${items.length > 1 ? `<button type="button" class="nav prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button><button type="button" class="nav next" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button><div class="dots">${items.map((x, n) => `<button type="button" class="${n === 0 ? 'on' : ''}" data-dot="${n}" aria-label="Slide ${n + 1}"></button>`).join('')}</div>` : ''}</section>`;
+    },
+    quicklinks(b) {
+      return `<section class="sx-quick"><div class="sx-wrap"><div class="grid">${(b.items || []).map((x) => {
+        const u = safeLink(x.link); const ic = /^fa-[a-z0-9-]{2,40}$/.test(x.icon || '') ? x.icon : 'fa-arrow-right';
+        return `<a class="q" ${u ? `href="${esc(u)}"` : ''}${u ? ext(u) : ''}><i class="fa-solid ${esc(ic)}"></i><span><b>${esc(x.title)}</b>${x.text ? `<small>${esc(x.text)}</small>` : ''}</span></a>`;
+      }).join('')}</div></div></section>`;
+    },
+    steps(b) {
+      return `<section class="sx-sec"><div class="sx-wrap">${head(b)}<ol class="sx-steps">${(b.items || []).map((x, n) => `<li><span class="n">${n + 1}</span><h3>${esc(x.title)}</h3>${x.text ? `<p>${esc(x.text)}</p>` : ''}</li>`).join('')}</ol></div></section>`;
+    },
+    register(b, ctx) {
+      const t = T(ctx); const im = imgUrl(ctx, b.image);
+      const benefits = String(b.benefits_text || '').split('\n').map((x) => x.trim()).filter(Boolean).slice(0, 8);
+      const progs = (ctx.programmes || []);
+      const f = (n, label, o = {}) => `<label class="sx-f ${o.wide ? 'wide' : ''}"><span>${esc(label)}${o.req ? ' *' : ''}</span><input name="${n}" type="${o.type || 'text'}" ${o.req ? 'required' : ''} maxlength="${o.max || 120}" autocomplete="${o.ac || 'off'}" ${o.min ? `minlength="${o.min}"` : ''}></label>`;
+      return `<section class="sx-sec" id="register"><div class="sx-wrap"><div class="sx-reg"><aside ${im ? `style="background-image:url('${esc(im)}')"` : ''}><div class="ov">${b.heading ? `<h2>${esc(b.heading)}</h2>` : ''}${b.intro ? `<p>${esc(b.intro)}</p>` : ''}${benefits.length ? `<ul>${benefits.map((x) => `<li><i class="fa-solid fa-circle-check"></i> ${esc(x)}</li>`).join('')}</ul>` : ''}</div></aside>
+        <form class="sx-form" data-register data-success="${esc(b.success || t('Welcome! Your account is ready.', 'Karibu! Akaunti yako iko tayari.'))}" novalidate>
+          ${f('first_name', t('First name', 'Jina la kwanza'), { req: 1, ac: 'given-name' })}${f('last_name', t('Last name', 'Jina la mwisho'), { req: 1, ac: 'family-name' })}
+          <label class="sx-f"><span>${t('Gender', 'Jinsia')}</span><select name="gender"><option value="">${t('Select…', 'Chagua…')}</option><option value="male">${t('Male', 'Kiume')}</option><option value="female">${t('Female', 'Kike')}</option></select></label>
+          ${f('phone', t('Phone number', 'Namba ya simu'), { req: 1, type: 'tel', ac: 'tel', max: 24 })}
+          ${f('email', t('Email (used to sign in)', 'Barua pepe (utaitumia kuingia)'), { req: 1, type: 'email', ac: 'email', wide: 1 })}
+          ${progs.length ? `<label class="sx-f wide"><span>${t('Programme', 'Programu')}</span><select name="programme_id"><option value="">${t('Select…', 'Chagua…')}</option>${progs.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label>` : ''}
+          ${f('password', t('Password (8+ characters)', 'Nenosiri (herufi 8+)'), { req: 1, type: 'password', ac: 'new-password', min: 8 })}${f('password_confirm', t('Repeat password', 'Rudia nenosiri'), { req: 1, type: 'password', ac: 'new-password', min: 8 })}
+          <input class="sx-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <div class="sx-msg" role="alert"></div><button class="sx-btn primary wide" type="submit"><i class="fa-solid fa-user-plus"></i> ${t('Create my student account', 'Fungua akaunti yangu ya mwanafunzi')}</button>
+          <p class="sx-note-s">${t('Already registered?', 'Umeshajisajili?')} <a href="/institution-login.html?i=${encodeURIComponent((ctx.inst && ctx.inst.id) || '')}&s=${encodeURIComponent(ctx.slug)}">${t('Sign in to your dashboard', 'Ingia kwenye dashibodi yako')}</a></p></form></div></div></section>`;
     },
     apply(b, ctx) {
       const t = T(ctx);
@@ -157,7 +211,7 @@
     gallery(b, ctx) {
       return `<section class="sx-sec"><div class="sx-wrap">${head(b)}<div class="sx-gallery">${(b.items || []).map((g) => { const u = imgUrl(ctx, g.image); return u ? `<figure><a href="${esc(u)}" data-zoom><img src="${esc(u)}" alt="${esc(g.caption || '')}" loading="lazy"></a>${g.caption ? `<figcaption>${esc(g.caption)}</figcaption>` : ''}</figure>` : ''; }).join('')}</div></div></section>`;
     },
-    cta: (b) => `<section class="sx-cta"><div class="sx-wrap"><h2>${esc(b.heading)}</h2>${b.text ? `<p>${esc(b.text)}</p>` : ''}${btn(b.button_label, b.button_link, 'light')}</div></section>`,
+    cta: (b, ctx) => `<section class="sx-cta ${imgUrl(ctx, b.image) ? 'has-bg' : ''}" ${imgUrl(ctx, b.image) ? `style="background-image:url('${esc(imgUrl(ctx, b.image))}')"` : ''}><div class="sx-wrap"><h2>${esc(b.heading)}</h2>${b.text ? `<p>${esc(b.text)}</p>` : ''}${btn(b.button_label, b.button_link, 'light')}</div></section>`,
     quote(b, ctx) {
       const im = imgUrl(ctx, b.image);
       return `<section class="sx-sec alt"><div class="sx-wrap narrow"><blockquote class="sx-quote"><p>${esc(b.text)}</p><footer>${im ? `<img src="${esc(im)}" alt="" loading="lazy">` : ''}<span><b>${esc(b.author)}</b>${b.role ? `<small>${esc(b.role)}</small>` : ''}</span></footer></blockquote></div></section>`;
@@ -192,6 +246,14 @@
     return `<a class="sx-book" href="/institution-opac.html?i=${encodeURIComponent(ctx.slug)}&q=${encodeURIComponent(b.title)}"><span class="cv">${esc((b.title || '?').charAt(0).toUpperCase())}${b.has_cover ? `<img src="/api/institution/books/${b.id}/cover" alt="" loading="lazy" onerror="this.remove()">` : ''}</span><span class="mt"><b>${esc(b.title)}</b><small>${esc(b.author || '')}</small><em class="${esc(b.status)}">${esc(st)}</em></span></a>`;
   }
 
+  function ebookCard(ctx, r) {
+    const t = T(ctx); const b = `/api/institution/public/${encodeURIComponent(ctx.slug)}/resources/${r.id}/file`;
+    const ty = String(r.res_type || 'file').replace(/[^a-z0-9 _-]/gi, '').slice(0, 14);
+    const acts = [r.allow_view ? `<a class="sx-btn primary sm" href="${b}?mode=view" target="_blank" rel="noopener"><i class="fa-solid fa-book-open-reader"></i> ${t('Read', 'Soma')}</a>` : '', r.allow_download ? `<a class="sx-btn light sm" href="${b}?mode=download"><i class="fa-solid fa-download"></i> ${t('Download', 'Pakua')}</a>` : ''].join('')
+      || `<a class="sx-btn light sm" href="/institution-start.html?i=${encodeURIComponent(ctx.slug)}"><i class="fa-solid fa-lock"></i> ${t('Sign in to read', 'Ingia kusoma')}</a>`;
+    return `<article class="sx-ebook"><span class="th"><i class="fa-solid fa-file-pdf"></i><img src="/api/institution/resources/${r.id}/thumb" alt="" loading="lazy" onerror="this.remove()"></span><span class="mt"><b>${esc(r.title)}</b><small>${esc(r.author || '')}</small><em>${esc(ty.toUpperCase())}${r.category ? ' · ' + esc(r.category) : ''}</em><span class="act">${acts}</span></span></article>`;
+  }
+
   async function loadBlock(el, ctx) {
     const kind = el.dataset.load; const limit = el.dataset.limit || 6; const t = T(ctx);
     try {
@@ -201,6 +263,10 @@
       } else if (kind === 'announcements') {
         const d = await getJson(base(ctx));
         el.innerHTML = d.announcements.length ? d.announcements.slice(0, Number(limit)).map((a) => `<div class="sx-note"><b>${esc(a.title)}</b><p>${esc(a.body)}</p><small>${esc(fdate(ctx, String(a.created_at).slice(0, 10)))}</small></div>`).join('') : empty(ctx, 'No announcements.', 'Hakuna matangazo.');
+      } else if (kind === 'ebooks') {
+        const q = el.dataset.q || '';
+        const d = await getJson(`${base(ctx)}/resources?limit=${limit}${q ? '&q=' + encodeURIComponent(q) : ''}`);
+        el.innerHTML = d.resources.length ? d.resources.map((r) => ebookCard(ctx, r)).join('') : empty(ctx, 'No e-books found.', 'Hakuna vitabu vya kidijitali vilivyopatikana.');
       } else if (kind === 'books') {
         const q = el.dataset.q || '';
         const d = await getJson(`${base(ctx)}/books?limit=${limit}${q ? '&q=' + encodeURIComponent(q) : ''}&sort=year`);
@@ -226,7 +292,7 @@
     }).catch(() => {});
   }
 
-  async function submitForm(form, ctx, path, mapper) {
+  async function submitForm(form, ctx, path, mapper, onOk) {
     const t = T(ctx); const msg = form.querySelector('.sx-msg'); const b = form.querySelector('button[type=submit]');
     msg.className = 'sx-msg'; msg.textContent = '';
     let bad = null;
@@ -238,27 +304,66 @@
     const label = b.textContent; b.disabled = true; b.textContent = t('Sending…', 'Inatuma…');
     try {
       const data = {}; new FormData(form).forEach((v, k) => { data[k] = v; });
-      await getJson(`${base(ctx)}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mapper ? mapper(data) : data) });
+      const res = await getJson(`${base(ctx)}${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mapper ? mapper(data) : data) });
       form.reset(); msg.className = 'sx-msg ok show'; msg.textContent = form.dataset.success || t('Thank you!', 'Asante!');
+      if (onOk) { onOk(res); return; }
     } catch (e) { msg.className = 'sx-msg err show'; msg.textContent = e.message || t('Something went wrong. Please try again.', 'Hitilafu imetokea. Tafadhali jaribu tena.'); }
     finally { b.disabled = false; b.textContent = label; }
   }
 
+  function initSliders(root) {
+    root.querySelectorAll('[data-slider]').forEach((sl) => {
+      if (sl.__init) return; sl.__init = true;
+      const slides = [...sl.querySelectorAll('.slide')]; const dots = [...sl.querySelectorAll('[data-dot]')]; let n = 0; let paused = false;
+      const go = (i) => { n = (i + slides.length) % slides.length; slides.forEach((x, k) => x.classList.toggle('on', k === n)); dots.forEach((x, k) => x.classList.toggle('on', k === n)); };
+      sl.addEventListener('click', (e) => { const d = e.target.closest('[data-dot]'); if (d) go(Number(d.dataset.dot)); else if (e.target.closest('.next')) go(n + 1); else if (e.target.closest('.prev')) go(n - 1); });
+      sl.addEventListener('mouseenter', () => { paused = true; }); sl.addEventListener('mouseleave', () => { paused = false; });
+      sl.addEventListener('focusin', () => { paused = true; }); sl.addEventListener('focusout', () => { paused = false; });
+      const calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (slides.length > 1 && !calm) {
+        const every = Math.max(3, Number(sl.dataset.interval) || 6) * 1000;
+        const timer = setInterval(() => { if (!sl.isConnected) { clearInterval(timer); return; } if (!paused && !document.hidden) go(n + 1); }, every);
+      }
+    });
+  }
+  // Gentle fade-in while scrolling; if anything goes wrong, everything is simply shown.
+  function reveal(root) {
+    if (!('IntersectionObserver' in window) || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    const blocks = root.querySelectorAll('.sx-block'); if (!blocks.length) return;
+    document.documentElement.classList.add('sx-js');
+    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('sx-in'); io.unobserve(en.target); } }), { threshold: 0.08 });
+    blocks.forEach((b, k) => { if (k < 2) b.classList.add('sx-in'); else io.observe(b); });
+    setTimeout(() => blocks.forEach((b) => b.classList.add('sx-in')), 4000);
+  }
+
   S.hydrate = (root, ctx) => {
     root.querySelectorAll('[data-load]').forEach((el) => loadBlock(el, ctx));
+    initSliders(root);
+    if (!ctx.preview) {
+      if (location.hash === '#ebooks') { const tb = root.querySelector('[data-libtab=ebooks]'); if (tb) tb.click(); }
+      reveal(root);
+    }
     if (root.__sx) return; root.__sx = true;
     root.addEventListener('click', (e) => {
       const post = e.target.closest('[data-post]'); if (post) { openPost(ctx, post.dataset.post); return; }
+      const tab = e.target.closest('[data-libtab]');
+      if (tab) { const lib = tab.closest('[data-lib]'); lib.querySelectorAll('[data-libtab]').forEach((x) => x.classList.toggle('on', x === tab)); lib.querySelectorAll('[data-load]').forEach((x) => { x.hidden = x.dataset.load !== tab.dataset.libtab; }); return; }
       const z = e.target.closest('[data-zoom]');
       if (z) { e.preventDefault(); const back = document.createElement('div'); back.className = 'sx-modal'; back.innerHTML = `<div class="box zoom"><button class="x" aria-label="Close">&times;</button><img src="${esc(z.getAttribute('href'))}" alt=""></div>`; back.addEventListener('click', (ev) => { if (ev.target === back || ev.target.closest('.x')) back.remove(); }); document.body.appendChild(back); }
     });
     root.addEventListener('keydown', (e) => { if (e.key === 'Enter') { const post = e.target.closest && e.target.closest('[data-post]'); if (post) openPost(ctx, post.dataset.post); } });
     root.addEventListener('submit', (e) => {
       const f = e.target;
-      if (f.matches('[data-lib-search]')) { e.preventDefault(); const box = f.parentElement.querySelector('[data-load=books]'); box.dataset.q = f.querySelector('input').value.trim(); box.innerHTML = '<div class="sx-loading">…</div>'; loadBlock(box, ctx); }
+      if (f.matches('[data-lib-search]')) { e.preventDefault(); const q = f.querySelector('input').value.trim(); f.closest('[data-lib]').querySelectorAll('[data-load]').forEach((box) => { box.dataset.q = q; box.innerHTML = '<div class="sx-loading">…</div>'; loadBlock(box, ctx); }); }
       else if (f.matches('[data-apply]')) {
         e.preventDefault();
         submitForm(f, ctx, '/apply', (d) => { const p = d.programme || ''; const out = { ...d }; delete out.programme; if (/^\d+$/.test(p)) out.programme_id = Number(p); else if (p.startsWith('t:')) out.programme_label = p.slice(2); return out; });
+      } else if (f.matches('[data-register]')) {
+        e.preventDefault();
+        const t = T(ctx); const msg = f.querySelector('.sx-msg');
+        if (f.password.value !== f.password_confirm.value) { msg.className = 'sx-msg err show'; msg.textContent = t('The two passwords do not match.', 'Manenosiri mawili hayafanani.'); return; }
+        submitForm(f, ctx, '/register', (d) => { const out = { ...d }; if (/^\d+$/.test(out.programme_id || '')) out.programme_id = Number(out.programme_id); else delete out.programme_id; return out; },
+          (res) => { msg.textContent = (f.dataset.success || '') + (res.student_no ? ' ' + t('Your student number:', 'Namba yako ya mwanafunzi:') + ' ' + res.student_no + '. ' : ' ') + t('Opening your dashboard…', 'Inafungua dashibodi yako…'); setTimeout(() => { location.href = '/institution-app.html'; }, 1800); });
       } else if (f.matches('[data-contact]')) { e.preventDefault(); submitForm(f, ctx, '/contact'); }
     });
   };
