@@ -621,12 +621,20 @@ export async function publicRegisterStudent({ request, env, params }) {
   } catch (e) { return errorResponse(e); }
 }
 
-// Entry page: which institution websites are live? (name + slug only)
-export async function publicSites({ env }) {
+// Entry page: look up ONE institution website by its own link (?i=<slug or id>).
+// Privacy: this endpoint never lists institutions. Without ?i= it returns an empty
+// list, so one institution's name can never show up for people who belong to
+// (or are signing in to) another institution.
+export async function publicSites({ env, url }) {
+  const want = String((url && url.searchParams.get('i')) || '').trim().slice(0, 60);
+  if (!want || !/^[a-z0-9-]+$/i.test(want)) {
+    return json({ sites: [] }, { headers: { 'Cache-Control': 'no-store' } });
+  }
   const { results } = await env.DB.prepare(
-    `SELECT i.id, i.name, i.slug, i.inst_type FROM ins_institutions i JOIN ins_site_config c ON c.institution_id = i.id WHERE c.enabled = 1 ORDER BY i.name LIMIT 50`
-  ).all();
-  return json({ sites: results }, { headers: { 'Cache-Control': 'public, max-age=60' } });
+    `SELECT i.id, i.name, i.slug, i.inst_type FROM ins_institutions i JOIN ins_site_config c ON c.institution_id = i.id
+     WHERE c.enabled = 1 AND (i.slug = ?1 OR CAST(i.id AS TEXT) = ?1) LIMIT 1`
+  ).bind(want).all();
+  return json({ sites: results }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
 // ---------------------------------------------------------------------

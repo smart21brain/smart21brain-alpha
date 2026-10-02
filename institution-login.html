@@ -100,6 +100,7 @@ if(!ok){var p=new URLSearchParams();p.set('go',location.hash==='#register'?'admi
       var btn = form.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<span class="in-spin"></span> Please wait…';
       IN.api.post(path, IN.formData(form)).then(function () {
         btn.innerHTML = '<i class="fa-solid fa-check"></i> Success';
+        try { localStorage.removeItem('in-inst-id'); } catch (e) {}   // never carry another person's institution over on a shared browser
         location.href = 'institution-app.html';
       }).catch(function (ex) {
         err.textContent = ex.message; err.classList.add('show'); btn.disabled = false; btn.textContent = label;

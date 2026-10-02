@@ -85,24 +85,37 @@
     });
   }
 
-  function chooser(sites) {
-    box.innerHTML = '<span class="logo"><i class="fa-solid fa-building-columns"></i></span><h1>Smart21Institution</h1><p class="sub">' + t('Choose your institution', 'Chagua taasisi yako') + '</p><div class="pick">' +
-      sites.map(function (s) { return '<a href="?i=' + encodeURIComponent(s.slug) + (go ? '&go=' + go : '') + '">' + esc(s.name) + '<i class="fa-solid fa-arrow-right"></i></a>'; }).join('') + '</div>' +
-      '<div class="links"><a href="institution-login.html?via=start">' + t('Staff sign in', 'Wafanyakazi: ingia') + '</a></div>';
-  }
-  function none() {
-    box.innerHTML = '<span class="logo"><i class="fa-solid fa-building-columns"></i></span><h1>Smart21Institution</h1><p class="sub">' + t('No institution website is live yet. Staff can sign in to set one up.', 'Hakuna tovuti ya taasisi iliyo hewani bado. Wafanyakazi wanaweza kuingia kuiandaa.') + '</p><div class="cards"><a class="card dash" href="institution-login.html?via=start"><i class="big fa-solid fa-gauge"></i><b>' + t('Dashboard', 'Dashibodi') + '</b><span class="go">' + t('Sign in', 'Ingia') + ' →</span></a><a class="card" href="institution-login.html?via=start#register"><i class="big fa-solid fa-building-columns"></i><b>' + t('Register your institution', 'Sajili taasisi yako') + '</b><span class="go">' + t('Start', 'Anza') + ' →</span></a></div>';
+  // Neutral entry page: shown to anyone who did not come through a specific institution's own link.
+  // It never lists or names any institution — every person signs in with their own account and
+  // lands in their own institution's workspace (their own data, nobody else's).
+  function generic() {
+    var loginUrl = 'institution-login.html?via=start';
+    box.innerHTML = '<span class="logo"><i class="fa-solid fa-building-columns"></i></span><h1>Smart21Institution</h1>' +
+      '<p class="sub">' + t('Sign in to your own institution, or register a new one. Each institution has its own private records.', 'Ingia kwenye taasisi yako mwenyewe, au sajili taasisi mpya. Kila taasisi ina rekodi zake binafsi.') + '</p>' +
+      '<div class="cards">' +
+      '<a class="card dash" href="' + loginUrl + '"><i class="big fa-solid fa-right-to-bracket"></i><b>' + t('Sign in', 'Ingia') + '</b><span>' + t('Administrators, teachers, librarians and students: use your email and password.', 'Wasimamizi, walimu, wasimamizi wa maktaba na wanafunzi: tumia barua pepe na nenosiri lako.') + '</span><span class="go">' + t('Continue', 'Endelea') + ' <i class="fa-solid fa-arrow-right"></i></span></a>' +
+      '<a class="card" href="' + loginUrl + '#register"><i class="big fa-solid fa-building-columns"></i><b>' + t('Register my institution', 'Sajili taasisi yangu') + '</b><span>' + t('Create a new, empty workspace that only you and the people you add can open.', 'Fungua nafasi mpya tupu ambayo ni wewe na uliowaongeza tu wanaweza kuifungua.') + '</span><span class="go">' + t('Start', 'Anza') + ' <i class="fa-solid fa-arrow-right"></i></span></a>' +
+      '</div>' +
+      '<div class="links"><span style="opacity:.75">' + t('Student? Open the link your institution gave you.', 'Mwanafunzi? Fungua kiungo ulichopewa na taasisi yako.') + '</span>' +
+      '<button id="lang" type="button"><i class="fa-solid fa-language"></i> ' + (sw ? 'English' : 'Kiswahili') + '</button></div>';
+    document.getElementById('lang').addEventListener('click', function () { try { localStorage.setItem('s21-lang', sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
   }
 
-  Promise.all([getJson('/api/institution/public-sites'), getJson('/api/institution/context')]).then(function (r) {
-    var sites = (r[0] && r[0].sites) || []; var me = r[1] && r[1].user ? r[1] : null;
-    var site = null;
-    if (want) site = sites.filter(function (s) { return s.slug === want || String(s.id) === want; })[0];
-    if (!site && me && me.institution) site = sites.filter(function (s) { return s.id === me.institution.id; })[0] || null;
-    if (!site && sites.length === 1) site = sites[0];
-    if (site) show(site, me); else if (sites.length) chooser(sites); else none();
+  // Which institution (if any) is this visit about? Only (1) the institution whose own link was opened
+  // (?i=...) or (2) the institution the signed-in person already belongs to. Never "the first one in the database".
+  getJson('/api/institution/context').then(function (me) {
+    me = me && me.user ? me : null;
+    var slug = want || (me && me.institution ? me.institution.slug : '');
+    if (!slug) return generic();
+    getJson('/api/institution/public-sites?i=' + encodeURIComponent(slug)).then(function (r) {
+      var site = r && r.sites && r.sites[0] ? r.sites[0] : null;
+      // A signed-in person may only see their OWN institution's page; a stranger's link falls back to the neutral page.
+      if (site && me && me.institution && want && String(site.id) !== String(me.institution.id)) me = null;
+      if (site) return show(site, me);
+      if (me && me.institution && !want) return location.replace('institution-app.html');
+      generic();
+    });
   });
-})();
 </script>
 </body>
 </html>

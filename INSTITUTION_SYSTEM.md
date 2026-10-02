@@ -45,6 +45,14 @@ Cron (daily 02:00 UTC)  →  weekly automatic backup for every institution
 | Import, backup & restore | `tools.js` | `admin.js` |
 | Sample data | `demo.js` | `dashboard.js` |
 
+### Private workspaces & the entry page
+* Every administrator who registers gets a **brand-new, empty institution** (their own categories, years, roles, settings). Nobody is added to anyone else's institution automatically.
+* `institution-start.html` is neutral by default: it only offers **Sign in** and **Register my institution** and never lists or names any institution.
+  An institution's name appears there only when someone opens **that institution's own link** (`institution-start.html?i=<slug>` or `/s/<slug>`), or when the signed-in person already belongs to it.
+* `GET /api/institution/public-sites` no longer lists institutions: it returns one institution only when `?i=<slug>` is given.
+* The browser's remembered institution (`in-inst-id`) is cleared at every sign-in/registration, and the server ignores any `X-Institution-Id` / `institution_id` that is not one of the person's own memberships.
+* Test: `node --no-warnings tests/tenant-isolation.test.mjs`
+
 ## 2. Roles and permissions (RBAC)
 
 Roles: Super Administrator, Administrator, Librarian, Staff, Teacher / Lecturer, Student

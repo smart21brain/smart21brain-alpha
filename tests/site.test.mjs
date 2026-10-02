@@ -128,7 +128,9 @@ r = await call('GET', '/api/institution/site-messages', { cookie: O }); ok(r.dat
 
 
 // --- student self-registration (home page) -> login + student record at once
-r = await call('GET', '/api/institution/public-sites'); ok(r.data.sites.length === 1 && r.data.sites[0].slug === 'demo', 'gateway lists the live site');
+r = await call('GET', '/api/institution/public-sites'); ok(r.data.sites.length === 0, 'gateway never lists institutions (privacy)');
+r = await call('GET', '/api/institution/public-sites?i=demo'); ok(r.data.sites.length === 1 && r.data.sites[0].slug === 'demo', 'gateway finds only the institution whose own link was opened');
+r = await call('GET', '/api/institution/public-sites?i=%27%20OR%201%3D1'); ok(r.data.sites.length === 0, 'gateway ignores malformed institution value');
 const reg = { first_name: 'Neema', last_name: 'Mushi', email: 'neema@x.test', phone: '+255 755 000 111', password: 'Secret123!', password_confirm: 'Secret123!', gender: 'female', programme_id: 1 };
 r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, password_confirm: 'nope' } }); ok(r.status === 400, 'password mismatch rejected');
 r = await call('POST', '/api/institution/public/demo/register', { body: { ...reg, password: 'short', password_confirm: 'short' } }); ok(r.status === 400, 'weak password rejected');
