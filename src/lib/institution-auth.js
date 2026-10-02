@@ -46,6 +46,8 @@ export const PERMISSIONS = [
   { group: 'Academics', key: 'results.enter',    label: 'Enter & change marks (teachers: own courses only)' },
   { group: 'Academics', key: 'results.all',      label: 'Enter & change marks for any course' },
   { group: 'System',    key: 'announcements.manage', label: 'Post & delete announcements' },
+  { group: 'Website',   key: 'site.manage',      label: 'Build & publish the institution website (pages, news, design)' },
+  { group: 'Website',   key: 'applications.manage', label: 'Review online applications & website messages' },
   { group: 'System',    key: 'reports.view',     label: 'View & export reports' },
   { group: 'System',    key: 'import.manage',    label: 'Import records from CSV / Excel' },
   { group: 'System',    key: 'users.manage',     label: 'Manage logins & roles' },

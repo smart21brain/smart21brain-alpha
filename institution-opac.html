@@ -30,7 +30,7 @@
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
   var slug = new URLSearchParams(location.search).get('i') || '';
   var app = document.getElementById('app');
-  var st = { q: '', field: 'all', status: '', sort: 'title', page: 1, tab: 'books' };
+  var st = { q: (new URLSearchParams(location.search).get('q') || '').slice(0, 120), field: 'all', status: '', sort: 'title', page: 1, tab: 'books' };
   var info = null;
   var STATUS = { available: t('Available', 'Ipo'), borrowed: t('Borrowed', 'Imekopwa'), reserved: t('Reserved', 'Imehifadhiwa'), lost: t('Lost', 'Imepotea'), damaged: t('Damaged', 'Imeharibika'), archived: t('Archived', 'Kumbukumbu'), unavailable: t('No copies', 'Hakuna nakala') };
 

@@ -267,3 +267,28 @@ Open the sidebar items you can see. You can search the catalogue and E-Library, 
 * **My library:** books you have, due dates, renew, reservations, fines, history.
 * **E-Library:** *Read* online or *Download* (if the institution allowed it).
 * **My results:** marks, grades and GPA. **Announcements** and the 🔔 bell show notices and reminders.
+
+---
+
+# Website module (website builder + public site + online applications)
+
+Smart21Institution is now also a **website for the institution**, not only a dashboard.
+
+* **Public website:** `/s/<institution-slug>` (home) and `/s/<slug>/<page>` — served by `institution-site.html`, styled by `css/institution-site.css`, drawn by `js/institution/site-render.js`. Menu with one level of drop-down, theme colours/fonts, English/Kiswahili switch, footer with social links, mobile menu.
+* **Website builder (in the app, sidebar → Website):** `js/institution/site-builder.js`
+  * *Pages* — each page is a list of **blocks**: banner, text (+picture), cards, numbers, latest news, events, announcements, **live library books** (from the OPAC), **online application form**, contact form, FAQ, gallery, call-to-action, quote, leader message, spacer. Add / reorder / copy / delete blocks, live desktop/mobile preview, drafts vs published.
+  * *News & events*, *Pictures* (media library, stored in R2), *Design & settings* (colours, font, corners, header button, footer links, publish switch, public catalogue switch).
+  * **Starter website** — one click builds Home, About, Programmes, Library, News & events, Apply, Contact from the institution's own details and programmes.
+* **Online registration:** visitors fill the Apply form → *Applications & messages* in the app (new / reviewing / accepted / rejected) → **Enrol as student** creates a real student record (next student number, programme, contact details). Contact-form messages arrive in the same screen. Admins get an in-app notification.
+* **Library on the website:** the *Library books* block lists live books with availability; the catalogue link opens `institution-opac.html?i=<slug>` (search, reserve after sign-in).
+
+New files: `institution-site-schema.sql`, `src/handlers/institution/site.js`, `institution-site.html`, `css/institution-site.css`, `js/institution/site-render.js`, `js/institution/site-builder.js`, `tests/site.test.mjs`, `tests/site-render.test.mjs`.
+New permissions: `site.manage` (build & publish), `applications.manage` (review applications/messages). Super Administrator and Administrator get them; give them to other roles in *Roles & permissions*.
+
+**Security:** page content is stored as validated JSON and **escaped when drawn** (an editor can never inject a script); links must be https/mailto/tel/`/path`; images must be an uploaded picture or https URL; public forms have a hidden honeypot, 5 submissions/hour per visitor (IP stored only as a hash) and are closed when the site is switched off; every query is filtered by institution.
+
+**Deploy:** `wrangler d1 execute smart21brain-db --file=./institution-site-schema.sql --remote` then `wrangler deploy`. Then: sign in → Website → *Create starter website* → *Design & settings* → switch **Website is live** (and *Public catalogue*).
+
+**Tests:** `node --no-warnings tests/site.test.mjs` (57 checks: permissions, tenant isolation, sanitising, uploads, applications, enrol, limits, routes) and `node --no-warnings tests/site-render.test.mjs` (27 checks: escaping of every block type).
+
+**Not built yet (honest list):** custom domain per institution (sites live under `/s/<slug>`; a domain can be pointed at it with a Cloudflare rule), e-mail/SMS notice to applicants, online payment of application fees, drag-and-drop (blocks move with arrow buttons), multi-language page content (one language per page; the menu/labels switch).

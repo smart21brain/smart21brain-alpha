@@ -24,6 +24,9 @@
     results: { mod: 'results', nav: 'results', title: IN.t('Marks & results', 'Alama na matokeo') },
     'my-results': { mod: 'myResults', nav: 'my-results', title: IN.t('My results', 'Matokeo yangu') },
     'my-profile': { mod: 'myProfile', nav: 'my-profile', title: IN.t('My profile', 'Wasifu wangu') },
+    website: { mod: 'website', nav: 'website', title: IN.t('Website', 'Tovuti') },
+    'site-page': { mod: 'sitePage', nav: 'website', title: IN.t('Edit page', 'Hariri ukurasa') },
+    applications: { mod: 'applications', nav: 'applications', title: IN.t('Applications & messages', 'Maombi na jumbe') },
     announcements: { mod: 'announcements', nav: 'announcements', title: IN.t('Announcements', 'Matangazo') },
     reports: { mod: 'reports', nav: 'reports', title: IN.t('Reports', 'Ripoti') },
     import: { mod: 'import', nav: 'import', title: IN.t('Import records', 'Leta rekodi') },
@@ -58,6 +61,10 @@
         { r: 'staff', i: 'fa-chalkboard-user', l: IN.t('Staff', 'Wafanyakazi'), show: c('staff.view') },
         { r: 'courses', i: 'fa-book-open-reader', l: IN.t('Courses & programmes', 'Kozi na programu'), show: c('academics.view') || c('academics.manage') },
         { r: 'results', i: 'fa-pen-to-square', l: IN.t('Marks & results', 'Alama na matokeo'), show: c('results.enter') || c('results.all') || c('academics.view') },
+      ] },
+      { group: IN.t('Website', 'Tovuti'), items: [
+        { r: 'website', i: 'fa-globe', l: IN.t('Website builder', 'Jenga tovuti'), show: c('site.manage') },
+        { r: 'applications', i: 'fa-user-plus', l: IN.t('Applications & messages', 'Maombi na jumbe'), show: c('applications.manage') },
       ] },
       { group: IN.t('Administration', 'Utawala'), items: [
         { r: 'reports', i: 'fa-chart-pie', l: IN.t('Reports', 'Ripoti'), show: c('reports.view') || c('academics.view') || c('audit.view') },

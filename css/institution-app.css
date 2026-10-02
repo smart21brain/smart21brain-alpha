@@ -488,3 +488,26 @@ body.in-body { background-image: url("../images/institution/bg-app-light.svg"); 
   .in-books { grid-template-columns: 1fr; }
   .in-btn, .in-icon-btn { min-height: 42px; }
 }
+
+/* ---- Website builder (screens in js/institution/site-builder.js) ---- */
+.in-site-editor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 1.1rem; align-items: start; }
+.in-site-preview { position: sticky; top: 76px; }
+.in-site-frame { border: 1px solid var(--in-border); border-radius: 14px; background: #fff; overflow: auto; max-height: calc(100vh - 150px); margin-inline: auto; transition: max-width .2s; }
+.in-site-preview .in-btn.on { background: var(--in-primary); color: #fff; }
+.in-site-block .in-site-bh { background: none; border: 0; text-align: left; display: flex; gap: .55rem; align-items: center; cursor: pointer; font: inherit; color: var(--in-text); flex: 1; min-width: 0; padding: .1rem 0; }
+.in-site-block .in-site-bh span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.in-site-fields { margin-top: .9rem; display: grid; gap: .8rem; border-top: 1px solid var(--in-border); padding-top: .9rem; }
+.in-site-item { border: 1px solid var(--in-border); border-radius: 12px; padding: .7rem; display: grid; gap: .6rem; background: var(--in-card-alt, transparent); }
+.in-thumb { width: 56px; height: 42px; border-radius: 8px; border: 1px solid var(--in-border); display: grid; place-items: center; overflow: hidden; color: var(--in-muted); flex: none; }
+.in-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.in-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: .6rem; }
+.in-pick { position: relative; aspect-ratio: 4/3; border: 2px solid var(--in-border); border-radius: 12px; overflow: hidden; padding: 0; background: var(--in-card, #fff); cursor: pointer; }
+.in-pick.on, button.in-pick:hover { border-color: var(--in-primary); }
+.in-pick img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.in-pick .in-btn { position: absolute; right: 6px; top: 6px; }
+.in-block-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .6rem; }
+.in-block-pick button { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 1rem .6rem; border: 1px solid var(--in-border); background: none; border-radius: 14px; cursor: pointer; font: inherit; color: var(--in-text); text-align: center; }
+.in-block-pick button:hover { border-color: var(--in-primary); background: var(--in-primary-soft, rgba(15,118,110,.08)); }
+.in-block-pick i { font-size: 1.4rem; color: var(--in-primary); }
+#spSave.pulse { box-shadow: 0 0 0 4px rgba(245,158,11,.35); }
+@media (max-width: 1100px) { .in-site-editor { grid-template-columns: 1fr; } .in-site-preview { position: static; } .in-site-frame { max-height: 70vh; } }

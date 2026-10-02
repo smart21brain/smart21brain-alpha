@@ -67,6 +67,7 @@ import * as insAcad from './handlers/institution/academics.js';
 import * as insInsights from './handlers/institution/insights.js';
 import * as insTools from './handlers/institution/tools.js';
 import * as insDemo from './handlers/institution/demo.js';
+import * as insSite from './handlers/institution/site.js';
 
 const router = new Router();
 
@@ -490,6 +491,37 @@ router.get('/api/institution/public/:slug/books', insLib.publicOpac);
 router.get('/api/institution/public/:slug/books/:id', insLib.publicBook);
 router.get('/api/institution/public/:slug/resources', insLib.publicResources);
 router.get('/api/institution/public/:slug/resources/:id/file', insEl.publicResourceFile);
+// Public website (no sign-in): site bundle, news & events, images, online application, contact form
+router.get('/api/institution/public/:slug/site', insSite.publicSiteBundle);
+router.get('/api/institution/public/:slug/posts', insSite.publicPosts);
+router.get('/api/institution/public/:slug/media/:id', insSite.publicMedia);
+router.post('/api/institution/public/:slug/apply', insSite.publicApply);
+router.post('/api/institution/public/:slug/contact', insSite.publicContact);
+// Website builder (needs sign-in + site.manage / applications.manage)
+router.get('/api/institution/site/config', insSite.getSiteConfig);
+router.put('/api/institution/site/config', insSite.saveSiteConfig);
+router.post('/api/institution/site/starter', insSite.createStarter);
+router.get('/api/institution/site/pages', insSite.listPages);
+router.post('/api/institution/site/pages', insSite.createPage);
+router.get('/api/institution/site/pages/:id', insSite.getPage);
+router.put('/api/institution/site/pages/:id', insSite.updatePage);
+router.delete('/api/institution/site/pages/:id', insSite.deletePage);
+router.get('/api/institution/site/media', insSite.listMedia);
+router.post('/api/institution/site/media', insSite.uploadMedia);
+router.get('/api/institution/site/media/:id/file', insSite.mediaFile);
+router.delete('/api/institution/site/media/:id', insSite.deleteMedia);
+router.get('/api/institution/site/posts', insSite.listAdminPosts);
+router.post('/api/institution/site/posts', insSite.createPost);
+router.get('/api/institution/site/posts/:id', insSite.getAdminPost);
+router.put('/api/institution/site/posts/:id', insSite.updatePost);
+router.delete('/api/institution/site/posts/:id', insSite.deletePost);
+router.get('/api/institution/applications', insSite.listApplications);
+router.put('/api/institution/applications/:id', insSite.updateApplication);
+router.post('/api/institution/applications/:id/enrol', insSite.enrolApplication);
+router.delete('/api/institution/applications/:id', insSite.deleteApplication);
+router.get('/api/institution/site-messages', insSite.listMessages);
+router.put('/api/institution/site-messages/:id', insSite.markMessage);
+router.delete('/api/institution/site-messages/:id', insSite.deleteMessage);
 // Settings, roles & permissions, logins
 router.get('/api/institution/info', insCore.getInstInfo);
 router.put('/api/institution/info', insCore.updateInstInfo);
@@ -681,6 +713,12 @@ export default {
           status: 500, headers: { 'Content-Type': 'application/json' },
         });
       }
+    }
+
+    // Institution public websites: /s/<institution-slug>[/<page>] all open the same page shell,
+    // which reads the slug and page from the address and loads them from /api/institution/public/*.
+    if (/^\/s\/[a-z0-9-]{1,40}(\/[a-z0-9-]{1,40})?\/?$/i.test(url.pathname) && request.method === 'GET') {
+      return env.ASSETS.fetch(new Request(new URL('/institution-site', request.url), request));
     }
 
     // Everything else: serve the static site from the assets binding.
