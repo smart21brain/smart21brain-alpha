@@ -39,6 +39,7 @@
         IN.closeModal(); IN.toast(IN.t(`Issued to ${r.borrower}. Due ${IN.date(r.due_date)}.`, `Imekopeshwa kwa ${r.borrower}. Rudisha ${IN.date(r.due_date)}.`)); IN.route();
       } });
     m.querySelector('#issueHost').replaceWith(...body.childNodes);
+    if (IN.attachScan) IN.attachScan(m.querySelector('[name=accession_no]'), { title: IN.t('Scan the book', 'Changanua kitabu') });
     if (prefillBook) { IN.api.get(`/books/${prefillBook}`).then((r) => kp.set({ id: r.book.id, label: r.book.title, sub: r.book.author })).catch(() => {}); }
   }
 
@@ -49,7 +50,8 @@
         ${loan.overdue ? `<div class="in-alert bad" style="margin-bottom:.8rem"><i class="fa-solid fa-clock"></i><div>${IN.t(`${loan.days_overdue} day(s) overdue. A fine will be added.`, `Imechelewa siku ${loan.days_overdue}. Faini itaongezwa.`)}</div></div>` : ''}
         ${IN.f.select('condition', IN.t('Condition of the book', 'Hali ya kitabu'), [['good', IN.t('Good', 'Nzuri')], ['damaged', IN.t('Damaged (fine applies)', 'Imeharibika (faini)')], ['lost', IN.t('Lost (fine applies)', 'Imepotea (faini)')]], { value: 'good', noBlank: true })}`,
       onSubmit: async (d) => {
-        const r = await IN.api.post('/loans/return', { loan_id: loan.id, condition: d.condition });
+        const r = await IN.api.queued('POST', '/loans/return', { loan_id: loan.id, condition: d.condition }, IN.t(`Return: ${loan.title} (${loan.borrower_name})`, `Kurudisha: ${loan.title} (${loan.borrower_name})`));
+        if (r.queued) { IN.closeModal(); after(); return; }
         IN.closeModal(); IN.toast(r.fine ? IN.t(`Returned. Fine of ${IN.money(r.fine)} added.`, `Imerudishwa. Faini ya ${IN.money(r.fine)} imeongezwa.`) : IN.t('Returned.', 'Imerudishwa.'), r.fine ? 'warn' : 'ok');
         if (r.held_for_next) IN.toast(IN.t('This copy is now held for the next person waiting.', 'Nakala hii imehifadhiwa kwa anayefuata.'), 'warn');
         after();
@@ -82,9 +84,11 @@
     const reload = (r = true) => { if (r) st.page = 1; load().catch((e) => { out.innerHTML = IN.errorBox(e); }); };
     el.querySelector('#lQ').addEventListener('input', IN.debounce((e) => { st.q = e.target.value.trim(); reload(); }, 300));
     const qr = el.querySelector('#quickReturn');
+    if (qr && IN.attachScan) IN.attachScan(el.querySelector('#qrCode'), { continuous: true, title: IN.t('Scan books to return', 'Changanua vitabu vya kurudisha'),
+      onCode: async (code) => { const r = await IN.api.queued('POST', '/loans/return', { accession_no: code, condition: 'good' }, IN.t(`Return: copy ${code}`, `Kurudisha: nakala ${code}`)); reload(false); return r.queued ? IN.t(`${code} — saved on this device, will be sent when online`, `${code} — imehifadhiwa kwenye kifaa, itatumwa mtandaoni`) : `"${r.title}" ${IN.t('returned', 'imerudishwa')}${r.fine ? ' · ' + IN.t('fine', 'faini') + ' ' + IN.money(r.fine) : ''}`; } });
     if (qr) qr.addEventListener('submit', async (e) => {
       e.preventDefault(); const code = el.querySelector('#qrCode').value.trim(); if (!code) return;
-      try { const r = await IN.api.post('/loans/return', { accession_no: code, condition: 'good' }); el.querySelector('#qrCode').value = ''; IN.toast(IN.t(`"${r.title}" returned.${r.fine ? ' Fine: ' + IN.money(r.fine) : ''}`, `"${r.title}" imerudishwa.${r.fine ? ' Faini: ' + IN.money(r.fine) : ''}`), r.fine ? 'warn' : 'ok'); reload(false); } catch (err) { IN.fail(err); }
+      try { const r = await IN.api.queued('POST', '/loans/return', { accession_no: code, condition: 'good' }, IN.t(`Return: copy ${code}`, `Kurudisha: nakala ${code}`)); el.querySelector('#qrCode').value = ''; if (r.queued) return; IN.toast(IN.t(`"${r.title}" returned.${r.fine ? ' Fine: ' + IN.money(r.fine) : ''}`, `"${r.title}" imerudishwa.${r.fine ? ' Faini: ' + IN.money(r.fine) : ''}`), r.fine ? 'warn' : 'ok'); reload(false); } catch (err) { IN.fail(err); }
     });
     IN.delegate(el, {
       tab: (b) => { st.filter = b.dataset.k; el.querySelectorAll('[data-act=tab]').forEach((x) => x.classList.toggle('on', x === b)); reload(); },

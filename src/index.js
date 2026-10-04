@@ -68,6 +68,9 @@ import * as insInsights from './handlers/institution/insights.js';
 import * as insTools from './handlers/institution/tools.js';
 import * as insDemo from './handlers/institution/demo.js';
 import * as insSite from './handlers/institution/site.js';
+import { flushOutbox } from './lib/institution-channels.js';
+import * as insDocs from './handlers/institution/documents.js';
+import * as insChan from './handlers/institution/channels.js';
 
 const router = new Router();
 
@@ -541,6 +544,12 @@ router.post('/api/institution/announcements', insCore.createAnnouncement);
 router.delete('/api/institution/announcements/:id', insCore.deleteAnnouncement);
 router.get('/api/institution/notifications', insCore.listNotifications);
 router.post('/api/institution/notifications/read', insCore.readNotifications);
+router.get('/api/institution/notification-settings', insChan.notificationSettings);
+router.put('/api/institution/notification-prefs', insChan.savePrefs);
+router.post('/api/institution/push/subscribe', insChan.pushSubscribe);
+router.post('/api/institution/push/unsubscribe', insChan.pushUnsubscribe);
+router.post('/api/institution/notifications/test', insChan.sendTest);
+router.get('/api/institution/notifications/delivery', insChan.deliveryOverview);
 // Library: catalogue (OPAC), books, copies, categories
 router.get('/api/institution/opac', insLib.opac);
 router.get('/api/institution/opac/suggest', insLib.suggest);
@@ -591,6 +600,11 @@ router.delete('/api/institution/students/:id', insPeople.deleteStudent);
 router.post('/api/institution/students/:id/photo', insPeople.uploadStudentPhoto);
 router.get('/api/institution/students/:id/photo', insPeople.studentPhoto);
 router.get('/api/institution/students/:id/results', insAcad.studentResults);
+router.get('/api/institution/students/:id/documents', insDocs.listDocuments);
+router.post('/api/institution/students/:id/documents', insDocs.uploadDocument);
+router.get('/api/institution/student-documents/:id/file', insDocs.documentFile);
+router.put('/api/institution/student-documents/:id', insDocs.renameDocument);
+router.delete('/api/institution/student-documents/:id', insDocs.deleteDocument);
 router.get('/api/institution/staff', insPeople.listStaff);
 router.post('/api/institution/staff', insPeople.createStaff);
 router.get('/api/institution/staff/:id', insPeople.getStaff);
@@ -648,6 +662,7 @@ router.post('/api/institution/backups', insTools.makeBackup);
 router.post('/api/institution/backups/:id/verify', insTools.verifyBackup);
 router.get('/api/institution/backups/:id/download', insTools.downloadBackup);
 router.post('/api/institution/backups/:id/restore', insTools.restoreBackup);
+router.post('/api/institution/backups/:id/restore-files', insTools.restoreFiles);
 router.delete('/api/institution/backups/:id', insTools.deleteBackup);
 
 export default {
@@ -734,7 +749,9 @@ export default {
   },
 
   // Daily cron (see [triggers] in wrangler.toml): Smart21Institution weekly automatic backups.
+  // Two triggers: "0 2 * * *" (weekly-backup check) and "* * * * *" (every minute: send queued e-mail / SMS / push).
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(insTools.runScheduledBackups(env));
+    if (event.cron === '* * * * *') ctx.waitUntil(flushOutbox(env, { limit: 60 }).catch(() => {}));
+    else ctx.waitUntil(insTools.runScheduledBackups(env));
   },
 };

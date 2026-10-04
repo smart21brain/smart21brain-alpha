@@ -26,8 +26,8 @@
         <div class="cols">${IN.f.input('page', IN.t('Page I am on', 'Ukurasa ninaosoma'), { type: 'number', value: cur.last_page || 1, required: true, attr: { min: 1, max: 100000 } })}${IN.f.input('total_pages', IN.t('Total pages (optional)', 'Kurasa zote (si lazima)'), { type: 'number', value: cur.total_pages || '', attr: { min: 1, max: 100000 } })}</div>
         ${IN.f.check('finished', IN.t('I have finished this book', 'Nimemaliza kitabu hiki'), cur.status === 'finished')}`,
       onSubmit: async (d) => {
-        await IN.api.post(`/me/reading/${resId}`, { page: Number(d.page), total_pages: d.total_pages ? Number(d.total_pages) : null, status: d.finished ? 'finished' : 'reading' });
-        IN.closeModal(); IN.toast(IN.t('Saved.', 'Imehifadhiwa.')); if (after) after();
+        const q = await IN.api.queued('POST', `/me/reading/${resId}`, { page: Number(d.page), total_pages: d.total_pages ? Number(d.total_pages) : null, status: d.finished ? 'finished' : 'reading' }, IN.t(`Reading progress: ${title}`, `Maendeleo ya kusoma: ${title}`));
+        IN.closeModal(); if (!q.queued) IN.toast(IN.t('Saved.', 'Imehifadhiwa.')); if (after) after();
       },
     });
   }

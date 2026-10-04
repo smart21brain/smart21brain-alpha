@@ -240,6 +240,7 @@ const NUM_SETTINGS = {
   loan_days_student: [1, 365], loan_days_staff: [1, 365], max_loans_student: [1, 100], max_loans_staff: [1, 100],
   max_renewals: [0, 20], renewal_days: [1, 120], fine_per_day: [0, 1e9], lost_fine_multiplier: [0, 20], damaged_fine: [0, 1e9],
   reservation_hold_days: [1, 30], max_upload_mb: [1, 25],
+  notify_email: [0, 1], notify_sms: [0, 1], notify_push: [0, 1],
 };
 export const saveSettings = secure({ perm: 'settings.manage' }, async ({ request, env, ctx }) => {
   const b = await readJson(request);

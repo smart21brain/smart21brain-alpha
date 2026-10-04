@@ -411,7 +411,7 @@ async function holdForWaiting(env, ctx, bookId, copyId) {
   await env.DB.prepare(`UPDATE ins_reservations SET status = 'ready', copy_id = ?, hold_until = ? WHERE id = ?`).bind(copyId, until, next.id).run();
   const book = await env.DB.prepare('SELECT title FROM ins_books WHERE id = ?').bind(bookId).first();
   const uid = await userIdForBorrower(env, ctx.inst.id, next.borrower_type, next.borrower_id);
-  if (uid) await notify(env, ctx.inst.id, uid, 'system', 'Your reserved book is ready', `"${book?.title}" is waiting for you until ${until}.`, '#my-library');
+  if (uid) await notify(env, ctx.inst.id, uid, 'system', 'Your reserved book is ready', `"${book?.title}" is waiting for you until ${until}.`, '#my-library', { sms: true });
   return true;
 }
 

@@ -15,7 +15,7 @@
   * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
   body { font-family: 'Inter', system-ui, sans-serif; color: #fff; background: #0B1F1E; -webkit-text-size-adjust: 100%; }
-  .bg { position: fixed; inset: 0; background: linear-gradient(135deg, #0F766E, #0B1F1E) center/cover no-repeat; }
+  .bg { position: fixed; inset: 0; background: url("https://images.unsplash.com/photo-1762512346988-045f4d5ad2b3?auto=format&fit=crop&w=1920&q=70") center/cover no-repeat, linear-gradient(135deg, #0F766E, #0B1F1E); }
   .bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,20,30,.55), rgba(5,20,30,.88)); }
   main { position: relative; min-height: 100%; display: grid; place-items: center; padding: max(1.5rem, env(safe-area-inset-top)) 1.2rem max(1.5rem, env(safe-area-inset-bottom)); }
   .box { width: min(920px, 100%); text-align: center; }

@@ -14,7 +14,7 @@ const LEVELS = ['public', 'members', 'staff'];
 const isPK = (b) => b[0] === 0x50 && b[1] === 0x4b && (b[2] === 3 || b[2] === 5);
 const isOle = (b) => b[0] === 0xd0 && b[1] === 0xcf && b[2] === 0x11 && b[3] === 0xe0;
 const isText = (b) => { for (let i = 0; i < b.length; i++) if (b[i] === 0) return false; return true; };
-const FILE_TYPES = {
+export const FILE_TYPES = {
   pdf:  { mime: 'application/pdf', ok: (b) => b[0] === 0x25 && b[1] === 0x50 && b[2] === 0x44 && b[3] === 0x46, inline: true },
   epub: { mime: 'application/epub+zip', ok: isPK },
   docx: { mime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', ok: isPK },

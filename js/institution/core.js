@@ -60,24 +60,44 @@
   IN.fileIcon = (name) => IN.icons[String(name || '').split('.').pop().toLowerCase()] || 'fa-file';
 
   // ------------------------------------------------------------ API
-  async function request(method, path, body, isForm) {
+  // `extra.opId` marks a write that may be kept on the device and sent again later (see extras.js). The server
+  // remembers the id, so a write whose answer was lost is never applied twice.
+  async function request(method, path, body, isForm, extra) {
     const opts = { method, credentials: 'include', headers: {} };
-    if (IN.state.inst) opts.headers['X-Institution-Id'] = String(IN.state.inst.id);
+    const instId = (extra && extra.instId) || (IN.state.inst && IN.state.inst.id);
+    if (instId) opts.headers['X-Institution-Id'] = String(instId);
+    if (extra && extra.opId) opts.headers['X-Client-Op-Id'] = extra.opId;
     if (body !== undefined) {
       if (isForm) opts.body = body;
       else { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
     }
     let res;
-    try { res = await fetch('/api/institution' + path, opts); } catch (e) { throw new Error('Cannot reach the server. Please check your internet connection and try again.'); }
+    try { res = await fetch('/api/institution' + path, opts); }
+    catch (e) {
+      // No connection: reads fall back to the last copy kept on this device (only for a few safe screens).
+      if (method === 'GET' && IN.offline) { const hit = await IN.offline.cacheGet(path); if (hit) { IN.offline.noteStale(hit.at); return Object.assign({}, hit.data, { _offline: true, _saved_at: hit.at }); } }
+      const err = new Error('Cannot reach the server. Please check your internet connection and try again.'); err.offline = true; throw err;
+    }
     let data = null;
     try { data = await res.json(); } catch (e) { /* not JSON */ }
     if (res.status === 401 && !/^\/(login|register)/.test(path)) { if (!/institution-(login|start)/.test(location.pathname)) location.href = 'institution-start.html?go=login'; throw new Error('Please sign in again.'); }
     if (!res.ok) { const err = new Error((data && data.error) || `Something went wrong (${res.status}).`); err.status = res.status; err.data = data; throw err; }
+    if (method === 'GET' && IN.offline && data && typeof data === 'object') IN.offline.cachePut(path, data);
     return data;
   }
+  IN.rawRequest = request;
   IN.api = {
     get: (p) => request('GET', p), post: (p, b) => request('POST', p, b || {}), put: (p, b) => request('PUT', p, b || {}),
     del: (p) => request('DELETE', p), upload: (p, fd) => request('POST', p, fd, true),
+    // A write that may wait on the device when there is no connection. Resolves to { queued: true } in that case.
+    queued: async (method, path, body, label) => {
+      const opId = (IN.offline && IN.offline.newId()) || String(Date.now()) + Math.random().toString(36).slice(2);
+      try { return await request(method, path, body || {}, false, { opId }); }
+      catch (e) {
+        if (e && e.offline && IN.offline) { await IN.offline.enqueue({ method, path, body: body || {}, label: label || path, opId }); return { queued: true, ok: true }; }
+        throw e;
+      }
+    },
   };
   IN.qs = (obj) => {
     const q = Object.entries(obj || {}).filter(([, v]) => v !== '' && v != null && v !== false).map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');

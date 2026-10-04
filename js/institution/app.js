@@ -29,6 +29,7 @@
     'site-page': { mod: 'sitePage', nav: 'website', title: IN.t('Edit page', 'Hariri ukurasa') },
     applications: { mod: 'applications', nav: 'applications', title: IN.t('Applications & messages', 'Maombi na jumbe') },
     announcements: { mod: 'announcements', nav: 'announcements', title: IN.t('Announcements', 'Matangazo') },
+    'notification-settings': { mod: 'notification-settings', nav: 'notification-settings', title: IN.t('Notifications', 'Arifa') },
     reports: { mod: 'reports', nav: 'reports', title: IN.t('Reports', 'Ripoti') },
     import: { mod: 'import', nav: 'import', title: IN.t('Import records', 'Leta rekodi') },
     users: { mod: 'users', nav: 'users', title: IN.t('Logins & roles', 'Akaunti na majukumu') },
@@ -47,6 +48,7 @@
       { group: IN.t('Overview', 'Muhtasari'), items: [
         { r: 'dashboard', i: 'fa-gauge-high', l: IN.t('Dashboard', 'Dashibodi'), show: true },
         { r: 'announcements', i: 'fa-bullhorn', l: IN.t('Announcements', 'Matangazo'), show: true },
+        { r: 'notification-settings', i: 'fa-bell', l: IN.t('Notifications', 'Arifa'), show: true },
       ] },
       { group: IN.t('Library', 'Maktaba'), items: [
         { r: 'catalogue', i: 'fa-magnifying-glass', l: IN.t('Catalogue (OPAC)', 'Katalogi (OPAC)'), show: true },
@@ -123,14 +125,14 @@
           <main class="in-content" id="inContent" tabindex="-1"></main>
         </div>
       </div>
-      <div class="in-offline" id="inOffline" role="status"><i class="fa-solid fa-wifi"></i> ${IN.t('You are offline. Changes cannot be saved until you reconnect.', 'Huna mtandao. Mabadiliko hayawezi kuhifadhiwa hadi uunganishwe tena.')}</div>`;
+      <div class="in-offline" id="inOffline" role="status"><i class="fa-solid fa-wifi"></i> ${IN.t('You are offline. Returns, marks and reading progress are kept on this device and sent when you reconnect; other changes need a connection.', 'Huna mtandao. Kurudisha vitabu, alama na maendeleo ya kusoma vinahifadhiwa kwenye kifaa na kutumwa mtandao ukirudi; mabadiliko mengine yanahitaji mtandao.')}</div>`;
 
     const side = document.getElementById('inSidebar'); const back = document.getElementById('inBackdrop');
     const toggle = (open) => { side.classList.toggle('open', open); back.classList.toggle('show', open); };
     document.getElementById('inMenu').addEventListener('click', () => toggle(!side.classList.contains('open')));
     back.addEventListener('click', () => toggle(false));
     document.getElementById('inNav').addEventListener('click', () => toggle(false));
-    document.getElementById('inLogout').addEventListener('click', async () => { await IN.api.post('/logout').catch(() => {}); localStorage.removeItem('in-inst-id'); location.href = 'institution-start.html?go=login'; });
+    document.getElementById('inLogout').addEventListener('click', async () => { if (IN.offline && !(await IN.offline.beforeSignOut())) return; await IN.api.post('/logout').catch(() => {}); localStorage.removeItem('in-inst-id'); location.href = 'institution-start.html?go=login'; });
     document.getElementById('inLangToggle').addEventListener('click', () => IN.toggleLang());
     const swc = document.getElementById('inSwitch');
     if (swc) swc.addEventListener('change', () => { localStorage.setItem('in-inst-id', swc.value); location.hash = 'dashboard'; location.reload(); });
@@ -144,6 +146,7 @@
     const sync = () => off.classList.toggle('show', !navigator.onLine);
     window.addEventListener('online', sync); window.addEventListener('offline', sync); sync();
     wireSearch(); wireBell();
+    if (IN.offline) IN.offline.mount();
   }
 
   // ---------------------------------------------------------- global search

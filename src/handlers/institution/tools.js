@@ -5,6 +5,7 @@ import {
 } from '../../lib/institution-auth.js';
 import { readBook, addCopies } from './library.js';
 import { readStudent, readStaff, insertStudent, insertStaff } from './people.js';
+import { saveFilesForBackup, readManifest, gcBlobs, restoreFileBatch, listBlobs, manifestKey } from './backup-files.js';
 
 const MAX_IMPORT_ROWS = 500;
 const norm = (s) => String(s == null ? '' : s).trim().toLowerCase();
@@ -142,10 +143,13 @@ export const importHistory = secure({ perm: 'import.manage' }, async ({ env, ctx
 // ---------------------------------------------------------------------
 // Insert order respects foreign keys; deletion runs in the reverse order.
 const BACKUP_TABLES = [
-  'ins_departments', 'ins_programmes', 'ins_academic_years', 'ins_terms', 'ins_staff', 'ins_students', 'ins_courses', 'ins_teaching', 'ins_enrollments', 'ins_results',
+  'ins_departments', 'ins_programmes', 'ins_academic_years', 'ins_terms', 'ins_staff', 'ins_students', 'ins_student_documents', 'ins_courses', 'ins_teaching', 'ins_enrollments', 'ins_results',
   'ins_categories', 'ins_books', 'ins_book_copies', 'ins_loans', 'ins_reservations', 'ins_fines', 'ins_resource_categories', 'ins_resources', 'ins_announcements',
 ];
+const OPTIONAL_TABLES = new Set(['ins_student_documents']);   // added later: an older database may not have it yet
 const MAX_ROWS_PER_TABLE = 50000;
+const FILE_COPIES_PER_RUN = 150;   // new files copied per backup run (keeps one run within the Worker's request limits; the next backup continues)
+const summaryOf = (counts) => Object.fromEntries(Object.entries(counts).filter(([k]) => k.startsWith('_files_')).map(([k, v]) => [k.slice(7), v]));
 const KEEP_BACKUPS = 10;
 
 const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -155,22 +159,29 @@ export async function createBackup(env, instId, userId) {
   if (!env.MATERIALS) fail(500, 'File storage is not configured, so backups cannot be saved.');
   const data = {}; const counts = {};
   for (const t of BACKUP_TABLES) {
-    const { results } = await env.DB.prepare(`SELECT * FROM ${t} WHERE institution_id = ? LIMIT ${MAX_ROWS_PER_TABLE + 1}`).bind(instId).all();
+    let results;
+    try { ({ results } = await env.DB.prepare(`SELECT * FROM ${t} WHERE institution_id = ? LIMIT ${MAX_ROWS_PER_TABLE + 1}`).bind(instId).all()); }
+    catch (e) { if (OPTIONAL_TABLES.has(t) && /no such table/i.test(String(e))) results = []; else throw e; }
     if (results.length > MAX_ROWS_PER_TABLE) fail(413, 'This institution is too large for a one-file backup. Please contact support.');
     data[t] = results; counts[t] = results.length;
   }
   const inst = await env.DB.prepare('SELECT name, short_name, slug, inst_type, currency FROM ins_institutions WHERE id = ?').bind(instId).first();
   const { results: settings } = await env.DB.prepare('SELECT key, value FROM ins_settings WHERE institution_id = ?').bind(instId).all();
   const { results: perms } = await env.DB.prepare('SELECT role, permission FROM ins_role_permissions WHERE institution_id = ?').bind(instId).all();
+  // Uploaded files: copy the new ones into the backup folder and write the manifest next to the backup.
+  const files = await saveFilesForBackup(env, instId, data, Number(env.BACKUP_FILE_COPIES_PER_RUN) || FILE_COPIES_PER_RUN);
+  for (const [k, v] of Object.entries(files.summary)) counts[`_files_${k}`] = v;
   const payload = JSON.stringify({ app: 'Smart21Institution', format: 1, created: new Date().toISOString(), institution: inst, tables: data, settings, role_permissions: perms });
   const checksum = await sha256(payload);
   const key = `institution/${instId}/backups/${new Date().toISOString().replace(/[:.]/g, '-')}-${randomToken(4)}.json`;
   await env.MATERIALS.put(key, payload, { httpMetadata: { contentType: 'application/json' } });
+  await env.MATERIALS.put(manifestKey(key), JSON.stringify(files.manifest), { httpMetadata: { contentType: 'application/json' } });
   const r = await env.DB.prepare('INSERT INTO ins_backups (institution_id, file_key, size_bytes, row_counts, checksum, created_by) VALUES (?, ?, ?, ?, ?, ?)').bind(instId, key, payload.length, JSON.stringify(counts), checksum, userId || null).run();
   // keep only the most recent backups
   const { results: old } = await env.DB.prepare('SELECT id, file_key FROM ins_backups WHERE institution_id = ? ORDER BY id DESC LIMIT -1 OFFSET ?').bind(instId, KEEP_BACKUPS).all();
-  for (const o of old) { await env.MATERIALS.delete(o.file_key).catch(() => {}); await env.DB.prepare('DELETE FROM ins_backups WHERE id = ?').bind(o.id).run(); }
-  return { id: r.meta.last_row_id, size_bytes: payload.length, counts };
+  for (const o of old) { await env.MATERIALS.delete(o.file_key).catch(() => {}); await env.MATERIALS.delete(manifestKey(o.file_key)).catch(() => {}); await env.DB.prepare('DELETE FROM ins_backups WHERE id = ?').bind(o.id).run(); }
+  if (old.length) await gcBlobs(env, instId).catch(() => {});
+  return { id: r.meta.last_row_id, size_bytes: payload.length, counts: Object.fromEntries(Object.entries(counts).filter(([k]) => !k.startsWith('_files_'))), files: files.summary };
 }
 
 // Scheduled (daily cron): back up every institution whose last backup is older than 7 days.
@@ -186,7 +197,7 @@ export async function runScheduledBackups(env) {
 
 export const listBackups = secure({ perm: 'backup.manage' }, async ({ env, ctx }) => {
   const { results } = await env.DB.prepare(`SELECT b.id, b.size_bytes, b.row_counts, b.checksum, b.verified_at, b.verified_ok, b.created_at, u.name AS created_by FROM ins_backups b LEFT JOIN users u ON u.id = b.created_by WHERE b.institution_id = ? ORDER BY b.id DESC`).bind(ctx.inst.id).all();
-  return json({ backups: results.map((b) => ({ ...b, row_counts: JSON.parse(b.row_counts || '{}'), checksum: b.checksum.slice(0, 12) })), keep: KEEP_BACKUPS });
+  return json({ backups: results.map((b) => { const all = JSON.parse(b.row_counts || '{}'); const row_counts = Object.fromEntries(Object.entries(all).filter(([k]) => !k.startsWith('_files_'))); return { ...b, row_counts, files: all._files_total === undefined ? null : summaryOf(all), checksum: b.checksum.slice(0, 12) }; }), keep: KEEP_BACKUPS });
 });
 
 export const makeBackup = secure({ perm: 'backup.manage' }, async ({ request, env, ctx }) => {
@@ -212,8 +223,19 @@ export const verifyBackup = secure({ perm: 'backup.manage' }, async ({ request, 
     else {
       try {
         const parsed = JSON.parse(text); const want = JSON.parse(b.row_counts || '{}');
-        const mismatch = BACKUP_TABLES.filter((t) => (parsed.tables?.[t]?.length ?? -1) !== want[t]);
+        const mismatch = BACKUP_TABLES.filter((t) => want[t] !== undefined && (parsed.tables?.[t]?.length ?? -1) !== want[t]);
         ok = !mismatch.length; detail = ok ? 'The file is complete and readable. It can be restored.' : `Row counts differ for: ${mismatch.join(', ')}.`;
+        if (ok) {                                                                   // uploaded files: are the copies still in storage?
+          const manifest = await readManifest(env, b.file_key);
+          if (!manifest) detail += ' This older backup holds records only (no copies of uploaded files).';
+          else {
+            const blobs = await listBlobs(env, ctx.inst.id);
+            const saved = manifest.filter((e) => e.st === 'saved'); const gone = saved.filter((e) => !blobs.has(e.b)).length;
+            const pending = manifest.filter((e) => e.st === 'pending').length; const missing = manifest.filter((e) => e.st === 'missing').length;
+            if (gone) { ok = false; detail = `The records are fine, but ${gone} saved file${gone === 1 ? ' is' : 's are'} missing from backup storage.`; }
+            else detail += ` ${saved.length} uploaded file${saved.length === 1 ? ' is' : 's are'} saved with it.${pending ? ` ${pending} more will be saved by the next backup.` : ''}${missing ? ` ${missing} file${missing === 1 ? ' was' : 's were'} already missing from storage when the backup ran.` : ''}`;
+          }
+        }
       } catch (e) { detail = 'The file could not be read.'; }
     }
   }
@@ -231,8 +253,9 @@ export const downloadBackup = secure({ perm: 'backup.manage' }, async ({ request
 
 export const deleteBackup = secure({ perm: 'backup.manage' }, async ({ request, env, params, ctx }) => {
   const { b } = await loadBackupFile(env, ctx, params.id);
-  if (env.MATERIALS) await env.MATERIALS.delete(b.file_key).catch(() => {});
+  if (env.MATERIALS) { await env.MATERIALS.delete(b.file_key).catch(() => {}); await env.MATERIALS.delete(manifestKey(b.file_key)).catch(() => {}); }
   await env.DB.prepare('DELETE FROM ins_backups WHERE id = ?').bind(b.id).run();
+  await gcBlobs(env, ctx.inst.id).catch(() => {});
   await audit(env, request, ctx, 'backup', 'backup.delete', 'backup', b.id, null);
   return json({ ok: true });
 });
@@ -257,9 +280,18 @@ export const restoreBackup = secure({ perm: 'backup.manage', roles: ['super_admi
   }
   const safety = await createBackup(env, ctx.inst.id, ctx.user.id);       // undo point
 
-  for (const t of [...BACKUP_TABLES].reverse()) await env.DB.prepare(`DELETE FROM ${t} WHERE institution_id = ?`).bind(ctx.inst.id).run();
+  // A table the backup does not contain at all (an older backup, before documents existed) is left untouched.
+  const inFile = (t) => Array.isArray(parsed.tables[t]);
+  // Deleting students cascades to their documents (foreign key). If the backup has no documents table (made before
+  // documents existed), keep the current document records aside and put back those whose student still exists.
+  let keptDocs = [];
+  if (!inFile('ins_student_documents')) {
+    try { ({ results: keptDocs } = await env.DB.prepare('SELECT * FROM ins_student_documents WHERE institution_id = ?').bind(ctx.inst.id).all()); } catch (e) { keptDocs = []; }
+  }
+  for (const t of [...BACKUP_TABLES].reverse()) if (inFile(t)) await env.DB.prepare(`DELETE FROM ${t} WHERE institution_id = ?`).bind(ctx.inst.id).run();
   let restored = 0;
   for (const t of BACKUP_TABLES) {
+    if (!inFile(t)) continue;
     const stmts = [];
     for (const row of parsed.tables[t] || []) {
       const keys = Object.keys(row).filter((k) => cols[t].has(k) && k !== 'institution_id');
@@ -268,6 +300,26 @@ export const restoreBackup = secure({ perm: 'backup.manage', roles: ['super_admi
     for (const part of chunk(stmts, 90)) await env.DB.batch(part);
     restored += stmts.length;
   }
-  await audit(env, request, ctx, 'backup', 'backup.restore', 'backup', b.id, `${restored} records restored; safety backup #${safety.id}`);
-  return json({ ok: true, restored, safety_backup_id: safety.id });
+  if (keptDocs.length) {
+    const have = new Set((await env.DB.prepare('SELECT id FROM ins_students WHERE institution_id = ?').bind(ctx.inst.id).all()).results.map((x) => x.id));
+    const back = keptDocs.filter((d) => have.has(d.student_id)).map((d) => { const keys = Object.keys(d); return env.DB.prepare(`INSERT INTO ins_student_documents (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => d[k])); });
+    for (const part of chunk(back, 90)) await env.DB.batch(part);
+  }
+  // Uploaded files: put back the first batch now; the screen asks for the rest with /restore-files until `next` is null.
+  const manifest = await readManifest(env, b.file_key);
+  const files = manifest ? await restoreFileBatch(env, ctx.inst.id, manifest, 0) : null;
+  await audit(env, request, ctx, 'backup', 'backup.restore', 'backup', b.id, `${restored} records restored; safety backup #${safety.id}${files ? `; files: ${files.restored} restored, ${files.present} already there, ${files.missing} not available` : '; no file copies in this backup'}`);
+  return json({ ok: true, restored, safety_backup_id: safety.id, files, files_in_backup: !!manifest });
+});
+
+// Continue restoring uploaded files from a backup (next batch). Safe to repeat: files already in place are skipped.
+export const restoreFiles = secure({ perm: 'backup.manage', roles: ['super_admin'] }, async ({ request, env, params, ctx }) => {
+  const body = await readJson(request);
+  const { b } = await loadBackupFile(env, ctx, params.id);
+  const manifest = await readManifest(env, b.file_key);
+  if (!manifest) fail(404, 'This backup has no copies of uploaded files.');
+  const start = Math.max(0, Math.floor(Number(body.start) || 0));
+  const files = await restoreFileBatch(env, ctx.inst.id, manifest, start);
+  await audit(env, request, ctx, 'backup', 'backup.restore_files', 'backup', b.id, `batch from ${start}: ${files.restored} restored, ${files.present} already there, ${files.missing} not available, ${files.failed} failed`);
+  return json({ ok: true, files });
 });

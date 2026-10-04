@@ -61,4 +61,12 @@ binding = "AI"
 # Smart21Institution: daily check that creates a weekly automatic backup for every
 # institution whose last backup is older than 7 days (see src/handlers/institution/tools.js).
 [triggers]
-crons = ["0 2 * * *"]
+crons = ["0 2 * * *", "* * * * *"]   # 02:00 = weekly backups, every minute = send queued e-mail / SMS / push
+
+# Smart21Institution — notification channels (all optional; nothing is sent by a channel that is not set up).
+# Add these as SECRETS (never in this file):
+#   E-mail (Resend):        wrangler secret put RESEND_API_KEY        and   wrangler secret put EMAIL_FROM   ("Name <no-reply@your-domain>")
+#   SMS (Africa's Talking): wrangler secret put AT_API_KEY            and   wrangler secret put AT_USERNAME   (optional: AT_SENDER_ID)
+#   SMS (or Twilio):        TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM
+#   Push:                   node scripts/generate-vapid.mjs   then   wrangler secret put VAPID_PRIVATE_JWK   (optional: VAPID_SUBJECT = mailto:you@your-domain)
+#   Links in e-mails:       wrangler secret put SITE_URL   (e.g. https://smart21brain.com)

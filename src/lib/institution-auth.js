@@ -11,6 +11,7 @@
 // School System so all systems behave the same way.
 
 import { getSessionUser, json } from './auth.js';
+import { queueChannels, flushOutbox, channelsConfigured, outboxState } from './institution-channels.js';
 import {
   HttpError, fail, V, readJson, safeJson, likeTerm, chunk, paging,
   storeImage, imageResponse, randomToken, errorResponse, assertSameOrigin,
@@ -132,9 +133,10 @@ export const can = (ctx, perm) => ctx.role === 'super_admin' || ctx.perms.has(pe
 //   opts.inst    false = endpoint works even before an institution exists
 export function secure(opts, fn) {
   if (typeof opts === 'function') { fn = opts; opts = {}; }
-  return async ({ request, env, params, url }) => {
+  return async ({ request, env, params, url, ctx: exec }) => {
     try {
-      if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) assertSameOrigin(request);
+      const isWrite = !['GET', 'HEAD', 'OPTIONS'].includes(request.method);
+      if (isWrite) assertSameOrigin(request);
       const ctx = await getInstContext(request, env);
       if (ctx.error) return ctx.error;
       if (!ctx.inst) {
@@ -146,7 +148,28 @@ export function secure(opts, fn) {
         const list = Array.isArray(opts.perm) ? opts.perm : [opts.perm];
         if (!list.some((p) => can(ctx, p))) fail(403, 'You do not have permission to perform this action.');
       }
-      return await fn({ request, env, params, url, ctx });
+
+      // Offline work: a change typed while offline is sent again later with the same X-Client-Op-Id.
+      // If that operation already succeeded (the answer was lost on the way), return the saved answer instead of doing it twice.
+      const opId = isWrite && ctx.user ? (request.headers.get('X-Client-Op-Id') || '') : '';
+      const validOp = /^[A-Za-z0-9_-]{8,64}$/.test(opId);
+      if (validOp) {
+        const seen = await env.DB.prepare('SELECT status, body FROM ins_client_ops WHERE institution_id = ? AND user_id = ? AND op_id = ?').bind(ctx.inst.id, ctx.user.id, opId).first();
+        if (seen) return new Response(seen.body || '{"ok":true}', { status: seen.status, headers: { 'Content-Type': 'application/json', 'X-Replayed': '1' } });
+      }
+      const res = await fn({ request, env, params, url, ctx });
+      if (validOp && res && res.status >= 200 && res.status < 300) {
+        try {
+          const text = await res.clone().text();
+          await env.DB.prepare('INSERT OR IGNORE INTO ins_client_ops (institution_id, user_id, op_id, status, body) VALUES (?, ?, ?, ?, ?)').bind(ctx.inst.id, ctx.user.id, opId, res.status, text.length < 20000 ? text : '{"ok":true}').run();
+        } catch (e) { /* the real action already happened; never fail it for bookkeeping */ }
+      }
+      // Notices created during this request are delivered (e-mail / SMS / push) right after the answer is sent.
+      if (isWrite && outboxState.dirty && exec && exec.waitUntil) {
+        outboxState.dirty = false;
+        exec.waitUntil(flushOutbox(env, { origin: new URL(request.url).origin }).catch(() => {}));
+      }
+      return res;
     } catch (e) {
       return errorResponse(e);
     }
@@ -165,6 +188,7 @@ export const DEFAULT_SETTINGS = {
   student_prefix: 'STU', staff_prefix: 'STF', accession_prefix: 'ACC',
   grading_scale: DEFAULT_GRADING,
   max_upload_mb: 20,
+  notify_email: 1, notify_sms: 0, notify_push: 1,        // institution-wide switches for the channels the server has set up
 };
 
 export async function getSettings(env, instId) {
@@ -215,11 +239,14 @@ export async function audit(env, request, ctx, module, action, entity, entityId,
 // kind: system | overdue | announcement | academic | admin | security
 // Channels (email / SMS / push) can be plugged in here later: every notification
 // in the system goes through this one function.
-export async function notify(env, instId, userId, kind, title, message, link) {
+// opts.sms: true = also text this one (e.g. "your reserved book is ready"); false = never text it.
+// Without opts, SMS is only used for overdue / security / academic notices (SMS costs money).
+export async function notify(env, instId, userId, kind, title, message, link, opts = {}) {
   try {
-    await env.DB.prepare(
+    const r = await env.DB.prepare(
       'INSERT INTO ins_notifications (institution_id, user_id, kind, title, message, link) VALUES (?, ?, ?, ?, ?, ?)'
     ).bind(instId, userId, kind, String(title).slice(0, 160), message ? String(message).slice(0, 500) : null, link || null).run();
+    if (channelsConfigured(env) && await queueChannels(env, instId, userId, r.meta.last_row_id, kind, opts.sms)) outboxState.dirty = true;
   } catch (e) { /* never block the real action */ }
 }
 

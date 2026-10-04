@@ -181,7 +181,7 @@ and **Print, PDF, Excel and CSV** export.
   row-by-row error report and preview → confirm → import → summary. Invalid rows are never silently imported.
 * **Backup:** one JSON file with every record of the institution + checksum. Manual or automatic (weekly, by the daily cron). The latest 10 are kept.
   **Verify** re-reads the stored file and compares the checksum and row counts. **Restore** (Super Administrator only) replaces
-  the institution's records after taking a safety backup first. *Uploaded files (e-library, photos) live in R2 and are not inside the backup file.*
+  the institution's records after taking a safety backup first. Uploaded files (e-library files, covers, student photos, student documents) are copied next to the backup and put back on restore — see *Backups now include uploaded files* below.
 
 ## 10. Deployment
 
@@ -225,17 +225,15 @@ Secrets/credentials are never in the source; the system only uses the existing b
 New modules (finance/fees, attendance, timetable, examinations, parent portal, HR, hostel, transport, inventory…) each need
 only: a schema file with `institution_id` on every table, a handler file using `secure({ perm }, …)`, a screen file registering
 `IN.modules.<name>`, new permission keys in `src/lib/institution-auth.js`, and a nav entry. They automatically reuse sign-in,
-roles, notifications (`notify()`), audit (`audit()`), search, reports, settings and backups. Email/SMS/push channels plug into
-`notify()` — today notifications are **in-app only**.
+roles, notifications (`notify()`), audit (`audit()`), search, reports, settings and backups. E-mail, SMS and push channels are built into `notify()` (see *Notification channels* below).
 
 ## 14. Not built yet (so nobody is misled)
 
-* Email / SMS / push notification delivery (in-app notifications work).
-* Student document attachments (only the photo is stored); password reset for institution logins uses the main Smart21Brain *Forgot password* page; no email/OTP verification at registration.
-* Barcode / QR scanning with a camera (a scanner that types the code works in the copy-number boxes).
-* True offline use: the public catalogue keeps the last results on the device and the app shows a connection indicator, but saving data needs a connection.
-* Restoring e-library files and photos from a backup (backups hold records only).
+* No e-mail/OTP verification at registration; password reset for institution logins uses the main Smart21Brain *Forgot password* page.
 * Bulk "promote class to next year" and timetables/attendance (planned modules).
+* **Camera barcode scanning needs a browser that can read barcodes** (Chrome / Edge on Android and desktop). Safari and Firefox can only read QR codes by camera; there the person can take a photo, type the number, or use a USB scanner.
+* **Offline saving covers a defined set of actions**, not everything: returning books, entering marks and saving reading progress are kept on the device and sent later. Issuing a book, renewing, registering, uploads and all administration need a connection, because the server's rules (limits, fines, who is waiting) decide the result.
+* E-mail, SMS and push only work after the person who deploys the system adds the provider keys (next section). Until then notices stay in-app, exactly as before.
 
 ---
 
@@ -344,3 +342,59 @@ API (all require sign-in and only ever touch the caller's own data): `PUT /api/i
 Reading progress is stored per person and book in `ins_reading_progress` (one row per user and resource). The page opens with `#page=N`, which PDF viewers honour; the page number itself is saved by the student with the bookmark button, because a browser tab showing a PDF cannot report which page is visible.
 
 **Deploy:** `wrangler d1 execute smart21brain-db --file=./institution-schema.sql --remote` (safe to re-run; it creates the new table) then `wrangler deploy`.
+
+
+---
+
+## Notification channels: e-mail, SMS and push
+
+Every notice still appears in the 🔔 bell. When the server has a provider configured, the same notice is also queued (`ins_outbox`) and delivered by e-mail, SMS and/or web push. Code: `src/lib/institution-channels.js` (sending), `src/handlers/institution/channels.js` (settings screen API), `js/institution/extras.js` (screen, push subscription), `institution-sw.js` (shows the push).
+
+**Who decides what is sent** (all must agree, otherwise the row is marked *skipped* with the reason): the server has the provider → the institution switch is on (*Notifications → For the institution*) → the person has not turned the channel off (*Notifications → How I get notified*) → an address exists (e-mail of the login, phone from the student/staff record or the one the person typed, a device that allowed push).
+
+* **SMS costs money**, so by default it is only used for overdue, security and academic notices and for "your reserved book is ready"; the institution switch for SMS is **off until an administrator switches it on**.
+* Sending starts right after the request that created the notice and is repeated by the every-minute cron (retries up to 3 times; a device the push service reports as gone is forgotten).
+* **Push carries no message text.** The server sends an empty push; the service worker then reads the person's newest unread notice using their own signed-in session. Push endpoints are only accepted from the real push services (Google, Mozilla, Microsoft, Apple).
+* Each person can press **Send me a test** per channel (5 per 10 minutes). Administrators see 7-day totals and the reasons for failed or skipped notices.
+
+**Set-up (all secrets; nothing is stored in the code or the database):**
+
+| Channel | Secrets |
+|---|---|
+| E-mail (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` (`Name <no-reply@your-domain>`; the domain must be verified at Resend) |
+| SMS (Africa's Talking) | `AT_API_KEY`, `AT_USERNAME` (use `sandbox` to test), optional `AT_SENDER_ID` |
+| SMS (Twilio, alternative) | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`; optional `SMS_PROVIDER` to choose when both are set |
+| Push | run `node scripts/generate-vapid.mjs`, then `wrangler secret put VAPID_PRIVATE_JWK` (paste the JSON), optional `VAPID_SUBJECT` (`mailto:you@your-domain`) |
+| All | `SITE_URL` (so e-mails can link to the app), optional `SMS_DEFAULT_COUNTRY_CODE` (default `255`: 0712… becomes +255712…) |
+
+Run `wrangler secret put NAME` for each, then deploy. On iPhone/iPad web push only works after the app is added to the Home Screen.
+
+## Student document attachments
+
+On a student's page (administrators / anyone with *Add, edit & delete student records*): **Attach document** — type (birth certificate, ID, transcript, certificate, medical letter, recommendation, application form, other), title, file. PDF, Word, Excel, PowerPoint, TXT, PNG, JPG; the real file content must match the extension; same size limit as the e-library; up to 20 per student. Files are in the private R2 bucket under random keys with no public URL. **Who can open them:** people with student-management rights, and the student themselves (read only, in *My profile*). Teachers, librarians and other students get "not found". Every upload, opening and deletion is in the audit log. Documents are part of the backup (records and files).
+
+## Camera scanning
+
+A camera button sits beside the copy-number box when issuing a book, and **Quick return** has a camera button that stays open so a pile of books can be returned one after another (each result is listed). Barcodes (Code 128, Code 39, EAN, UPC, ITF…) and QR codes are read with the browser's built-in detector where it exists, otherwise QR codes with the bundled jsQR library. Every scanner window also has *type the code* and *take a photo* as fallbacks, and a USB/Bluetooth scanner that types the code still works as before. The camera needs HTTPS and the person's permission.
+
+## Offline saving
+
+* **Kept on the device and sent later:** returning a book (quick return, scanner and the return window), saving marks, saving reading progress. A small cloud button with a number appears in the top bar while changes wait; it lists them and shows why the server refused any (*Discard* or *Send now*). They are sent automatically when the connection returns (and every minute while online). Each carries a unique operation id, so if the answer was lost on the way the server recognises the repeat and does not apply it twice (`ins_client_ops`, kept 30 days).
+* **Last screen kept for reading offline** (per person and institution): library catalogue, my library, my profile, my results, my reading, marks sheet, the lending list, dashboard. Not kept: student documents, backups, settings, audit, people records. Signing out clears them; if changes are still waiting the person is asked first and the waiting changes stay for their next sign-in.
+* Everything else needs a connection and says so.
+
+## Backups now include uploaded files
+
+A backup is still one JSON file of records, plus a small manifest, and the uploaded files (student photos, staff photos, book covers, e-library files and thumbnails, student documents) are copied once each into a private folder of the same bucket (`institution/<id>/backup-files/…`). Later backups reuse existing copies and only copy new files (up to 150 per run, so one run stays within Worker limits; the next backup continues). **Verify** checks the records, that every saved file copy still exists, and tells the administrator when a backup is partial or when a file was already missing. **Restore** (Super Administrator) restores the records, then puts back every lost file in batches (the screen keeps going until finished; files that are already in place are never overwritten). Copies no remaining backup refers to are removed when old backups are pruned. Older backups (made before this update) still verify and restore, records only, and leave the documents table untouched.
+
+*Limits, honestly:* the file copies live in the same R2 bucket as the originals, so they protect against deleted/overwritten files and bad restores but **not against losing the whole bucket** — keep an off-site copy of important files too. The backup JSON can still be downloaded; the file copies cannot be downloaded from the screen.
+
+## Deploy this update
+
+1. `wrangler d1 execute smart21brain-db --file=./institution-schema.sql --remote` (safe to re-run; creates 5 new tables).
+2. Add the secrets you want from the table above (none are required; without them nothing changes).
+3. `wrangler deploy` (the cron now has two triggers: 02:00 daily for backups and every minute for the notification outbox).
+
+## Tests added
+
+`node --no-warnings tests/channels-docs-backup.test.mjs` (95 checks: each channel with a fake network, VAPID signature verified with the public key, escaping, switches, retries, rate limit, documents permissions for every role and another institution, file backup / verify / restore / batching / cleanup / tampered manifest, older backups, offline replay idempotency) and `node --no-warnings tests/offline-queue.test.mjs` (34 checks of the on-device queue and saved screens). The earlier suites still pass (tenant isolation 9, website 81, renderer 31).

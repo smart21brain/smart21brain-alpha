@@ -474,3 +474,79 @@ CREATE TABLE IF NOT EXISTS ins_reading_progress (
   UNIQUE (user_id, resource_id)
 );
 CREATE INDEX IF NOT EXISTS idx_ins_reading_user ON ins_reading_progress(institution_id, user_id, last_opened_at DESC);
+
+-- ---------------------------------------------------------------------
+-- Notification channels (email / SMS / web push) — every statement is safe to re-run.
+-- ins_notifications stays the in-app inbox; ins_outbox is the delivery queue behind it.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ins_notification_prefs (      -- one row per person who changed their choices
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  institution_id INTEGER NOT NULL REFERENCES ins_institutions(id) ON DELETE CASCADE,
+  user_id        INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  email_on       INTEGER NOT NULL DEFAULT 1 CHECK (email_on IN (0,1)),
+  sms_on         INTEGER NOT NULL DEFAULT 1 CHECK (sms_on IN (0,1)),
+  push_on        INTEGER NOT NULL DEFAULT 1 CHECK (push_on IN (0,1)),
+  phone          TEXT,                                    -- number for SMS if the person has no student/staff record phone
+  updated_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (institution_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS ins_push_subscriptions (      -- one row per browser/phone that allowed push
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  institution_id INTEGER NOT NULL REFERENCES ins_institutions(id) ON DELETE CASCADE,
+  user_id        INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  endpoint       TEXT NOT NULL UNIQUE,
+  user_agent     TEXT,
+  created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  last_ok_at     TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_ins_push_user ON ins_push_subscriptions(institution_id, user_id);
+
+CREATE TABLE IF NOT EXISTS ins_outbox (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  institution_id  INTEGER NOT NULL REFERENCES ins_institutions(id) ON DELETE CASCADE,
+  notification_id INTEGER REFERENCES ins_notifications(id) ON DELETE CASCADE,
+  user_id         INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  channel         TEXT NOT NULL CHECK (channel IN ('email','sms','push')),
+  status          TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','sent','failed','skipped')),
+  attempts        INTEGER NOT NULL DEFAULT 0,
+  detail          TEXT,                                   -- why it was skipped / the last error (never a secret)
+  created_at      TEXT NOT NULL DEFAULT (datetime('now')),
+  sent_at         TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_ins_outbox_pending ON ins_outbox(status, id);
+CREATE INDEX IF NOT EXISTS idx_ins_outbox_inst ON ins_outbox(institution_id, id DESC);
+
+-- ---------------------------------------------------------------------
+-- Student document attachments (files live in the private R2 bucket under random keys)
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ins_student_documents (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  institution_id INTEGER NOT NULL REFERENCES ins_institutions(id) ON DELETE CASCADE,
+  student_id     INTEGER NOT NULL REFERENCES ins_students(id) ON DELETE CASCADE,
+  title          TEXT NOT NULL,
+  doc_type       TEXT NOT NULL DEFAULT 'other' CHECK (doc_type IN ('birth_certificate','id_document','transcript','certificate','medical','recommendation','application','other')),
+  file_key       TEXT NOT NULL,
+  file_name      TEXT NOT NULL,
+  mime           TEXT NOT NULL,
+  file_size      INTEGER NOT NULL DEFAULT 0,
+  uploaded_by    INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  deleted_at     TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_ins_stdoc_student ON ins_student_documents(institution_id, student_id, deleted_at);
+
+-- ---------------------------------------------------------------------
+-- Offline work: changes typed while offline are replayed later. The server remembers each
+-- client operation id so a replay that already succeeded is never applied twice.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ins_client_ops (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  institution_id INTEGER NOT NULL REFERENCES ins_institutions(id) ON DELETE CASCADE,
+  user_id        INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  op_id          TEXT NOT NULL,
+  status         INTEGER NOT NULL,
+  body           TEXT,
+  created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (institution_id, user_id, op_id)
+);

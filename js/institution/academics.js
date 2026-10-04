@@ -116,7 +116,7 @@
         const bad = rows.find((r) => r.marks !== '' && (Number(r.marks) < 0 || Number(r.marks) > 100 || Number.isNaN(Number(r.marks))));
         if (bad) return IN.toast(IN.t('Marks must be between 0 and 100.', 'Alama lazima ziwe kati ya 0 na 100.'), 'error');
         save.disabled = true;
-        try { const r = await IN.api.post('/results/sheet', { course_id: Number(st.course_id), term_id: Number(st.term_id), rows }); IN.toast(IN.t(`${r.saved} mark(s) saved.`, `Alama ${r.saved} zimehifadhiwa.`)); await load(); } catch (e) { IN.fail(e); save.disabled = false; }
+        try { const r = await IN.api.queued('POST', '/results/sheet', { course_id: Number(st.course_id), term_id: Number(st.term_id), rows }, IN.t(`Marks: ${rows.length} student(s)`, `Alama: wanafunzi ${rows.length}`)); if (r.queued) { save.disabled = false; return; } IN.toast(IN.t(`${r.saved} mark(s) saved.`, `Alama ${r.saved} zimehifadhiwa.`)); await load(); } catch (e) { IN.fail(e); save.disabled = false; }
       });
     };
     el.querySelector('[name=course_id]').addEventListener('change', (e) => { st.course_id = e.target.value; load().catch(IN.fail); });
