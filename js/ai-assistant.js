@@ -127,7 +127,7 @@
       var lang = (m[1] || '').toLowerCase(), code = m[2].replace(/\n$/, '');
       html += '<div class="ai-code" data-lang="' + esc(lang) + '"><div class="ai-code-bar"><span>' + esc(lang || 'code') + '</span><span class="ai-code-actions">' +
         '<button type="button" data-ai-copy><i class="fa-regular fa-copy"></i> Copy</button>' +
-        (canUse ? '<button type="button" data-ai-use><i class="fa-solid fa-play"></i> Use in editor</button>' : '') +
+        '<button type="button" data-ai-use><i class="fa-solid fa-up-right-from-square"></i> Smart21Editor</button>' +
         '</span></div><pre><code>' + highlight(code, lang) + '</code></pre></div>';
       last = m.index + m[0].length;
       if (!m[3]) { last = src.length; break; }
@@ -344,7 +344,12 @@
       var box = (copy || use) && (copy || use).closest('.ai-code'); if (!box) return;
       var code = box.querySelector('code').textContent;
       if (copy) copyText(code, function () { copy.innerHTML = '<i class="fa-solid fa-check"></i> Copied'; setTimeout(function () { copy.innerHTML = '<i class="fa-regular fa-copy"></i> Copy'; }, 1500); });
-      else { try { window.S21AI.insertCode(code, box.getAttribute('data-lang')); use.innerHTML = '<i class="fa-solid fa-check"></i> Inserted'; setTimeout(function () { use.innerHTML = '<i class="fa-solid fa-play"></i> Use in editor'; }, 1500); } catch (er) {} }
+      else { try {
+        var lg = box.getAttribute('data-lang');
+        if (window.S21AI && typeof window.S21AI.insertCode === 'function') window.S21AI.insertCode(code, lg);
+        else { localStorage.setItem('s21-ai-handoff', JSON.stringify({ code: code, lang: lg || '', t: Date.now() })); window.open('smart21editor.html?from=ai', '_blank'); }
+        use.innerHTML = '<i class="fa-solid fa-check"></i> Sent'; setTimeout(function () { use.innerHTML = '<i class="fa-solid fa-up-right-from-square"></i> Smart21Editor'; }, 1500);
+      } catch (er) {} }
     });
 
     /* restore this tab's conversation */

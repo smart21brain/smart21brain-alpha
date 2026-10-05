@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/ai-page.css?v=1">
+<link rel="stylesheet" href="css/ai-page.css?v=2">
 </head>
 <body>
 <a class="skip" href="#aiInput">Skip to message box</a>
@@ -80,24 +80,23 @@
     <button class="to-bottom" id="toBottom" aria-label="Scroll to latest"><i class="fa-solid fa-arrow-down"></i></button>
 
     <footer class="composer-wrap">
-      <div class="modes" id="modes" role="radiogroup" aria-label="Mode">
-        <button role="radio" aria-checked="true"  data-mode="" class="on"><i class="fa-solid fa-bolt"></i> Auto</button>
-        <button role="radio" aria-checked="false" data-mode="learn"><i class="fa-solid fa-graduation-cap"></i> Learn</button>
-        <button role="radio" aria-checked="false" data-mode="code"><i class="fa-solid fa-code"></i> Code</button>
-        <button role="radio" aria-checked="false" data-mode="write"><i class="fa-solid fa-feather-pointed"></i> Write</button>
-        <button role="radio" aria-checked="false" data-mode="quiz"><i class="fa-solid fa-circle-question"></i> Quiz me</button>
-      </div>
       <form class="composer" id="composer">
         <textarea id="aiInput" rows="1" maxlength="4000" placeholder="Message Smart21brain AI…" aria-label="Message Smart21brain AI"></textarea>
         <div class="c-row">
-          <span class="c-hint">Enter to send · Shift+Enter for a new line</span>
+          <div class="modes" id="modes" role="radiogroup" aria-label="Mode">
+          <button type="button" role="radio" aria-checked="true"  data-mode="" class="on"><i class="fa-solid fa-bolt"></i> Auto</button>
+          <button type="button" role="radio" aria-checked="false" data-mode="learn"><i class="fa-solid fa-graduation-cap"></i> Learn</button>
+          <button type="button" role="radio" aria-checked="false" data-mode="code"><i class="fa-solid fa-code"></i> Code</button>
+          <button type="button" role="radio" aria-checked="false" data-mode="write"><i class="fa-solid fa-feather-pointed"></i> Write</button>
+          <button type="button" role="radio" aria-checked="false" data-mode="quiz"><i class="fa-solid fa-circle-question"></i> Quiz me</button>
+          </div>
           <span class="c-btns">
             <button type="button" class="icon-btn" id="micBtn" aria-label="Speak your question" title="Speak"><i class="fa-solid fa-microphone"></i></button>
             <button type="submit" class="send" id="sendBtn" aria-label="Send" disabled><i class="fa-solid fa-arrow-up"></i></button>
           </span>
         </div>
       </form>
-      <p class="fine">Smart21brain AI can make mistakes. Check important answers with your teacher.</p>
+      <p class="fine">Enter to send · Shift+Enter for a new line · Smart21brain AI can make mistakes, so check important answers with your teacher.</p>
     </footer>
   </main>
 </div>

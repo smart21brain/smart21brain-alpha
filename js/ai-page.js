@@ -43,9 +43,7 @@
   /* ---------------- rendering ---------------- */
   function setHasChat(on) { app.classList.toggle('has-chat', on); }
   function decorate(root) {                                   // add "Preview" to HTML code blocks
-    $$('.ai-code[data-lang="html"] .ai-code-actions', root).forEach(function (bar) {
-      if (!bar.querySelector('[data-prev]')) bar.insertAdjacentHTML('afterbegin', '<button type="button" data-prev><i class="fa-solid fa-eye"></i> Preview</button>');
-    });
+    /* Preview / Code / Smart21Editor tabs are now built into each code block by ai-render.js */
   }
   function userNode(text, i) {
     var el = document.createElement('div'); el.className = 'msg user'; el.setAttribute('data-i', i);
@@ -183,7 +181,8 @@
 
   /* ---------------- events ---------------- */
   thread.addEventListener('click', function (e) {
-    var codeCopy = e.target.closest('[data-ai-copy]'), prev = e.target.closest('[data-prev]'), act = e.target.closest('[data-act]');
+    if (Md.onCodeClick(e)) return;
+    var codeCopy = e.target.closest('[data-ai-copy]'), prev = null, act = e.target.closest('[data-act]');
     var c = cur();
     if (codeCopy || prev) {
       var code = (codeCopy || prev).closest('.ai-code').querySelector('code').textContent;

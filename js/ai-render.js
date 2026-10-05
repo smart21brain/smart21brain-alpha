@@ -111,14 +111,18 @@
   }
   function renderMarkdown(src) {
     var re = /```([\w+#.-]*)[^\n]*\n([\s\S]*?)(```|$)/g, html = '', last = 0, m;
-    var canUse = !!(window.S21AI && typeof window.S21AI.insertCode === 'function');
     while ((m = re.exec(src))) {
       html += renderText(src.slice(last, m.index));
       var lang = (m[1] || '').toLowerCase(), code = m[2].replace(/\n$/, '');
-      html += '<div class="ai-code" data-lang="' + esc(lang) + '"><div class="ai-code-bar"><span>' + esc(lang || 'code') + '</span><span class="ai-code-actions">' +
-        '<button type="button" data-ai-copy><i class="fa-regular fa-copy"></i> Copy</button>' +
-        (canUse ? '<button type="button" data-ai-use><i class="fa-solid fa-play"></i> Use in editor</button>' : '') +
-        '</span></div><pre><code>' + highlight(code, lang) + '</code></pre></div>';
+      var canPrev = /^(html|htm|svg)$/.test(lang) || (!lang && /^\s*<(!doctype|html|svg|body|div|head)/i.test(code));
+      html += '<div class="ai-code" data-lang="' + esc(lang) + '" data-view="code"><div class="ai-code-bar"><span class="ai-code-lang">' + esc(lang || 'code') + '</span>' +
+        '<span class="ai-code-actions"><span class="ai-seg" role="tablist" aria-label="Code output view">' +
+        (canPrev ? '<button type="button" role="tab" data-view="preview"><i class="fa-solid fa-eye"></i> Preview</button>' : '') +
+        '<button type="button" role="tab" data-view="code" class="on" aria-selected="true"><i class="fa-solid fa-code"></i> Code</button>' +
+        '<button type="button" role="tab" data-ai-editor title="Open this code in Smart21Editor"><i class="fa-solid fa-up-right-from-square"></i> Smart21Editor</button>' +
+        '</span><button type="button" data-ai-copy><i class="fa-regular fa-copy"></i> Copy</button></span></div>' +
+        '<pre><code>' + highlight(code, lang) + '</code></pre>' +
+        (canPrev ? '<div class="ai-code-prev" hidden></div>' : '') + '</div>';
       last = m.index + m[0].length;
       if (!m[3]) { last = src.length; break; }
     }
@@ -126,5 +130,34 @@
     return html;
   }
 
-  window.S21Md = { render: renderMarkdown, highlight: highlight, esc: esc };
+  /* ---- code block actions: Preview / Code tabs + hand-off to Smart21Editor ---- */
+  var HANDOFF = 's21-ai-handoff';
+  function sendToEditor(code, lang) {
+    if (window.S21AI && typeof window.S21AI.insertCode === 'function') { window.S21AI.insertCode(code, lang); return true; }   // already inside the editor
+    try { localStorage.setItem(HANDOFF, JSON.stringify({ code: code, lang: lang || '', t: Date.now() })); } catch (e) { return false; }
+    window.open('smart21editor.html?from=ai', '_blank');
+    return true;
+  }
+  function setView(box, view) {
+    var prev = box.querySelector('.ai-code-prev'), pre = box.querySelector('pre');
+    box.setAttribute('data-view', view);
+    [].forEach.call(box.querySelectorAll('.ai-seg [data-view]'), function (b) { var on = b.getAttribute('data-view') === view; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+    if (!prev) return;
+    if (view === 'preview') {
+      var f = document.createElement('iframe'); f.title = 'Code preview'; f.setAttribute('sandbox', 'allow-scripts');
+      f.srcdoc = box.querySelector('code').textContent; prev.innerHTML = ''; prev.appendChild(f); prev.hidden = false; pre.hidden = true;
+    } else { prev.hidden = true; prev.innerHTML = ''; pre.hidden = false; }
+  }
+  function onCodeClick(e) {            // returns true if the click was handled
+    var b = e.target.closest && e.target.closest('.ai-seg [data-view], [data-ai-editor]');
+    if (!b) return false;
+    var box = b.closest('.ai-code'); if (!box) return false;
+    if (b.hasAttribute('data-ai-editor')) {
+      var ok = sendToEditor(box.querySelector('code').textContent, box.getAttribute('data-lang'));
+      var old = b.innerHTML; b.innerHTML = ok ? '<i class="fa-solid fa-check"></i> Sent' : old; setTimeout(function () { b.innerHTML = old; }, 1500);
+    } else setView(box, b.getAttribute('data-view'));
+    return true;
+  }
+
+  window.S21Md = { onCodeClick: onCodeClick, sendToEditor: sendToEditor, render: renderMarkdown, highlight: highlight, esc: esc };
 })();

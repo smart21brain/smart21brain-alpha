@@ -29,4 +29,21 @@
       E.set(code, cur && cur.mode);
     }
   };
+
+  /* Code sent from the AI chat ("Smart21Editor" tab) arrives via localStorage; load it once the editor is ready. */
+  try {
+    var raw = localStorage.getItem('s21-ai-handoff');
+    if (raw) {
+      localStorage.removeItem('s21-ai-handoff');
+      var h = JSON.parse(raw), tries = 0;
+      if (h && h.code && Date.now() - h.t < 120000) {
+        var timer = setInterval(function () {
+          if ((window.S21E && window.S21E.set && window.S21E.cur && window.S21E.cur()) || ++tries > 100) {
+            clearInterval(timer);
+            if (window.S21E && window.S21E.set) window.S21AI.insertCode(h.code, (h.lang || '').toLowerCase());
+          }
+        }, 100);
+      }
+    }
+  } catch (e) {}
 })();
