@@ -5,7 +5,7 @@
   var S = window.S21C, R = window.S21CRunner;
   if (!S) return;
 
-  var ICON = { html: 'fa-brands fa-html5', css: 'fa-brands fa-css3-alt', javascript: 'fa-brands fa-js', python: 'fa-brands fa-python', sql: 'fa-solid fa-database', cpp: 'fa-solid fa-code', bootstrap: 'fa-brands fa-bootstrap', jquery: 'fa-solid fa-bolt', react: 'fa-brands fa-react' };
+  var ICON = { html: 'fa-brands fa-html5', css: 'fa-brands fa-css3-alt', javascript: 'fa-brands fa-js', python: 'fa-brands fa-python', sql: 'fa-solid fa-database', cpp: 'fa-solid fa-code', c: 'fa-solid fa-microchip', java: 'fa-brands fa-java', php: 'fa-brands fa-php', csharp: 'fa-solid fa-hashtag', go: 'fa-brands fa-golang', rust: 'fa-brands fa-rust', typescript: 'fa-solid fa-t', bootstrap: 'fa-brands fa-bootstrap', jquery: 'fa-solid fa-bolt', react: 'fa-brands fa-react' };
   var STARTER = {
     bootstrap: '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">\n</head>\n<body>\n<div class="container mt-4">\n  <h1 class="text-primary">My Bootstrap page</h1>\n  <p class="lead">Add classes to style things.</p>\n  <button class="btn btn-success">Click me</button>\n</div>\n<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"><\/script>\n</body>\n</html>',
     jquery: '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"><\/script>\n</head>\n<body>\n<h2 id="title">Hello!</h2>\n<button id="btn">Click me</button>\n\n<script>\n$(function () {\n  $("#btn").click(function () {\n    $("#title").text("jQuery works!").css("color", "crimson");\n  });\n});\n<\/script>\n</body>\n</html>',
@@ -14,6 +14,13 @@
     javascript: '// Write JavaScript here and press Run\nconst name = "Smart21Code";\nconsole.log("Hello from " + name);\n\nfor (let i = 1; i <= 3; i++) {\n  console.log("Loop number " + i);\n}',
     python: '# Write Python here and press Run\nname = "Smart21Code"\nprint("Hello from", name)\n\nfor i in range(1, 4):\n    print("Loop number", i)',
     cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n  cout << "Hello from Smart21Code!" << endl;\n\n  for (int i = 1; i <= 3; i++) {\n    cout << "Loop number " << i << endl;\n  }\n  return 0;\n}',
+    c: '#include <stdio.h>\n\nint main(void) {\n  printf("Hello from Smart21Code!\\n");\n\n  for (int i = 1; i <= 3; i++) {\n    printf("Loop number %d\\n", i);\n  }\n  return 0;\n}',
+    java: 'class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello from Smart21Code!");\n\n    for (int i = 1; i <= 3; i++) {\n      System.out.println("Loop number " + i);\n    }\n  }\n}',
+    php: '<?php\n$name = "Smart21Code";\necho "Hello from $name\\n";\n\nfor ($i = 1; $i <= 3; $i++) {\n  echo "Loop number $i\\n";\n}\n',
+    csharp: 'using System;\n\nclass Program {\n  static void Main() {\n    Console.WriteLine("Hello from Smart21Code!");\n\n    for (int i = 1; i <= 3; i++) {\n      Console.WriteLine("Loop number " + i);\n    }\n  }\n}',
+    go: 'package main\n\nimport "fmt"\n\nfunc main() {\n\tfmt.Println("Hello from Smart21Code!")\n\n\tfor i := 1; i <= 3; i++ {\n\t\tfmt.Println("Loop number", i)\n\t}\n}',
+    rust: 'fn main() {\n    println!("Hello from Smart21Code!");\n\n    for i in 1..=3 {\n        println!("Loop number {}", i);\n    }\n}',
+    typescript: 'const app: string = "Smart21Code";\nconsole.log("Hello from " + app);\n\nfor (let i: number = 1; i <= 3; i++) {\n  console.log("Loop number " + i);\n}',
     sql: '-- Try a query on the school database\nSELECT name, city, score\nFROM students\nORDER BY score DESC\nLIMIT 5;'
   };
 
@@ -22,6 +29,7 @@
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); }
   function lang(id) { return S.langs.filter(function (l) { return l.id === id; })[0]; }
   function list(id) { return S.lessons[id] || []; }
+  function compiled(L) { return !!L && (L.run === 'cpp' || L.run === 'wbx'); }
   function looksHtml(code) { return /^\s*</.test(code); }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { /* ignore */ } return null; }
 
@@ -39,6 +47,13 @@
     if (langId === 'python') return 'python';
     if (langId === 'sql') return 'text/x-sqlite';
     if (langId === 'cpp') return 'text/x-c++src';
+    if (langId === 'c') return 'text/x-csrc';
+    if (langId === 'java') return 'text/x-java';
+    if (langId === 'php') return 'text/x-php';
+    if (langId === 'csharp') return 'text/x-csharp';
+    if (langId === 'go') return 'text/x-go';
+    if (langId === 'rust') return 'rust';
+    if (langId === 'typescript') return 'text/typescript';
     if (langId === 'javascript') return looksHtml(code) ? 'htmlmixed' : 'javascript';
     return 'htmlmixed';
   }
@@ -105,7 +120,7 @@
   }
 
   function viewHome() {
-    document.title = 'Smart21Code — Learn HTML, CSS, JavaScript, Python, C++, SQL, Bootstrap, jQuery & React | Smart21Brain';
+    document.title = 'Smart21Code — Learn HTML, CSS, JavaScript, Python, C++, C, Java, PHP, C#, Go, Rust, TypeScript, SQL, Bootstrap, jQuery & React | Smart21Brain';
     setLayout(false, false, true);
     var last = (store('s21c-last') || '').split('/');
     var cont = '';
@@ -115,7 +130,7 @@
     }
     var total = S.langs.reduce(function (n, l) { return n + list(l.id).length; }, 0);
     var h = '<section class="c-hero"><h1>Learn to code. Try it. Build it.</h1>' +
-      '<p>Free, hands-on tutorials in HTML, CSS, JavaScript, Python, C++, SQL, Bootstrap, jQuery and React. Every example opens in a real editor — change the code and run it right in your browser.</p>' +
+      '<p>Free, hands-on tutorials in HTML, CSS, JavaScript, Python, C++, C, Java, PHP, C#, Go, Rust, TypeScript, SQL, Bootstrap, jQuery and React. Every example opens in a real editor — change the code and run it right in your browser.</p>' +
       '<div class="btns"><a class="c-btn" href="#/html"><i class="fa-solid fa-play"></i> Start with HTML</a>' +
       '<a class="c-btn alt" href="#/playground"><i class="fa-solid fa-flask"></i> Open the Playground</a>' + cont + '</div></section>';
     h += '<h2 class="c-h2">Choose a tutorial</h2><div class="c-cards">';
@@ -126,7 +141,7 @@
     });
     h += '</div><h2 class="c-h2">How it works</h2><div class="c-steps">' +
       '<div class="c-step"><b>1</b><h4>Read a short lesson</h4><p>Plain-English explanations, one idea at a time.</p></div>' +
-      '<div class="c-step"><b>2</b><h4>Try it Yourself</h4><p>Edit any example and run it. Web frameworks, Python and SQL run in your browser, and C++ is compiled by a real g++ compiler.</p></div>' +
+      '<div class="c-step"><b>2</b><h4>Try it Yourself</h4><p>Edit any example and run it. Web frameworks, Python and SQL run in your browser, while C++, C, Java, PHP, C#, Go, Rust and TypeScript are compiled and run by real compilers online.</p></div>' +
       '<div class="c-step"><b>3</b><h4>Practise with exercises</h4><p>Fill in the blank to check what you learned — ' + total + ' lessons in all.</p></div></div>';
     h += '<div class="c-panel" style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between"><div><h4 style="margin:0 0 .2rem"><i class="fa-solid fa-robot" style="color:var(--s21-primary)"></i> Get more advanced with Smart21brain AI</h4><p style="margin:0">Ask the AI to explain a lesson, debug your code, or suggest what to build next.</p></div><button class="c-btn" data-ai-ask="1">Ask the AI</button></div>';
     $('#cMain').innerHTML = h;
@@ -225,9 +240,9 @@
   function viewPlay(route) {
     document.title = 'Playground | Smart21Code';
     setLayout(false, false, true);
-    var opts = ['html', 'javascript', 'python', 'cpp', 'sql', 'bootstrap', 'jquery', 'react'];
+    var opts = ['html', 'javascript', 'python', 'cpp', 'c', 'java', 'php', 'csharp', 'go', 'rust', 'typescript', 'sql', 'bootstrap', 'jquery', 'react'];
     var h = '<div class="c-crumb"><a href="#/">Smart21Code</a> › <span>Playground</span></div><h1><i class="fa-solid fa-flask" style="color:var(--s21-primary)"></i> Playground</h1>' +
-      '<p class="c-body">A full-screen editor with syntax colours. HTML, CSS, JavaScript, Bootstrap, jQuery and React run instantly; Python, C++ and SQL run for real too. Your code is saved on this device.</p><div class="c-cards">';
+      '<p class="c-body">A full-screen editor with syntax colours. HTML, CSS, JavaScript, Bootstrap, jQuery and React run instantly; Python, C++, C, Java, PHP, C#, Go, Rust, TypeScript and SQL run for real too. Your code is saved on this device.</p><div class="c-cards">';
     opts.forEach(function (id) {
       var l = lang(id);
       h += '<a class="c-card" href="#/playground/' + id + '" style="--lc:' + l.color + '"><div class="ic"><i class="' + ICON[id] + '"></i></div><h3>' + (id === 'html' ? 'HTML / CSS' : esc(l.name)) + '</h3><p>' + esc(l.tag) + '</p><div class="meta"><span>Open editor</span><span class="go">Go ›</span></div></a>';
@@ -328,7 +343,7 @@
 
   function showResult(kind) {
     $('#tryFrame').style.display = kind === 'web' ? '' : 'none';
-    $('#tryOut').hidden = kind !== 'python' && kind !== 'cpp';
+    $('#tryOut').hidden = kind !== 'python' && kind !== 'cpp' && kind !== 'wbx';
     $('#trySql').hidden = kind !== 'sql';
     $('#tryConsole').hidden = true;
   }
@@ -344,8 +359,8 @@
     t.hidden = false; document.body.classList.add('c-lock');
     var mode = modeFor(o.lang, o.code);
     setVal(o.code, mode);
-    $('#tryStdinWrap').hidden = o.lang !== 'python' && o.lang !== 'cpp';
-    if (o.lang === 'cpp') { $('#tryStdin').value = o.stdin || ''; $('#tryStdinLabel').textContent = 'Input (what the user would type for cin, one value per line)'; }
+    $('#tryStdinWrap').hidden = o.lang !== 'python' && !compiled(L);
+    if (compiled(L)) { $('#tryStdin').value = o.stdin || ''; $('#tryStdinLabel').textContent = L.stdin || 'Input (what the user would type for cin, one value per line)'; }
     else if (o.lang === 'python') { $('#tryStdinLabel').textContent = 'Input (one line for each input() call)'; }
     $('#tryRestore').hidden = o.lang !== 'sql';
     var kind = L.run;
@@ -391,22 +406,23 @@
       $('#tryFrame').srcdoc = R.buildWeb(code);
       setStatus('');
       if (isMobile() && !auto) setPanel('result');
-    } else if (L.run === 'cpp') {
-      showResult('cpp');
+    } else if (compiled(L)) {
+      showResult(L.run);
       var cout_ = $('#tryOut'); cout_.textContent = '';
       running = true; btn.className = 'c-btn stop'; btn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop'; setStatus('Compiling…');
       if (isMobile()) setPanel('result');
-      R.runCpp(code, {
+      var copts = {
         stdin: $('#tryStdin').value,
         onStatus: function (s) { setStatus(s); },
         onOut: function (text, isErr) {
           var span = document.createElement('span'); if (isErr) span.className = 'err'; span.textContent = text + '\n'; cout_.appendChild(span); cout_.scrollTop = cout_.scrollHeight;
         }
-      }).then(function () {
+      };
+      (L.run === 'wbx' ? R.runCompiled(L.wbx, code, copts) : R.runCpp(code, copts)).then(function () {
         if (!running) return;
         running = false; btn.className = 'c-btn run'; btn.innerHTML = '<i class="fa-solid fa-play"></i> Run';
         setStatus(cout_.textContent.trim() ? 'Finished' : 'Finished (no output)');
-        if (!cout_.textContent.trim()) cout_.innerHTML = '<span style="opacity:.6">Your program ran but did not print anything. Use cout to show a result.</span>';
+        if (!cout_.textContent.trim()) cout_.innerHTML = '<span style="opacity:.6">Your program ran but did not print anything. Use ' + esc(L.out || 'cout') + ' to show a result.</span>';
       });
     } else if (L.run === 'python') {
       showResult('python');
@@ -480,13 +496,38 @@
   }
 
   /* ---------------------------------------------------------- init */
+  /* Smart21brain AI context: lets the AI see the lesson / code the learner is looking at */
+  window.S21AI = {
+    getContext: function () {
+      var r = parseRoute(), c = { page: 'smart21code' };
+      try {
+        if (r.lang) c.language = lang(r.lang).name;
+        if (r.view === 'lesson') { var x = list(r.lang).filter(function (y) { return y.i === r.id; })[0]; if (x) c.lesson = x.t; }
+        if (tryOpen && (cm || fallback)) {
+          c.code = getVal();
+          if (cur && cur.lang) c.language = lang(cur.lang).name;
+          var o = $('#tryOut'), k = $('#tryConsoleBody');
+          c.output = ((o && !o.hidden ? o.textContent : '') + (k && !$('#tryConsole').hidden ? '\n' + k.textContent : '')).trim();
+        }
+      } catch (e) {}
+      return c;
+    },
+    insertCode: function (code, blockLang) {
+      if (tryOpen && (cm || fallback)) { setVal(code, cur && cur.mode ? cur.mode : modeFor(cur && cur.lang, code)); runTry(true); return; }
+      var alias = { js: 'javascript', ts: 'typescript', py: 'python', 'c++': 'cpp', 'c#': 'csharp', golang: 'go', rs: 'rust' };
+      var id = alias[blockLang] || blockLang, r = parseRoute();
+      if (!lang(id)) id = lang(r.lang) ? r.lang : 'html';
+      openTry({ lang: id, code: code, title: 'AI code — Try it Yourself', reset: code });
+    }
+  };
+
   function askAI() {
     var r = parseRoute(), q = 'Explain in simple words';
     if (r.view === 'lesson') { var x = list(r.lang).filter(function (y) { return y.i === r.id; })[0]; if (x) q = 'Explain "' + x.t + '" in ' + lang(r.lang).name + ' in simple words with an example.'; }
     var trig = $('[data-ai-trigger]'), panel = $('#s21-ai-panel');
     if (!trig || !panel) return;
     if (!panel.classList.contains('open')) trig.click();
-    var inp = $('input', panel); if (inp) { inp.value = q; inp.focus(); }
+    panel.dispatchEvent(new CustomEvent('s21ai:prefill', { detail: q }));
   }
 
   function init() {

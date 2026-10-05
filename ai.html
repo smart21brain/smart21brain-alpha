@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart21brain AI — Your learning &amp; coding assistant | Smart21Brain</title>
+<meta name="description" content="Chat with Smart21brain AI: learn any subject, get coding help, write better and practise with quizzes — free, fast and made for learners.">
+<link rel="canonical" href="https://smart21brain.com/ai.html">
+<meta property="og:title" content="Smart21brain AI — Your learning & coding assistant">
+<meta property="og:description" content="Ask anything. Learn, code, write and quiz yourself with Smart21brain AI.">
+<meta property="og:type" content="website">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<script>
+  // Same theme preference as the rest of the site (js/darkmode.js uses the 's21-theme' key).
+  try { var t = localStorage.getItem('s21-theme'); document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark'); } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/ai-page.css?v=1">
+</head>
+<body>
+<a class="skip" href="#aiInput">Skip to message box</a>
+
+<div class="app" id="app">
+  <!-- ============ Sidebar ============ -->
+  <aside class="side" id="side" aria-label="Chats">
+    <div class="side-top">
+      <a class="brand" href="index.html" aria-label="Smart21Brain home">
+        <img src="images/logo/coool.png" alt="" width="30" height="30">
+        <span>Smart<em>21</em>brain <b>AI</b></span>
+      </a>
+      <button class="icon-btn only-mobile" id="sideClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <button class="new-chat" id="newChat"><i class="fa-solid fa-pen-to-square"></i> New chat</button>
+
+    <div class="search-wrap">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="search" id="chatSearch" placeholder="Search chats" aria-label="Search chats" autocomplete="off">
+    </div>
+
+    <nav class="history" id="history" aria-label="Chat history"></nav>
+
+    <div class="side-bottom">
+      <a href="index.html"><i class="fa-solid fa-house"></i> Smart21Brain home</a>
+      <a href="smart21code.html"><i class="fa-solid fa-laptop-code"></i> Smart21Code</a>
+      <a href="smart21editor.html"><i class="fa-solid fa-code"></i> Smart21Editor</a>
+      <button id="clearAll" class="link-btn"><i class="fa-regular fa-trash-can"></i> Clear all chats</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <!-- ============ Main ============ -->
+  <main class="main">
+    <header class="top">
+      <button class="icon-btn" id="sideOpen" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+      <button class="icon-btn only-desktop" id="sideToggle" aria-label="Toggle sidebar"><i class="fa-solid fa-table-columns"></i></button>
+      <div class="model-chip" title="Smart21brain AI"><i class="fa-solid fa-wand-magic-sparkles"></i> Smart21brain AI</div>
+      <div class="top-actions">
+        <button class="icon-btn" id="exportChat" aria-label="Download this chat" title="Download chat (.md)"><i class="fa-solid fa-download"></i></button>
+        <button class="icon-btn" data-theme-toggle id="themeBtn" aria-label="Toggle light / dark"><i class="fa-solid fa-sun"></i></button>
+      </div>
+    </header>
+
+    <section class="stage" id="stage" aria-live="polite">
+      <!-- Welcome screen -->
+      <div class="welcome" id="welcome">
+        <img class="w-logo" src="images/logo/coool.png" alt="Smart21brain AI" width="64" height="64">
+        <h1><span id="greet">Hello</span>, <span class="grad">how can I help you today?</span></h1>
+        <p class="w-sub">Learn any subject, get coding help, write better and test yourself.</p>
+        <div class="cards" id="cards"></div>
+      </div>
+      <!-- Conversation -->
+      <div class="thread" id="thread"></div>
+    </section>
+
+    <button class="to-bottom" id="toBottom" aria-label="Scroll to latest"><i class="fa-solid fa-arrow-down"></i></button>
+
+    <footer class="composer-wrap">
+      <div class="modes" id="modes" role="radiogroup" aria-label="Mode">
+        <button role="radio" aria-checked="true"  data-mode="" class="on"><i class="fa-solid fa-bolt"></i> Auto</button>
+        <button role="radio" aria-checked="false" data-mode="learn"><i class="fa-solid fa-graduation-cap"></i> Learn</button>
+        <button role="radio" aria-checked="false" data-mode="code"><i class="fa-solid fa-code"></i> Code</button>
+        <button role="radio" aria-checked="false" data-mode="write"><i class="fa-solid fa-feather-pointed"></i> Write</button>
+        <button role="radio" aria-checked="false" data-mode="quiz"><i class="fa-solid fa-circle-question"></i> Quiz me</button>
+      </div>
+      <form class="composer" id="composer">
+        <textarea id="aiInput" rows="1" maxlength="4000" placeholder="Message Smart21brain AI…" aria-label="Message Smart21brain AI"></textarea>
+        <div class="c-row">
+          <span class="c-hint">Enter to send · Shift+Enter for a new line</span>
+          <span class="c-btns">
+            <button type="button" class="icon-btn" id="micBtn" aria-label="Speak your question" title="Speak"><i class="fa-solid fa-microphone"></i></button>
+            <button type="submit" class="send" id="sendBtn" aria-label="Send" disabled><i class="fa-solid fa-arrow-up"></i></button>
+          </span>
+        </div>
+      </form>
+      <p class="fine">Smart21brain AI can make mistakes. Check important answers with your teacher.</p>
+    </footer>
+  </main>
+</div>
+
+<!-- HTML preview modal -->
+<div class="modal" id="previewModal" hidden>
+  <div class="modal-box">
+    <div class="modal-head"><strong><i class="fa-solid fa-eye"></i> Preview</strong><button class="icon-btn" id="previewClose" aria-label="Close preview"><i class="fa-solid fa-xmark"></i></button></div>
+    <iframe id="previewFrame" title="Code preview" sandbox="allow-scripts"></iframe>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="js/ai-render.js"></script>
+<script src="js/ai-page.js?v=1"></script>
+</body>
+</html>
