@@ -3,662 +3,548 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System21 — All Tools You Need Are Here</title>
-<meta name="description" content="System21 is the Smart21 toolbox: image tools, document tools and more. Remove backgrounds, compress files and use everyday tools in one place.">
+<title>System21 — All the Tools You Need</title>
+<meta name="description" content="System21 is the Smart21 tool hub: background remover, file compressor and more. Free, private, runs in your browser.">
 <link rel="canonical" href="https://smart21brain.com/system21.html">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
 <link rel="apple-touch-icon" href="images/logo/coool.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=14">
 <link rel="stylesheet" href="css/responsive.css?v=5">
-
-<style>
-  /* =====================================================
-     SYSTEM21 — engineer's workbench look
-     Blueprint grid, IC-chip tiles, terminal-style labels.
-     Everything is scoped to #page-system21 so it cannot
-     leak into the rest of Smart21Brain.
-     ===================================================== */
-  #page-system21 {
-    --sy-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    --sy-trace: var(--s21-primary);
-    --sy-glow: color-mix(in srgb, var(--s21-primary) 55%, transparent);
-    --sy-grid: color-mix(in srgb, var(--s21-text) 7%, transparent);
-    --sy-grid-major: color-mix(in srgb, var(--s21-text) 13%, transparent);
-    font-family: var(--sy-mono);
-  }
-  #page-system21 main { position: relative; overflow: hidden; }
-
-  /* blueprint grid: fine 24px lines + major 120px lines */
-  #page-system21 .sy-grid-bg {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(var(--sy-grid-major) 1px, transparent 1px),
-      linear-gradient(90deg, var(--sy-grid-major) 1px, transparent 1px),
-      linear-gradient(var(--sy-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--sy-grid) 1px, transparent 1px);
-    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
-            mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
-  }
-  #page-system21 .sy-wrap { position: relative; z-index: 1; }
-
-  /* ---------- navbar tweaks (System21 brand) ---------- */
-  #page-system21 .s21-logo .mark {
-    background: linear-gradient(135deg, var(--sy-trace), color-mix(in srgb, var(--sy-trace) 60%, #000));
-  }
-  #page-system21 .s21-logo { font-family: var(--sy-mono); font-weight: 800; letter-spacing: -.02em; }
-  #page-system21 .s21-logo .mark svg { display: block; width: 22px; height: 22px; }
-  #page-system21 .s21-nav-link { font-family: var(--sy-mono); font-size: .86rem; }
-  #page-system21 .sy-version {
-    font-family: var(--sy-mono); font-size: .66rem; font-weight: 600;
-    padding: .15rem .45rem; border: 1px solid var(--s21-border); border-radius: 6px;
-    color: var(--s21-text-soft); margin-left: .5rem; align-self: center; letter-spacing: .02em;
-  }
-
-  /* ---------- hero ---------- */
-  #page-system21 .sy-hero { padding: clamp(2.2rem, 6vw, 4.2rem) 0 1.6rem; text-align: center; }
-  #page-system21 .sy-prompt {
-    display: inline-flex; align-items: center; gap: .55rem; flex-wrap: wrap; justify-content: center;
-    font-size: .8rem; color: var(--s21-text-soft);
-    background: var(--s21-white); border: 1px solid var(--s21-border); border-radius: 10px;
-    padding: .45rem .8rem; margin-bottom: 1.2rem;
-  }
-  #page-system21 .sy-prompt .ps { color: var(--sy-trace); font-weight: 800; }
-  #page-system21 .sy-prompt .cursor {
-    display: inline-block; width: .55em; height: 1.05em; background: var(--sy-trace);
-    vertical-align: -.18em; animation: sy-blink 1.05s steps(1) infinite;
-  }
-  @keyframes sy-blink { 50% { opacity: 0; } }
-  #page-system21 .sy-title {
-    font-family: var(--sy-mono); font-weight: 800; letter-spacing: -.04em;
-    font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1; margin: 0 0 .7rem;
-  }
-  #page-system21 .sy-title .n21 { color: var(--s21-secondary); }
-  #page-system21 .sy-tagline { font-size: clamp(1rem, 2.4vw, 1.3rem); color: var(--s21-text-soft); margin: 0; }
-  #page-system21 .sy-tagline b { color: var(--s21-text); font-weight: 600; }
-  #page-system21 .sy-stats { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-top: 1.4rem; }
-  #page-system21 .sy-stat {
-    font-size: .74rem; padding: .3rem .7rem; border-radius: 999px;
-    border: 1px solid var(--s21-border); background: var(--s21-white); color: var(--s21-text-soft);
-  }
-  #page-system21 .sy-stat b { color: var(--sy-trace); }
-
-  /* ---------- sections (rows from the sketch) ---------- */
-  #page-system21 .sy-section { padding: 1.4rem 0 1.2rem; scroll-margin-top: calc(var(--s21-navbar-h, 78px) + 12px); }
-  #page-system21 .sy-section + .sy-section { border-top: 1px solid var(--s21-border); }
-  #page-system21 .sy-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
-  #page-system21 .sy-label {
-    display: inline-flex; align-items: center; gap: .55rem;
-    font-weight: 800; font-size: .95rem; letter-spacing: .01em;
-    border: 2px solid var(--sy-trace); border-radius: 14px; padding: .35rem .9rem;
-    background: color-mix(in srgb, var(--sy-trace) 8%, transparent);
-  }
-  #page-system21 .sy-label .idx { color: var(--sy-trace); opacity: .85; font-weight: 600; }
-  #page-system21 .sy-line {
-    flex: 1; min-width: 60px; height: 2px; position: relative;
-    background: repeating-linear-gradient(90deg, var(--s21-border) 0 10px, transparent 10px 16px);
-  }
-  #page-system21 .sy-count { font-size: .72rem; color: var(--s21-text-soft); }
-
-  /* 5 tiles per row, exactly like the paper */
-  #page-system21 .sy-row {
-    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.8rem, 2.2vw, 1.6rem);
-  }
-  @media (max-width: 991.98px) { #page-system21 .sy-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (max-width: 479.98px) { #page-system21 .sy-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-
-  #page-system21 .sy-tool { display: flex; flex-direction: column; align-items: center; gap: .65rem; min-width: 0; }
-  #page-system21 .sy-name {
-    font-size: .78rem; font-weight: 600; text-align: center; line-height: 1.25; min-height: 2em;
-    color: var(--s21-text); overflow-wrap: anywhere;
-  }
-  #page-system21 .sy-name small { display: block; font-weight: 400; color: var(--s21-text-soft); font-size: .66rem; }
-
-  /* IC chip tile: square body with "pins" on the left & right edges */
-  #page-system21 .sy-chip {
-    --pin: color-mix(in srgb, var(--s21-text) 30%, transparent);
-    position: relative; width: 100%; max-width: 124px; aspect-ratio: 1 / 1;
-    display: grid; place-items: center; cursor: pointer;
-    background: var(--s21-white); color: var(--s21-text);
-    border: 2px solid var(--sy-trace); border-radius: 18px;
-    box-shadow: 0 0 0 0 var(--sy-glow), var(--card-shadow, 0 6px 20px rgba(0,0,0,.12));
-    transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s ease, border-color .2s ease;
-    font-size: clamp(1.6rem, 4.2vw, 2.3rem);
-  }
-  #page-system21 .sy-chip::before,
-  #page-system21 .sy-chip::after {
-    content: ""; position: absolute; top: 18%; bottom: 18%; width: 7px;
-    background: repeating-linear-gradient(to bottom, var(--pin) 0 5px, transparent 5px 12px);
-    border-radius: 2px; transition: background .2s ease;
-  }
-  #page-system21 .sy-chip::before { left: -8px; }
-  #page-system21 .sy-chip::after  { right: -8px; }
-  #page-system21 .sy-chip .notch {
-    position: absolute; top: 9px; left: 9px; width: 8px; height: 8px; border-radius: 50%;
-    border: 2px solid var(--sy-trace); opacity: .75;
-  }
-  #page-system21 .sy-chip .led {
-    position: absolute; top: 11px; right: 11px; width: 7px; height: 7px; border-radius: 50%;
-    background: #2ee56f; box-shadow: 0 0 8px #2ee56f;
-    animation: sy-pulse 2.2s ease-in-out infinite;
-  }
-  @keyframes sy-pulse { 50% { opacity: .35; } }
-  #page-system21 .sy-chip i { color: var(--sy-trace); transition: transform .25s ease; }
-  #page-system21 .sy-chip:hover,
-  #page-system21 .sy-chip:focus-visible {
-    transform: translateY(-4px);
-    box-shadow: 0 0 0 4px var(--sy-glow), var(--card-shadow-hover, 0 16px 36px rgba(0,0,0,.2));
-    outline: none;
-  }
-  #page-system21 .sy-chip:hover::before, #page-system21 .sy-chip:hover::after,
-  #page-system21 .sy-chip:focus-visible::before, #page-system21 .sy-chip:focus-visible::after {
-    background: repeating-linear-gradient(to bottom, var(--sy-trace) 0 5px, transparent 5px 12px);
-  }
-  #page-system21 .sy-chip:hover i { transform: scale(1.12) rotate(-4deg); }
-  #page-system21 .sy-chip:active { transform: scale(.92); }
-
-  /* empty slot (the blank rounded squares on the paper) */
-  #page-system21 .sy-chip.is-empty {
-    cursor: default; border: 2px dashed color-mix(in srgb, var(--s21-text) 28%, transparent);
-    background: transparent; box-shadow: none; font-size: 1rem;
-  }
-  #page-system21 .sy-chip.is-empty::before, #page-system21 .sy-chip.is-empty::after { display: none; }
-  #page-system21 .sy-chip.is-empty:hover, #page-system21 .sy-chip.is-empty:focus-visible { transform: none; box-shadow: none; }
-  #page-system21 .sy-chip.is-empty .slot { font-size: .66rem; color: var(--s21-text-soft); text-align: center; line-height: 1.5; }
-  #page-system21 .sy-chip.is-empty .slot i { display: block; font-size: 1.05rem; margin-bottom: .25rem; color: var(--s21-text-soft); opacity: .6; }
-  #page-system21 .sy-name.is-muted { color: var(--s21-text-soft); font-weight: 400; }
-
-  /* ---------- footer strip ---------- */
-  #page-system21 .sy-foot { border-top: 1px solid var(--s21-border); padding: 1.4rem 0 2.2rem; font-size: .76rem; color: var(--s21-text-soft); }
-  #page-system21 .sy-foot a { color: var(--sy-trace); }
-
-  /* ---------- tool workspace modal ---------- */
-  #page-system21 .sy-modal .modal-content { font-family: var(--sy-mono); border-radius: 18px; border: 2px solid var(--sy-trace); }
-  #page-system21 .sy-modal .modal-title { font-weight: 800; font-size: 1.02rem; }
-  #page-system21 .sy-drop {
-    border: 2px dashed color-mix(in srgb, var(--s21-text) 30%, transparent); border-radius: 14px;
-    padding: 1.6rem 1rem; text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
-    color: var(--s21-text-soft); font-size: .85rem;
-  }
-  #page-system21 .sy-drop:hover, #page-system21 .sy-drop.is-over {
-    border-color: var(--sy-trace); background: color-mix(in srgb, var(--sy-trace) 8%, transparent);
-  }
-  #page-system21 .sy-drop i { display: block; font-size: 1.8rem; color: var(--sy-trace); margin-bottom: .5rem; }
-  #page-system21 .sy-preview {
-    border-radius: 12px; border: 1px solid var(--s21-border); overflow: hidden; display: grid; place-items: center;
-    min-height: 160px; max-height: 340px;
-    background-color: #fff;
-    background-image: linear-gradient(45deg, #d9d9d9 25%, transparent 25%, transparent 75%, #d9d9d9 75%),
-                      linear-gradient(45deg, #d9d9d9 25%, transparent 25%, transparent 75%, #d9d9d9 75%);
-    background-size: 16px 16px; background-position: 0 0, 8px 8px;
-  }
-  #page-system21 .sy-preview canvas, #page-system21 .sy-preview img { max-width: 100%; max-height: 340px; display: block; }
-  #page-system21 .sy-readout { font-size: .78rem; display: flex; gap: .6rem; flex-wrap: wrap; }
-  #page-system21 .sy-readout span { padding: .25rem .6rem; border: 1px solid var(--s21-border); border-radius: 8px; }
-  #page-system21 .sy-readout b { color: var(--sy-trace); }
-  #page-system21 .sy-modal label { font-size: .78rem; font-weight: 600; }
-  #page-system21 .sy-modal .form-range::-webkit-slider-thumb { background: var(--sy-trace); }
-  #page-system21 .sy-modal .form-range::-moz-range-thumb { background: var(--sy-trace); }
-  #page-system21 .sy-note { font-size: .72rem; color: var(--s21-text-soft); }
-
-  @media (prefers-reduced-motion: reduce) {
-    #page-system21 .sy-prompt .cursor, #page-system21 .sy-chip .led { animation: none; }
-    #page-system21 .sy-chip, #page-system21 .sy-chip i { transition: none; }
-  }
-</style>
+<link rel="stylesheet" href="css/animations.css?v=4">
 </head>
-<body id="page-system21">
+<body>
 <a href="#main" class="skip-link">Skip to main content</a>
 
-<!-- ============ SYSTEM21 TOP NAV BAR ============ -->
 <header class="s21-navbar">
-  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4" aria-label="System21 navigation">
-    <a class="s21-logo" href="system21.html">
-      <span class="mark">
-        <!-- microchip glyph -->
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="6.5" y="6.5" width="11" height="11" rx="2" stroke="white" stroke-width="1.6"/>
-          <rect x="10" y="10" width="4" height="4" rx=".6" fill="white"/>
-          <path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </span>
-      System<span class="brand-21">21</span>
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      Smart<span class="brand-21">21</span>Brain
     </a>
-    <span class="sy-version d-none d-sm-inline">v1.0</span>
-
     <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
       <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
     </div>
-    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu">
-      <i class="fa-solid fa-bars fa-lg"></i>
-    </button>
-
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu"><i class="fa-solid fa-bars fa-lg"></i></button>
     <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
       <ul class="navbar-nav gap-1">
-        <li class="nav-item"><a class="nav-link s21-nav-link active" href="system21.html">All Tools</a></li>
-        <li class="nav-item"><a class="nav-link s21-nav-link" href="#image-tools">Image Tools</a></li>
-        <li class="nav-item"><a class="nav-link s21-nav-link" href="#document-tools">Document Tools</a></li>
-        <li class="nav-item"><a class="nav-link s21-nav-link" href="#other-tools">Other Tools</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
         <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link active" href="system21.html" aria-current="page"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
       </ul>
     </div>
-
     <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
       <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
-      <a href="index.html" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-arrow-left me-1"></i> Smart21Brain</a>
+      <span data-guest-nav="desktop" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary" data-i18n="nav_start">Get Started</a></span>
     </div>
   </nav>
 </header>
 
-<!-- Mobile offcanvas (hamburger side menu) -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
   <div class="offcanvas-header">
-    <h5 id="mobileNavLabel" class="font-display mb-0">System21</h5>
+    <h5 id="mobileNavLabel" class="font-display mb-0">Menu</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body d-flex flex-column">
     <ul class="navbar-nav gap-1 mb-4">
-      <li class="nav-item"><a class="nav-link s21-nav-link active" href="system21.html" data-bs-dismiss="offcanvas">All Tools</a></li>
-      <li class="nav-item"><a class="nav-link s21-nav-link" href="#image-tools" data-bs-dismiss="offcanvas">Image Tools</a></li>
-      <li class="nav-item"><a class="nav-link s21-nav-link" href="#document-tools" data-bs-dismiss="offcanvas">Document Tools</a></li>
-      <li class="nav-item"><a class="nav-link s21-nav-link" href="#other-tools" data-bs-dismiss="offcanvas">Other Tools</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link active" href="system21.html" aria-current="page"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
     </ul>
     <div class="mt-auto d-flex flex-column gap-2">
-      <a href="index.html" class="btn-s21 btn-s21-outline w-100"><i class="fa-solid fa-arrow-left me-1"></i> Back to Smart21Brain</a>
+      <span data-guest-nav="mobile" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline w-100" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary w-100" data-i18n="nav_start">Get Started</a></span>
     </div>
   </div>
 </div>
 
-<main id="main">
-  <div class="sy-grid-bg" aria-hidden="true"></div>
+<style>
+/* ===== System21 — scoped styles (sx-) ===== */
+.sx-page{--sx-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--sx-line:color-mix(in srgb,var(--s21-text) 11%,transparent);--sx-glow:color-mix(in srgb,var(--s21-primary) 55%,#3ddc97 45%);position:relative}
+.sx-page::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--sx-line) 1px,transparent 1px),linear-gradient(90deg,var(--sx-line) 1px,transparent 1px);
+  background-size:36px 36px;-webkit-mask-image:linear-gradient(#000 0,transparent 520px);mask-image:linear-gradient(#000 0,transparent 520px)}
+.sx-page>*{position:relative;z-index:1}
+.sx-mono{font-family:var(--sx-mono)}
 
-  <div class="container sy-wrap">
+/* status bar */
+.sx-status{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;align-items:center;font:500 .72rem/1 var(--sx-mono);color:var(--s21-text-soft);padding:.7rem 0;border-bottom:1px solid var(--s21-border)}
+.sx-status b{color:var(--s21-text);font-weight:600}
+.sx-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#3ddc97;box-shadow:0 0 0 0 rgba(61,220,151,.6);margin-right:.45rem;animation:sx-pulse 2s infinite}
+@keyframes sx-pulse{70%{box-shadow:0 0 0 7px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
 
-    <!-- ============ HEADING (top of the paper) ============ -->
-    <section class="sy-hero">
-      <div class="sy-prompt" aria-hidden="true"><span class="ps">$</span> system21 --list-tools <span class="cursor"></span></div>
-      <h1 class="sy-title">System<span class="n21">21</span></h1>
-      <p class="sy-tagline"><b>All tools you need</b> are here</p>
-      <div class="sy-stats">
-        <span class="sy-stat"><b>3</b> categories</span>
-        <span class="sy-stat"><b>2</b> tools online</span>
-        <span class="sy-stat"><b>13</b> slots free</span>
-        <span class="sy-stat">100% in-browser · files never leave your device</span>
+/* hero */
+.sx-hero{padding:3.2rem 0 2.4rem}
+.sx-prompt{font:600 .82rem var(--sx-mono);color:var(--sx-glow);margin-bottom:1rem}
+.sx-prompt span{color:var(--s21-text-soft)}
+.sx-title{font-family:var(--sx-mono);font-weight:800;letter-spacing:-.04em;font-size:clamp(2.6rem,7vw,4.6rem);line-height:1;margin:0 0 .9rem}
+.sx-title .n{color:var(--s21-accent)}
+.sx-caret{display:inline-block;width:.5ch;height:.85em;background:var(--sx-glow);vertical-align:-.08em;margin-left:.15em;animation:sx-blink 1s steps(1) infinite}
+@keyframes sx-blink{50%{opacity:0}}
+.sx-tag{font-size:clamp(1.05rem,2.2vw,1.35rem);color:var(--s21-text-soft);max-width:44rem;margin:0}
+.sx-tag strong{color:var(--s21-text)}
+.sx-meta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.4rem}
+.sx-pill{font:600 .74rem var(--sx-mono);padding:.4rem .75rem;border:1px solid var(--s21-border);border-radius:999px;background:var(--s21-white);color:var(--s21-text-soft)}
+.sx-pill i{color:var(--sx-glow);margin-right:.4rem}
+
+/* category sections — same structure as the paper sketch */
+.sx-cat{border-top:1px solid var(--s21-border);padding:1.6rem 0 2rem}
+.sx-chip{display:inline-flex;align-items:center;gap:.55rem;font:700 .86rem var(--sx-mono);color:var(--s21-text);border:1.5px solid var(--s21-accent);border-radius:999px;padding:.4rem 1rem;background:color-mix(in srgb,var(--s21-accent) 7%,transparent)}
+.sx-chip small{font:500 .7rem var(--sx-mono);color:var(--s21-text-soft)}
+.sx-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1.1rem;margin-top:1.4rem}
+@media(max-width:991px){.sx-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:575px){.sx-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}}
+
+.sx-slot{display:flex;flex-direction:column;align-items:center;gap:.7rem;text-align:center}
+.sx-tile{appearance:none;width:100%;aspect-ratio:1/1;max-width:132px;border-radius:22px;border:1.5px solid var(--s21-accent);background:var(--s21-white);color:var(--s21-text);display:grid;place-items:center;font-size:2rem;cursor:pointer;position:relative;transition:transform .18s,box-shadow .18s,border-color .18s;box-shadow:0 0 0 0 transparent}
+.sx-tile:hover,.sx-tile:focus-visible{transform:translateY(-4px);box-shadow:0 14px 30px color-mix(in srgb,var(--s21-accent) 28%,transparent);outline:none}
+.sx-tile:focus-visible{outline:2px solid var(--s21-secondary);outline-offset:3px}
+.sx-tile .ic{color:var(--s21-accent)}
+.sx-tile .id{position:absolute;top:8px;left:11px;font:600 .58rem var(--sx-mono);color:var(--s21-text-soft);letter-spacing:.06em}
+.sx-tile .go{position:absolute;bottom:8px;right:10px;font-size:.7rem;color:var(--s21-text-soft);opacity:0;transition:opacity .18s}
+.sx-tile:hover .go,.sx-tile:focus-visible .go{opacity:1}
+.sx-name{font:700 .84rem var(--sx-mono);line-height:1.25}
+.sx-sub{font:500 .68rem var(--sx-mono);color:var(--s21-text-soft);margin-top:-.45rem}
+.sx-empty{width:100%;aspect-ratio:1/1;max-width:132px;border-radius:22px;border:1.5px dashed color-mix(in srgb,var(--s21-accent) 55%,transparent);display:grid;place-items:center;color:color-mix(in srgb,var(--s21-text-soft) 70%,transparent);font:600 .62rem var(--sx-mono);letter-spacing:.08em;opacity:.8}
+.sx-empty i{display:block;font-size:1.1rem;margin-bottom:.3rem}
+
+/* workspace dialog */
+.sx-dlg{border:1px solid var(--s21-border);border-radius:20px;background:var(--s21-bg);color:var(--s21-text);padding:0;width:min(1040px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.sx-dlg::backdrop{background:rgba(5,10,8,.72);backdrop-filter:blur(4px)}
+.sx-dlg-h{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.1rem;border-bottom:1px solid var(--s21-border);background:var(--s21-white);position:sticky;top:0;z-index:2}
+.sx-dlg-h .dots{display:flex;gap:6px}.sx-dlg-h .dots i{width:11px;height:11px;border-radius:50%;background:var(--s21-border)}
+.sx-dlg-h .dots i:first-child{background:#ef476f}.sx-dlg-h .dots i:nth-child(2){background:#ffd166}.sx-dlg-h .dots i:nth-child(3){background:#3ddc97}
+.sx-dlg-h h2{font:700 .9rem var(--sx-mono);margin:0;flex:1}
+.sx-x{appearance:none;border:1px solid var(--s21-border);background:transparent;color:var(--s21-text);border-radius:10px;width:34px;height:34px;cursor:pointer}
+.sx-x:hover{border-color:var(--s21-accent);color:var(--s21-accent)}
+.sx-dlg-b{padding:1.2rem;overflow:auto;max-height:calc(100vh - 100px)}
+.sx-drop{border:2px dashed var(--s21-border);border-radius:16px;padding:2.2rem 1rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;background:var(--s21-white)}
+.sx-drop:hover,.sx-drop.over,.sx-drop:focus-visible{border-color:var(--s21-accent);background:color-mix(in srgb,var(--s21-accent) 6%,var(--s21-white));outline:none}
+.sx-drop i{font-size:1.8rem;color:var(--s21-accent);margin-bottom:.6rem}
+.sx-drop p{margin:0;font:500 .82rem var(--sx-mono);color:var(--s21-text-soft)}
+.sx-drop p b{color:var(--s21-text)}
+.sx-ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem 1.4rem;margin:1.1rem 0}
+.sx-ctrl label{display:flex;justify-content:space-between;font:600 .76rem var(--sx-mono);margin-bottom:.35rem}
+.sx-ctrl label output{color:var(--s21-accent)}
+.sx-ctrl input[type=range]{width:100%;accent-color:var(--s21-accent)}
+.sx-ctrl select{width:100%;font:500 .8rem var(--sx-mono);padding:.45rem .6rem;border-radius:10px;border:1px solid var(--s21-border);background:var(--s21-white);color:var(--s21-text)}
+.sx-btn{appearance:none;border:0;border-radius:12px;padding:.6rem 1.1rem;font:700 .8rem var(--sx-mono);cursor:pointer;background:var(--s21-accent);color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+.sx-btn:hover{filter:brightness(1.08);color:#fff}
+.sx-btn.ghost{background:transparent;color:var(--s21-text);border:1px solid var(--s21-border)}
+.sx-btn.ghost:hover{border-color:var(--s21-accent);color:var(--s21-accent)}
+.sx-btn[disabled]{opacity:.45;pointer-events:none}
+.sx-rows{display:flex;flex-direction:column;gap:.6rem;margin-top:1rem}
+.sx-row{display:grid;grid-template-columns:56px 1fr auto;gap:.9rem;align-items:center;padding:.65rem .8rem;border:1px solid var(--s21-border);border-radius:14px;background:var(--s21-white)}
+.sx-row img{width:56px;height:56px;object-fit:cover;border-radius:10px;background:var(--s21-border)}
+.sx-row .nm{font:600 .8rem var(--sx-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sx-row .st{font:500 .72rem var(--sx-mono);color:var(--s21-text-soft);margin-top:.2rem}
+.sx-row .st b{color:#3ddc97}.sx-row .st b.bad{color:var(--s21-secondary)}
+.sx-bar{height:4px;border-radius:4px;background:var(--s21-border);margin-top:.45rem;overflow:hidden}
+.sx-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--s21-accent),var(--s21-secondary));width:0;transition:width .3s}
+.sx-total{margin-top:1rem;font:600 .78rem var(--sx-mono);color:var(--s21-text-soft)}
+.sx-total b{color:#3ddc97}
+.sx-stage{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+@media(max-width:700px){.sx-stage{grid-template-columns:1fr}.sx-row{grid-template-columns:48px 1fr}.sx-row .act{grid-column:1/-1}}
+.sx-pane{border:1px solid var(--s21-border);border-radius:14px;overflow:hidden;background:var(--s21-white)}
+.sx-pane h3{font:700 .7rem var(--sx-mono);letter-spacing:.08em;text-transform:uppercase;margin:0;padding:.5rem .8rem;border-bottom:1px solid var(--s21-border);color:var(--s21-text-soft)}
+.sx-pane .cv{display:grid;place-items:center;padding:.6rem;min-height:220px}
+.sx-pane canvas{max-width:100%;max-height:360px;height:auto;display:block;cursor:crosshair}
+.sx-checker{background:conic-gradient(#8883 25%,transparent 0 50%,#8883 0 75%,transparent 0) 0 0/18px 18px}
+.sx-hint{font:500 .72rem var(--sx-mono);color:var(--s21-text-soft);margin:.7rem 0 0}
+.sx-hint i{color:var(--s21-secondary);margin-right:.35rem}
+.sx-sw{display:inline-block;width:14px;height:14px;border-radius:4px;border:1px solid var(--s21-border);vertical-align:-2px;margin-right:.35rem}
+.sx-foot{padding:2.2rem 0 3.5rem;border-top:1px solid var(--s21-border)}
+.sx-foot code{font-family:var(--sx-mono);font-size:.78rem;color:var(--s21-text-soft)}
+@media (prefers-reduced-motion:reduce){.sx-dot,.sx-caret{animation:none}.sx-tile{transition:none}}
+</style>
+
+<div class="sx-page">
+  <div class="container">
+
+    <!-- status bar -->
+    <div class="sx-status" role="status">
+      <span><i class="sx-dot"></i><b>SYSTEM21</b> online</span>
+      <span>build <b>1.0.0</b></span>
+      <span>runtime <b>client-side</b></span>
+      <span>uploads <b>0 bytes sent</b></span>
+      <span class="ms-auto" id="sxClock" aria-hidden="true"></span>
+    </div>
+
+    <!-- hero -->
+    <section class="sx-hero" aria-labelledby="sxTitle">
+      <div class="sx-prompt"><span>root@smart21:~$</span> ./system21 --list-tools</div>
+      <h1 class="sx-title" id="sxTitle">System<span class="n">21</span><span class="sx-caret" aria-hidden="true"></span></h1>
+      <p class="sx-tag"><strong>All tools you need are here.</strong> Pick a tool, drop in your file, get the result. Everything runs inside your browser — your files never leave your device.</p>
+      <div class="sx-meta">
+        <span class="sx-pill"><i class="fa-solid fa-shield-halved"></i>Private by design</span>
+        <span class="sx-pill"><i class="fa-solid fa-bolt"></i>No sign-up</span>
+        <span class="sx-pill"><i class="fa-solid fa-microchip"></i><span id="sxCount">2</span> tools online · more loading</span>
       </div>
     </section>
 
-    <!-- ============ ROW 1 — IMAGE TOOL ============ -->
-    <section class="sy-section" id="image-tools" aria-labelledby="h-image">
-      <div class="sy-head">
-        <h2 class="sy-label mb-0" id="h-image" style="font-size:.95rem"><span class="idx">01</span> Image tool</h2>
-        <span class="sy-line" aria-hidden="true"></span>
-        <span class="sy-count">1 / 5 slots used</span>
-      </div>
-      <div class="sy-row">
-        <div class="sy-tool">
-          <button type="button" class="sy-chip" data-tool="bg-remover" aria-label="Open Background Remover">
-            <span class="notch"></span><span class="led" title="online"></span>
-            <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-          </button>
-          <span class="sy-name">Background Remover<small>PNG · JPG · WebP</small></span>
+    <main id="main" tabindex="-1">
+
+      <!-- ===== Image tool ===== -->
+      <section class="sx-cat" aria-labelledby="catImg">
+        <span class="sx-chip" id="catImg"><i class="fa-regular fa-image"></i> Image tool <small>/img</small></span>
+        <div class="sx-grid">
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="bg" aria-label="Open Background Remover">
+              <span class="id">IMG.01</span>
+              <i class="fa-solid fa-wand-magic-sparkles ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Background Remover</div>
+            <div class="sx-sub">PNG · JPG · WebP</div>
+          </div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.02"><span><i class="fa-solid fa-plus"></i>IMG.02</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.03"><span><i class="fa-solid fa-plus"></i>IMG.03</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.04"><span><i class="fa-solid fa-plus"></i>IMG.04</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.05"><span><i class="fa-solid fa-plus"></i>IMG.05</span></div></div>
         </div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 02</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 03</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 04</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 05</span></div><span class="sy-name is-muted">Coming soon</span></div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============ ROW 2 — DOCUMENT TOOLS ============ -->
-    <section class="sy-section" id="document-tools" aria-labelledby="h-doc">
-      <div class="sy-head">
-        <h2 class="sy-label mb-0" id="h-doc" style="font-size:.95rem"><span class="idx">02</span> Document tools</h2>
-        <span class="sy-line" aria-hidden="true"></span>
-        <span class="sy-count">1 / 5 slots used</span>
-      </div>
-      <div class="sy-row">
-        <div class="sy-tool">
-          <button type="button" class="sy-chip" data-tool="compress" aria-label="Open Compress">
-            <span class="notch"></span><span class="led" title="online"></span>
-            <i class="fa-solid fa-compress" aria-hidden="true"></i>
-          </button>
-          <span class="sy-name">Compress<small>shrink file size</small></span>
+      <!-- ===== Document tools ===== -->
+      <section class="sx-cat" aria-labelledby="catDoc">
+        <span class="sx-chip" id="catDoc"><i class="fa-regular fa-file-lines"></i> Document tools <small>/doc</small></span>
+        <div class="sx-grid">
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="zip" aria-label="Open Compress">
+              <span class="id">DOC.01</span>
+              <i class="fa-solid fa-compress ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Compress</div>
+            <div class="sx-sub">Shrink image files</div>
+          </div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.02"><span><i class="fa-solid fa-plus"></i>DOC.02</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.03"><span><i class="fa-solid fa-plus"></i>DOC.03</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.04"><span><i class="fa-solid fa-plus"></i>DOC.04</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.05"><span><i class="fa-solid fa-plus"></i>DOC.05</span></div></div>
         </div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 02</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 03</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 04</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 05</span></div><span class="sy-name is-muted">Coming soon</span></div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============ ROW 3 — OTHER TOOLS ============ -->
-    <section class="sy-section" id="other-tools" aria-labelledby="h-other">
-      <div class="sy-head">
-        <h2 class="sy-label mb-0" id="h-other" style="font-size:.95rem"><span class="idx">03</span> Other tools</h2>
-        <span class="sy-line" aria-hidden="true"></span>
-        <span class="sy-count">0 / 5 slots used</span>
-      </div>
-      <div class="sy-row">
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 01</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 02</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 03</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 04</span></div><span class="sy-name is-muted">Coming soon</span></div>
-        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 05</span></div><span class="sy-name is-muted">Coming soon</span></div>
-      </div>
-    </section>
+      <!-- ===== Other tools ===== -->
+      <section class="sx-cat" aria-labelledby="catOth">
+        <span class="sx-chip" id="catOth"><i class="fa-solid fa-toolbox"></i> Other tools <small>/misc</small></span>
+        <div class="sx-grid">
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.01"><span><i class="fa-solid fa-plus"></i>OTH.01</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.02"><span><i class="fa-solid fa-plus"></i>OTH.02</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.03"><span><i class="fa-solid fa-plus"></i>OTH.03</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.04"><span><i class="fa-solid fa-plus"></i>OTH.04</span></div></div>
+          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.05"><span><i class="fa-solid fa-plus"></i>OTH.05</span></div></div>
+        </div>
+      </section>
 
+      <div class="sx-foot"><code>// To add a tool: copy a .sx-slot block, change the id and name, then register it in TOOLS (bottom of this file).</code></div>
+    </main>
   </div>
+</div>
 
-  <div class="sy-foot">
-    <div class="container sy-wrap d-flex flex-wrap justify-content-between gap-2">
-      <span>© 2026 Smart21Brain · System21</span>
-      <span>Part of <a href="earth21.html">Earth21</a></span>
+<!-- ===== Tool workspace ===== -->
+<dialog class="sx-dlg" id="sxDlg" aria-labelledby="sxDlgT">
+  <div class="sx-dlg-h">
+    <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <h2 id="sxDlgT">tool</h2>
+    <button class="sx-x" type="button" id="sxClose" aria-label="Close tool"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="sx-dlg-b" id="sxDlgB"></div>
+</dialog>
+
+<script>
+(function(){
+  'use strict';
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var fmt=function(n){return n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(2)+' MB'};
+  var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+
+  // live clock in status bar
+  var clk=$('#sxClock');(function t(){clk.textContent=new Date().toISOString().slice(0,19).replace('T',' ')+' UTC';setTimeout(t,1000)})();
+
+  var dlg=$('#sxDlg'),body=$('#sxDlgB'),title=$('#sxDlgT'),lastBtn=null,cleanup=null;
+  function open(id,btn){
+    lastBtn=btn;if(cleanup){cleanup();cleanup=null}
+    var tool=TOOLS[id];title.textContent='~/system21/'+tool.path;body.innerHTML='';
+    cleanup=tool.mount(body)||null;
+    if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');
+    history.replaceState(null,'','#'+id);
+  }
+  function close(){if(dlg.close)dlg.close();else dlg.removeAttribute('open')}
+  dlg.addEventListener('close',function(){if(cleanup){cleanup();cleanup=null}history.replaceState(null,'',location.pathname+location.search);if(lastBtn)lastBtn.focus()});
+  dlg.addEventListener('click',function(e){if(e.target===dlg)close()});
+  $('#sxClose').addEventListener('click',close);
+  document.querySelectorAll('[data-open]').forEach(function(b){b.addEventListener('click',function(){open(b.dataset.open,b)})});
+
+  function dropzone(host,accept,multiple,onFiles,label){
+    var z=document.createElement('div');z.className='sx-drop';z.tabIndex=0;z.setAttribute('role','button');
+    z.innerHTML='<i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i><p><b>'+label+'</b><br>or drag &amp; drop here · accepts '+accept.replace(/image\//g,'').replace(/,/g,' · ')+'</p>';
+    var inp=document.createElement('input');inp.type='file';inp.accept=accept;inp.multiple=!!multiple;inp.hidden=true;
+    z.appendChild(inp);host.appendChild(z);
+    var pick=function(){inp.click()};
+    z.addEventListener('click',function(e){if(e.target!==inp)pick()});
+    z.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
+    inp.addEventListener('change',function(){if(inp.files.length)onFiles([].slice.call(inp.files));inp.value=''});
+    ['dragenter','dragover'].forEach(function(ev){z.addEventListener(ev,function(e){e.preventDefault();z.classList.add('over')})});
+    ['dragleave','drop'].forEach(function(ev){z.addEventListener(ev,function(e){e.preventDefault();z.classList.remove('over')})});
+    z.addEventListener('drop',function(e){var f=[].slice.call(e.dataTransfer.files).filter(function(x){return /^image\//.test(x.type)});if(f.length)onFiles(multiple?f:[f[0]])});
+    return z;
+  }
+  function loadImg(file){return new Promise(function(res,rej){var u=URL.createObjectURL(file),i=new Image();i.onload=function(){res({img:i,url:u})};i.onerror=function(){URL.revokeObjectURL(u);rej(new Error('Cannot read '+file.name))};i.src=u})}
+  function toBlob(c,type,q){return new Promise(function(r){c.toBlob(r,type,q)})}
+  function baseName(n){return n.replace(/\.[^.]+$/,'')}
+  function dl(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+
+  /* ================= COMPRESS ================= */
+  function mountCompress(host){
+    host.innerHTML='<div class="sx-ctrl">'+
+      '<div><label for="zQ">Quality <output id="zQo">75%</output></label><input id="zQ" type="range" min="10" max="100" value="75"></div>'+
+      '<div><label for="zW">Max width <output id="zWo">original</output></label><input id="zW" type="range" min="320" max="4096" step="64" value="4096"></div>'+
+      '<div><label for="zF">Output format</label><select id="zF"><option value="image/jpeg">JPEG — smallest for photos</option><option value="image/webp">WebP — modern, smaller</option></select></div>'+
+    '</div>';
+    var rows=document.createElement('div'),total=document.createElement('div'),items=[],tm;
+    rows.className='sx-rows';total.className='sx-total';
+    dropzone(host,'image/jpeg,image/png,image/webp',true,add,'Choose images to compress');
+    host.appendChild(rows);host.appendChild(total);
+    var q=$('#zQ',host),w=$('#zW',host),f=$('#zF',host);
+    function opts(){return {q:+q.value/100,w:+w.value,t:f.value}}
+    function labels(){$('#zQo',host).textContent=q.value+'%';$('#zWo',host).textContent=+w.value>=4096?'original':w.value+' px'}
+    [q,w,f].forEach(function(el){el.addEventListener('input',function(){labels();clearTimeout(tm);tm=setTimeout(function(){items.forEach(run)},250)})});
+    function add(files){files.forEach(function(file){
+      var it={file:file,row:document.createElement('div')};
+      it.row.className='sx-row';it.row.innerHTML='<img alt=""><div><div class="nm">'+esc(file.name)+'</div><div class="st">reading…</div><div class="sx-bar"><i></i></div></div><div class="act"></div>';
+      rows.appendChild(it.row);items.push(it);
+      loadImg(file).then(function(r){it.src=r;$('img',it.row).src=r.url;run(it)}).catch(function(e){$('.st',it.row).textContent=e.message})
+    })}
+    function run(it){
+      if(!it.src)return;var o=opts(),im=it.src.img,sc=Math.min(1,o.w/im.naturalWidth),W=Math.round(im.naturalWidth*sc),H=Math.round(im.naturalHeight*sc);
+      var c=document.createElement('canvas');c.width=W;c.height=H;var x=c.getContext('2d');
+      if(o.t==='image/jpeg'){x.fillStyle='#fff';x.fillRect(0,0,W,H)}
+      x.imageSmoothingQuality='high';x.drawImage(im,0,0,W,H);
+      toBlob(c,o.t,o.q).then(function(b){
+        if(!b){$('.st',it.row).textContent='This browser cannot encode '+o.t;return}
+        it.out=b;var keep=b.size>=it.file.size,pct=Math.round((1-b.size/it.file.size)*100);
+        $('.st',it.row).innerHTML=fmt(it.file.size)+' → '+fmt(b.size)+' · '+W+'×'+H+' · '+(keep?'<b class="bad">no gain ('+pct+'%) — try lower quality</b>':'<b>−'+pct+'%</b>');
+        $('.sx-bar i',it.row).style.width=Math.max(0,Math.min(100,100-pct))+'%';
+        var ext=o.t==='image/webp'?'webp':'jpg',a=$('.act',it.row);a.innerHTML='';
+        var btn=document.createElement('button');btn.className='sx-btn';btn.type='button';btn.innerHTML='<i class="fa-solid fa-download"></i> Save';
+        btn.onclick=function(){dl(b,baseName(it.file.name)+'-compressed.'+ext)};a.appendChild(btn);
+        sum();
+      });
+    }
+    function sum(){var a=0,b=0,n=0;items.forEach(function(i){if(i.out){a+=i.file.size;b+=i.out.size;n++}});
+      total.innerHTML=n?n+' file'+(n>1?'s':'')+' · '+fmt(a)+' → '+fmt(b)+' · saved <b>'+fmt(Math.max(0,a-b))+'</b> ('+Math.max(0,Math.round((1-b/a)*100))+'%)':''}
+    return function(){items.forEach(function(i){if(i.src)URL.revokeObjectURL(i.src.url)});items=[]};
+  }
+
+  /* ================= BACKGROUND REMOVER ================= */
+  function mountBg(host){
+    host.innerHTML='<div class="sx-ctrl">'+
+      '<div><label for="bT">Tolerance <output id="bTo">40</output></label><input id="bT" type="range" min="1" max="140" value="40"></div>'+
+      '<div><label for="bE">Edge softness <output id="bEo">1 px</output></label><input id="bE" type="range" min="0" max="6" value="1"></div>'+
+      '<div><label for="bM">Mode</label><select id="bM"><option value="edge">Edge fill — keeps matching colours inside the subject</option><option value="all">Everywhere — remove this colour from the whole image</option></select></div>'+
+    '</div>';
+    var holder=document.createElement('div');host.appendChild(holder);
+    var st=null,key=null,tm;
+    var dz=dropzone(holder,'image/jpeg,image/png,image/webp',false,function(fs){load(fs[0])},'Choose an image');
+    var stage=document.createElement('div');stage.className='sx-stage';stage.hidden=true;
+    stage.innerHTML='<div class="sx-pane"><h3>Original — click to pick background colour</h3><div class="cv"><canvas id="bSrc"></canvas></div></div><div class="sx-pane"><h3>Result — transparent PNG</h3><div class="cv sx-checker"><canvas id="bOut" style="cursor:default"></canvas></div></div>';
+    var bar=document.createElement('div');bar.style.cssText='display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:1rem';bar.hidden=true;
+    bar.innerHTML='<button class="sx-btn" id="bDl" type="button"><i class="fa-solid fa-download"></i> Download PNG</button><button class="sx-btn ghost" id="bNew" type="button"><i class="fa-solid fa-rotate-left"></i> New image</button><span class="sx-hint" style="margin:0" id="bInfo"></span>';
+    var hint=document.createElement('p');hint.className='sx-hint';hint.hidden=true;
+    hint.innerHTML='<i class="fa-solid fa-circle-info"></i>Works best on plain backgrounds (studio shots, scans, logos). It is a colour-based remover, not AI — if edges are left behind, click the background on the left or raise the tolerance.';
+    host.appendChild(stage);host.appendChild(bar);host.appendChild(hint);
+    var src=$('#bSrc',host),out=$('#bOut',host),T=$('#bT',host),E=$('#bE',host),M=$('#bM',host);
+    function labels(){$('#bTo',host).textContent=T.value;$('#bEo',host).textContent=E.value+' px'}
+    function load(file){
+      loadImg(file).then(function(r){
+        var im=r.img,sc=Math.min(1,2400/Math.max(im.naturalWidth,im.naturalHeight)),W=Math.round(im.naturalWidth*sc),H=Math.round(im.naturalHeight*sc);
+        src.width=out.width=W;src.height=out.height=H;var x=src.getContext('2d',{willReadFrequently:true});x.clearRect(0,0,W,H);x.drawImage(im,0,0,W,H);
+        URL.revokeObjectURL(r.url);
+        st={name:file.name,W:W,H:H,data:x.getImageData(0,0,W,H)};key=autoKey(st.data,W,H);
+        dz.hidden=true;stage.hidden=bar.hidden=hint.hidden=false;render();
+      }).catch(function(e){alert(e.message)})
+    }
+    function autoKey(d,W,H){ // median colour of the border pixels
+      var rs=[],gs=[],bs=[],p=d.data,push=function(x,y){var i=(y*W+x)*4;rs.push(p[i]);gs.push(p[i+1]);bs.push(p[i+2])};
+      for(var x=0;x<W;x++){push(x,0);push(x,H-1)}for(var y=0;y<H;y++){push(0,y);push(W-1,y)}
+      var m=function(a){a.sort(function(a,b){return a-b});return a[a.length>>1]};return [m(rs),m(gs),m(bs)];
+    }
+    function render(){
+      var W=st.W,H=st.H,p=st.data.data,n=W*H,t=+T.value,t2=t*t,k=key,mask=new Uint8Array(n); // 1 = background
+      var near=function(i){var dr=p[i*4]-k[0],dg=p[i*4+1]-k[1],db=p[i*4+2]-k[2];return dr*dr+dg*dg+db*db<=t2&&(p[i*4+3]>0)};
+
+      if(M.value==='all'){for(var i=0;i<n;i++)if(near(i))mask[i]=1}
+      else{
+        var stack=new Int32Array(n),sp=0,seen=new Uint8Array(n),seed=function(i){if(!seen[i]&&near(i)){seen[i]=1;mask[i]=1;stack[sp++]=i}};
+        for(var x=0;x<W;x++){seed(x);seed((H-1)*W+x)}for(var y=0;y<H;y++){seed(y*W);seed(y*W+W-1)}
+        while(sp){var c=stack[--sp],cx=c%W,cy=(c/W)|0;
+          if(cx>0)seed(c-1);if(cx<W-1)seed(c+1);if(cy>0)seed(c-W);if(cy<H-1)seed(c+W)}
+      }
+      // alpha with optional box-blur feather
+      var a=new Float32Array(n),r=+E.value;for(var j=0;j<n;j++)a[j]=mask[j]?0:255;
+      if(r>0)a=blur(a,W,H,r);
+      var o=out.getContext('2d'),img=o.createImageData(W,H),d=img.data,cleared=0;
+      for(var q=0;q<n;q++){d[q*4]=p[q*4];d[q*4+1]=p[q*4+1];d[q*4+2]=p[q*4+2];d[q*4+3]=Math.round(a[q]*p[q*4+3]/255);if(mask[q])cleared++}
+      o.putImageData(img,0,0);
+      $('#bInfo',host).innerHTML='<span class="sx-sw" style="background:rgb('+k.join(',')+')"></span>background rgb('+k.join(', ')+') · removed '+Math.round(cleared/n*100)+'% · '+W+'×'+H;
+    }
+    function blur(a,W,H,r){ // separable box blur
+      var t=new Float32Array(a.length),o=new Float32Array(a.length),w=2*r+1,x,y,s,i;
+      for(y=0;y<H;y++){s=0;for(x=-r;x<=r;x++)s+=a[y*W+Math.min(W-1,Math.max(0,x))];
+        for(x=0;x<W;x++){t[y*W+x]=s/w;s+=a[y*W+Math.min(W-1,x+r+1)]-a[y*W+Math.max(0,x-r)]}}
+      for(x=0;x<W;x++){s=0;for(y=-r;y<=r;y++)s+=t[Math.min(H-1,Math.max(0,y))*W+x];
+        for(y=0;y<H;y++){o[y*W+x]=s/w;s+=t[Math.min(H-1,y+r+1)*W+x]-t[Math.max(0,y-r)*W+x]}}
+      return o;
+    }
+    [T,E,M].forEach(function(el){el.addEventListener('input',function(){labels();if(!st)return;clearTimeout(tm);tm=setTimeout(render,60)})});
+    src.addEventListener('click',function(e){
+      if(!st)return;var b=src.getBoundingClientRect(),x=Math.min(st.W-1,Math.max(0,Math.floor((e.clientX-b.left)*st.W/b.width))),y=Math.min(st.H-1,Math.max(0,Math.floor((e.clientY-b.top)*st.H/b.height))),i=(y*st.W+x)*4,p=st.data.data;
+      key=[p[i],p[i+1],p[i+2]];render();
+    });
+    $('#bDl',host).addEventListener('click',function(){toBlob(out,'image/png').then(function(b){dl(b,baseName(st.name)+'-no-bg.png')})});
+    $('#bNew',host).addEventListener('click',function(){st=null;stage.hidden=bar.hidden=hint.hidden=true;dz.hidden=false});
+    return function(){st=null};
+  }
+
+  var TOOLS={
+    bg:{path:'img/background-remover',mount:mountBg},
+    zip:{path:'doc/compress',mount:mountCompress}
+  };
+  $('#sxCount').textContent=Object.keys(TOOLS).length;
+  var h=location.hash.slice(1);if(TOOLS[h]){var b=document.querySelector('[data-open="'+h+'"]');if(b)open(h,b)}
+})();
+</script>
+
+
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem">System21 — all the tools you need, in one place.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6>Earth21 systems</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="school.html">School System</a></li>
+          <li><a href="shop.html">Smart21Shop</a></li>
+          <li><a href="stationery.html">Stationery OS</a></li>
+          <li><a href="institution.html">Smart21Institution</a></li>
+          <li><a href="system21.html">System21 Tools</a></li>
+          <li><a href="earth21.html">Daily Tasks (soon)</a></li>
+          <li><a href="earth21.html">Marketing (soon)</a></li>
+          <li><a href="earth21.html">Social (soon)</a></li>
+          <li><a href="earth21.html">Universities (soon)</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
     </div>
   </div>
-</main>
+</footer>
 
-<!-- ============ TOOL WORKSPACE (one modal, two panes) ============ -->
-<div class="modal fade sy-modal" id="toolModal" tabindex="-1" aria-labelledby="toolModalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="toolModalTitle">Tool</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
 
-        <!-- Background Remover -->
-        <div id="pane-bg-remover" hidden>
-          <label class="sy-drop w-100 mb-3" for="bgFile" id="bgDrop">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            Drop an image here or tap to choose
-          </label>
-          <input type="file" id="bgFile" accept="image/*" hidden>
-          <div class="row g-3 align-items-end mb-3">
-            <div class="col-sm-8">
-              <label for="bgTol" class="d-flex justify-content-between"><span>Tolerance</span><span id="bgTolVal">35</span></label>
-              <input type="range" class="form-range" id="bgTol" min="5" max="120" value="35">
-            </div>
-            <div class="col-sm-4">
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="bgSoft" checked>
-                <label class="form-check-label" for="bgSoft">Smooth edges</label>
-              </div>
-            </div>
-          </div>
-          <div class="sy-preview mb-3"><canvas id="bgCanvas" width="1" height="1" aria-label="Result preview"></canvas></div>
-          <p class="sy-note mb-3">Works best on photos with a plain, single-colour background. Detects the background colour from the image edges and clears everything connected to it.</p>
-          <div class="d-flex gap-2 flex-wrap">
-            <button type="button" class="btn-s21 btn-s21-primary" id="bgDownload" disabled><i class="fa-solid fa-download me-1"></i> Download PNG</button>
-            <button type="button" class="btn-s21 btn-s21-outline" id="bgReset" disabled>Reset</button>
-          </div>
-        </div>
-
-        <!-- Compress -->
-        <div id="pane-compress" hidden>
-          <label class="sy-drop w-100 mb-3" for="cpFile" id="cpDrop">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            Drop an image here or tap to choose
-          </label>
-          <input type="file" id="cpFile" accept="image/*" hidden>
-          <div class="row g-3 mb-3">
-            <div class="col-sm-5">
-              <label for="cpQ" class="d-flex justify-content-between"><span>Quality</span><span id="cpQVal">70</span></label>
-              <input type="range" class="form-range" id="cpQ" min="10" max="95" value="70">
-            </div>
-            <div class="col-6 col-sm-3">
-              <label for="cpW">Max width</label>
-              <select class="form-select form-select-sm" id="cpW">
-                <option value="0">Original</option>
-                <option value="1920">1920 px</option>
-                <option value="1280" selected>1280 px</option>
-                <option value="800">800 px</option>
-              </select>
-            </div>
-            <div class="col-6 col-sm-4">
-              <label for="cpFmt">Format</label>
-              <select class="form-select form-select-sm" id="cpFmt">
-                <option value="image/jpeg" selected>JPEG</option>
-                <option value="image/webp">WebP</option>
-              </select>
-            </div>
-          </div>
-          <div class="sy-preview mb-3"><img id="cpImg" alt="Compressed preview" hidden></div>
-          <div class="sy-readout mb-3" id="cpStats" hidden>
-            <span>before <b id="cpBefore">–</b></span>
-            <span>after <b id="cpAfter">–</b></span>
-            <span>saved <b id="cpSaved">–</b></span>
-          </div>
-          <p class="sy-note mb-3">Image compression runs here in your browser. PDF and Office file compression will be added as separate slots.</p>
-          <div class="d-flex gap-2 flex-wrap">
-            <a class="btn-s21 btn-s21-primary disabled" id="cpDownload" role="button" aria-disabled="true"><i class="fa-solid fa-download me-1"></i> Download</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> Study Buddy</span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
   </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai">Hi! Ask me to explain a topic or suggest a video or book to try next.</div></div>
+  <p class="ai-disclaimer">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script src="js/darkmode.js"></script>
-<script>
-(function () {
-  'use strict';
-
-  /* ---------- open the right tool in the modal ---------- */
-  var modalEl = document.getElementById('toolModal');
-  var modal = new bootstrap.Modal(modalEl);
-  var titleEl = document.getElementById('toolModalTitle');
-  var TITLES = { 'bg-remover': 'Background Remover', 'compress': 'Compress' };
-
-  document.querySelectorAll('[data-tool]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var tool = btn.getAttribute('data-tool');
-      ['bg-remover', 'compress'].forEach(function (t) {
-        document.getElementById('pane-' + t).hidden = (t !== tool);
-      });
-      titleEl.textContent = TITLES[tool];
-      modal.show();
-    });
-  });
-
-  /* ---------- shared helpers ---------- */
-  function wireDrop(labelEl, inputEl, handler) {
-    ['dragenter', 'dragover'].forEach(function (ev) {
-      labelEl.addEventListener(ev, function (e) { e.preventDefault(); labelEl.classList.add('is-over'); });
-    });
-    ['dragleave', 'drop'].forEach(function (ev) {
-      labelEl.addEventListener(ev, function (e) { e.preventDefault(); labelEl.classList.remove('is-over'); });
-    });
-    labelEl.addEventListener('drop', function (e) {
-      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-      if (f) handler(f);
-    });
-    inputEl.addEventListener('change', function () { if (inputEl.files[0]) handler(inputEl.files[0]); });
-  }
-  function loadImage(file) {
-    return new Promise(function (resolve, reject) {
-      if (!file.type || file.type.indexOf('image/') !== 0) { reject(new Error('Please choose an image file.')); return; }
-      var url = URL.createObjectURL(file);
-      var img = new Image();
-      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('Could not read that image.')); };
-      img.src = url;
-    });
-  }
-  function fmtBytes(n) {
-    if (n < 1024) return n + ' B';
-    if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
-    return (n / 1048576).toFixed(2) + ' MB';
-  }
-
-  /* =====================================================
-     BACKGROUND REMOVER
-     1. estimate bg colour from the 4 corners
-     2. flood-fill inward from every border pixel that is
-        within `tolerance` of that colour
-     3. cleared pixels become transparent (optionally
-        softening the edge pixels next to them)
-     ===================================================== */
-  var bgCanvas = document.getElementById('bgCanvas');
-  var bgCtx = bgCanvas.getContext('2d', { willReadFrequently: true });
-  var bgTol = document.getElementById('bgTol');
-  var bgSoft = document.getElementById('bgSoft');
-  var bgDownload = document.getElementById('bgDownload');
-  var bgReset = document.getElementById('bgReset');
-  var bgSource = null;      // ImageData of the untouched, downscaled original
-  var bgName = 'image';
-  var MAX_SIDE = 1600;
-
-  function bgRender() {
-    if (!bgSource) return;
-    var w = bgSource.width, h = bgSource.height;
-    var src = bgSource.data;
-    var out = new Uint8ClampedArray(src);
-    var tol = parseInt(bgTol.value, 10);
-    var tol2 = tol * tol;
-
-    // background colour = average of the four corner pixels
-    var corners = [0, (w - 1), (h - 1) * w, (h * w - 1)];
-    var r = 0, g = 0, b = 0;
-    corners.forEach(function (p) { r += src[p * 4]; g += src[p * 4 + 1]; b += src[p * 4 + 2]; });
-    r /= 4; g /= 4; b /= 4;
-
-    function matches(p) {
-      var dr = src[p * 4] - r, dg = src[p * 4 + 1] - g, db = src[p * 4 + 2] - b;
-      return (dr * dr + dg * dg + db * db) <= tol2;
-    }
-
-    var visited = new Uint8Array(w * h);
-    var stack = new Int32Array(w * h);
-    var sp = 0;
-    function push(p) {
-      if (!visited[p] && matches(p)) { visited[p] = 1; stack[sp++] = p; }
-    }
-    var x, y;
-    for (x = 0; x < w; x++) { push(x); push((h - 1) * w + x); }
-    for (y = 0; y < h; y++) { push(y * w); push(y * w + (w - 1)); }
-
-    while (sp > 0) {
-      var p = stack[--sp];
-      var px = p % w;
-      if (px > 0) push(p - 1);
-      if (px < w - 1) push(p + 1);
-      if (p >= w) push(p - w);
-      if (p < w * (h - 1)) push(p + w);
-    }
-
-    for (var i = 0; i < w * h; i++) { if (visited[i]) out[i * 4 + 3] = 0; }
-
-    if (bgSoft.checked) {
-      // half-fade the first kept pixel next to a cleared one
-      for (y = 1; y < h - 1; y++) {
-        for (x = 1; x < w - 1; x++) {
-          var q = y * w + x;
-          if (visited[q]) continue;
-          if (visited[q - 1] || visited[q + 1] || visited[q - w] || visited[q + w]) out[q * 4 + 3] = 140;
-        }
-      }
-    }
-
-    bgCtx.putImageData(new ImageData(out, w, h), 0, 0);
-    bgDownload.disabled = false;
-    bgReset.disabled = false;
-  }
-
-  wireDrop(document.getElementById('bgDrop'), document.getElementById('bgFile'), function (file) {
-    loadImage(file).then(function (img) {
-      var scale = Math.min(1, MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
-      var w = Math.max(1, Math.round(img.naturalWidth * scale));
-      var h = Math.max(1, Math.round(img.naturalHeight * scale));
-      bgCanvas.width = w; bgCanvas.height = h;
-      bgCtx.clearRect(0, 0, w, h);
-      bgCtx.drawImage(img, 0, 0, w, h);
-      bgSource = bgCtx.getImageData(0, 0, w, h);
-      bgName = (file.name || 'image').replace(/\.[^.]+$/, '');
-      bgRender();
-    }).catch(function (err) { alert(err.message); });
-  });
-
-  var bgTimer = null;
-  bgTol.addEventListener('input', function () {
-    document.getElementById('bgTolVal').textContent = bgTol.value;
-    clearTimeout(bgTimer); bgTimer = setTimeout(bgRender, 60);
-  });
-  bgSoft.addEventListener('change', bgRender);
-
-  bgDownload.addEventListener('click', function () {
-    bgCanvas.toBlob(function (blob) {
-      if (!blob) return;
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = bgName + '-no-bg.png';
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
-    }, 'image/png');
-  });
-  bgReset.addEventListener('click', function () {
-    if (!bgSource) return;
-    bgCtx.putImageData(bgSource, 0, 0);
-    bgDownload.disabled = true; bgReset.disabled = true;
-  });
-
-  /* =====================================================
-     COMPRESS (image): resize + re-encode via canvas
-     ===================================================== */
-  var cpQ = document.getElementById('cpQ');
-  var cpW = document.getElementById('cpW');
-  var cpFmt = document.getElementById('cpFmt');
-  var cpImg = document.getElementById('cpImg');
-  var cpStats = document.getElementById('cpStats');
-  var cpDownload = document.getElementById('cpDownload');
-  var cpFile = null, cpImgEl = null, cpUrl = null;
-
-  function cpRun() {
-    if (!cpImgEl || !cpFile) return;
-    var maxW = parseInt(cpW.value, 10);
-    var w = cpImgEl.naturalWidth, h = cpImgEl.naturalHeight;
-    if (maxW > 0 && w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
-    var c = document.createElement('canvas');
-    c.width = w; c.height = h;
-    var ctx = c.getContext('2d');
-    if (cpFmt.value === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); } // JPEG has no alpha
-    ctx.drawImage(cpImgEl, 0, 0, w, h);
-    c.toBlob(function (blob) {
-      if (!blob) return;
-      if (cpUrl) URL.revokeObjectURL(cpUrl);
-      cpUrl = URL.createObjectURL(blob);
-      cpImg.src = cpUrl; cpImg.hidden = false;
-      var saved = Math.round((1 - blob.size / cpFile.size) * 100);
-      document.getElementById('cpBefore').textContent = fmtBytes(cpFile.size);
-      document.getElementById('cpAfter').textContent = fmtBytes(blob.size);
-      document.getElementById('cpSaved').textContent = saved > 0 ? saved + '%' : 'none — try lower quality';
-      cpStats.hidden = false;
-      var ext = cpFmt.value === 'image/webp' ? 'webp' : 'jpg';
-      cpDownload.href = cpUrl;
-      cpDownload.download = (cpFile.name || 'image').replace(/\.[^.]+$/, '') + '-compressed.' + ext;
-      cpDownload.classList.remove('disabled');
-      cpDownload.removeAttribute('aria-disabled');
-    }, cpFmt.value, parseInt(cpQ.value, 10) / 100);
-  }
-
-  wireDrop(document.getElementById('cpDrop'), document.getElementById('cpFile'), function (file) {
-    loadImage(file).then(function (img) { cpFile = file; cpImgEl = img; cpRun(); })
-      .catch(function (err) { alert(err.message); });
-  });
-  var cpTimer = null;
-  cpQ.addEventListener('input', function () {
-    document.getElementById('cpQVal').textContent = cpQ.value;
-    clearTimeout(cpTimer); cpTimer = setTimeout(cpRun, 120);
-  });
-  cpW.addEventListener('change', cpRun);
-  cpFmt.addEventListener('change', cpRun);
-})();
-</script>
+<script src="js/polish-animations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/ai-assistant.js?v=4"></script>
+<script src="js/main.js"></script>
+<script src="js/nav-account.js"></script>
+<script>AOS.init({duration:650,once:true,offset:60});</script>
+<script src="js/cookie-consent.js"></script>
 </body>
 </html>
