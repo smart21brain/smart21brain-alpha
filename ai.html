@@ -80,23 +80,24 @@
     <button class="to-bottom" id="toBottom" aria-label="Scroll to latest"><i class="fa-solid fa-arrow-down"></i></button>
 
     <footer class="composer-wrap">
-      <form class="composer" id="composer">
-        <textarea id="aiInput" rows="1" maxlength="4000" placeholder="Message Smart21brain AI…" aria-label="Message Smart21brain AI"></textarea>
-        <div class="c-row">
           <div class="modes" id="modes" role="radiogroup" aria-label="Mode">
-          <button type="button" role="radio" aria-checked="true"  data-mode="" class="on"><i class="fa-solid fa-bolt"></i> Auto</button>
           <button type="button" role="radio" aria-checked="false" data-mode="learn"><i class="fa-solid fa-graduation-cap"></i> Learn</button>
           <button type="button" role="radio" aria-checked="false" data-mode="code"><i class="fa-solid fa-code"></i> Code</button>
           <button type="button" role="radio" aria-checked="false" data-mode="write"><i class="fa-solid fa-feather-pointed"></i> Write</button>
           <button type="button" role="radio" aria-checked="false" data-mode="quiz"><i class="fa-solid fa-circle-question"></i> Quiz me</button>
           </div>
+      <form class="composer" id="composer">
+        <textarea id="aiInput" rows="1" maxlength="4000" placeholder="Message Smart21brain AI…" aria-label="Message Smart21brain AI"></textarea>
+        <div class="c-row">
+          <div class="modes modes-in" role="radiogroup" aria-label="Auto mode">
+          <button type="button" role="radio" aria-checked="true"  data-mode="" class="on"><i class="fa-solid fa-bolt"></i> Auto</button></div>
           <span class="c-btns">
             <button type="button" class="icon-btn" id="micBtn" aria-label="Speak your question" title="Speak"><i class="fa-solid fa-microphone"></i></button>
             <button type="submit" class="send" id="sendBtn" aria-label="Send" disabled><i class="fa-solid fa-arrow-up"></i></button>
           </span>
         </div>
       </form>
-      <p class="fine">Enter to send · Shift+Enter for a new line · Smart21brain AI can make mistakes, so check important answers with your teacher.</p>
+      <p class="fine">Smart21brain AI can make mistakes, so check important answers with your teacher.</p>
     </footer>
   </main>
 </div>

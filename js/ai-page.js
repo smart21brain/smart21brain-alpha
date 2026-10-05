@@ -230,12 +230,12 @@
   input.addEventListener('input', grow);
   input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!busy) $('#composer').requestSubmit(); } });
   $('#composer').addEventListener('submit', function (e) { e.preventDefault(); if (busy) { if (abort) abort.abort(); return; } send(input.value); });
-  $('#modes').addEventListener('click', function (e) {
+  $$('.modes').forEach(function (g) { g.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return; mode = b.getAttribute('data-mode') || '';
-    $$('#modes button').forEach(function (x) { var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    $$('.modes button').forEach(function (x) { var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
     var ph = { '': 'Message Smart21brain AI…', learn: 'What would you like to learn?', code: 'Paste code or describe what to build…', write: 'What should we write?', quiz: 'Which topic should I quiz you on?' };
     input.placeholder = ph[mode]; input.focus();
-  });
+  }); });
 
   /* voice input */
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition, rec = null;
@@ -276,14 +276,14 @@
   $('#cards').innerHTML = CARDS.map(function (k, n) { return '<button class="card" data-card="' + n + '"><i class="fa-solid ' + k.i + '" style="background:' + k.c + '"></i><div><b>' + k.t + '</b><span>' + k.d + '</span></div></button>'; }).join('');
   $('#cards').addEventListener('click', function (e) {
     var b = e.target.closest('[data-card]'); if (!b) return; var k = CARDS[+b.getAttribute('data-card')];
-    var mb = $('#modes [data-mode="' + k.m + '"]'); if (mb) mb.click(); send(k.p);
+    var mb = $('.modes [data-mode="' + k.m + '"]'); if (mb) mb.click(); send(k.p);
   });
 
   /* ---------------- boot ---------------- */
   var h = new Date().getHours(); $('#greet').textContent = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
   paintTheme(); loadAll(); renderHistory(); grow();
   var params = new URLSearchParams(location.search);
-  var qm = params.get('mode'); if (qm) { var mb2 = $('#modes [data-mode="' + qm + '"]'); if (mb2) mb2.click(); }
+  var qm = params.get('mode'); if (qm) { var mb2 = $('.modes [data-mode="' + qm + '"]'); if (mb2) mb2.click(); }
   var q0 = (params.get('q') || '').trim();
   if (q0) { history.replaceState(null, '', location.pathname); send(q0); }
   else if (convos.length && params.get('resume') === '1') openConvo(convos[0].id);

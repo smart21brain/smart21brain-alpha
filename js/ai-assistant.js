@@ -119,6 +119,15 @@
     flushPara(); closeLists(0);
     return out;
   }
+  /* Build a runnable document for a code block (null = this language can't run in the browser). */
+  function previewDoc(code, lang) {
+    lang = (lang || '').toLowerCase();
+    if (lang === 'svg') return '<!doctype html><body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#fff">' + code;
+    if (lang === 'html' || lang === 'htm' || (!lang && /^\s*<(!doctype|html|svg|body|div|head|style|h1|p|section|main)/i.test(code))) return code;
+    if (lang === 'css') return '<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:system-ui,sans-serif;padding:1rem}</style><style>' + code + '</style><body><h1>Heading</h1><p>A paragraph with a <a href="#">link</a> and <strong>bold text</strong>.</p><button>Button</button><ul><li>One</li><li>Two</li><li>Three</li></ul><div class="box card container">A box</div>';
+    if (lang === 'js' || lang === 'javascript') return '<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><body style="font-family:system-ui,sans-serif;padding:1rem"><div id="app"></div><pre id="out" style="white-space:pre-wrap;font:13px/1.5 ui-monospace,Menlo,monospace;background:#f3f6f4;padding:.7rem;border-radius:8px;margin-top:.8rem"></pre><script>(function(){var o=document.getElementById("out");function w(c,a){o.textContent+=(c?c+": ":"")+[].map.call(a,function(x){try{return typeof x==="object"?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(" ")+"\\n"}console.log=function(){w("",arguments)};console.error=function(){w("error",arguments)};console.warn=function(){w("warn",arguments)};window.onerror=function(m){w("error",[m])};})();<\/script><script>' + code.replace(/<\/script/gi, '<\\/script') + '<\/script>';
+    return null;
+  }
   function renderMarkdown(src) {
     var re = /```([\w+#.-]*)[^\n]*\n([\s\S]*?)(```|$)/g, html = '', last = 0, m;
     var canUse = !!(window.S21AI && typeof window.S21AI.insertCode === 'function');
@@ -126,9 +135,10 @@
       html += renderText(src.slice(last, m.index));
       var lang = (m[1] || '').toLowerCase(), code = m[2].replace(/\n$/, '');
       html += '<div class="ai-code" data-lang="' + esc(lang) + '"><div class="ai-code-bar"><span>' + esc(lang || 'code') + '</span><span class="ai-code-actions">' +
+        '<button type="button" data-ai-prev><i class="fa-solid fa-eye"></i> Preview</button>' +
         '<button type="button" data-ai-copy><i class="fa-regular fa-copy"></i> Copy</button>' +
         '<button type="button" data-ai-use><i class="fa-solid fa-up-right-from-square"></i> Smart21Editor</button>' +
-        '</span></div><pre><code>' + highlight(code, lang) + '</code></pre></div>';
+        '</span></div><pre><code>' + highlight(code, lang) + '</code></pre><div class="ai-code-prev" hidden></div></div>';
       last = m.index + m[0].length;
       if (!m[3]) { last = src.length; break; }
     }
@@ -340,8 +350,16 @@
 
     /* copy / use-in-editor buttons in code blocks */
     log.addEventListener('click', function (e) {
-      var copy = e.target.closest('[data-ai-copy]'), use = e.target.closest('[data-ai-use]');
-      var box = (copy || use) && (copy || use).closest('.ai-code'); if (!box) return;
+      var copy = e.target.closest('[data-ai-copy]'), use = e.target.closest('[data-ai-use]'), pv = e.target.closest('[data-ai-prev]');
+      var box = (copy || use || pv) && (copy || use || pv).closest('.ai-code'); if (!box) return;
+      if (pv) {
+        var pane = box.querySelector('.ai-code-prev'), pre = box.querySelector('pre'), showing = !pane.hidden;
+        if (showing) { pane.hidden = true; pane.innerHTML = ''; pre.hidden = false; pv.innerHTML = '<i class="fa-solid fa-eye"></i> Preview'; return; }
+        var d = previewDoc(box.querySelector('code').textContent, box.getAttribute('data-lang'));
+        if (d === null) pane.innerHTML = '<div class="ai-code-note">Live preview works for HTML, CSS, JavaScript and SVG. To run this code, use the Smart21Editor button.</div>';
+        else { var fr = document.createElement('iframe'); fr.title = 'Code preview'; fr.setAttribute('sandbox', 'allow-scripts'); fr.srcdoc = d; pane.innerHTML = ''; pane.appendChild(fr); }
+        pane.hidden = false; pre.hidden = true; pv.innerHTML = '<i class="fa-solid fa-code"></i> Code'; return;
+      }
       var code = box.querySelector('code').textContent;
       if (copy) copyText(code, function () { copy.innerHTML = '<i class="fa-solid fa-check"></i> Copied'; setTimeout(function () { copy.innerHTML = '<i class="fa-regular fa-copy"></i> Copy'; }, 1500); });
       else { try {

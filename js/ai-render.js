@@ -114,7 +114,7 @@
     while ((m = re.exec(src))) {
       html += renderText(src.slice(last, m.index));
       var lang = (m[1] || '').toLowerCase(), code = m[2].replace(/\n$/, '');
-      var canPrev = /^(html|htm|svg)$/.test(lang) || (!lang && /^\s*<(!doctype|html|svg|body|div|head)/i.test(code));
+      var canPrev = true;
       html += '<div class="ai-code" data-lang="' + esc(lang) + '" data-view="code"><div class="ai-code-bar"><span class="ai-code-lang">' + esc(lang || 'code') + '</span>' +
         '<span class="ai-code-actions"><span class="ai-seg" role="tablist" aria-label="Code output view">' +
         (canPrev ? '<button type="button" role="tab" data-view="preview"><i class="fa-solid fa-eye"></i> Preview</button>' : '') +
@@ -128,6 +128,16 @@
     }
     html += renderText(src.slice(last));
     return html;
+  }
+
+  /* Build a runnable document for a code block (null = this language can't run in the browser). */
+  function previewDoc(code, lang) {
+    lang = (lang || '').toLowerCase();
+    if (lang === 'svg') return '<!doctype html><body style="margin:0;display:grid;place-items:center;min-height:100vh;background:#fff">' + code;
+    if (lang === 'html' || lang === 'htm' || (!lang && /^\s*<(!doctype|html|svg|body|div|head|style|h1|p|section|main)/i.test(code))) return code;
+    if (lang === 'css') return '<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font-family:system-ui,sans-serif;padding:1rem}</style><style>' + code + '</style><body><h1>Heading</h1><p>A paragraph with a <a href="#">link</a> and <strong>bold text</strong>.</p><button>Button</button><ul><li>One</li><li>Two</li><li>Three</li></ul><div class="box card container">A box</div>';
+    if (lang === 'js' || lang === 'javascript') return '<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><body style="font-family:system-ui,sans-serif;padding:1rem"><div id="app"></div><pre id="out" style="white-space:pre-wrap;font:13px/1.5 ui-monospace,Menlo,monospace;background:#f3f6f4;padding:.7rem;border-radius:8px;margin-top:.8rem"></pre><script>(function(){var o=document.getElementById("out");function w(c,a){o.textContent+=(c?c+": ":"")+[].map.call(a,function(x){try{return typeof x==="object"?JSON.stringify(x):String(x)}catch(e){return String(x)}}).join(" ")+"\\n"}console.log=function(){w("",arguments)};console.error=function(){w("error",arguments)};console.warn=function(){w("warn",arguments)};window.onerror=function(m){w("error",[m])};})();<\/script><script>' + code.replace(/<\/script/gi, '<\\/script') + '<\/script>';
+    return null;
   }
 
   /* ---- code block actions: Preview / Code tabs + hand-off to Smart21Editor ---- */
@@ -145,7 +155,10 @@
     if (!prev) return;
     if (view === 'preview') {
       var f = document.createElement('iframe'); f.title = 'Code preview'; f.setAttribute('sandbox', 'allow-scripts');
-      f.srcdoc = box.querySelector('code').textContent; prev.innerHTML = ''; prev.appendChild(f); prev.hidden = false; pre.hidden = true;
+      var doc = previewDoc(box.querySelector('code').textContent, box.getAttribute('data-lang')); prev.innerHTML = '';
+      if (doc === null) prev.innerHTML = '<div class="ai-code-note"><i class="fa-solid fa-circle-info"></i> Live preview works for HTML, CSS, JavaScript and SVG. To run this code, open it in Smart21Editor.</div>';
+      else { f.srcdoc = doc; prev.appendChild(f); }
+      prev.hidden = false; pre.hidden = true;
     } else { prev.hidden = true; prev.innerHTML = ''; pre.hidden = false; }
   }
   function onCodeClick(e) {            // returns true if the click was handled
@@ -159,5 +172,5 @@
     return true;
   }
 
-  window.S21Md = { onCodeClick: onCodeClick, sendToEditor: sendToEditor, render: renderMarkdown, highlight: highlight, esc: esc };
+  window.S21Md = { previewDoc: previewDoc, onCodeClick: onCodeClick, sendToEditor: sendToEditor, render: renderMarkdown, highlight: highlight, esc: esc };
 })();

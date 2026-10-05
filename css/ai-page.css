@@ -138,10 +138,10 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------------- composer ---------------- */
 .composer-wrap { padding: .3rem 1rem calc(.6rem + env(safe-area-inset-bottom, 0px)); }
-.composer, .fine { max-width: var(--col); margin-left: auto; margin-right: auto; }
-.modes { display: flex; gap: .25rem; overflow-x: auto; flex: 1; min-width: 0; scrollbar-width: none; }
+.modes, .composer, .fine { max-width: var(--col); margin-left: auto; margin-right: auto; }
+.modes { display: flex; gap: .4rem; overflow-x: auto; min-width: 0; scrollbar-width: none; margin: 0 auto .55rem; padding: 2px; }
 .modes::-webkit-scrollbar { display: none; }
-.modes button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .4rem; border: 1px solid transparent; background: transparent; border-radius: 999px; padding: .32rem .7rem; font-size: .8rem; font-weight: 600; color: var(--soft); transition: all .15s; }
+.modes button { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .4rem; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: .32rem .7rem; font-size: .8rem; font-weight: 600; color: var(--soft); transition: all .15s; }
 .modes button:hover { color: var(--text); background: var(--hover); }
 .modes button.on { background: color-mix(in srgb, var(--brand) 16%, var(--panel)); color: var(--text); border-color: color-mix(in srgb, var(--brand) 55%, transparent); }
 .composer { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; padding: .7rem .8rem .55rem 1.1rem; box-shadow: var(--shadow); transition: border-color .15s; }
@@ -193,3 +193,9 @@ a { color: inherit; text-decoration: none; }
 .ai-code-prev iframe { display: block; width: 100%; height: min(420px, 60vh); border: 0; background: #fff; }
 .ai-code pre[hidden], .ai-code-prev[hidden] { display: none; }
 @media (max-width: 520px) { .ai-code-bar { flex-wrap: wrap; } .ai-code-actions { width: 100%; justify-content: space-between; } }
+
+.modes.modes-in { margin: 0; max-width: none; padding: 0; overflow: visible; }
+.modes.modes-in button { border-color: transparent; background: transparent; }
+.modes.modes-in button.on { border-color: color-mix(in srgb, var(--brand) 55%, transparent); background: color-mix(in srgb, var(--brand) 16%, var(--panel)); }
+
+.ai-code-note { padding: .9rem 1rem; font-size: .85rem; color: #333; background: #f3f6f4; }
