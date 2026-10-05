@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="css/ai-page.css?v=2">
 </head>
 <body>
-<a class="skip" href="#aiInput">Skip to message box</a>
+<a class="skip" href="#aiInput" data-ai-t="skip">Skip to message box</a>
 
 <div class="app" id="app">
   <!-- ============ Sidebar ============ -->
@@ -32,23 +32,23 @@
         <img src="images/logo/coool.png" alt="" width="30" height="30">
         <span>Smart<em>21</em>brain <b>AI</b></span>
       </a>
-      <button class="icon-btn only-mobile" id="sideClose" aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+      <button class="icon-btn only-mobile" id="sideClose" aria-label="Close menu" data-ai-t-aria="close_menu"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <button class="new-chat" id="newChat"><i class="fa-solid fa-pen-to-square"></i> New chat</button>
+    <button class="new-chat" id="newChat"><i class="fa-solid fa-pen-to-square"></i> <span data-ai-t="new_chat">New chat</span></button>
 
     <div class="search-wrap">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="search" id="chatSearch" placeholder="Search chats" aria-label="Search chats" autocomplete="off">
+      <input type="search" id="chatSearch" placeholder="Search chats" data-ai-t-ph="search_chats" aria-label="Search chats" data-ai-t-aria="search_chats" autocomplete="off">
     </div>
 
     <nav class="history" id="history" aria-label="Chat history"></nav>
 
     <div class="side-bottom">
-      <a href="index.html"><i class="fa-solid fa-house"></i> Smart21Brain home</a>
+      <a href="index.html"><i class="fa-solid fa-house"></i> <span data-ai-t="home">Smart21Brain home</span></a>
       <a href="smart21code.html"><i class="fa-solid fa-laptop-code"></i> Smart21Code</a>
       <a href="smart21editor.html"><i class="fa-solid fa-code"></i> Smart21Editor</a>
-      <button id="clearAll" class="link-btn"><i class="fa-regular fa-trash-can"></i> Clear all chats</button>
+      <button id="clearAll" class="link-btn"><i class="fa-regular fa-trash-can"></i> <span data-ai-t="clear_all">Clear all chats</span></button>
     </div>
   </aside>
   <div class="scrim" id="scrim"></div>
@@ -56,12 +56,13 @@
   <!-- ============ Main ============ -->
   <main class="main">
     <header class="top">
-      <button class="icon-btn" id="sideOpen" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
-      <button class="icon-btn only-desktop" id="sideToggle" aria-label="Toggle sidebar"><i class="fa-solid fa-table-columns"></i></button>
+      <button class="icon-btn" id="sideOpen" aria-label="Open menu" data-ai-t-aria="open_menu"><i class="fa-solid fa-bars"></i></button>
+      <button class="icon-btn only-desktop" id="sideToggle" aria-label="Toggle sidebar" data-ai-t-aria="toggle_side"><i class="fa-solid fa-table-columns"></i></button>
       <div class="model-chip" title="Smart21brain AI"><i class="fa-solid fa-wand-magic-sparkles"></i> Smart21brain AI</div>
       <div class="top-actions">
-        <button class="icon-btn" id="exportChat" aria-label="Download this chat" title="Download chat (.md)"><i class="fa-solid fa-download"></i></button>
-        <button class="icon-btn" data-theme-toggle id="themeBtn" aria-label="Toggle light / dark"><i class="fa-solid fa-sun"></i></button>
+        <button class="icon-btn" id="exportChat" aria-label="Download this chat" data-ai-t-aria="dl_chat" title="Download chat (.md)" data-ai-t-title="dl_chat_t"><i class="fa-solid fa-download"></i></button>
+        <button class="icon-btn" data-lang-btn id="langBtn" aria-label="Switch language" data-ai-t-aria="switch_lang" style="font-weight:800;font-size:.72rem">SW</button>
+        <button class="icon-btn" data-theme-toggle id="themeBtn" aria-label="Toggle light / dark" data-ai-t-aria="toggle_theme"><i class="fa-solid fa-sun"></i></button>
       </div>
     </header>
 
@@ -69,35 +70,35 @@
       <!-- Welcome screen -->
       <div class="welcome" id="welcome">
         <img class="w-logo" src="images/logo/coool.png" alt="Smart21brain AI" width="64" height="64">
-        <h1><span id="greet">Hello</span>, <span class="grad">how can I help you today?</span></h1>
-        <p class="w-sub">Learn any subject, get coding help, write better and test yourself.</p>
+        <h1><span id="greet">Hello</span>, <span class="grad" data-ai-t="hello_q">how can I help you today?</span></h1>
+        <p class="w-sub" data-ai-t="welcome_sub">Learn any subject, get coding help, write better and test yourself.</p>
         <div class="cards" id="cards"></div>
       </div>
       <!-- Conversation -->
       <div class="thread" id="thread"></div>
     </section>
 
-    <button class="to-bottom" id="toBottom" aria-label="Scroll to latest"><i class="fa-solid fa-arrow-down"></i></button>
+    <button class="to-bottom" id="toBottom" aria-label="Scroll to latest" data-ai-t-aria="to_bottom"><i class="fa-solid fa-arrow-down"></i></button>
 
     <footer class="composer-wrap">
-          <div class="modes" id="modes" role="radiogroup" aria-label="Mode">
-          <button type="button" role="radio" aria-checked="false" data-mode="learn"><i class="fa-solid fa-graduation-cap"></i> Learn</button>
-          <button type="button" role="radio" aria-checked="false" data-mode="code"><i class="fa-solid fa-code"></i> Code</button>
-          <button type="button" role="radio" aria-checked="false" data-mode="write"><i class="fa-solid fa-feather-pointed"></i> Write</button>
-          <button type="button" role="radio" aria-checked="false" data-mode="quiz"><i class="fa-solid fa-circle-question"></i> Quiz me</button>
+          <div class="modes" id="modes" role="radiogroup" aria-label="Mode" data-ai-t-aria="mode_aria">
+          <button type="button" role="radio" aria-checked="false" data-mode="learn"><i class="fa-solid fa-graduation-cap"></i> <span data-ai-t="mode_learn">Learn</span></button>
+          <button type="button" role="radio" aria-checked="false" data-mode="code"><i class="fa-solid fa-code"></i> <span data-ai-t="mode_code">Code</span></button>
+          <button type="button" role="radio" aria-checked="false" data-mode="write"><i class="fa-solid fa-feather-pointed"></i> <span data-ai-t="mode_write">Write</span></button>
+          <button type="button" role="radio" aria-checked="false" data-mode="quiz"><i class="fa-solid fa-circle-question"></i> <span data-ai-t="mode_quiz">Quiz me</span></button>
           </div>
       <form class="composer" id="composer">
-        <textarea id="aiInput" rows="1" maxlength="4000" placeholder="Message Smart21brain AI…" aria-label="Message Smart21brain AI"></textarea>
+        <textarea id="aiInput" rows="1" maxlength="4000" placeholder="Message Smart21brain AI…" data-ai-t-ph="placeholder" aria-label="Message Smart21brain AI" data-ai-t-aria="placeholder"></textarea>
         <div class="c-row">
           <div class="modes modes-in" role="radiogroup" aria-label="Auto mode">
-          <button type="button" role="radio" aria-checked="true"  data-mode="" class="on"><i class="fa-solid fa-bolt"></i> Auto</button></div>
+          <button type="button" role="radio" aria-checked="true"  data-mode="" class="on"><i class="fa-solid fa-bolt"></i> <span data-ai-t="mode_auto">Auto</span></button></div>
           <span class="c-btns">
-            <button type="button" class="icon-btn" id="micBtn" aria-label="Speak your question" title="Speak"><i class="fa-solid fa-microphone"></i></button>
-            <button type="submit" class="send" id="sendBtn" aria-label="Send" disabled><i class="fa-solid fa-arrow-up"></i></button>
+            <button type="button" class="icon-btn" id="micBtn" aria-label="Speak your question" data-ai-t-aria="mic" title="Speak" data-ai-t-title="speak"><i class="fa-solid fa-microphone"></i></button>
+            <button type="submit" class="send" id="sendBtn" aria-label="Send" data-ai-t-aria="send" disabled><i class="fa-solid fa-arrow-up"></i></button>
           </span>
         </div>
       </form>
-      <p class="fine">Smart21brain AI can make mistakes, so check important answers with your teacher.</p>
+      <p class="fine" data-ai-t="fine">Smart21brain AI can make mistakes, so check important answers with your teacher.</p>
     </footer>
   </main>
 </div>
@@ -105,14 +106,15 @@
 <!-- HTML preview modal -->
 <div class="modal" id="previewModal" hidden>
   <div class="modal-box">
-    <div class="modal-head"><strong><i class="fa-solid fa-eye"></i> Preview</strong><button class="icon-btn" id="previewClose" aria-label="Close preview"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="modal-head"><strong><i class="fa-solid fa-eye"></i> <span data-ai-t="preview">Preview</span></strong><button class="icon-btn" id="previewClose" aria-label="Close preview" data-ai-t-aria="close_preview"><i class="fa-solid fa-xmark"></i></button></div>
     <iframe id="previewFrame" title="Code preview" sandbox="allow-scripts"></iframe>
   </div>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
 
+<script src="js/ai-i18n.js"></script>
 <script src="js/ai-render.js"></script>
-<script src="js/ai-page.js?v=1"></script>
+<script src="js/ai-page.js?v=2"></script>
 </body>
 </html>

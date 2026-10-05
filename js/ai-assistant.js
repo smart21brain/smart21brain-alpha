@@ -150,6 +150,7 @@
   function getContext() {
     var ctx = {};
     try { if (window.S21AI && typeof window.S21AI.getContext === 'function') ctx = window.S21AI.getContext() || {}; } catch (e) { ctx = {}; }
+    try { ctx.locale = localStorage.getItem('s21-lang') === 'sw' ? 'sw' : 'en'; } catch (e) {}
     if (!ctx.page) ctx.page = (location.pathname.split('/').pop() || 'index').replace(/\.html$/, '');
     return ctx;
   }

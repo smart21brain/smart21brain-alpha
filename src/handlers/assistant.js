@@ -63,6 +63,7 @@ function cleanContext(raw) {
     page: str(c.page, 40),
     mode: ['learn', 'code', 'write', 'quiz'].includes(c.mode) ? c.mode : '',
     language: str(c.language, 40),
+    locale: c.locale === 'sw' ? 'sw' : 'en',
     lesson: str(c.lesson, 160),
     code: clip(str(c.code, MAX_CODE + 50), MAX_CODE),
     output: clip(str(c.output, 2000), 2000),
@@ -88,6 +89,7 @@ function buildSystem(ctx, isCode) {
   let sys = BASE_PROMPT;
   if (ctx.mode && MODE_PROMPTS[ctx.mode]) sys += '\n\n' + MODE_PROMPTS[ctx.mode];
   if (isCode) sys += '\n\n' + CODE_PROMPT;
+  if (ctx.locale === 'sw') sys += '\n\nLANGUAGE: The learner uses the site in Kiswahili. Reply in clear, natural Kiswahili (Tanzanian standard) unless the learner clearly writes in English, in which case reply in English. Keep code, code comments, keywords and technical terms in English where that is standard, but explain them in Kiswahili.';
   const lines = [];
   if (ctx.language) lines.push('Language: ' + ctx.language);
   if (ctx.lesson) lines.push('Current lesson: ' + ctx.lesson);

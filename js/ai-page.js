@@ -4,7 +4,7 @@
   'use strict';
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
-  var Md = window.S21Md, esc = Md.esc;
+  var Md = window.S21Md, esc = Md.esc, L = window.S21AIL, T = L.t;
   var STORE = 's21ai-convos-v1', MAX_CONVOS = 40, MAX_MSGS = 60, MAX_HISTORY = 12;
 
   var app = $('#app'), thread = $('#thread'), stage = $('#stage'), input = $('#aiInput'), sendBtn = $('#sendBtn');
@@ -25,17 +25,17 @@
   /* ---------------- sidebar history ---------------- */
   function groupName(ts) {
     var d = new Date(); d.setHours(0, 0, 0, 0); var day = 864e5, t = d.getTime();
-    if (ts >= t) return 'Today'; if (ts >= t - day) return 'Yesterday'; if (ts >= t - 7 * day) return 'Previous 7 days'; return 'Older';
+    if (ts >= t) return T('today'); if (ts >= t - day) return T('yesterday'); if (ts >= t - 7 * day) return T('prev7'); return T('older');
   }
   function renderHistory() {
     var q = ($('#chatSearch').value || '').trim().toLowerCase(), box = $('#history'), html = '', last = '';
     var list = convos.filter(function (c) { return !q || c.title.toLowerCase().indexOf(q) >= 0 || c.messages.some(function (m) { return m.content.toLowerCase().indexOf(q) >= 0; }); });
-    if (!list.length) { box.innerHTML = '<p class="h-empty">' + (q ? 'No chats match your search.' : 'Your conversations will appear here.') + '</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="h-empty">' + (q ? T('no_match') : T('empty_hist')) + '</p>'; return; }
     list.forEach(function (c) {
       var g = groupName(c.updated);
       if (g !== last) { html += '<div class="h-group">' + g + '</div>'; last = g; }
       html += '<div class="h-item' + (c.id === activeId ? ' active' : '') + '"><button class="h-title" data-open="' + c.id + '" title="' + esc(c.title) + '">' + esc(c.title) + '</button>' +
-              '<button class="icon-btn h-del" data-del="' + c.id + '" aria-label="Delete chat"><i class="fa-regular fa-trash-can"></i></button></div>';
+              '<button class="icon-btn h-del" data-del="' + c.id + '" aria-label="' + T('del_chat') + '"><i class="fa-regular fa-trash-can"></i></button></div>';
     });
     box.innerHTML = html;
   }
@@ -47,7 +47,7 @@
   }
   function userNode(text, i) {
     var el = document.createElement('div'); el.className = 'msg user'; el.setAttribute('data-i', i);
-    el.innerHTML = '<div class="u-wrap"><div class="u-bubble"></div><div class="u-tools"><button class="icon-btn" data-act="copyu" title="Copy"><i class="fa-regular fa-copy"></i></button><button class="icon-btn" data-act="edit" title="Edit"><i class="fa-solid fa-pen"></i></button></div></div>';
+    el.innerHTML = '<div class="u-wrap"><div class="u-bubble"></div><div class="u-tools"><button class="icon-btn" data-act="copyu" title="' + T('copy') + '"><i class="fa-regular fa-copy"></i></button><button class="icon-btn" data-act="edit" title="' + T('edit') + '"><i class="fa-solid fa-pen"></i></button></div></div>';
     el.querySelector('.u-bubble').textContent = text; return el;
   }
   function aiNode(i) {
@@ -60,11 +60,11 @@
   }
   function setActions(node, isLast, liked) {
     var a = node.querySelector('.actions');
-    a.innerHTML = '<button class="icon-btn" data-act="copy" title="Copy"><i class="fa-regular fa-copy"></i></button>' +
-      '<button class="icon-btn' + (liked === 1 ? ' on' : '') + '" data-act="up" title="Good answer"><i class="fa-regular fa-thumbs-up"></i></button>' +
-      '<button class="icon-btn' + (liked === -1 ? ' on' : '') + '" data-act="down" title="Bad answer"><i class="fa-regular fa-thumbs-down"></i></button>' +
-      ('speechSynthesis' in window ? '<button class="icon-btn" data-act="speak" title="Read aloud"><i class="fa-solid fa-volume-high"></i></button>' : '') +
-      (isLast ? '<button class="icon-btn" data-act="regen" title="Regenerate"><i class="fa-solid fa-rotate-right"></i></button>' : '');
+    a.innerHTML = '<button class="icon-btn" data-act="copy" title="' + T('copy') + '"><i class="fa-regular fa-copy"></i></button>' +
+      '<button class="icon-btn' + (liked === 1 ? ' on' : '') + '" data-act="up" title="' + T('good') + '"><i class="fa-regular fa-thumbs-up"></i></button>' +
+      '<button class="icon-btn' + (liked === -1 ? ' on' : '') + '" data-act="down" title="' + T('bad') + '"><i class="fa-regular fa-thumbs-down"></i></button>' +
+      ('speechSynthesis' in window ? '<button class="icon-btn" data-act="speak" title="' + T('read') + '"><i class="fa-solid fa-volume-high"></i></button>' : '') +
+      (isLast ? '<button class="icon-btn" data-act="regen" title="' + T('regen') + '"><i class="fa-solid fa-rotate-right"></i></button>' : '');
   }
   function renderThread() {
     var c = cur(); thread.innerHTML = '';
@@ -84,7 +84,7 @@
   function setBusy(on) {
     busy = on; sendBtn.classList.toggle('stop', on);
     sendBtn.innerHTML = on ? '<i class="fa-solid fa-stop"></i>' : '<i class="fa-solid fa-arrow-up"></i>';
-    sendBtn.setAttribute('aria-label', on ? 'Stop generating' : 'Send'); sendBtn.disabled = on ? false : !input.value.trim();
+    sendBtn.setAttribute('aria-label', on ? T('stop') : T('send')); sendBtn.disabled = on ? false : !input.value.trim();
   }
 
   /* ---------------- chat flow ---------------- */
@@ -124,17 +124,17 @@
         paint(node, answer, false); c.messages.push({ role: 'assistant', content: answer });
         if (c.messages.length > MAX_MSGS) c.messages = c.messages.slice(-MAX_MSGS);
         c.updated = Date.now(); saveAll(); setActions(node, true); renderHistory();
-      } else { node.querySelector('.md').innerHTML = '<p class="err">' + esc(note || 'I could not generate an answer. Please try again.') + '</p>'; setActions(node, false); node.querySelector('.actions').innerHTML = '<button class="icon-btn" data-act="retry" title="Try again"><i class="fa-solid fa-rotate-right"></i></button>'; }
+      } else { node.querySelector('.md').innerHTML = '<p class="err">' + esc(note || T('no_answer')) + '</p>'; setActions(node, false); node.querySelector('.actions').innerHTML = '<button class="icon-btn" data-act="retry" title="' + T('retry') + '"><i class="fa-solid fa-rotate-right"></i></button>'; }
       setBusy(false); abort = null; scrollDown(false);
     }
     fetch('/api/ai-assistant', {
       method: 'POST', signal: abort.signal, headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: q.content, history: hist, context: { page: 'ai', mode: mode }, stream: true })
+      body: JSON.stringify({ prompt: q.content, history: hist, context: { page: 'ai', mode: mode, locale: L.lang() }, stream: true })
     }).then(function (resp) {
       var type = resp.headers.get('content-type') || '';
       if (!resp.ok || type.indexOf('text/event-stream') < 0 || !resp.body) {
         return resp.json().catch(function () { return {}; }).then(function (d) {
-          if (!resp.ok) { finish(d.error || 'The assistant is unavailable right now.'); return; }
+          if (!resp.ok) { finish(d.error || T('unavailable')); return; }
           answer = d.answer || ''; finish();
         });
       }
@@ -159,7 +159,7 @@
       return pump();
     }).catch(function (err) {
       if (err && err.name === 'AbortError') { if (answer) finish(); else { if (raf) cancelAnimationFrame(raf); node.remove(); setBusy(false); abort = null; } return; }
-      finish('Connection problem. Check your internet and try again.');
+      finish(T('conn'));
     });
   }
   function regenerate() {
@@ -170,7 +170,7 @@
   function startEdit(msgEl) {
     var c = cur(), i = +msgEl.getAttribute('data-i'); if (!c || busy) return;
     var wrap = msgEl.querySelector('.u-wrap'), original = c.messages[i].content;
-    wrap.innerHTML = '<div class="u-edit"><textarea aria-label="Edit message"></textarea><div class="row"><button class="pill-btn" data-act="cancel-edit">Cancel</button><button class="pill-btn primary" data-act="save-edit">Send</button></div></div>';
+    wrap.innerHTML = '<div class="u-edit"><textarea aria-label="' + T('edit_msg') + '"></textarea><div class="row"><button class="pill-btn" data-act="cancel-edit">' + T('cancel') + '</button><button class="pill-btn primary" data-act="save-edit">' + T('save_send') + '</button></div></div>';
     var ta = wrap.querySelector('textarea'); ta.value = original; ta.focus(); ta.setSelectionRange(original.length, original.length);
     wrap.querySelector('[data-act="cancel-edit"]').onclick = function () { renderThread(); };
     wrap.querySelector('[data-act="save-edit"]').onclick = function () {
@@ -186,18 +186,18 @@
     var c = cur();
     if (codeCopy || prev) {
       var code = (codeCopy || prev).closest('.ai-code').querySelector('code').textContent;
-      if (codeCopy) copy(code, function () { codeCopy.innerHTML = '<i class="fa-solid fa-check"></i> Copied'; setTimeout(function () { codeCopy.innerHTML = '<i class="fa-regular fa-copy"></i> Copy'; }, 1400); });
+      if (codeCopy) copy(code, function () { codeCopy.innerHTML = '<i class="fa-solid fa-check"></i> ' + T('copied'); setTimeout(function () { codeCopy.innerHTML = '<i class="fa-regular fa-copy"></i> ' + T('copy'); }, 1400); });
       else { $('#previewFrame').srcdoc = code; $('#previewModal').hidden = false; }
       return;
     }
     if (!act) return;
     var msg = act.closest('.msg'), i = msg ? +msg.getAttribute('data-i') : -1, a = act.getAttribute('data-act');
-    if (a === 'copy' || a === 'copyu') { var t = c && c.messages[i] ? c.messages[i].content : ''; copy(t, function () { toast('Copied'); }); }
+    if (a === 'copy' || a === 'copyu') { var t = c && c.messages[i] ? c.messages[i].content : ''; copy(t, function () { toast(T('copied')); }); }
     else if (a === 'edit') startEdit(msg);
     else if (a === 'regen' || a === 'retry') { if (a === 'retry') { msg.remove(); stream(); } else regenerate(); }
     else if (a === 'up' || a === 'down') {
       var m = c && c.messages[i]; if (!m) return; var v = a === 'up' ? 1 : -1; m.liked = m.liked === v ? 0 : v; saveAll(); setActions(msg, i === c.messages.length - 1, m.liked);
-      if (m.liked) toast('Thanks for the feedback');
+      if (m.liked) toast(T('thanks'));
     }
     else if (a === 'speak') {
       if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
@@ -223,7 +223,7 @@
   });
   $('#chatSearch').addEventListener('input', renderHistory);
   $('#newChat').addEventListener('click', newChat);
-  $('#clearAll').addEventListener('click', function () { if (convos.length && confirm('Delete all your chats on this device?')) { convos = []; saveAll(); newChat(); } });
+  $('#clearAll').addEventListener('click', function () { if (convos.length && confirm(T('confirm_clear'))) { convos = []; saveAll(); newChat(); } });
 
   /* composer */
   function grow() { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 200) + 'px'; if (!busy) sendBtn.disabled = !input.value.trim(); }
@@ -233,7 +233,7 @@
   $$('.modes').forEach(function (g) { g.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return; mode = b.getAttribute('data-mode') || '';
     $$('.modes button').forEach(function (x) { var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
-    var ph = { '': 'Message Smart21brain AI…', learn: 'What would you like to learn?', code: 'Paste code or describe what to build…', write: 'What should we write?', quiz: 'Which topic should I quiz you on?' };
+    var ph = { '': T('placeholder'), learn: T('ph_learn'), code: T('ph_code'), write: T('ph_write'), quiz: T('ph_quiz') };
     input.placeholder = ph[mode]; input.focus();
   }); });
 
@@ -246,7 +246,7 @@
     var base = input.value; btn.classList.add('rec');
     rec.onresult = function (ev) { var t = ''; for (var i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript; input.value = (base ? base + ' ' : '') + t; grow(); };
     rec.onend = function () { rec = null; btn.classList.remove('rec'); input.focus(); };
-    rec.onerror = function () { toast('Microphone not available'); };
+    rec.onerror = function () { toast(T('no_mic')); };
     try { rec.start(); } catch (e) { rec = null; btn.classList.remove('rec'); }
   });
 
@@ -261,26 +261,33 @@
     document.documentElement.setAttribute('data-theme', next); try { localStorage.setItem('s21-theme', next); } catch (e) {} paintTheme();
   });
   $('#exportChat').addEventListener('click', function () {
-    var c = cur(); if (!c || !c.messages.length) { toast('Nothing to download yet'); return; }
+    var c = cur(); if (!c || !c.messages.length) { toast(T('nothing_dl')); return; }
     var md = '# ' + c.title + '\n\n' + c.messages.map(function (m) { return (m.role === 'user' ? '**You:**\n\n' : '**Smart21brain AI:**\n\n') + m.content; }).join('\n\n---\n\n') + '\n';
     var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' })); a.download = 'smart21brain-ai-chat.md'; a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
   });
 
   /* welcome cards */
   var CARDS = [
-    { i: 'fa-graduation-cap', c: 'linear-gradient(135deg,#0B6E4F,#2fbf8a)', t: 'Explain a topic', d: 'Teach me how fractions work, with examples', m: 'learn', p: 'Teach me how fractions work with simple examples.' },
-    { i: 'fa-code', c: 'linear-gradient(135deg,#7c5cff,#5b8def)', t: 'Help me code', d: 'Write a Python program that guesses a number', m: 'code', p: 'Write a simple Python number guessing game and explain how it works.' },
-    { i: 'fa-feather-pointed', c: 'linear-gradient(135deg,#f5a623,#ef476f)', t: 'Write something', d: 'A short story about a brave robot', m: 'write', p: 'Write a short, fun story for kids about a brave little robot.' },
-    { i: 'fa-circle-question', c: 'linear-gradient(135deg,#ef476f,#7c5cff)', t: 'Quiz me', d: 'Test my knowledge of the solar system', m: 'quiz', p: 'Quiz me on the solar system.' }
+    { i: 'fa-graduation-cap', c: 'linear-gradient(135deg,#0B6E4F,#2fbf8a)', k: 'card1', m: 'learn' },
+    { i: 'fa-code', c: 'linear-gradient(135deg,#7c5cff,#5b8def)', k: 'card2', m: 'code' },
+    { i: 'fa-feather-pointed', c: 'linear-gradient(135deg,#f5a623,#ef476f)', k: 'card3', m: 'write' },
+    { i: 'fa-circle-question', c: 'linear-gradient(135deg,#ef476f,#7c5cff)', k: 'card4', m: 'quiz' }
   ];
-  $('#cards').innerHTML = CARDS.map(function (k, n) { return '<button class="card" data-card="' + n + '"><i class="fa-solid ' + k.i + '" style="background:' + k.c + '"></i><div><b>' + k.t + '</b><span>' + k.d + '</span></div></button>'; }).join('');
+  function paintCards() { $('#cards').innerHTML = CARDS.map(function (k, n) { return '<button class="card" data-card="' + n + '"><i class="fa-solid ' + k.i + '" style="background:' + k.c + '"></i><div><b>' + esc(T(k.k + '_t')) + '</b><span>' + esc(T(k.k + '_d')) + '</span></div></button>'; }).join(''); }
   $('#cards').addEventListener('click', function (e) {
     var b = e.target.closest('[data-card]'); if (!b) return; var k = CARDS[+b.getAttribute('data-card')];
-    var mb = $('.modes [data-mode="' + k.m + '"]'); if (mb) mb.click(); send(k.p);
+    var mb = $('.modes [data-mode="' + k.m + '"]'); if (mb) mb.click(); send(T(k.k + '_p'));
   });
 
   /* ---------------- boot ---------------- */
-  var h = new Date().getHours(); $('#greet').textContent = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  function paintGreet() { var h = new Date().getHours(); $('#greet').textContent = T(h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening'); }
+  $('#langBtn').addEventListener('click', function () { L.set(L.lang() === 'en' ? 'sw' : 'en'); });
+  L.onChange(function () {
+    paintGreet(); paintCards(); renderHistory(); setBusy(busy);
+    var on = $('.modes button.on'); input.placeholder = T(({ '': 'placeholder', learn: 'ph_learn', code: 'ph_code', write: 'ph_write', quiz: 'ph_quiz' })[on ? on.getAttribute('data-mode') || '' : '']);
+    if (cur() && cur().messages.length) { var sc = stage.scrollTop; renderThread(); stage.scrollTop = sc; }
+  });
+  L.apply();
   paintTheme(); loadAll(); renderHistory(); grow();
   var params = new URLSearchParams(location.search);
   var qm = params.get('mode'); if (qm) { var mb2 = $('.modes [data-mode="' + qm + '"]'); if (mb2) mb2.click(); }

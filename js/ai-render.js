@@ -2,6 +2,7 @@
    Everything is HTML-escaped before formatting, so model output can never inject markup. */
 (function () {
   'use strict';
+  function T(k, d) { return (window.S21AIL && window.S21AIL.t) ? window.S21AIL.t(k) : d; }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
   /* ================= syntax highlighting (small, dependency-free) ================= */
@@ -117,10 +118,10 @@
       var canPrev = true;
       html += '<div class="ai-code" data-lang="' + esc(lang) + '" data-view="code"><div class="ai-code-bar"><span class="ai-code-lang">' + esc(lang || 'code') + '</span>' +
         '<span class="ai-code-actions"><span class="ai-seg" role="tablist" aria-label="Code output view">' +
-        (canPrev ? '<button type="button" role="tab" data-view="preview"><i class="fa-solid fa-eye"></i> Preview</button>' : '') +
-        '<button type="button" role="tab" data-view="code" class="on" aria-selected="true"><i class="fa-solid fa-code"></i> Code</button>' +
+        (canPrev ? '<button type="button" role="tab" data-view="preview"><i class="fa-solid fa-eye"></i> ' + T('preview', 'Preview') + '</button>' : '') +
+        '<button type="button" role="tab" data-view="code" class="on" aria-selected="true"><i class="fa-solid fa-code"></i> ' + T('c_code', 'Code') + '</button>' +
         '<button type="button" role="tab" data-ai-editor title="Open this code in Smart21Editor"><i class="fa-solid fa-up-right-from-square"></i> Smart21Editor</button>' +
-        '</span><button type="button" data-ai-copy><i class="fa-regular fa-copy"></i> Copy</button></span></div>' +
+        '</span><button type="button" data-ai-copy><i class="fa-regular fa-copy"></i> ' + T('copy', 'Copy') + '</button></span></div>' +
         '<pre><code>' + highlight(code, lang) + '</code></pre>' +
         (canPrev ? '<div class="ai-code-prev" hidden></div>' : '') + '</div>';
       last = m.index + m[0].length;
@@ -156,7 +157,7 @@
     if (view === 'preview') {
       var f = document.createElement('iframe'); f.title = 'Code preview'; f.setAttribute('sandbox', 'allow-scripts');
       var doc = previewDoc(box.querySelector('code').textContent, box.getAttribute('data-lang')); prev.innerHTML = '';
-      if (doc === null) prev.innerHTML = '<div class="ai-code-note"><i class="fa-solid fa-circle-info"></i> Live preview works for HTML, CSS, JavaScript and SVG. To run this code, open it in Smart21Editor.</div>';
+      if (doc === null) prev.innerHTML = '<div class="ai-code-note"><i class="fa-solid fa-circle-info"></i> ' + T('c_note', 'Live preview works for HTML, CSS, JavaScript and SVG. To run this code, open it in Smart21Editor.') + '</div>';
       else { f.srcdoc = doc; prev.appendChild(f); }
       prev.hidden = false; pre.hidden = true;
     } else { prev.hidden = true; prev.innerHTML = ''; pre.hidden = false; }
@@ -167,7 +168,7 @@
     var box = b.closest('.ai-code'); if (!box) return false;
     if (b.hasAttribute('data-ai-editor')) {
       var ok = sendToEditor(box.querySelector('code').textContent, box.getAttribute('data-lang'));
-      var old = b.innerHTML; b.innerHTML = ok ? '<i class="fa-solid fa-check"></i> Sent' : old; setTimeout(function () { b.innerHTML = old; }, 1500);
+      var old = b.innerHTML; b.innerHTML = ok ? '<i class="fa-solid fa-check"></i> ' + T('c_sent', 'Sent') : old; setTimeout(function () { b.innerHTML = old; }, 1500);
     } else setView(box, b.getAttribute('data-view'));
     return true;
   }
