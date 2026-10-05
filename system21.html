@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System21 — All Tools You Need Are Here</title>
+<meta name="description" content="System21 is the Smart21 toolbox: image tools, document tools and more. Remove backgrounds, compress files and use everyday tools in one place.">
+<link rel="canonical" href="https://smart21brain.com/system21.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=14">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+
+<style>
+  /* =====================================================
+     SYSTEM21 — engineer's workbench look
+     Blueprint grid, IC-chip tiles, terminal-style labels.
+     Everything is scoped to #page-system21 so it cannot
+     leak into the rest of Smart21Brain.
+     ===================================================== */
+  #page-system21 {
+    --sy-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sy-trace: var(--s21-primary);
+    --sy-glow: color-mix(in srgb, var(--s21-primary) 55%, transparent);
+    --sy-grid: color-mix(in srgb, var(--s21-text) 7%, transparent);
+    --sy-grid-major: color-mix(in srgb, var(--s21-text) 13%, transparent);
+    font-family: var(--sy-mono);
+  }
+  #page-system21 main { position: relative; overflow: hidden; }
+
+  /* blueprint grid: fine 24px lines + major 120px lines */
+  #page-system21 .sy-grid-bg {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--sy-grid-major) 1px, transparent 1px),
+      linear-gradient(90deg, var(--sy-grid-major) 1px, transparent 1px),
+      linear-gradient(var(--sy-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--sy-grid) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+  }
+  #page-system21 .sy-wrap { position: relative; z-index: 1; }
+
+  /* ---------- navbar tweaks (System21 brand) ---------- */
+  #page-system21 .s21-logo .mark {
+    background: linear-gradient(135deg, var(--sy-trace), color-mix(in srgb, var(--sy-trace) 60%, #000));
+  }
+  #page-system21 .s21-logo { font-family: var(--sy-mono); font-weight: 800; letter-spacing: -.02em; }
+  #page-system21 .s21-logo .mark svg { display: block; width: 22px; height: 22px; }
+  #page-system21 .s21-nav-link { font-family: var(--sy-mono); font-size: .86rem; }
+  #page-system21 .sy-version {
+    font-family: var(--sy-mono); font-size: .66rem; font-weight: 600;
+    padding: .15rem .45rem; border: 1px solid var(--s21-border); border-radius: 6px;
+    color: var(--s21-text-soft); margin-left: .5rem; align-self: center; letter-spacing: .02em;
+  }
+
+  /* ---------- hero ---------- */
+  #page-system21 .sy-hero { padding: clamp(2.2rem, 6vw, 4.2rem) 0 1.6rem; text-align: center; }
+  #page-system21 .sy-prompt {
+    display: inline-flex; align-items: center; gap: .55rem; flex-wrap: wrap; justify-content: center;
+    font-size: .8rem; color: var(--s21-text-soft);
+    background: var(--s21-white); border: 1px solid var(--s21-border); border-radius: 10px;
+    padding: .45rem .8rem; margin-bottom: 1.2rem;
+  }
+  #page-system21 .sy-prompt .ps { color: var(--sy-trace); font-weight: 800; }
+  #page-system21 .sy-prompt .cursor {
+    display: inline-block; width: .55em; height: 1.05em; background: var(--sy-trace);
+    vertical-align: -.18em; animation: sy-blink 1.05s steps(1) infinite;
+  }
+  @keyframes sy-blink { 50% { opacity: 0; } }
+  #page-system21 .sy-title {
+    font-family: var(--sy-mono); font-weight: 800; letter-spacing: -.04em;
+    font-size: clamp(2.6rem, 8vw, 5rem); line-height: 1; margin: 0 0 .7rem;
+  }
+  #page-system21 .sy-title .n21 { color: var(--s21-secondary); }
+  #page-system21 .sy-tagline { font-size: clamp(1rem, 2.4vw, 1.3rem); color: var(--s21-text-soft); margin: 0; }
+  #page-system21 .sy-tagline b { color: var(--s21-text); font-weight: 600; }
+  #page-system21 .sy-stats { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-top: 1.4rem; }
+  #page-system21 .sy-stat {
+    font-size: .74rem; padding: .3rem .7rem; border-radius: 999px;
+    border: 1px solid var(--s21-border); background: var(--s21-white); color: var(--s21-text-soft);
+  }
+  #page-system21 .sy-stat b { color: var(--sy-trace); }
+
+  /* ---------- sections (rows from the sketch) ---------- */
+  #page-system21 .sy-section { padding: 1.4rem 0 1.2rem; scroll-margin-top: calc(var(--s21-navbar-h, 78px) + 12px); }
+  #page-system21 .sy-section + .sy-section { border-top: 1px solid var(--s21-border); }
+  #page-system21 .sy-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1.4rem; flex-wrap: wrap; }
+  #page-system21 .sy-label {
+    display: inline-flex; align-items: center; gap: .55rem;
+    font-weight: 800; font-size: .95rem; letter-spacing: .01em;
+    border: 2px solid var(--sy-trace); border-radius: 14px; padding: .35rem .9rem;
+    background: color-mix(in srgb, var(--sy-trace) 8%, transparent);
+  }
+  #page-system21 .sy-label .idx { color: var(--sy-trace); opacity: .85; font-weight: 600; }
+  #page-system21 .sy-line {
+    flex: 1; min-width: 60px; height: 2px; position: relative;
+    background: repeating-linear-gradient(90deg, var(--s21-border) 0 10px, transparent 10px 16px);
+  }
+  #page-system21 .sy-count { font-size: .72rem; color: var(--s21-text-soft); }
+
+  /* 5 tiles per row, exactly like the paper */
+  #page-system21 .sy-row {
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(.8rem, 2.2vw, 1.6rem);
+  }
+  @media (max-width: 991.98px) { #page-system21 .sy-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 479.98px) { #page-system21 .sy-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  #page-system21 .sy-tool { display: flex; flex-direction: column; align-items: center; gap: .65rem; min-width: 0; }
+  #page-system21 .sy-name {
+    font-size: .78rem; font-weight: 600; text-align: center; line-height: 1.25; min-height: 2em;
+    color: var(--s21-text); overflow-wrap: anywhere;
+  }
+  #page-system21 .sy-name small { display: block; font-weight: 400; color: var(--s21-text-soft); font-size: .66rem; }
+
+  /* IC chip tile: square body with "pins" on the left & right edges */
+  #page-system21 .sy-chip {
+    --pin: color-mix(in srgb, var(--s21-text) 30%, transparent);
+    position: relative; width: 100%; max-width: 124px; aspect-ratio: 1 / 1;
+    display: grid; place-items: center; cursor: pointer;
+    background: var(--s21-white); color: var(--s21-text);
+    border: 2px solid var(--sy-trace); border-radius: 18px;
+    box-shadow: 0 0 0 0 var(--sy-glow), var(--card-shadow, 0 6px 20px rgba(0,0,0,.12));
+    transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .25s ease, border-color .2s ease;
+    font-size: clamp(1.6rem, 4.2vw, 2.3rem);
+  }
+  #page-system21 .sy-chip::before,
+  #page-system21 .sy-chip::after {
+    content: ""; position: absolute; top: 18%; bottom: 18%; width: 7px;
+    background: repeating-linear-gradient(to bottom, var(--pin) 0 5px, transparent 5px 12px);
+    border-radius: 2px; transition: background .2s ease;
+  }
+  #page-system21 .sy-chip::before { left: -8px; }
+  #page-system21 .sy-chip::after  { right: -8px; }
+  #page-system21 .sy-chip .notch {
+    position: absolute; top: 9px; left: 9px; width: 8px; height: 8px; border-radius: 50%;
+    border: 2px solid var(--sy-trace); opacity: .75;
+  }
+  #page-system21 .sy-chip .led {
+    position: absolute; top: 11px; right: 11px; width: 7px; height: 7px; border-radius: 50%;
+    background: #2ee56f; box-shadow: 0 0 8px #2ee56f;
+    animation: sy-pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes sy-pulse { 50% { opacity: .35; } }
+  #page-system21 .sy-chip i { color: var(--sy-trace); transition: transform .25s ease; }
+  #page-system21 .sy-chip:hover,
+  #page-system21 .sy-chip:focus-visible {
+    transform: translateY(-4px);
+    box-shadow: 0 0 0 4px var(--sy-glow), var(--card-shadow-hover, 0 16px 36px rgba(0,0,0,.2));
+    outline: none;
+  }
+  #page-system21 .sy-chip:hover::before, #page-system21 .sy-chip:hover::after,
+  #page-system21 .sy-chip:focus-visible::before, #page-system21 .sy-chip:focus-visible::after {
+    background: repeating-linear-gradient(to bottom, var(--sy-trace) 0 5px, transparent 5px 12px);
+  }
+  #page-system21 .sy-chip:hover i { transform: scale(1.12) rotate(-4deg); }
+  #page-system21 .sy-chip:active { transform: scale(.92); }
+
+  /* empty slot (the blank rounded squares on the paper) */
+  #page-system21 .sy-chip.is-empty {
+    cursor: default; border: 2px dashed color-mix(in srgb, var(--s21-text) 28%, transparent);
+    background: transparent; box-shadow: none; font-size: 1rem;
+  }
+  #page-system21 .sy-chip.is-empty::before, #page-system21 .sy-chip.is-empty::after { display: none; }
+  #page-system21 .sy-chip.is-empty:hover, #page-system21 .sy-chip.is-empty:focus-visible { transform: none; box-shadow: none; }
+  #page-system21 .sy-chip.is-empty .slot { font-size: .66rem; color: var(--s21-text-soft); text-align: center; line-height: 1.5; }
+  #page-system21 .sy-chip.is-empty .slot i { display: block; font-size: 1.05rem; margin-bottom: .25rem; color: var(--s21-text-soft); opacity: .6; }
+  #page-system21 .sy-name.is-muted { color: var(--s21-text-soft); font-weight: 400; }
+
+  /* ---------- footer strip ---------- */
+  #page-system21 .sy-foot { border-top: 1px solid var(--s21-border); padding: 1.4rem 0 2.2rem; font-size: .76rem; color: var(--s21-text-soft); }
+  #page-system21 .sy-foot a { color: var(--sy-trace); }
+
+  /* ---------- tool workspace modal ---------- */
+  #page-system21 .sy-modal .modal-content { font-family: var(--sy-mono); border-radius: 18px; border: 2px solid var(--sy-trace); }
+  #page-system21 .sy-modal .modal-title { font-weight: 800; font-size: 1.02rem; }
+  #page-system21 .sy-drop {
+    border: 2px dashed color-mix(in srgb, var(--s21-text) 30%, transparent); border-radius: 14px;
+    padding: 1.6rem 1rem; text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
+    color: var(--s21-text-soft); font-size: .85rem;
+  }
+  #page-system21 .sy-drop:hover, #page-system21 .sy-drop.is-over {
+    border-color: var(--sy-trace); background: color-mix(in srgb, var(--sy-trace) 8%, transparent);
+  }
+  #page-system21 .sy-drop i { display: block; font-size: 1.8rem; color: var(--sy-trace); margin-bottom: .5rem; }
+  #page-system21 .sy-preview {
+    border-radius: 12px; border: 1px solid var(--s21-border); overflow: hidden; display: grid; place-items: center;
+    min-height: 160px; max-height: 340px;
+    background-color: #fff;
+    background-image: linear-gradient(45deg, #d9d9d9 25%, transparent 25%, transparent 75%, #d9d9d9 75%),
+                      linear-gradient(45deg, #d9d9d9 25%, transparent 25%, transparent 75%, #d9d9d9 75%);
+    background-size: 16px 16px; background-position: 0 0, 8px 8px;
+  }
+  #page-system21 .sy-preview canvas, #page-system21 .sy-preview img { max-width: 100%; max-height: 340px; display: block; }
+  #page-system21 .sy-readout { font-size: .78rem; display: flex; gap: .6rem; flex-wrap: wrap; }
+  #page-system21 .sy-readout span { padding: .25rem .6rem; border: 1px solid var(--s21-border); border-radius: 8px; }
+  #page-system21 .sy-readout b { color: var(--sy-trace); }
+  #page-system21 .sy-modal label { font-size: .78rem; font-weight: 600; }
+  #page-system21 .sy-modal .form-range::-webkit-slider-thumb { background: var(--sy-trace); }
+  #page-system21 .sy-modal .form-range::-moz-range-thumb { background: var(--sy-trace); }
+  #page-system21 .sy-note { font-size: .72rem; color: var(--s21-text-soft); }
+
+  @media (prefers-reduced-motion: reduce) {
+    #page-system21 .sy-prompt .cursor, #page-system21 .sy-chip .led { animation: none; }
+    #page-system21 .sy-chip, #page-system21 .sy-chip i { transition: none; }
+  }
+</style>
+</head>
+<body id="page-system21">
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- ============ SYSTEM21 TOP NAV BAR ============ -->
+<header class="s21-navbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4" aria-label="System21 navigation">
+    <a class="s21-logo" href="system21.html">
+      <span class="mark">
+        <!-- microchip glyph -->
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="6.5" y="6.5" width="11" height="11" rx="2" stroke="white" stroke-width="1.6"/>
+          <rect x="10" y="10" width="4" height="4" rx=".6" fill="white"/>
+          <path d="M9.5 3v3.5M14.5 3v3.5M9.5 17.5V21M14.5 17.5V21M3 9.5h3.5M3 14.5h3.5M17.5 9.5H21M17.5 14.5H21" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+      System<span class="brand-21">21</span>
+    </a>
+    <span class="sy-version d-none d-sm-inline">v1.0</span>
+
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu">
+      <i class="fa-solid fa-bars fa-lg"></i>
+    </button>
+
+    <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link s21-nav-link active" href="system21.html">All Tools</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="#image-tools">Image Tools</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="#document-tools">Document Tools</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="#other-tools">Other Tools</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      </ul>
+    </div>
+
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <a href="index.html" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-arrow-left me-1"></i> Smart21Brain</a>
+    </div>
+  </nav>
+</header>
+
+<!-- Mobile offcanvas (hamburger side menu) -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+  <div class="offcanvas-header">
+    <h5 id="mobileNavLabel" class="font-display mb-0">System21</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <ul class="navbar-nav gap-1 mb-4">
+      <li class="nav-item"><a class="nav-link s21-nav-link active" href="system21.html" data-bs-dismiss="offcanvas">All Tools</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="#image-tools" data-bs-dismiss="offcanvas">Image Tools</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="#document-tools" data-bs-dismiss="offcanvas">Document Tools</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="#other-tools" data-bs-dismiss="offcanvas">Other Tools</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+    </ul>
+    <div class="mt-auto d-flex flex-column gap-2">
+      <a href="index.html" class="btn-s21 btn-s21-outline w-100"><i class="fa-solid fa-arrow-left me-1"></i> Back to Smart21Brain</a>
+    </div>
+  </div>
+</div>
+
+<main id="main">
+  <div class="sy-grid-bg" aria-hidden="true"></div>
+
+  <div class="container sy-wrap">
+
+    <!-- ============ HEADING (top of the paper) ============ -->
+    <section class="sy-hero">
+      <div class="sy-prompt" aria-hidden="true"><span class="ps">$</span> system21 --list-tools <span class="cursor"></span></div>
+      <h1 class="sy-title">System<span class="n21">21</span></h1>
+      <p class="sy-tagline"><b>All tools you need</b> are here</p>
+      <div class="sy-stats">
+        <span class="sy-stat"><b>3</b> categories</span>
+        <span class="sy-stat"><b>2</b> tools online</span>
+        <span class="sy-stat"><b>13</b> slots free</span>
+        <span class="sy-stat">100% in-browser · files never leave your device</span>
+      </div>
+    </section>
+
+    <!-- ============ ROW 1 — IMAGE TOOL ============ -->
+    <section class="sy-section" id="image-tools" aria-labelledby="h-image">
+      <div class="sy-head">
+        <h2 class="sy-label mb-0" id="h-image" style="font-size:.95rem"><span class="idx">01</span> Image tool</h2>
+        <span class="sy-line" aria-hidden="true"></span>
+        <span class="sy-count">1 / 5 slots used</span>
+      </div>
+      <div class="sy-row">
+        <div class="sy-tool">
+          <button type="button" class="sy-chip" data-tool="bg-remover" aria-label="Open Background Remover">
+            <span class="notch"></span><span class="led" title="online"></span>
+            <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+          </button>
+          <span class="sy-name">Background Remover<small>PNG · JPG · WebP</small></span>
+        </div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 02</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 03</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 04</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 05</span></div><span class="sy-name is-muted">Coming soon</span></div>
+      </div>
+    </section>
+
+    <!-- ============ ROW 2 — DOCUMENT TOOLS ============ -->
+    <section class="sy-section" id="document-tools" aria-labelledby="h-doc">
+      <div class="sy-head">
+        <h2 class="sy-label mb-0" id="h-doc" style="font-size:.95rem"><span class="idx">02</span> Document tools</h2>
+        <span class="sy-line" aria-hidden="true"></span>
+        <span class="sy-count">1 / 5 slots used</span>
+      </div>
+      <div class="sy-row">
+        <div class="sy-tool">
+          <button type="button" class="sy-chip" data-tool="compress" aria-label="Open Compress">
+            <span class="notch"></span><span class="led" title="online"></span>
+            <i class="fa-solid fa-compress" aria-hidden="true"></i>
+          </button>
+          <span class="sy-name">Compress<small>shrink file size</small></span>
+        </div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 02</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 03</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 04</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 05</span></div><span class="sy-name is-muted">Coming soon</span></div>
+      </div>
+    </section>
+
+    <!-- ============ ROW 3 — OTHER TOOLS ============ -->
+    <section class="sy-section" id="other-tools" aria-labelledby="h-other">
+      <div class="sy-head">
+        <h2 class="sy-label mb-0" id="h-other" style="font-size:.95rem"><span class="idx">03</span> Other tools</h2>
+        <span class="sy-line" aria-hidden="true"></span>
+        <span class="sy-count">0 / 5 slots used</span>
+      </div>
+      <div class="sy-row">
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 01</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 02</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 03</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 04</span></div><span class="sy-name is-muted">Coming soon</span></div>
+        <div class="sy-tool"><div class="sy-chip is-empty" aria-hidden="true"><span class="slot"><i class="fa-solid fa-plus"></i>slot 05</span></div><span class="sy-name is-muted">Coming soon</span></div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="sy-foot">
+    <div class="container sy-wrap d-flex flex-wrap justify-content-between gap-2">
+      <span>© 2026 Smart21Brain · System21</span>
+      <span>Part of <a href="earth21.html">Earth21</a></span>
+    </div>
+  </div>
+</main>
+
+<!-- ============ TOOL WORKSPACE (one modal, two panes) ============ -->
+<div class="modal fade sy-modal" id="toolModal" tabindex="-1" aria-labelledby="toolModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="toolModalTitle">Tool</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Background Remover -->
+        <div id="pane-bg-remover" hidden>
+          <label class="sy-drop w-100 mb-3" for="bgFile" id="bgDrop">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Drop an image here or tap to choose
+          </label>
+          <input type="file" id="bgFile" accept="image/*" hidden>
+          <div class="row g-3 align-items-end mb-3">
+            <div class="col-sm-8">
+              <label for="bgTol" class="d-flex justify-content-between"><span>Tolerance</span><span id="bgTolVal">35</span></label>
+              <input type="range" class="form-range" id="bgTol" min="5" max="120" value="35">
+            </div>
+            <div class="col-sm-4">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="bgSoft" checked>
+                <label class="form-check-label" for="bgSoft">Smooth edges</label>
+              </div>
+            </div>
+          </div>
+          <div class="sy-preview mb-3"><canvas id="bgCanvas" width="1" height="1" aria-label="Result preview"></canvas></div>
+          <p class="sy-note mb-3">Works best on photos with a plain, single-colour background. Detects the background colour from the image edges and clears everything connected to it.</p>
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn-s21 btn-s21-primary" id="bgDownload" disabled><i class="fa-solid fa-download me-1"></i> Download PNG</button>
+            <button type="button" class="btn-s21 btn-s21-outline" id="bgReset" disabled>Reset</button>
+          </div>
+        </div>
+
+        <!-- Compress -->
+        <div id="pane-compress" hidden>
+          <label class="sy-drop w-100 mb-3" for="cpFile" id="cpDrop">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Drop an image here or tap to choose
+          </label>
+          <input type="file" id="cpFile" accept="image/*" hidden>
+          <div class="row g-3 mb-3">
+            <div class="col-sm-5">
+              <label for="cpQ" class="d-flex justify-content-between"><span>Quality</span><span id="cpQVal">70</span></label>
+              <input type="range" class="form-range" id="cpQ" min="10" max="95" value="70">
+            </div>
+            <div class="col-6 col-sm-3">
+              <label for="cpW">Max width</label>
+              <select class="form-select form-select-sm" id="cpW">
+                <option value="0">Original</option>
+                <option value="1920">1920 px</option>
+                <option value="1280" selected>1280 px</option>
+                <option value="800">800 px</option>
+              </select>
+            </div>
+            <div class="col-6 col-sm-4">
+              <label for="cpFmt">Format</label>
+              <select class="form-select form-select-sm" id="cpFmt">
+                <option value="image/jpeg" selected>JPEG</option>
+                <option value="image/webp">WebP</option>
+              </select>
+            </div>
+          </div>
+          <div class="sy-preview mb-3"><img id="cpImg" alt="Compressed preview" hidden></div>
+          <div class="sy-readout mb-3" id="cpStats" hidden>
+            <span>before <b id="cpBefore">–</b></span>
+            <span>after <b id="cpAfter">–</b></span>
+            <span>saved <b id="cpSaved">–</b></span>
+          </div>
+          <p class="sy-note mb-3">Image compression runs here in your browser. PDF and Office file compression will be added as separate slots.</p>
+          <div class="d-flex gap-2 flex-wrap">
+            <a class="btn-s21 btn-s21-primary disabled" id="cpDownload" role="button" aria-disabled="true"><i class="fa-solid fa-download me-1"></i> Download</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="js/darkmode.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- open the right tool in the modal ---------- */
+  var modalEl = document.getElementById('toolModal');
+  var modal = new bootstrap.Modal(modalEl);
+  var titleEl = document.getElementById('toolModalTitle');
+  var TITLES = { 'bg-remover': 'Background Remover', 'compress': 'Compress' };
+
+  document.querySelectorAll('[data-tool]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var tool = btn.getAttribute('data-tool');
+      ['bg-remover', 'compress'].forEach(function (t) {
+        document.getElementById('pane-' + t).hidden = (t !== tool);
+      });
+      titleEl.textContent = TITLES[tool];
+      modal.show();
+    });
+  });
+
+  /* ---------- shared helpers ---------- */
+  function wireDrop(labelEl, inputEl, handler) {
+    ['dragenter', 'dragover'].forEach(function (ev) {
+      labelEl.addEventListener(ev, function (e) { e.preventDefault(); labelEl.classList.add('is-over'); });
+    });
+    ['dragleave', 'drop'].forEach(function (ev) {
+      labelEl.addEventListener(ev, function (e) { e.preventDefault(); labelEl.classList.remove('is-over'); });
+    });
+    labelEl.addEventListener('drop', function (e) {
+      var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (f) handler(f);
+    });
+    inputEl.addEventListener('change', function () { if (inputEl.files[0]) handler(inputEl.files[0]); });
+  }
+  function loadImage(file) {
+    return new Promise(function (resolve, reject) {
+      if (!file.type || file.type.indexOf('image/') !== 0) { reject(new Error('Please choose an image file.')); return; }
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('Could not read that image.')); };
+      img.src = url;
+    });
+  }
+  function fmtBytes(n) {
+    if (n < 1024) return n + ' B';
+    if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+    return (n / 1048576).toFixed(2) + ' MB';
+  }
+
+  /* =====================================================
+     BACKGROUND REMOVER
+     1. estimate bg colour from the 4 corners
+     2. flood-fill inward from every border pixel that is
+        within `tolerance` of that colour
+     3. cleared pixels become transparent (optionally
+        softening the edge pixels next to them)
+     ===================================================== */
+  var bgCanvas = document.getElementById('bgCanvas');
+  var bgCtx = bgCanvas.getContext('2d', { willReadFrequently: true });
+  var bgTol = document.getElementById('bgTol');
+  var bgSoft = document.getElementById('bgSoft');
+  var bgDownload = document.getElementById('bgDownload');
+  var bgReset = document.getElementById('bgReset');
+  var bgSource = null;      // ImageData of the untouched, downscaled original
+  var bgName = 'image';
+  var MAX_SIDE = 1600;
+
+  function bgRender() {
+    if (!bgSource) return;
+    var w = bgSource.width, h = bgSource.height;
+    var src = bgSource.data;
+    var out = new Uint8ClampedArray(src);
+    var tol = parseInt(bgTol.value, 10);
+    var tol2 = tol * tol;
+
+    // background colour = average of the four corner pixels
+    var corners = [0, (w - 1), (h - 1) * w, (h * w - 1)];
+    var r = 0, g = 0, b = 0;
+    corners.forEach(function (p) { r += src[p * 4]; g += src[p * 4 + 1]; b += src[p * 4 + 2]; });
+    r /= 4; g /= 4; b /= 4;
+
+    function matches(p) {
+      var dr = src[p * 4] - r, dg = src[p * 4 + 1] - g, db = src[p * 4 + 2] - b;
+      return (dr * dr + dg * dg + db * db) <= tol2;
+    }
+
+    var visited = new Uint8Array(w * h);
+    var stack = new Int32Array(w * h);
+    var sp = 0;
+    function push(p) {
+      if (!visited[p] && matches(p)) { visited[p] = 1; stack[sp++] = p; }
+    }
+    var x, y;
+    for (x = 0; x < w; x++) { push(x); push((h - 1) * w + x); }
+    for (y = 0; y < h; y++) { push(y * w); push(y * w + (w - 1)); }
+
+    while (sp > 0) {
+      var p = stack[--sp];
+      var px = p % w;
+      if (px > 0) push(p - 1);
+      if (px < w - 1) push(p + 1);
+      if (p >= w) push(p - w);
+      if (p < w * (h - 1)) push(p + w);
+    }
+
+    for (var i = 0; i < w * h; i++) { if (visited[i]) out[i * 4 + 3] = 0; }
+
+    if (bgSoft.checked) {
+      // half-fade the first kept pixel next to a cleared one
+      for (y = 1; y < h - 1; y++) {
+        for (x = 1; x < w - 1; x++) {
+          var q = y * w + x;
+          if (visited[q]) continue;
+          if (visited[q - 1] || visited[q + 1] || visited[q - w] || visited[q + w]) out[q * 4 + 3] = 140;
+        }
+      }
+    }
+
+    bgCtx.putImageData(new ImageData(out, w, h), 0, 0);
+    bgDownload.disabled = false;
+    bgReset.disabled = false;
+  }
+
+  wireDrop(document.getElementById('bgDrop'), document.getElementById('bgFile'), function (file) {
+    loadImage(file).then(function (img) {
+      var scale = Math.min(1, MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+      var w = Math.max(1, Math.round(img.naturalWidth * scale));
+      var h = Math.max(1, Math.round(img.naturalHeight * scale));
+      bgCanvas.width = w; bgCanvas.height = h;
+      bgCtx.clearRect(0, 0, w, h);
+      bgCtx.drawImage(img, 0, 0, w, h);
+      bgSource = bgCtx.getImageData(0, 0, w, h);
+      bgName = (file.name || 'image').replace(/\.[^.]+$/, '');
+      bgRender();
+    }).catch(function (err) { alert(err.message); });
+  });
+
+  var bgTimer = null;
+  bgTol.addEventListener('input', function () {
+    document.getElementById('bgTolVal').textContent = bgTol.value;
+    clearTimeout(bgTimer); bgTimer = setTimeout(bgRender, 60);
+  });
+  bgSoft.addEventListener('change', bgRender);
+
+  bgDownload.addEventListener('click', function () {
+    bgCanvas.toBlob(function (blob) {
+      if (!blob) return;
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = bgName + '-no-bg.png';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    }, 'image/png');
+  });
+  bgReset.addEventListener('click', function () {
+    if (!bgSource) return;
+    bgCtx.putImageData(bgSource, 0, 0);
+    bgDownload.disabled = true; bgReset.disabled = true;
+  });
+
+  /* =====================================================
+     COMPRESS (image): resize + re-encode via canvas
+     ===================================================== */
+  var cpQ = document.getElementById('cpQ');
+  var cpW = document.getElementById('cpW');
+  var cpFmt = document.getElementById('cpFmt');
+  var cpImg = document.getElementById('cpImg');
+  var cpStats = document.getElementById('cpStats');
+  var cpDownload = document.getElementById('cpDownload');
+  var cpFile = null, cpImgEl = null, cpUrl = null;
+
+  function cpRun() {
+    if (!cpImgEl || !cpFile) return;
+    var maxW = parseInt(cpW.value, 10);
+    var w = cpImgEl.naturalWidth, h = cpImgEl.naturalHeight;
+    if (maxW > 0 && w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var ctx = c.getContext('2d');
+    if (cpFmt.value === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); } // JPEG has no alpha
+    ctx.drawImage(cpImgEl, 0, 0, w, h);
+    c.toBlob(function (blob) {
+      if (!blob) return;
+      if (cpUrl) URL.revokeObjectURL(cpUrl);
+      cpUrl = URL.createObjectURL(blob);
+      cpImg.src = cpUrl; cpImg.hidden = false;
+      var saved = Math.round((1 - blob.size / cpFile.size) * 100);
+      document.getElementById('cpBefore').textContent = fmtBytes(cpFile.size);
+      document.getElementById('cpAfter').textContent = fmtBytes(blob.size);
+      document.getElementById('cpSaved').textContent = saved > 0 ? saved + '%' : 'none — try lower quality';
+      cpStats.hidden = false;
+      var ext = cpFmt.value === 'image/webp' ? 'webp' : 'jpg';
+      cpDownload.href = cpUrl;
+      cpDownload.download = (cpFile.name || 'image').replace(/\.[^.]+$/, '') + '-compressed.' + ext;
+      cpDownload.classList.remove('disabled');
+      cpDownload.removeAttribute('aria-disabled');
+    }, cpFmt.value, parseInt(cpQ.value, 10) / 100);
+  }
+
+  wireDrop(document.getElementById('cpDrop'), document.getElementById('cpFile'), function (file) {
+    loadImage(file).then(function (img) { cpFile = file; cpImgEl = img; cpRun(); })
+      .catch(function (err) { alert(err.message); });
+  });
+  var cpTimer = null;
+  cpQ.addEventListener('input', function () {
+    document.getElementById('cpQVal').textContent = cpQ.value;
+    clearTimeout(cpTimer); cpTimer = setTimeout(cpRun, 120);
+  });
+  cpW.addEventListener('change', cpRun);
+  cpFmt.addEventListener('change', cpRun);
+})();
+</script>
+</body>
+</html>
