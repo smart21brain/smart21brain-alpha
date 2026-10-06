@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>System21 — All the Tools You Need</title>
-<meta name="description" content="System21 is the Smart21 tool hub: 20 free tools: image, PDF, QR code, password, converters and more. Free, private, runs in your browser.">
+<meta name="description" content="System21 is the Smart21 tool hub: 21 free tools: image, PDF, QR code, password, converters and more. Free, private, runs in your browser.">
 <link rel="canonical" href="https://smart21brain.com/system21.html">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
@@ -194,7 +194,7 @@
     <!-- status bar -->
     <div class="sx-status" role="status">
       <span><i class="sx-dot"></i><b>SYSTEM21</b> online</span>
-      <span>build <b>1.1.0</b></span>
+      <span>build <b>1.2.0</b></span>
       <span>runtime <b>client-side</b></span>
       <span>uploads <b>0 bytes sent</b></span>
       <span class="ms-auto" id="sxClock" aria-hidden="true"></span>
@@ -208,7 +208,7 @@
       <div class="sx-meta">
         <span class="sx-pill"><i class="fa-solid fa-shield-halved"></i>Private by design</span>
         <span class="sx-pill"><i class="fa-solid fa-bolt"></i>No sign-up</span>
-        <span class="sx-pill"><i class="fa-solid fa-microchip"></i><span id="sxCount">20</span> tools online · more loading</span>
+        <span class="sx-pill"><i class="fa-solid fa-microchip"></i><span id="sxCount">21</span> tools online · more loading</span>
       </div>
     </section>
 
@@ -271,12 +271,12 @@
         <span class="sx-chip" id="catDoc"><i class="fa-regular fa-file-lines"></i> Document tools <small>/doc</small></span>
         <div class="sx-grid">
           <div class="sx-slot">
-            <button class="sx-tile" type="button" data-open="zip" aria-label="Open Compress">
+            <button class="sx-tile" type="button" data-open="zip" aria-label="Open Compress Image">
               <span class="id">DOC.01</span>
               <i class="fa-solid fa-compress ic" aria-hidden="true"></i>
               <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
             </button>
-            <div class="sx-name">Compress</div>
+            <div class="sx-name">Compress Image</div>
             <div class="sx-sub">Shrink image files</div>
           </div>
           <div class="sx-slot">
@@ -315,6 +315,15 @@
             <div class="sx-name">Split PDF</div>
             <div class="sx-sub">Extract or split pages</div>
           </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="pdfzip" aria-label="Open Compress PDF">
+              <span class="id">DOC.06</span>
+              <i class="fa-solid fa-file-zipper ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Compress PDF</div>
+            <div class="sx-sub">Make PDFs smaller</div>
+          </div>
         </div>
       </section>
 
@@ -329,7 +338,7 @@
               <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
             </button>
             <div class="sx-name">QR Code</div>
-            <div class="sx-sub">Text · URL · Wi-Fi</div>
+            <div class="sx-sub">Styles · logo · vCard · Wi-Fi</div>
           </div>
           <div class="sx-slot">
             <button class="sx-tile" type="button" data-open="password" aria-label="Open Password Maker">
@@ -439,8 +448,8 @@
 
 <script src="js/system21-bg.js?v=1"></script>
 <script src="js/system21-img.js?v=1"></script>
-<script src="js/system21-doc.js?v=1"></script>
-<script src="js/system21-misc.js?v=1"></script>
+<script src="js/system21-doc.js?v=2"></script>
+<script src="js/system21-misc.js?v=2"></script>
 <script>
 (function(){
   'use strict';
@@ -536,8 +545,9 @@
     txt2pdf:{path:'doc/text-to-pdf',mount:function(h){return window.SX_DOC.txt2pdf(h)}},
     merge:{path:'doc/merge-pdf',mount:function(h){return window.SX_DOC.merge(h)}},
     split:{path:'doc/split-pdf',mount:function(h){return window.SX_DOC.split(h)}},
+    pdfzip:{path:'doc/compress-pdf',wide:true,mount:function(h){return window.SX_DOC.compress(h)}},
     filters:{path:'img/photo-filters',wide:true,mount:function(h){return window.SX_IMG.filters(h)}},
-    qr:{path:'misc/qr-code',mount:function(h){return window.SX_MISC.qr(h)}},
+    qr:{path:'misc/qr-code',wide:true,mount:function(h){return window.SX_MISC.qr(h)}},
     password:{path:'misc/password',mount:function(h){return window.SX_MISC.password(h)}},
     units:{path:'misc/unit-converter',mount:function(h){return window.SX_MISC.units(h)}},
     color:{path:'misc/color-tools',mount:function(h){return window.SX_MISC.color(h)}},

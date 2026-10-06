@@ -1,7 +1,7 @@
 /*!
  * System21 — Extra tools: QR Code, Password Generator, Unit Converter, Color Tools, Age & Date,
  * Text Tools, JSON Formatter, Base64/URL, Hash Generator, Timer.
- * Everything runs in the browser. Exposes window.SX_MISC = { qr, password, units, color, age, text, json, base64, hash, timer }
+ * Everything runs in the browser. QR Code: 9 content types, dot/eye styles, gradients, logo, PNG/SVG/JPG/copy/share/print. Exposes window.SX_MISC = { qr, password, units, color, age, text, json, base64, hash, timer }
  * — each is mount(host) -> cleanup(). QR uses qrcode-generator (MIT) from js/vendor, loaded on demand.
  */
 (function () {
@@ -54,58 +54,181 @@
 
   /* ====================== QR CODE ====================== */
   function qr(host) {
-    var st = { type: 'text', fg: '#000000', bg: '#ffffff', ec: 'M', size: 512, qr: null };
-    var ctl = mk('div', 'im-grid'); host.appendChild(ctl);
-    var typeSel = select(ctl, 'Content type', [['text', 'Text / URL'], ['wifi', 'Wi-Fi network'], ['email', 'Email'], ['tel', 'Phone number']], 'text', function (v) { st.type = v; layout(); draw(); });
-    select(ctl, 'Error correction', [['L', 'L — 7% (smallest)'], ['M', 'M — 15%'], ['Q', 'Q — 25%'], ['H', 'H — 30% (most robust)']], 'M', function (v) { st.ec = v; draw(); });
-    var inputs = mk('div', 'im-box'); ctl.appendChild(inputs);
-    var colors = mk('div', 'im-grid'); host.appendChild(colors);
-    var fgc = mk('label', 'im-col'); fgc.innerHTML = '<span>Code color</span><input type="color" value="#000000">'; colors.appendChild(fgc);
-    var bgc = mk('label', 'im-col'); bgc.innerHTML = '<span>Background</span><input type="color" value="#ffffff">'; colors.appendChild(bgc);
-    fgc.querySelector('input').addEventListener('input', function (e) { st.fg = e.target.value; draw(); });
-    bgc.querySelector('input').addEventListener('input', function (e) { st.bg = e.target.value; draw(); });
-    var cvWrap = mk('div', 'im-viewport'); var cv = mk('canvas'); cv.setAttribute('aria-label', 'Generated QR code'); cvWrap.appendChild(cv); host.appendChild(cvWrap);
-    var msg = mk('p', 'sx-hint'); host.appendChild(msg);
-    var bar = mk('div', 'im-bar'); host.appendChild(bar);
-    var bPng = btn(bar, '<i class="fa-solid fa-download"></i> Save PNG', 'sx-btn', function () { cv.toBlob(function (b) { dl(b, 'qr-code.png'); }); });
-    var bSvg = btn(bar, '<i class="fa-solid fa-vector-square"></i> Save SVG', 'sx-btn ghost', function () { if (st.qr) dl(new Blob([toSvg()], { type: 'image/svg+xml' }), 'qr-code.svg'); });
+    var st = { type: 'text', dot: 'square', eye: 'square', fg: '#000000', fg2: '#5b4bff', grad: false, eyeCustom: false, eyeColor: '#5b4bff', bg: '#ffffff', transp: false, margin: 4, ec: 'M', size: 1024, logo: null, logoPct: 20, qr: null, data: '', g: null, scanTok: 0, scanTm: 0 };
+    var r3 = function (v) { return +v.toFixed(3); };
+
+    /* --- content --- */
+    var top = mk('div', 'im-grid'); host.appendChild(top);
+    select(top, 'Content type', [['text', 'Text / URL'], ['wifi', 'Wi-Fi network'], ['vcard', 'Contact card (vCard)'], ['email', 'Email'], ['tel', 'Phone number'], ['sms', 'SMS message'], ['wa', 'WhatsApp message'], ['geo', 'Location (map pin)'], ['event', 'Calendar event']], 'text', function (v) { st.type = v; layout(); draw(); });
+    var inputs = mk('div', 'im-box'); top.appendChild(inputs);
+
+    /* --- two columns: preview | style --- */
+    var cols = mk('div', 'im-filters'); host.appendChild(cols);
+    var left = mk('div', 'im-left'), right = mk('div', 'im-right'); cols.appendChild(left); cols.appendChild(right);
+    var vp = mk('div', 'im-viewport'), cv = mk('canvas'); cv.setAttribute('aria-label', 'Generated QR code'); vp.appendChild(cv); left.appendChild(vp);
+    var msg = mk('p', 'sx-hint'), warn = mk('p', 'sx-hint'), scan = mk('p', 'sx-hint'); left.appendChild(msg); left.appendChild(warn); left.appendChild(scan);
+    var bar = mk('div', 'im-bar'); left.appendChild(bar);
+    var bPng = btn(bar, '<i class="fa-solid fa-download"></i> PNG', 'sx-btn', function () { cv.toBlob(function (b) { dl(b, 'qr-code.png'); }); });
+    var bSvg = btn(bar, '<i class="fa-solid fa-vector-square"></i> SVG', 'sx-btn ghost', function () { dl(new Blob([toSvg()], { type: 'image/svg+xml' }), 'qr-code.svg'); });
+    var bJpg = btn(bar, '<i class="fa-regular fa-image"></i> JPG', 'sx-btn ghost', function () { var c = mk('canvas'); c.width = cv.width; c.height = cv.height; var x = c.getContext('2d'); x.fillStyle = st.transp ? '#ffffff' : st.bg; x.fillRect(0, 0, c.width, c.height); x.drawImage(cv, 0, 0); c.toBlob(function (b) { dl(b, 'qr-code.jpg'); }, 'image/jpeg', .95); });
+    var bCopy = btn(bar, '<i class="fa-regular fa-copy"></i> Copy image', 'sx-btn ghost', function () {
+      var ok = function () { var o = bCopy.innerHTML; bCopy.innerHTML = '<i class="fa-solid fa-check"></i> Copied'; setTimeout(function () { bCopy.innerHTML = o; }, 1200); };
+      if (!(navigator.clipboard && window.ClipboardItem)) { msg.innerHTML = '<i class="fa-solid fa-circle-info"></i>This browser cannot copy images — use Save PNG instead.'; return; }
+      cv.toBlob(function (b) { navigator.clipboard.write([new ClipboardItem({ 'image/png': b })]).then(ok, function () { msg.innerHTML = '<i class="fa-solid fa-circle-info"></i>Copy was blocked — use Save PNG instead.'; }); });
+    });
+    var bShare = btn(bar, '<i class="fa-solid fa-share-nodes"></i> Share', 'sx-btn ghost', function () { cv.toBlob(function (b) { var f = new File([b], 'qr-code.png', { type: 'image/png' }); if (navigator.canShare && navigator.canShare({ files: [f] })) navigator.share({ files: [f], title: 'QR code' }).catch(function () { }); }); });
+    bShare.hidden = !(navigator.canShare && typeof File === 'function');
+    var bPrint = btn(bar, '<i class="fa-solid fa-print"></i> Print', 'sx-btn ghost', function () {
+      var fr = mk('iframe'); fr.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0'; document.body.appendChild(fr);
+      var d = fr.contentWindow.document; d.open(); d.write('<!doctype html><title>QR code</title><style>body{margin:0;display:grid;place-items:center;min-height:100vh}img{width:12cm;max-width:90vw}</style><img src="' + cv.toDataURL('image/png') + '">'); d.close();
+      var img = d.querySelector('img'); var go = function () { fr.contentWindow.focus(); fr.contentWindow.print(); setTimeout(function () { fr.remove(); }, 1500); }; if (img.complete) go(); else img.onload = go;
+    });
+    var acts = [bPng, bSvg, bJpg, bCopy, bShare, bPrint];
+
+    /* --- style panel --- */
+    var H = function (t) { right.appendChild(mk('h3', 'mx-h', t)).style.marginTop = '.2rem'; };
+    function colorRow(label, val, cb) { var l = mk('label', 'im-col'); l.style.margin = '.35rem 0'; l.innerHTML = '<span>' + label + '</span><input type="color" value="' + val + '">'; var i = l.querySelector('input'); i.addEventListener('input', function () { cb(i.value); }); right.appendChild(l); return i; }
+    var sub = function (t) { var h = mk('h3', 'mx-h', t); h.style.marginTop = '.9rem'; right.appendChild(h); };
+    H('Quick styles');
+    var presets = mk('div', 'mx-pal'); right.appendChild(presets);
+    var inCode, inCode2, inEye, inBg, chkGrad, chkEye, chkTr;
+    [['Classic', '#000000', '#000000', false], ['Smart21', '#5b4bff', '#5b4bff', false], ['Forest', '#0b6b3a', '#0b6b3a', false], ['Sunset', '#be123c', '#ea580c', true], ['Ocean', '#023e8a', '#0077b6', true], ['Night', '#6d28d9', '#0e7490', true]].forEach(function (p) {
+      var b = mk('button', 'mx-sw'); b.type = 'button'; b.style.cssText = 'min-width:70px;flex:1 1 70px;height:42px;place-items:center;color:#fff;background:linear-gradient(135deg,' + p[1] + ',' + p[2] + ')'; b.textContent = p[0]; b.title = 'Apply ' + p[0];
+      b.addEventListener('click', function () { st.fg = p[1]; st.fg2 = p[2]; st.grad = p[3]; st.bg = '#ffffff'; st.transp = false; inCode.value = st.fg; inCode2.value = st.fg2; chkGrad.checked = st.grad; inBg.value = st.bg; chkTr.checked = false; draw(); });
+      presets.appendChild(b);
+    });
+    sub('Shape');
+    select(right, 'Dot style', [['square', 'Square'], ['rounded', 'Rounded'], ['dots', 'Dots'], ['diamond', 'Diamond']], st.dot, function (v) { st.dot = v; draw(); });
+    select(right, 'Corner eyes', [['square', 'Square'], ['rounded', 'Rounded'], ['circle', 'Circle']], st.eye, function (v) { st.eye = v; draw(); });
+    sub('Colors');
+    inCode = colorRow('Code color', st.fg, function (v) { st.fg = v; draw(); });
+    chkGrad = check(right, 'Gradient (add second color)', false, function (v) { st.grad = v; draw(); });
+    inCode2 = colorRow('Gradient end', st.fg2, function (v) { st.fg2 = v; draw(); });
+    chkEye = check(right, 'Custom eye color', false, function (v) { st.eyeCustom = v; draw(); });
+    inEye = colorRow('Eye color', st.eyeColor, function (v) { st.eyeColor = v; draw(); });
+    inBg = colorRow('Background', st.bg, function (v) { st.bg = v; draw(); });
+    chkTr = check(right, 'Transparent background (PNG / SVG)', false, function (v) { st.transp = v; draw(); });
+    sub('Size & margin');
+    slider(right, 'Margin', 0, 10, st.margin, ' modules', function (v) { st.margin = v; draw(); });
+    select(right, 'Export size', [[256, '256 px'], [512, '512 px'], [1024, '1024 px — print'], [2048, '2048 px — large print']], st.size, function (v) { st.size = +v; draw(); });
+    var ecSel = select(right, 'Error correction', [['L', 'L — 7% (smallest)'], ['M', 'M — 15%'], ['Q', 'Q — 25%'], ['H', 'H — 30% (most robust)']], st.ec, function (v) { st.ec = v; draw(); });
+    sub('Logo in the center');
+    var lf = mk('input', 'im-text'); lf.type = 'file'; lf.accept = 'image/png,image/jpeg,image/webp,image/svg+xml,image/gif'; lf.setAttribute('aria-label', 'Choose a logo image'); right.appendChild(lf);
+    var logoSl = slider(right, 'Logo size', 8, 25, st.logoPct, '%', function (v) { st.logoPct = v; draw(); });
+    var logoBar = mk('div', 'im-bar'); right.appendChild(logoBar);
+    var rmLogo = btn(logoBar, '<i class="fa-solid fa-xmark"></i> Remove logo', 'sx-btn ghost', function () { st.logo = null; lf.value = ''; sync(); draw(); });
+    function sync() { logoSl.disabled = !st.logo; rmLogo.hidden = !st.logo; logoSl.parentNode.style.opacity = st.logo ? 1 : .45; inCode2.parentNode.style.opacity = st.grad ? 1 : .5; }
+    lf.addEventListener('change', function () {
+      var file = lf.files[0]; if (!file) return;
+      var u = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        var s = Math.min(1, 256 / Math.max(im.naturalWidth || 256, im.naturalHeight || 256)), c = mk('canvas'); c.width = Math.max(1, Math.round((im.naturalWidth || 256) * s)); c.height = Math.max(1, Math.round((im.naturalHeight || 256) * s));
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+        var url = c.toDataURL('image/png'), i2 = new Image(); i2.onload = function () { st.logo = { img: i2, url: url, w: c.width, h: c.height }; if (st.ec !== 'H') { st.ec = 'H'; ecSel.value = 'H'; } sync(); draw(); }; i2.src = url;
+      };
+      im.onerror = function () { URL.revokeObjectURL(u); msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>Could not read that image.'; };
+      im.src = u;
+    });
+
+    /* --- content inputs --- */
     var f = {};
     function layout() {
-      inputs.innerHTML = '';
-      if (st.type === 'text') f.text = field(inputs, 'Text or URL', 'textarea', 'https://smart21brain.com', { rows: 3, maxlength: 1200 });
-      if (st.type === 'wifi') { f.ssid = field(inputs, 'Network name (SSID)', 'text', ''); f.pass = field(inputs, 'Password', 'text', ''); f.sec = select(inputs, 'Security', [['WPA', 'WPA / WPA2'], ['WEP', 'WEP'], ['nopass', 'None']], 'WPA', draw); }
-      if (st.type === 'email') { f.to = field(inputs, 'Email address', 'email', ''); f.sub = field(inputs, 'Subject (optional)', 'text', ''); }
-      if (st.type === 'tel') f.tel = field(inputs, 'Phone number', 'tel', '+255');
+      inputs.innerHTML = ''; f = {}; var t = st.type, g = function (l, ty, v, a) { return field(inputs, l, ty, v, a); };
+      if (t === 'text') f.text = g('Text or URL', 'textarea', 'https://smart21brain.com', { rows: 3, maxlength: 2000 });
+      if (t === 'wifi') { f.ssid = g('Network name (SSID)', 'text', ''); f.pass = g('Password', 'text', ''); f.sec = select(inputs, 'Security', [['WPA', 'WPA / WPA2 / WPA3'], ['WEP', 'WEP'], ['nopass', 'None']], 'WPA', draw); f.hid = check(inputs, 'Hidden network', false, draw); }
+      if (t === 'vcard') { f.fn = g('First name', 'text', ''); f.ln = g('Last name', 'text', ''); f.org = g('Company', 'text', ''); f.job = g('Job title', 'text', ''); f.tel = g('Phone', 'tel', ''); f.mail = g('Email', 'email', ''); f.url = g('Website', 'url', ''); f.adr = g('Address', 'text', ''); }
+      if (t === 'email') { f.to = g('Email address', 'email', ''); f.sub = g('Subject (optional)', 'text', ''); f.body = g('Message (optional)', 'textarea', '', { rows: 2 }); }
+      if (t === 'tel') f.tel = g('Phone number', 'tel', '+255');
+      if (t === 'sms') { f.tel = g('Phone number', 'tel', '+255'); f.body = g('Message', 'textarea', '', { rows: 2 }); }
+      if (t === 'wa') { f.tel = g('WhatsApp number (with country code)', 'tel', '+255'); f.body = g('Pre-filled message (optional)', 'textarea', '', { rows: 2 }); }
+      if (t === 'geo') { f.lat = g('Latitude', 'number', '-6.7924', { step: 'any' }); f.lng = g('Longitude', 'number', '39.2083', { step: 'any' }); }
+      if (t === 'event') { var d = new Date(Date.now() + 864e5); d.setMinutes(0, 0, 0); var loc = function (x) { return new Date(x.getTime() - x.getTimezoneOffset() * 6e4).toISOString().slice(0, 16); }; f.title = g('Event title', 'text', ''); f.start = g('Starts', 'datetime-local', loc(d)); f.end = g('Ends', 'datetime-local', loc(new Date(d.getTime() + 36e5))); f.where = g('Location (optional)', 'text', ''); f.desc = g('Description (optional)', 'textarea', '', { rows: 2 }); }
       inputs.querySelectorAll('input,textarea').forEach(function (i) { i.addEventListener('input', draw); });
     }
+    var vEsc = function (s) { return String(s || '').replace(/([\;,])/g, '\\$1').replace(/\r?\n/g, '\\n'); };
+    var dt = function (s) { return s.replace(/[-:]/g, '') + (s.length === 16 ? '00' : ''); };
+    var digits = function (s) { return String(s).replace(/[^\d]/g, ''); };
     function payload() {
-      if (st.type === 'text') return f.text.value;
-      if (st.type === 'tel') return f.tel.value.trim() ? 'tel:' + f.tel.value.trim() : '';
-      if (st.type === 'email') return f.to.value.trim() ? 'mailto:' + f.to.value.trim() + (f.sub.value ? '?subject=' + encodeURIComponent(f.sub.value) : '') : '';
-      var q = function (s) { return s.replace(/([\;,:"])/g, '\\$1'); };
-      return f.ssid.value ? 'WIFI:T:' + f.sec.value + ';S:' + q(f.ssid.value) + ';' + (f.sec.value === 'nopass' ? '' : 'P:' + q(f.pass.value) + ';') + ';' : '';
+      var t = st.type, v = function (k) { return (f[k].value || '').trim(); };
+      if (t === 'text') return f.text.value;
+      if (t === 'tel') return v('tel') && digits(v('tel')) ? 'tel:' + v('tel').replace(/[^\d+]/g, '') : '';
+      if (t === 'sms') return digits(v('tel')) ? 'SMSTO:' + v('tel').replace(/[^\d+]/g, '') + ':' + f.body.value : '';
+      if (t === 'wa') return digits(v('tel')) ? 'https://wa.me/' + digits(v('tel')) + (f.body.value ? '?text=' + encodeURIComponent(f.body.value) : '') : '';
+      if (t === 'email') { if (!v('to')) return ''; var q = []; if (v('sub')) q.push('subject=' + encodeURIComponent(f.sub.value)); if (f.body.value) q.push('body=' + encodeURIComponent(f.body.value)); return 'mailto:' + v('to') + (q.length ? '?' + q.join('&') : ''); }
+      if (t === 'geo') { var la = parseFloat(f.lat.value), lo = parseFloat(f.lng.value); return isFinite(la) && isFinite(lo) && Math.abs(la) <= 90 && Math.abs(lo) <= 180 ? 'geo:' + la + ',' + lo : ''; }
+      if (t === 'wifi') { var e = function (s) { return s.replace(/([\;,:"])/g, '\\$1'); }; return f.ssid.value ? 'WIFI:T:' + f.sec.value + ';S:' + e(f.ssid.value) + ';' + (f.sec.value === 'nopass' ? '' : 'P:' + e(f.pass.value) + ';') + (f.hid.checked ? 'H:true;' : '') + ';' : ''; }
+      if (t === 'vcard') { if (!v('fn') && !v('ln') && !v('org')) return ''; return ['BEGIN:VCARD', 'VERSION:3.0', 'N:' + vEsc(v('ln')) + ';' + vEsc(v('fn')) + ';;;', 'FN:' + vEsc((v('fn') + ' ' + v('ln')).trim() || v('org')), v('org') && 'ORG:' + vEsc(v('org')), v('job') && 'TITLE:' + vEsc(v('job')), v('tel') && 'TEL:' + v('tel'), v('mail') && 'EMAIL:' + v('mail'), v('url') && 'URL:' + v('url'), v('adr') && 'ADR:;;' + vEsc(v('adr')) + ';;;;', 'END:VCARD'].filter(Boolean).join('\n'); }
+      if (t === 'event') { if (!v('title') || !f.start.value) return ''; return ['BEGIN:VEVENT', 'SUMMARY:' + vEsc(v('title')), 'DTSTART:' + dt(f.start.value), f.end.value && 'DTEND:' + dt(f.end.value), v('where') && 'LOCATION:' + vEsc(v('where')), f.desc.value && 'DESCRIPTION:' + vEsc(f.desc.value), 'END:VEVENT'].filter(Boolean).join('\n'); }
+      return '';
     }
+
+    /* --- geometry (one set of SVG path strings drives both canvas and SVG) --- */
+    function shape(kind, x, y, s, rad) {
+      x = r3(x); y = r3(y); s = r3(s);
+      if (kind === 'circle' || kind === 'dot') { var r = r3(s / 2), cy = r3(y + r); return 'M' + x + ' ' + cy + 'a' + r + ' ' + r + ' 0 1 0 ' + s + ' 0a' + r + ' ' + r + ' 0 1 0 ' + (-s) + ' 0z'; }
+      if (kind === 'diamond') { var h = r3(s / 2); return 'M' + r3(x + h) + ' ' + y + 'l' + h + ' ' + h + 'l' + (-h) + ' ' + h + 'l' + (-h) + ' ' + (-h) + 'z'; }
+      if (kind === 'rounded') { var q = r3(rad), w = r3(s - 2 * q); return 'M' + r3(x + q) + ' ' + y + 'h' + w + 'a' + q + ' ' + q + ' 0 0 1 ' + q + ' ' + q + 'v' + w + 'a' + q + ' ' + q + ' 0 0 1 ' + (-q) + ' ' + q + 'h' + (-w) + 'a' + q + ' ' + q + ' 0 0 1 ' + (-q) + ' ' + (-q) + 'v' + (-w) + 'a' + q + ' ' + q + ' 0 0 1 ' + q + ' ' + (-q) + 'z'; }
+      return 'M' + x + ' ' + y + 'h' + s + 'v' + s + 'h' + (-s) + 'z';
+    }
+    function geometry(q) {
+      var n = q.getModuleCount(), m = st.margin, total = n + m * 2, data = [], ring = [], center = [];
+      var box = null; if (st.logo) { var L = total * st.logoPct / 100, ar = st.logo.w / st.logo.h, lw = ar >= 1 ? L : L * ar, lh = ar >= 1 ? L / ar : L; box = { x: (total - lw) / 2, y: (total - lh) / 2, w: lw, h: lh }; }
+      var pad = .6, isEye = function (r, c) { return (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7); };
+      for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) {
+        if (!q.isDark(r, c) || isEye(r, c)) continue; var x = c + m, y = r + m;
+        if (box && x + .5 > box.x - pad && x + .5 < box.x + box.w + pad && y + .5 > box.y - pad && y + .5 < box.y + box.h + pad) continue;
+        data.push(st.dot === 'dots' ? shape('dot', x + .06, y + .06, .88) : st.dot === 'rounded' ? shape('rounded', x, y, 1, .34) : st.dot === 'diamond' ? shape('diamond', x - .04, y - .04, 1.08) : shape('square', x - .015, y - .015, 1.03));
+      }
+      [[0, 0], [0, n - 7], [n - 7, 0]].forEach(function (p) {
+        var x = p[1] + m, y = p[0] + m;
+        ring.push(shape(st.eye, x, y, 7, 2.2), shape(st.eye, x + 1, y + 1, 5, 1.5)); center.push(shape(st.eye, x + 2, y + 2, 3, 1));
+      });
+      return { n: n, total: total, data: data.join(''), ring: ring.join(''), center: center.join(''), box: box };
+    }
+    var eyeFill = function (g) { return st.eyeCustom ? st.eyeColor : g; };
     function toSvg() {
-      var n = st.qr.getModuleCount(), m = 4, s = n + m * 2, d = '';
-      for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (st.qr.isDark(r, c)) d += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
-      return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + s + ' ' + s + '" width="' + st.size + '" height="' + st.size + '" shape-rendering="crispEdges"><rect width="' + s + '" height="' + s + '" fill="' + st.bg + '"/><path d="' + d + '" fill="' + st.fg + '"/></svg>';
+      var g = st.g, s = g.total, px = st.size, grad = st.grad ? '<defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + s + '" y2="' + s + '"><stop offset="0" stop-color="' + st.fg + '"/><stop offset="1" stop-color="' + st.fg2 + '"/></linearGradient></defs>' : '', main = st.grad ? 'url(#g)' : st.fg, eye = eyeFill(main);
+      return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ' + s + ' ' + s + '" width="' + px + '" height="' + px + '">' + grad + (st.transp ? '' : '<rect width="' + s + '" height="' + s + '" fill="' + st.bg + '"/>') + '<path d="' + g.data + '" fill="' + main + '"/><path d="' + g.ring + '" fill="' + eye + '" fill-rule="evenodd"/><path d="' + g.center + '" fill="' + eye + '"/>' + (g.box ? '<image x="' + r3(g.box.x) + '" y="' + r3(g.box.y) + '" width="' + r3(g.box.w) + '" height="' + r3(g.box.h) + '" href="' + st.logo.url + '" xlink:href="' + st.logo.url + '"/>' : '') + '</svg>';
+    }
+    function paint() {
+      var g = st.g, sc = Math.max(1, Math.round(st.size / g.total)), px = sc * g.total; cv.width = cv.height = px; var x = cv.getContext('2d'); x.scale(sc, sc);
+      if (!st.transp) { x.fillStyle = st.bg; x.fillRect(0, 0, g.total, g.total); }
+      var main = st.fg; if (st.grad) { main = x.createLinearGradient(0, 0, g.total, g.total); main.addColorStop(0, st.fg); main.addColorStop(1, st.fg2); }
+      x.fillStyle = main; x.fill(new Path2D(g.data)); x.fillStyle = eyeFill(main); x.fill(new Path2D(g.ring), 'evenodd'); x.fill(new Path2D(g.center));
+      if (g.box) { x.imageSmoothingQuality = 'high'; x.drawImage(st.logo.img, g.box.x, g.box.y, g.box.w, g.box.h); }
+      cv.style.width = Math.min(px, 340) + 'px'; cv.style.height = 'auto'; vp.classList.toggle('sx-checker', st.transp);
+    }
+    function checks(q) {
+      var a = hex2rgb(st.fg), b = hex2rgb(st.bg), c1 = contrast(a, b), c2 = st.grad ? contrast(hex2rgb(st.fg2), b) : 21, c3 = st.eyeCustom ? contrast(hex2rgb(st.eyeColor), b) : 21, w = [];
+      if (!st.transp && Math.min(c1, c2, c3) < 3) w.push('Low contrast (' + Math.min(c1, c2, c3).toFixed(1) + ':1) — scanners may fail. Make the code darker than the background.');
+      else if (!st.transp && lum(a) > lum(b)) w.push('Light code on a dark background is “inverted” — some scanner apps cannot read it.');
+      if (st.transp) w.push('Transparent background: place the code on a light, plain surface so it stays readable.');
+      if (st.margin < 2) w.push('Margin below 2 modules can make scanning unreliable.');
+      if (st.logo && st.ec !== 'H') w.push('Use error correction H with a logo.');
+      warn.innerHTML = w.length ? '<i class="fa-solid fa-triangle-exclamation" style="color:var(--s21-secondary)"></i>' + w.map(esc).join('<br><i class="fa-solid fa-triangle-exclamation" style="color:var(--s21-secondary)"></i>') : '';
+    }
+    function verify() {
+      scan.innerHTML = ''; if (!window.BarcodeDetector) return; var tok = ++st.scanTok, want = st.data;
+      clearTimeout(st.scanTm); st.scanTm = setTimeout(function () {
+        try { new window.BarcodeDetector({ formats: ['qr_code'] }).detect(cv).then(function (r) { if (tok !== st.scanTok) return; var ok = r.length && r[0].rawValue === want; scan.innerHTML = ok ? '<i class="fa-solid fa-circle-check" style="color:#3ddc97"></i>Scan test passed — this browser read the code correctly.' : '<i class="fa-solid fa-circle-xmark" style="color:var(--s21-secondary)"></i>Scan test could not read this design. Try more contrast, a bigger margin or a smaller logo.'; }, function () { }); } catch (e) { }
+      }, 350);
     }
     function draw() {
-      var data = payload();
-      [bPng, bSvg].forEach(function (b) { b.disabled = !data; });
-      if (!data) { st.qr = null; cv.width = cv.height = 10; cv.getContext('2d').clearRect(0, 0, 10, 10); msg.textContent = 'Type something above to generate a QR code.'; return; }
+      sync(); var data = payload(); st.data = data;
+      acts.forEach(function (b) { b.disabled = !data; });
+      if (!data) { st.qr = null; st.g = null; cv.width = cv.height = 10; cv.style.width = '120px'; cv.getContext('2d').clearRect(0, 0, 10, 10); msg.textContent = 'Fill in the details above to generate a QR code.'; warn.innerHTML = ''; scan.innerHTML = ''; return; }
       loadScript('js/vendor/qrcode.js').then(function () {
+        if (st.data !== data) return;
         window.qrcode.stringToBytes = window.qrcode.stringToBytesFuncs['UTF-8'];
-        var q; try { q = window.qrcode(0, st.ec); q.addData(data); q.make(); } catch (e) { st.qr = null; msg.textContent = 'Too much data for a QR code — shorten the text or lower error correction.'; return; }
-        st.qr = q; var n = q.getModuleCount(), m = 4, cell = Math.max(2, Math.floor(st.size / (n + m * 2))), px = cell * (n + m * 2);
-        cv.width = cv.height = px; var x = cv.getContext('2d'); x.fillStyle = st.bg; x.fillRect(0, 0, px, px); x.fillStyle = st.fg;
-        for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) x.fillRect((c + m) * cell, (r + m) * cell, cell, cell);
-        cv.style.width = Math.min(px, 320) + 'px'; cv.style.imageRendering = 'pixelated';
-        msg.innerHTML = '<i class="fa-solid fa-circle-info"></i>' + n + '×' + n + ' modules · keep strong contrast between code and background so phones can scan it.';
+        var q; try { q = window.qrcode(0, st.ec); q.addData(data); q.make(); } catch (e) { st.qr = null; acts.forEach(function (b) { b.disabled = true; }); msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>Too much data for a QR code — shorten it or lower the error correction.'; return; }
+        st.qr = q; st.g = geometry(q); paint(); checks(q);
+        var bytes = new TextEncoder().encode(data).length;
+        msg.innerHTML = '<i class="fa-solid fa-circle-info"></i>Version ' + ((st.g.n - 17) / 4) + ' · ' + st.g.n + '×' + st.g.n + ' modules · ' + bytes + ' bytes · exports at ' + cv.width + ' px';
+        verify();
       }).catch(function (e) { msg.textContent = e.message; });
     }
-    layout(); draw();
-    return function () { };
+    layout(); sync(); draw();
+    return function () { clearTimeout(st.scanTm); st.scanTok++; };
   }
 
   /* ====================== PASSWORD ====================== */

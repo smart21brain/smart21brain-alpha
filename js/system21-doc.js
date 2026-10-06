@@ -1,13 +1,13 @@
 /*!
  * System21 — Document tools: Image to PDF, Text to PDF (with word count), Merge PDF, Split PDF.
- * Image to PDF and Text to PDF use a built-in PDF writer (no library). Merge/Split use pdf-lib (MIT), loaded on demand.
- * Exposes window.SX_DOC = { img2pdf, txt2pdf, merge, split } — each is mount(host) -> cleanup().
+ * Image to PDF and Text to PDF use a built-in PDF writer (no library). Merge/Split/Compress use pdf-lib (MIT) and, for Strong compression, pdf.js (Apache-2.0) — both bundled in js/vendor and loaded on demand.
+ * Exposes window.SX_DOC = { img2pdf, txt2pdf, merge, split, compress } — each is mount(host) -> cleanup().
  * Config (optional, before this file): window.SX_DOC_CONFIG = { pdfLibUrl: 'js/vendor/pdf-lib.min.js' } to self-host pdf-lib.
  */
 (function () {
   'use strict';
 
-  var CFG = Object.assign({ pdfLibUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js' }, window.SX_DOC_CONFIG || {});
+  var CFG = Object.assign({ pdfLibUrl: 'js/vendor/pdf-lib.min.js', pdfJsUrl: 'js/vendor/pdf.min.js', pdfJsWorkerUrl: 'js/vendor/pdf.worker.min.js' }, window.SX_DOC_CONFIG || {});
   var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var fmt = function (n) { return n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(1) + ' KB' : (n / 1048576).toFixed(2) + ' MB'; };
@@ -295,5 +295,171 @@
     return function () { alive = false; };
   }
 
-  window.SX_DOC = { img2pdf: img2pdf, txt2pdf: txt2pdf, merge: merge, split: split, _buildTextPdf: buildTextPdf, _parseRanges: parseRanges };
+  /* ====================== COMPRESS PDF ====================== */
+  var pdfjs = null;
+  function loadPdfJs() {
+    if (window.pdfjsLib) { window.pdfjsLib.GlobalWorkerOptions.workerSrc = CFG.pdfJsWorkerUrl; return Promise.resolve(window.pdfjsLib); }
+    if (pdfjs) return pdfjs;
+    pdfjs = new Promise(function (res, rej) { var s = document.createElement('script'); s.src = CFG.pdfJsUrl; s.async = true; s.onload = function () { if (!window.pdfjsLib) return rej(new Error('PDF renderer did not start')); window.pdfjsLib.GlobalWorkerOptions.workerSrc = CFG.pdfJsWorkerUrl; res(window.pdfjsLib); }; s.onerror = function () { rej(new Error('Could not load the PDF renderer — check your internet connection.')); }; document.head.appendChild(s); });
+    pdfjs.catch(function () { pdfjs = null; }); return pdfjs;
+  }
+  var tick = function () { return new Promise(function (r) { setTimeout(r, 0); }); };
+  function deflate(u8) {
+    var cs = new CompressionStream('deflate'), w = cs.writable.getWriter(); w.write(u8); w.close();
+    return new Response(cs.readable).arrayBuffer().then(function (b) { return new Uint8Array(b); });
+  }
+  function decodeImg(blob) {
+    if (window.createImageBitmap) return createImageBitmap(blob);
+    return new Promise(function (res, rej) { var u = URL.createObjectURL(blob), i = new Image(); i.onload = function () { URL.revokeObjectURL(u); res(i); }; i.onerror = function () { URL.revokeObjectURL(u); rej(new Error('image')); }; i.src = u; });
+  }
+
+  /* Smart mode: keep text & vectors, re-encode big images, deflate raw streams, strip extras. */
+  async function smartCompress(bytes, o, progress) {
+    var L = await loadLib(), P = L.PDFDocument, N = L.PDFName, R = L.PDFRawStream, doc = await P.load(bytes, { updateMetadata: false }), ctx = doc.context;
+    var lk = function (v) { return v && ctx.lookup(v); };
+    var nm = function (v) { v = lk(v); return v && v.encodedName ? v.encodedName : null; };
+    var num = function (v) { v = lk(v); return v && typeof v.asNumber === 'function' ? v.asNumber() : null; };
+    var list = ctx.enumerateIndirectObjects(), done = 0, stats = { img: 0, imgSaved: 0, raw: 0 };
+    for (var k = 0; k < list.length; k++) {
+      var ref = list[k][0], obj = list[k][1];
+      if (!(obj instanceof R)) continue;
+      var d = obj.dict, sub = nm(d.get(N.of('Subtype'))), typ = nm(d.get(N.of('Type'))), filt = lk(d.get(N.of('Filter')));
+      if (sub === '/Image') {
+        try {
+          var w = num(d.get(N.of('Width'))), h = num(d.get(N.of('Height'))), bpc = num(d.get(N.of('BitsPerComponent'))), isMask = lk(d.get(N.of('ImageMask')));
+          var fname = filt && filt.encodedName ? filt.encodedName : (filt && filt.size && filt.size() === 1 ? nm(filt.get(0)) : null);
+          var cs = lk(d.get(N.of('ColorSpace'))), comps = 0;
+          if (cs && cs.encodedName === '/DeviceRGB') comps = 3; else if (cs && cs.encodedName === '/DeviceGray') comps = 1;
+          else if (cs && cs.size && cs.size() === 2 && nm(cs.get(0)) === '/ICCBased') { var prof = lk(cs.get(1)); comps = prof && prof.dict ? num(prof.dict.get(N.of('N'))) : 0; }
+          var okShape = w && h && bpc === 8 && (comps === 1 || comps === 3) && !(isMask && isMask.toString() === 'true') && !d.get(N.of('Decode')) && !d.get(N.of('Mask')) && w * h <= 36e6;
+          var minBytes = obj.contents.length > (o.strong ? 12000 : 20000);
+          if (okShape && minBytes && (fname === '/DCTDecode' || fname === '/FlateDecode')) {
+            var bm;
+            if (fname === '/DCTDecode') bm = await decodeImg(new Blob([obj.contents], { type: 'image/jpeg' }));
+            else {
+              var raw = L.decodePDFRawStream(obj).decode();
+              if (raw.length !== w * h * comps) throw new Error('layout');
+              var rc = cvs(w, h), rx = rc.getContext('2d'), id = rx.createImageData(w, h), px = id.data;
+              for (var i = 0, j = 0, n = w * h; i < n; i++) { if (comps === 3) { px[j++] = raw[i * 3]; px[j++] = raw[i * 3 + 1]; px[j++] = raw[i * 3 + 2]; } else { var g = raw[i]; px[j++] = g; px[j++] = g; px[j++] = g; } px[j++] = 255; }
+              rx.putImageData(id, 0, 0); bm = rc;
+            }
+            var sw = bm.width || w, sh = bm.height || h, sc = Math.min(1, o.maxPx / Math.max(sw, sh)), nw = Math.max(1, Math.round(sw * sc)), nh = Math.max(1, Math.round(sh * sc));
+            var c = cvs(nw, nh), x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, nw, nh); x.imageSmoothingQuality = 'high'; x.drawImage(bm, 0, 0, nw, nh);
+            if (bm.close) bm.close();
+            var jb = await toBlob(c, 'image/jpeg', o.q), ju = jb ? new Uint8Array(await jb.arrayBuffer()) : null;
+            if (ju && ju.length < obj.contents.length * 0.9) {
+              var nd = ctx.obj({ Type: 'XObject', Subtype: 'Image', Width: nw, Height: nh, ColorSpace: comps === 1 ? 'DeviceRGB' : d.get(N.of('ColorSpace')), BitsPerComponent: 8, Filter: 'DCTDecode', Length: ju.length });
+              var sm = d.get(N.of('SMask')); if (sm) nd.set(N.of('SMask'), sm);
+              stats.imgSaved += obj.contents.length - ju.length; stats.img++;
+              ctx.assign(ref, R.of(nd, ju));
+            }
+          }
+        } catch (e) { /* leave this image untouched */ }
+      } else if (!filt && typ !== '/XRef' && typ !== '/ObjStm' && window.CompressionStream && obj.contents.length > 1024) {
+        try { var z = await deflate(obj.contents); if (z.length < obj.contents.length * 0.9) { d.set(N.of('Filter'), N.of('FlateDecode')); d.set(N.of('Length'), ctx.obj(z.length)); ctx.assign(ref, R.of(d, z)); stats.raw++; } } catch (e) { }
+      }
+      if (++done % 8 === 0) { progress(k / list.length); await tick(); }
+    }
+    if (o.strip) { doc.setTitle(''); doc.setAuthor(''); doc.setSubject(''); doc.setKeywords([]); doc.setCreator(''); doc.setProducer('System21'); }
+    var out = await doc.save({ useObjectStreams: true });
+    out.stats = stats; return out;
+  }
+
+  /* Strong mode: draw every page to an image and rebuild the PDF (text is no longer selectable). */
+  async function strongCompress(bytes, o, progress) {
+    var lib = await loadPdfJs(), task = lib.getDocument({ data: bytes.slice(), isEvalSupported: false }), pdf = await task.promise;
+    try {
+      var b = new PdfBuilder(), cat = b.reserve(), pagesId = b.reserve(), kids = [];
+      for (var p = 1; p <= pdf.numPages; p++) {
+        var page = await pdf.getPage(p), v1 = page.getViewport({ scale: 1 }), sc = Math.min(o.dpi / 72, 4000 / Math.max(v1.width, v1.height)), vp = page.getViewport({ scale: sc });
+        var c = cvs(Math.max(1, Math.round(vp.width)), Math.max(1, Math.round(vp.height))), x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+        await page.render({ canvasContext: x, viewport: vp }).promise; page.cleanup();
+        var blob = await toBlob(c, 'image/jpeg', o.q), ju = new Uint8Array(await blob.arrayBuffer()), pw = v1.width, ph = v1.height;
+        var imgId = b.add('<</Type/XObject/Subtype/Image/Width ' + c.width + '/Height ' + c.height + '/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length __LEN__>>', ju);
+        var cId = b.add('<</Length __LEN__>>', ascii('q ' + pw.toFixed(2) + ' 0 0 ' + ph.toFixed(2) + ' 0 0 cm /Im0 Do Q'));
+        kids.push(b.add('<</Type/Page/Parent ' + pagesId + ' 0 R/MediaBox[0 0 ' + pw.toFixed(2) + ' ' + ph.toFixed(2) + ']/Resources<</XObject<</Im0 ' + imgId + ' 0 R>>>>/Contents ' + cId + ' 0 R>>'));
+        progress(p / pdf.numPages); await tick();
+      }
+      b.set(pagesId, '<</Type/Pages/Count ' + kids.length + '/Kids[' + kids.map(function (k) { return k + ' 0 R'; }).join(' ') + ']>>');
+      b.set(cat, '<</Type/Catalog/Pages ' + pagesId + ' 0 R>>');
+      return b.build(cat);
+    } finally { pdf.destroy(); }
+  }
+
+  var CPRESETS = {
+    smart: { light: { q: 80, px: 3000 }, balanced: { q: 65, px: 2000 }, max: { q: 45, px: 1200 } },
+    strong: { light: { q: 80, px: 150 }, balanced: { q: 65, px: 110 }, max: { q: 50, px: 80 } }
+  };
+  function compressPdf(host) {
+    var st = { mode: 'smart', preset: 'balanced', q: 65, px: 2000, strip: true }, items = [], alive = true, busy = false;
+    var seg = mk('div', 'im-seg3'); seg.innerHTML = '<button type="button" data-p="light">Light<br><small>best quality</small></button><button type="button" data-p="balanced" class="on">Balanced<br><small>recommended</small></button><button type="button" data-p="max">Maximum<br><small>smallest file</small></button>'; host.appendChild(seg);
+    var ctl = mk('div', 'im-grid'); ctl.style.marginTop = '1rem'; host.appendChild(ctl);
+    var note = mk('p', 'sx-hint'); host.appendChild(note);
+    function applyPreset(p) { st.preset = p; var v = CPRESETS[st.mode][p]; st.q = v.q; st.px = v.px; [].forEach.call(seg.children, function (b) { b.classList.toggle('on', b.dataset.p === p); }); buildCtl(); }
+    seg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) applyPreset(b.dataset.p); });
+    function buildCtl() {
+      ctl.innerHTML = '';
+      select(ctl, 'Method', [['smart', 'Smart — keeps text sharp & selectable'], ['strong', 'Strong — flatten pages to images']], st.mode, function (v) { st.mode = v; applyPreset(st.preset); });
+      slider(ctl, 'Image quality', 20, 95, st.q, '%', function (v) { st.q = v; clearPreset(); });
+      if (st.mode === 'smart') slider(ctl, 'Largest image side', 600, 4000, st.px, ' px', function (v) { st.px = v; clearPreset(); }, 100);
+      else slider(ctl, 'Page resolution', 50, 200, st.px, ' dpi', function (v) { st.px = v; clearPreset(); }, 5);
+      if (st.mode === 'smart') check(ctl, 'Remove title, author & other metadata', st.strip, function (v) { st.strip = v; });
+      note.innerHTML = st.mode === 'smart' ? '<i class="fa-solid fa-circle-info"></i>Re-compresses the pictures inside the PDF and packs the rest tighter. Best for PDFs with photos or scans plus real text.' : '<i class="fa-solid fa-triangle-exclamation"></i>Turns every page into a picture. Biggest savings — especially for scans — but text can no longer be selected or searched.';
+    }
+    function clearPreset() { [].forEach.call(seg.children, function (b) { b.classList.remove('on'); }); }
+    buildCtl();
+    dropzone(host, true, 'application/pdf,.pdf', isPdf, add, 'Choose PDF files to compress', 'PDF');
+    var rows = mk('div', 'sx-rows'); host.appendChild(rows);
+    var bar = mk('div', 'im-bar'); bar.hidden = true; host.appendChild(bar);
+    var go = btn(bar, '<i class="fa-solid fa-compress"></i> Compress', 'sx-btn', run);
+    var saveAll = btn(bar, '<i class="fa-solid fa-download"></i> Save all', 'sx-btn ghost', function () { items.forEach(function (it, i) { if (it.out) setTimeout(function () { dl(it.out, outName(it)); }, i * 400); }); }); saveAll.hidden = true;
+    btn(bar, '<i class="fa-solid fa-xmark"></i> Clear', 'sx-btn ghost', function () { if (busy) return; items = []; draw(); });
+    var total = mk('div', 'sx-total'); host.appendChild(total);
+    var outName = function (it) { return baseName(it.file.name) + '-compressed.pdf'; };
+    function add(files) { files.forEach(function (f) { items.push({ file: f, state: 'ready' }); }); draw(); }
+    function draw() {
+      rows.innerHTML = ''; bar.hidden = !items.length; go.disabled = busy;
+      items.forEach(function (it, idx) {
+        var r = mk('div', 'sx-row im-pdfrow'); it.row = r;
+        r.innerHTML = '<div class="im-pdfic"><i class="fa-solid fa-file-pdf"></i></div><div><div class="nm">' + esc(it.file.name) + '</div><div class="st"></div><div class="sx-bar"><i></i></div></div><div class="act"></div>';
+        rows.appendChild(r); paintRow(it);
+        var rm = btn(r.querySelector('.act'), '<i class="fa-solid fa-xmark"></i>', 'sx-btn ghost im-mini', function () { if (busy) return; items.splice(idx, 1); draw(); }); rm.setAttribute('aria-label', 'Remove');
+      });
+      sum();
+    }
+    function paintRow(it) {
+      var s = it.row.querySelector('.st'), a = it.row.querySelector('.act'), bar2 = it.row.querySelector('.sx-bar i');
+      if (it.state === 'ready') s.textContent = fmt(it.file.size) + ' · ready';
+      else if (it.state === 'work') { s.textContent = fmt(it.file.size) + ' · compressing… ' + Math.round(it.pct * 100) + '%'; bar2.style.width = Math.round(it.pct * 100) + '%'; }
+      else if (it.state === 'err') s.innerHTML = '<span class="bad">' + esc(it.err) + '</span>';
+      else if (it.state === 'same') { s.innerHTML = fmt(it.file.size) + ' · <span class="bad">already well compressed — no gain, original kept</span>'; bar2.style.width = '100%'; }
+      else if (it.state === 'done') {
+        var pct = Math.round((1 - it.out.size / it.file.size) * 100); s.innerHTML = fmt(it.file.size) + ' → ' + fmt(it.out.size) + ' · <span class="good">−' + pct + '%</span>' + (it.note ? ' · ' + esc(it.note) : ''); bar2.style.width = (100 - pct) + '%';
+        var old = a.querySelector('.sx-btn:not(.im-mini)'); if (old) old.remove();
+        var sv = btn(a, '<i class="fa-solid fa-download"></i> Save', 'sx-btn', function () { dl(it.out, outName(it)); }); a.insertBefore(sv, a.firstChild);
+      }
+    }
+    function sum() {
+      var a = 0, b = 0, n = 0; items.forEach(function (i) { if (i.state === 'done') { a += i.file.size; b += i.out.size; n++; } });
+      total.innerHTML = n ? n + ' file' + (n > 1 ? 's' : '') + ' · ' + fmt(a) + ' → ' + fmt(b) + ' · saved <b>' + fmt(a - b) + '</b> (' + Math.round((1 - b / a) * 100) + '%)' : ''; saveAll.hidden = n < 2;
+    }
+    async function run() {
+      if (busy || !items.length) return; busy = true; go.disabled = true; var mode = st.mode, o = { q: st.q / 100, strip: st.strip, strong: mode === 'strong', maxPx: st.px, dpi: st.px };
+      for (var i = 0; i < items.length && alive; i++) {
+        var it = items[i]; if (it.state === 'done' && it.mode === mode && it.sig === st.q + '/' + st.px) continue;
+        it.state = 'work'; it.pct = 0; paintRow(it);
+        try {
+          var bytes = await readBuf(it.file), prog = function (p) { it.pct = p; if (alive) paintRow(it); };
+          var out = mode === 'smart' ? await smartCompress(bytes, o, prog) : await strongCompress(bytes, o, prog);
+          if (out.length >= it.file.size * 0.98) { it.state = 'same'; it.out = null; }
+          else { it.out = new Blob([out], { type: 'application/pdf' }); it.state = 'done'; it.mode = mode; it.sig = st.q + '/' + st.px; it.note = mode === 'smart' ? (out.stats && out.stats.img ? out.stats.img + ' image' + (out.stats.img > 1 ? 's' : '') + ' optimised' : 'structure optimised') : ''; }
+        } catch (e) { it.state = 'err'; it.err = /password|encrypt/i.test(String(e && (e.message || e.name))) ? 'Password-protected — remove the password first.' : 'Could not compress this file (' + String(e && e.message || e).slice(0, 80) + ').'; }
+        if (alive) paintRow(it);
+      }
+      busy = false; if (alive) { go.disabled = false; sum(); }
+    }
+    return function () { alive = false; };
+  }
+
+  window.SX_DOC = { compress: compressPdf, img2pdf: img2pdf, txt2pdf: txt2pdf, merge: merge, split: split, _buildTextPdf: buildTextPdf, _parseRanges: parseRanges };
 })();
