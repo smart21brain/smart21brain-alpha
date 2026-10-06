@@ -199,3 +199,27 @@ a { color: inherit; text-decoration: none; }
 .modes.modes-in button.on { border-color: color-mix(in srgb, var(--brand) 55%, transparent); background: color-mix(in srgb, var(--brand) 16%, var(--panel)); }
 
 .ai-code-note { padding: .9rem 1rem; font-size: .85rem; color: #333; background: #f3f6f4; }
+
+/* ---------------- attachments, pinned + rename (used by ai-attach.js / ai-page.js) ---------------- */
+.att-row { display: flex; flex-wrap: wrap; gap: .5rem; padding: 0 0 .5rem; }
+.att-row[hidden] { display: none; }
+.att-chip { position: relative; display: inline-flex; align-items: center; gap: .45rem; border: 1px solid var(--line); background: var(--bg); border-radius: 12px; padding: .3rem .6rem; font-size: .8rem; max-width: 220px; }
+.att-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.att-chip i.fa-solid { color: var(--brand); }
+.att-img { padding: 0; width: 64px; height: 64px; overflow: hidden; }
+.att-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.att-x { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: .6rem; display: grid; place-items: center; padding: 0; }
+.att-file .att-x { position: static; width: 20px; height: 20px; flex-shrink: 0; }
+.att-spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--brand); animation: spin .8s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.u-atts { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: flex-end; }
+.u-thumb { width: 96px; height: 96px; object-fit: cover; border-radius: 14px; border: 1px solid var(--line); }
+.u-file { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid var(--line); background: var(--panel); border-radius: 12px; padding: .35rem .7rem; font-size: .82rem; }
+.u-file i { color: var(--brand); }
+.c-tools { display: inline-flex; align-items: center; gap: .1rem; }
+.app.drag .composer { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 25%, transparent); }
+.h-item.pinned .h-title i { color: var(--brand); margin-right: .35rem; font-size: .7rem; }
+.h-act { opacity: 0; width: 28px; height: 28px; font-size: .72rem; }
+.h-item:hover .h-act, .h-item:focus-within .h-act { opacity: 1; }
+.h-ren { flex: 1; min-width: 0; margin: .3rem 0; padding: .35rem .5rem; border-radius: 8px; border: 1px solid var(--brand); background: var(--panel); color: var(--text); font: inherit; font-size: .86rem; outline: none; }
+@media (hover: none) { .h-act, .h-del { opacity: 1; } }
