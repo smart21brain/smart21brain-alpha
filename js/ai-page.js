@@ -84,7 +84,7 @@
     setHasChat(true);
     c.messages.forEach(function (m, i) {
       if (m.role === 'user') thread.appendChild(userNode(m.content, i, m.atts));
-      else { var n = aiNode(i); paint(n, m.content, false); setActions(n, i === c.messages.length - 1, m.liked); thread.appendChild(n); }
+      else { var n = aiNode(i); paint(n, m.content, false); if (m.imgId && Chat.paintImage) Chat.paintImage(n, m); setActions(n, i === c.messages.length - 1, m.liked); thread.appendChild(n); }
     });
     stage.scrollTop = stage.scrollHeight;
   }
@@ -115,6 +115,7 @@
   function send(text) {
     text = (text || '').trim(); var list = A.list();
     if ((!text && !list.length) || busy || A.busy()) return;
+    if (!list.length && !Chat.voice && Chat.intercept && Chat.intercept(text)) { input.value = ''; grow(); return; }
     var titleFrom = text || (list[0] && list[0].name) || '';
     if (!text) text = T('att_default_q');
     var c = ensureConvo(titleFrom), msg = { role: 'user', content: text };
@@ -186,6 +187,8 @@
   }
   function regenerate() {
     var c = cur(); if (!c || busy) return;
+    var lastM = c.messages[c.messages.length - 1];
+    if (lastM && lastM.imgId && Chat.regenImage) { c.messages.pop(); var um = c.messages.pop(); saveAll(); renderThread(); Chat.regenImage(um ? um.content : lastM.imgPrompt, lastM); return; }
     if (c.messages.length && c.messages[c.messages.length - 1].role === 'assistant') c.messages.pop();
     saveAll(); renderThread(); stream();
   }
@@ -197,7 +200,7 @@
     wrap.querySelector('[data-act="cancel-edit"]').onclick = function () { renderThread(); };
     wrap.querySelector('[data-act="save-edit"]').onclick = function () {
       var v = ta.value.trim(); if (!v) return;
-      var old = c.messages[i], nm = { role: 'user', content: v }; if (old.atts) { nm.atts = old.atts; nm._full = old._full; } c.messages = c.messages.slice(0, i); c.messages.push(nm); c.updated = Date.now(); saveAll(); renderThread(); stream();
+      var old = c.messages[i], nm = { role: 'user', content: v }; if (old.atts) { nm.atts = old.atts; nm._full = old._full; } c.messages = c.messages.slice(0, i); c.updated = Date.now(); if (!nm.atts && Chat.intercept) { saveAll(); renderThread(); if (Chat.intercept(v)) return; } c.messages.push(nm); saveAll(); renderThread(); stream();
     };
   }
 
@@ -216,6 +219,12 @@
     var msg = act.closest('.msg'), i = msg ? +msg.getAttribute('data-i') : -1, a = act.getAttribute('data-act');
     if (a === 'copy' || a === 'copyu') { var t = c && c.messages[i] ? c.messages[i].content : ''; copy(t, function () { toast(T('copied')); }); }
     else if (a === 'edit') startEdit(msg);
+    else if (a === 'retry-img') {
+      var rt = msg.getAttribute('data-retry') || ''; msg.remove();
+      if (c && c.messages.length && c.messages[c.messages.length - 1].role === 'user') { c.messages.pop(); saveAll(); }
+      var lu = thread.lastElementChild; if (lu && lu.classList.contains('user')) lu.remove();
+      if (rt && Chat.intercept) Chat.intercept(rt, true);
+    }
     else if (a === 'regen' || a === 'retry') { if (a === 'retry') { msg.remove(); stream(); } else regenerate(); }
     else if (a === 'up' || a === 'down') {
       var m = c && c.messages[i]; if (!m) return; var v = a === 'up' ? 1 : -1; m.liked = m.liked === v ? 0 : v; saveAll(); setActions(msg, i === c.messages.length - 1, m.liked);
@@ -321,7 +330,8 @@
     { i: 'fa-graduation-cap', c: 'linear-gradient(135deg,#0B6E4F,#2fbf8a)', k: 'card1', m: 'learn' },
     { i: 'fa-code', c: 'linear-gradient(135deg,#7c5cff,#5b8def)', k: 'card2', m: 'code' },
     { i: 'fa-feather-pointed', c: 'linear-gradient(135deg,#f5a623,#ef476f)', k: 'card3', m: 'write' },
-    { i: 'fa-circle-question', c: 'linear-gradient(135deg,#ef476f,#7c5cff)', k: 'card4', m: 'quiz' }
+    { i: 'fa-circle-question', c: 'linear-gradient(135deg,#ef476f,#7c5cff)', k: 'card4', m: 'quiz' },
+    { i: 'fa-image', c: 'linear-gradient(135deg,#00b4d8,#7c5cff)', k: 'card5', m: '' }
   ];
   function paintCards() { $('#cards').innerHTML = CARDS.map(function (k, n) { return '<button class="card" data-card="' + n + '"><i class="fa-solid ' + k.i + '" style="background:' + k.c + '"></i><div><b>' + esc(T(k.k + '_t')) + '</b><span>' + esc(T(k.k + '_d')) + '</span></div></button>'; }).join(''); }
   $('#cards').addEventListener('click', function (e) {
@@ -329,6 +339,34 @@
     var mb = $('.modes [data-mode="' + k.m + '"]'); if (mb) mb.click(); send(T(k.k + '_p'));
   });
 
+  /* image turns: used by ai-image.js to add a "draw me ..." exchange to the active chat */
+  Chat.beginTurn = function (userText, onCancel) {
+    if (busy) return null;
+    var c = ensureConvo(userText);
+    c.messages.push({ role: 'user', content: userText }); c.updated = Date.now(); saveAll();
+    setHasChat(true); thread.appendChild(userNode(userText, c.messages.length - 1)); renderHistory();
+    var node = aiNode(c.messages.length); node.querySelector('.md').innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
+    thread.appendChild(node); userScrolled = false; scrollDown(true);
+    $$('.msg.ai .actions [data-act="regen"]').forEach(function (b) { b.remove(); });
+    setBusy(true); abort = { abort: function () { if (onCancel) onCancel(); } };
+    var done = false;
+    function end() { done = true; setBusy(false); abort = null; scrollDown(false); }
+    return {
+      node: node,
+      finish: function (text, extra) {
+        if (done) return; var m = { role: 'assistant', content: text }; Object.keys(extra || {}).forEach(function (k) { m[k] = extra[k]; });
+        c.messages.push(m); c.updated = Date.now(); saveAll();
+        paint(node, text, false); if (m.imgId && Chat.paintImage) Chat.paintImage(node, m);
+        setActions(node, true); renderHistory(); end();
+      },
+      fail: function (text) {
+        if (done) return; node.querySelector('.md').innerHTML = '<p class="err">' + esc(text) + '</p>';
+        node.querySelector('.actions').innerHTML = '<button class="icon-btn" data-act="retry-img" title="' + T('retry') + '"><i class="fa-solid fa-rotate-right"></i></button>';
+        node.setAttribute('data-retry', userText); end();
+      },
+      cancel: function () { if (done) return; node.remove(); end(); }
+    };
+  };
   Chat.send = send; Chat.input = input; Chat.toast = toast; Chat.cur = cur; Chat.grow = grow; Chat.isBusy = function () { return busy; };
   Chat.stop = function () { if (abort) abort.abort(); };
   Chat.getMode = function () { return mode; };
