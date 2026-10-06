@@ -70,8 +70,8 @@ window.S21AIL.extend({
     prompts: 'Prompt ideas', prompts_search: 'Search prompts', prompts_empty: 'No prompts match your search.', prompts_close: 'Close prompt ideas',
     style_btn: 'My style', style_title: 'How should I answer you?', style_desc: 'Tell Smart21brain AI how you like answers. This note is added to every question. It is saved only on this device.',
     style_ph: 'e.g. I am in Form 2. Explain with simple words and one example.', style_save: 'Save', style_clear: 'Clear', style_saved: 'Saved', style_cleared: 'Cleared', style_on: 'My style is on', style_try: 'Try one:', style_close: 'Close',
-    voice: 'Voice chat', voice_start: 'Tap the circle and speak', voice_listening: 'Listening…', voice_thinking: 'Thinking…', voice_speaking: 'Speaking… tap to interrupt',
-    voice_close: 'End voice chat', voice_no: 'Voice chat is not supported in this browser. Try Chrome or Edge.', voice_hint: 'Speak naturally. I will answer out loud.', voice_err: 'I could not hear you. Tap the circle to try again.'
+    voice: 'Voice chat', voice_start: 'Tap the circle and speak', voice_listening: 'Listening…', voice_thinking: 'Thinking…', voice_speaking: 'Speaking… talk or tap to interrupt',
+    voice_close: 'End voice chat', voice_no: 'Voice chat is not supported in this browser. Try Chrome or Edge.', voice_hint: 'Speak naturally. I will answer out loud, and you can interrupt me any time.', voice_err: 'I could not hear you. Tap the circle to try again.'
   },
   sw: {
     pinned: 'Zilizobandikwa', pin: 'Bandika mazungumzo', unpin: 'Ondoa kubandika', rename: 'Badilisha jina', rename_ph: 'Jina la mazungumzo', pinned_toast: 'Imebandikwa', unpinned_toast: 'Imeondolewa',
@@ -79,7 +79,7 @@ window.S21AIL.extend({
     prompts: 'Mawazo ya maswali', prompts_search: 'Tafuta maswali', prompts_empty: 'Hakuna swali linalolingana.', prompts_close: 'Funga mawazo ya maswali',
     style_btn: 'Mtindo wangu', style_title: 'Nikujibu vipi?', style_desc: 'Mwambie Smart21brain AI unavyopenda majibu. Maelezo haya yanaongezwa kwa kila swali. Yanahifadhiwa kwenye kifaa hiki tu.',
     style_ph: 'mf. Niko Kidato cha Pili. Eleza kwa maneno rahisi na mfano mmoja.', style_save: 'Hifadhi', style_clear: 'Futa', style_saved: 'Imehifadhiwa', style_cleared: 'Imefutwa', style_on: 'Mtindo wangu umewashwa', style_try: 'Jaribu mojawapo:', style_close: 'Funga',
-    voice: 'Mazungumzo ya sauti', voice_start: 'Gusa duara kisha zungumza', voice_listening: 'Nasikiliza…', voice_thinking: 'Nafikiri…', voice_speaking: 'Naongea… gusa kunikatiza',
-    voice_close: 'Maliza mazungumzo ya sauti', voice_no: 'Mazungumzo ya sauti hayatumiki kwenye kivinjari hiki. Jaribu Chrome au Edge.', voice_hint: 'Zungumza kawaida. Nitajibu kwa sauti.', voice_err: 'Sikukusikia. Gusa duara ujaribu tena.'
+    voice: 'Mazungumzo ya sauti', voice_start: 'Gusa duara kisha zungumza', voice_listening: 'Nasikiliza…', voice_thinking: 'Nafikiri…', voice_speaking: 'Naongea… zungumza au gusa kunikatiza',
+    voice_close: 'Maliza mazungumzo ya sauti', voice_no: 'Mazungumzo ya sauti hayatumiki kwenye kivinjari hiki. Jaribu Chrome au Edge.', voice_hint: 'Zungumza kawaida. Nitajibu kwa sauti, na unaweza kunikatiza wakati wowote.', voice_err: 'Sikukusikia. Gusa duara ujaribu tena.'
   }
 });

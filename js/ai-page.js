@@ -7,7 +7,7 @@
   var Md = window.S21Md, esc = Md.esc, L = window.S21AIL, T = L.t;
   var STORE = 's21ai-convos-v1', MAX_CONVOS = 40, MAX_MSGS = 60, MAX_HISTORY = 12;
 
-  var A = window.S21Attach, Chat = window.S21Chat = { hooks: { answerDone: [] }, voice: false, getCustom: function () { return ''; } };
+  var A = window.S21Attach, Chat = window.S21Chat = { hooks: { answerDone: [], token: [] }, voice: false, getCustom: function () { return ''; } };
   var app = $('#app'), thread = $('#thread'), stage = $('#stage'), input = $('#aiInput'), sendBtn = $('#sendBtn');
   var convos = [], activeId = null, mode = '', busy = false, abort = null, userScrolled = false;
 
@@ -171,7 +171,7 @@
             chunk.split('\n').forEach(function (line) {
               if (line.indexOf('data:') !== 0) return;
               var d = line.slice(5).trim(); if (!d || d === '[DONE]') return;
-              try { var j = JSON.parse(d); if (j.t) { answer += j.t; got = true; } if (j.error) answer += (answer ? '\n\n' : '') + '*' + j.error + '*'; } catch (e) {}
+              try { var j = JSON.parse(d); if (j.t) { answer += j.t; got = true; Chat.hooks.token.forEach(function (f) { try { f(j.t); } catch (e) {} }); } if (j.error) answer += (answer ? '\n\n' : '') + '*' + j.error + '*'; } catch (e) {}
             });
             if (got && !raf) raf = requestAnimationFrame(flush);
           }
