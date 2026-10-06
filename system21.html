@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>System21 — All the Tools You Need</title>
-<meta name="description" content="System21 is the Smart21 tool hub: background remover, file compressor and more. Free, private, runs in your browser.">
+<meta name="description" content="System21 is the Smart21 tool hub: 20 free tools: image, PDF, QR code, password, converters and more. Free, private, runs in your browser.">
 <link rel="canonical" href="https://smart21brain.com/system21.html">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="css/style.css?v=14">
 <link rel="stylesheet" href="css/system21-bg.css?v=1">
 <link rel="stylesheet" href="css/system21-img.css?v=1">
+<link rel="stylesheet" href="css/system21-misc.css?v=1">
 <link rel="stylesheet" href="css/responsive.css?v=5">
 <link rel="stylesheet" href="css/animations.css?v=4">
 </head>
@@ -193,7 +194,7 @@
     <!-- status bar -->
     <div class="sx-status" role="status">
       <span><i class="sx-dot"></i><b>SYSTEM21</b> online</span>
-      <span>build <b>1.0.0</b></span>
+      <span>build <b>1.1.0</b></span>
       <span>runtime <b>client-side</b></span>
       <span>uploads <b>0 bytes sent</b></span>
       <span class="ms-auto" id="sxClock" aria-hidden="true"></span>
@@ -207,7 +208,7 @@
       <div class="sx-meta">
         <span class="sx-pill"><i class="fa-solid fa-shield-halved"></i>Private by design</span>
         <span class="sx-pill"><i class="fa-solid fa-bolt"></i>No sign-up</span>
-        <span class="sx-pill"><i class="fa-solid fa-microchip"></i><span id="sxCount">2</span> tools online · more loading</span>
+        <span class="sx-pill"><i class="fa-solid fa-microchip"></i><span id="sxCount">20</span> tools online · more loading</span>
       </div>
     </section>
 
@@ -321,11 +322,103 @@
       <section class="sx-cat" aria-labelledby="catOth">
         <span class="sx-chip" id="catOth"><i class="fa-solid fa-toolbox"></i> Other tools <small>/misc</small></span>
         <div class="sx-grid">
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.01"><span><i class="fa-solid fa-plus"></i>OTH.01</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.02"><span><i class="fa-solid fa-plus"></i>OTH.02</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.03"><span><i class="fa-solid fa-plus"></i>OTH.03</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.04"><span><i class="fa-solid fa-plus"></i>OTH.04</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot OTH.05"><span><i class="fa-solid fa-plus"></i>OTH.05</span></div></div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="qr" aria-label="Open QR Code">
+              <span class="id">OTH.01</span>
+              <i class="fa-solid fa-qrcode ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">QR Code</div>
+            <div class="sx-sub">Text · URL · Wi-Fi</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="password" aria-label="Open Password Maker">
+              <span class="id">OTH.02</span>
+              <i class="fa-solid fa-key ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Password Maker</div>
+            <div class="sx-sub">Strong · random · private</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="units" aria-label="Open Unit Converter">
+              <span class="id">OTH.03</span>
+              <i class="fa-solid fa-ruler-combined ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Unit Converter</div>
+            <div class="sx-sub">Length · weight · more</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="color" aria-label="Open Color Tools">
+              <span class="id">OTH.04</span>
+              <i class="fa-solid fa-palette ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Color Tools</div>
+            <div class="sx-sub">Picker · palette · contrast</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="age" aria-label="Open Age and Dates">
+              <span class="id">OTH.05</span>
+              <i class="fa-solid fa-calendar-days ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Age &amp; Dates</div>
+            <div class="sx-sub">Age · gaps · add days</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Text & developer tools ===== -->
+      <section class="sx-cat" aria-labelledby="catDev">
+        <span class="sx-chip" id="catDev"><i class="fa-solid fa-terminal"></i> Text &amp; developer tools <small>/dev</small></span>
+        <div class="sx-grid">
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="text" aria-label="Open Text Tools">
+              <span class="id">DEV.01</span>
+              <i class="fa-solid fa-font ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Text Tools</div>
+            <div class="sx-sub">Case · count · clean</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="json" aria-label="Open JSON Formatter">
+              <span class="id">DEV.02</span>
+              <i class="fa-solid fa-code ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">JSON Formatter</div>
+            <div class="sx-sub">Format · minify · check</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="base64" aria-label="Open Base64 and URL">
+              <span class="id">DEV.03</span>
+              <i class="fa-solid fa-lock ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Base64 / URL</div>
+            <div class="sx-sub">Encode · decode</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="hash" aria-label="Open Hash Maker">
+              <span class="id">DEV.04</span>
+              <i class="fa-solid fa-fingerprint ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Hash Maker</div>
+            <div class="sx-sub">SHA-256 · files · text</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="timer" aria-label="Open Timer">
+              <span class="id">DEV.05</span>
+              <i class="fa-solid fa-stopwatch ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Timer</div>
+            <div class="sx-sub">Stopwatch · countdown · focus</div>
+          </div>
         </div>
       </section>
 
@@ -347,6 +440,7 @@
 <script src="js/system21-bg.js?v=1"></script>
 <script src="js/system21-img.js?v=1"></script>
 <script src="js/system21-doc.js?v=1"></script>
+<script src="js/system21-misc.js?v=1"></script>
 <script>
 (function(){
   'use strict';
@@ -442,7 +536,17 @@
     txt2pdf:{path:'doc/text-to-pdf',mount:function(h){return window.SX_DOC.txt2pdf(h)}},
     merge:{path:'doc/merge-pdf',mount:function(h){return window.SX_DOC.merge(h)}},
     split:{path:'doc/split-pdf',mount:function(h){return window.SX_DOC.split(h)}},
-    filters:{path:'img/photo-filters',wide:true,mount:function(h){return window.SX_IMG.filters(h)}}
+    filters:{path:'img/photo-filters',wide:true,mount:function(h){return window.SX_IMG.filters(h)}},
+    qr:{path:'misc/qr-code',mount:function(h){return window.SX_MISC.qr(h)}},
+    password:{path:'misc/password',mount:function(h){return window.SX_MISC.password(h)}},
+    units:{path:'misc/unit-converter',mount:function(h){return window.SX_MISC.units(h)}},
+    color:{path:'misc/color-tools',mount:function(h){return window.SX_MISC.color(h)}},
+    age:{path:'misc/age-dates',mount:function(h){return window.SX_MISC.age(h)}},
+    text:{path:'dev/text-tools',mount:function(h){return window.SX_MISC.text(h)}},
+    json:{path:'dev/json',mount:function(h){return window.SX_MISC.json(h)}},
+    base64:{path:'dev/base64-url',mount:function(h){return window.SX_MISC.base64(h)}},
+    hash:{path:'dev/hash',mount:function(h){return window.SX_MISC.hash(h)}},
+    timer:{path:'dev/timer',mount:function(h){return window.SX_MISC.timer(h)}}
   };
   $('#sxCount').textContent=Object.keys(TOOLS).length;
   var h=location.hash.slice(1);if(TOOLS[h]){var b=document.querySelector('[data-open="'+h+'"]');if(b)open(h,b)}
