@@ -110,10 +110,65 @@
     flushPara(); closeLists(0);
     return out;
   }
+  /* ================= maths: LaTeX -> everyday symbols (√, ×, ², ½ ...) =================
+     The chat model sometimes answers in LaTeX ($$ \frac{a}{b} $$). Learners should see normal school-maths symbols. */
+  var SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '+': '⁺', '-': '⁻', 'n': 'ⁿ', 'x': 'ˣ', 'i': 'ⁱ' };
+  var SUB = { '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉', 'n': 'ₙ', 'x': 'ₓ' };
+  var SYM = { times: '×', div: '÷', cdot: '·', pm: '±', mp: '∓', approx: '≈', neq: '≠', ne: '≠', leq: '≤', le: '≤', geq: '≥', ge: '≥', ll: '≪', gg: '≫', infty: '∞', pi: 'π', theta: 'θ', alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', Delta: 'Δ', lambda: 'λ', mu: 'μ', sigma: 'σ', Sigma: 'Σ', omega: 'ω', Omega: 'Ω', phi: 'φ', rho: 'ρ', epsilon: 'ε', angle: '∠', triangle: '△', circ: '°', degree: '°', therefore: '∴', because: '∵', Rightarrow: '⇒', Leftarrow: '⇐', rightarrow: '→', to: '→', leftarrow: '←', leftrightarrow: '↔', Leftrightarrow: '⇔', implies: '⇒', iff: '⇔', sum: 'Σ', prod: '∏', int: '∫', partial: '∂', nabla: '∇', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', cup: '∪', cap: '∩', emptyset: '∅', forall: '∀', exists: '∃', perp: '⊥', parallel: '∥', sim: '∼', cong: '≅', equiv: '≡', propto: '∝', ldots: '…', dots: '…', cdots: '⋯', quad: ' ', qquad: '  ', ',': ' ', ';': ' ', ':': ' ', '!': '', ' ': ' ', '%': '%', '$': '$', '&': '&', '_': '_', '#': '#', '{': '{', '}': '}' };
+  var FUNC = /\\(sin|cos|tan|cot|sec|csc|log|ln|lim|max|min|exp|arcsin|arccos|arctan)\b/g;
+  var HALF = { '1/2': '½', '1/3': '⅓', '2/3': '⅔', '1/4': '¼', '3/4': '¾', '1/5': '⅕', '1/8': '⅛' };
+  function script(str, map, mark) { var o = ''; for (var i = 0; i < str.length; i++) { if (!map[str[i]]) return mark + '(' + str + ')'; o += map[str[i]]; } return o; }
+  function group(s, i) {            // read {...} (nested) starting at s[i]; returns [inner, indexAfter]
+    if (s[i] !== '{') return null; var d = 0;
+    for (var j = i; j < s.length; j++) { if (s[j] === '{') d++; else if (s[j] === '}' && --d === 0) return [s.slice(i + 1, j), j + 1]; }
+    return null;
+  }
+  function wrapIf(t) { return /^[\w.,°π²³]+$/.test(t) ? t : '(' + t + ')'; }
+  function texInner(t) {
+    var guard = 0, m;
+    t = t.replace(/\\(?:left|right|big|Big|bigg|Bigg)\s*([()[\]|.]|\\\{|\\\})/g, function (_, c) { return c === '.' ? '' : c.replace('\\', ''); });
+    t = t.replace(/\\(?:text|mathrm|textbf|mathbf|mathit|operatorname|textit|boxed|underline|overline|vec|hat|bar)\s*\{([^{}]*)\}/g, '$1');
+    t = t.replace(/\\(?:d|t)?frac\s*\{/g, '\\frac{');
+    while ((m = /\\frac\{/.exec(t)) && guard++ < 40) {
+      var a = group(t, m.index + 5), b = a && group(t, a[1]);
+      if (!a || !b) { t = t.slice(0, m.index) + t.slice(m.index + 5); continue; }
+      var n = texInner(a[0]).trim(), d = texInner(b[0]).trim(), key = n + '/' + d;
+      t = t.slice(0, m.index) + (HALF[key] || (wrapIf(n) + '/' + wrapIf(d))) + t.slice(b[1]);
+    }
+    guard = 0;
+    while ((m = /\\sqrt\s*(\[([^\]]*)\])?\s*\{/.exec(t)) && guard++ < 40) {
+      var g = group(t, m.index + m[0].length - 1); if (!g) { t = t.slice(0, m.index) + '√' + t.slice(m.index + m[0].length); continue; }
+      var inner = texInner(g[0]).trim(), root = m[2] === '3' ? '∛' : m[2] === '4' ? '∜' : '√';
+      t = t.slice(0, m.index) + root + (/^[\w.]+$/.test(inner) ? inner : '(' + inner + ')') + t.slice(g[1]);
+    }
+    t = t.replace(/\\sqrt\s*(\w)/g, '√$1');
+    t = t.replace(FUNC, '$1');
+    t = t.replace(/\^\s*\{\s*\\circ\s*\}|\^\s*\\circ/g, '°');
+    t = t.replace(/\^\s*\{([^{}]*)\}/g, function (_, e) { return script(texInner(e).trim(), SUP, '^'); });
+    t = t.replace(/\^\s*([0-9nx+-])/g, function (_, e) { return SUP[e]; });
+    t = t.replace(/_\s*\{([^{}]*)\}/g, function (_, e) { return script(texInner(e).trim(), SUB, '_'); });
+    t = t.replace(/_\s*([0-9nx])/g, function (_, e) { return SUB[e]; });
+    t = t.replace(/\\([A-Za-z]+|[,;:! %$&_#{}])/g, function (all, w) { return Object.prototype.hasOwnProperty.call(SYM, w) ? SYM[w] : (/^[A-Za-z]{2,}$/.test(w) ? w : all); });
+    t = t.replace(/\\\\/g, '\n').replace(/&=/g, '=').replace(/[{}]/g, '');
+    return t.replace(/[ \t]{2,}/g, ' ').trim();
+  }
+  function mathToText(s) {
+    if (s.indexOf('\\') < 0 && s.indexOf('$') < 0) return s.replace(/^(#{1,6})(?=[^#\s])/gm, '$1 ');
+    s = s.replace(/\$\$([\s\S]+?)\$\$/g, function (_, t) { return '\n\n' + texInner(t) + '\n\n'; });
+    s = s.replace(/\\\[([\s\S]+?)\\\]/g, function (_, t) { return '\n\n' + texInner(t) + '\n\n'; });
+    s = s.replace(/\\\(([\s\S]+?)\\\)/g, function (_, t) { return texInner(t); });
+    s = s.replace(/\$([^$\n]*\\[^$\n]*)\$/g, function (_, t) { return texInner(t); });     // $...$ only when it holds LaTeX (so "$5 and $10" is untouched)
+    s = s.replace(/\\begin\{(?:align|aligned|equation|gather|array|cases)\*?\}(?:\{[^}]*\})?([\s\S]*?)\\end\{[^}]*\}/g, function (_, t) { return '\n\n' + texInner(t) + '\n\n'; });
+    s = s.replace(/^(#{1,6})(?=[^#\s])/gm, '$1 ');
+    // LaTeX the model forgot to wrap in $...$: convert any line that still holds common commands
+    s = s.replace(/^.*\\(?:frac|dfrac|sqrt|times|div|cdot|text|approx|pm|leq|geq|neq|circ|theta|pi|angle|therefore|Rightarrow|rightarrow)\b.*$/gm, function (line) { return texInner(line); });
+    return s.replace(/\n{3,}/g, '\n\n');
+  }
+
   function renderMarkdown(src) {
     var re = /```([\w+#.-]*)[^\n]*\n([\s\S]*?)(```|$)/g, html = '', last = 0, m;
     while ((m = re.exec(src))) {
-      html += renderText(src.slice(last, m.index));
+      html += renderText(mathToText(src.slice(last, m.index)));
       var lang = (m[1] || '').toLowerCase(), code = m[2].replace(/\n$/, '');
       var canPrev = true;
       html += '<div class="ai-code" data-lang="' + esc(lang) + '" data-view="code"><div class="ai-code-bar"><span class="ai-code-lang">' + esc(lang || 'code') + '</span>' +
@@ -127,7 +182,7 @@
       last = m.index + m[0].length;
       if (!m[3]) { last = src.length; break; }
     }
-    html += renderText(src.slice(last));
+    html += renderText(mathToText(src.slice(last)));
     return html;
   }
 
@@ -173,5 +228,5 @@
     return true;
   }
 
-  window.S21Md = { previewDoc: previewDoc, onCodeClick: onCodeClick, sendToEditor: sendToEditor, render: renderMarkdown, highlight: highlight, esc: esc };
+  window.S21Md = { previewDoc: previewDoc, onCodeClick: onCodeClick, sendToEditor: sendToEditor, render: renderMarkdown, mathToText: mathToText, highlight: highlight, esc: esc };
 })();

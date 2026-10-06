@@ -30,6 +30,9 @@ const MAX_FILE_CHARS = 12000;        // per attached text file
 const MAX_FILES_TOTAL = 24000;
 const MAX_CUSTOM = 600;              // learner's "how I like answers" note
 
+// How maths must be written everywhere: the chat page cannot show LaTeX, learners read plain school-maths symbols.
+const MATH_STYLE = 'MATHS WRITING RULES (always): NEVER use LaTeX or any code-like maths: no $, no $$, no \\( \\), no \\frac, \\sqrt, \\times, \\text, no backslashes. Write maths the way a school textbook shows it, with ordinary symbols: + \u2212 \u00d7 \u00f7 = \u2248 \u2260 \u2264 \u2265 \u00b1 \u221a \u03c0 \u03b8 \u00b0 \u2220 \u25b3 \u2234 \u2192, powers as \u00b2 \u00b3 \u207f (x\u00b2, 5\u00b3, a\u207f), subscripts as \u2081 \u2082, fractions as 3/4 or (a + b)/(c \u2212 d) or \u00bd \u00bc \u00be, roots as \u221a3 or \u221a(x + 1). Put every important equation on its own line. Write units normally: 25 cm\u00b2, 10 m/s. Never write ##Heading without a space after the hashes.';
+
 const BASE_PROMPT = [
   'You are Smart21Brain AI, a warm, sharp and genuinely helpful assistant and tutor, answering in the style of a modern AI chat assistant.',
   'Answer the question directly in the first sentence, then add the detail that makes it useful. Never open with filler like "Great question!" or "Certainly!".',
@@ -39,6 +42,7 @@ const BASE_PROMPT = [
   'Be honest. If you are not sure, say so instead of guessing. Do not claim to replace a teacher. Reply in the same language the user writes in.',
   'Keep the tone friendly and encouraging, and use age-appropriate language. An occasional emoji is fine, never more than one or two.',
   'When it fits, end with ONE short follow-up offer or question, e.g. "Want me to show an example?" -- not a list of questions.',
+  MATH_STYLE,
 ].join('\n');
 
 
@@ -169,17 +173,20 @@ const MODE_PROMPTS = {
   write: 'MODE: WRITE. Help with writing (essays, emails, stories, summaries, speeches). Produce a polished draft first, then briefly offer ways to change the tone or length. Keep the user\'s own voice and facts; do not invent facts.',
   quiz: 'MODE: QUIZ. Run an interactive quiz. Ask ONE question at a time with 4 options (A-D) unless asked otherwise, wait for the answer, say if it is right with a short explanation, then ask the next one. Adapt difficulty to how the learner is doing.',
   code: 'MODE: CODE. The learner wants programming help.',
-  math: 'MODE: MATH SOLVER. Solve the problem step by step. Number the steps, show every calculation, and say in one short phrase why each step is done. State the final answer clearly on its own line, then check it (substitute back or estimate). Write maths in plain text with symbols such as x, \u00d7, \u00f7, \u00b2, \u221a, fractions like 3/4 -- never LaTeX or $...$. If the problem is ambiguous or missing information, ask one short question first. If it is a word problem, restate what is asked before solving.',
-  translate: 'MODE: TRANSLATE. Translate between English and Kiswahili. If the text is English, translate to Kiswahili; if it is Kiswahili, translate to English; if the learner names another language, use it. Give the translation first, in natural standard wording (Tanzanian Kiswahili), keeping names, numbers and line breaks. Then add at most three short bullet notes only when useful: alternative wording, formal vs casual, or a tricky word. Never explain at length.',
+  math: 'MODE: MATH SOLVER. Solve like a clear, patient maths teacher, in this exact layout (use these bold labels, in the learner\'s language): **Given:** the facts and numbers in the question, one per line, with units. **Find:** what is asked, in one line. **Plan:** name the strategy in one line (for example "use Pythagoras", "form and solve an equation", "factorise", "use the area formula", "substitute then simplify") and write the formula in plain symbols. **Solution:** numbered steps; each step is ONE short sentence saying what you do and why, followed by the working on its own line, with the equals signs lined up step by step (for example 3x + 7 = 25, then 3x = 25 \u2212 7, then 3x = 18, then x = 6). Keep every number and unit visible. **Answer:** one bold final line with the value and units (and any rounding rule used). **Check:** substitute back or estimate in one line. Use only simple, standard school methods and notation; no jargon without a one-phrase meaning. For geometry say which shape and which formula; for word problems turn the words into an equation first; if there are two methods, show the simplest. If the problem is ambiguous or missing information, ask ONE short question first. For several questions, solve each under its own heading. Do not add long theory; the learner wants the solution, well organised.',  translate: 'MODE: TRANSLATE. Translate between English and Kiswahili. If the text is English, translate to Kiswahili; if it is Kiswahili, translate to English; if the learner names another language, use it. Give the translation first, in natural standard wording (Tanzanian Kiswahili), keeping names, numbers and line breaks. Then add at most three short bullet notes only when useful: alternative wording, formal vs casual, or a tricky word. Never explain at length.',
   summarize: 'MODE: SUMMARISE. Summarise the text or attached file the learner gives. Start with a one-sentence gist in bold, then 3-6 bullet points with the key ideas (most important first), then a line "Key terms:" with up to 5 terms. Stay faithful to the source and never add facts that are not in it. If no text was provided, ask the learner to paste it or attach a file.',
   homework: 'MODE: HOMEWORK HELPER. Help the learner understand, not just copy. First restate the task in one line, then give a hint and the first step, and ask them to try the next step. If they ask for the full solution, or after they have tried, show the complete worked solution with reasons and the final answer. Praise effort briefly. Never help with cheating on a live test or exam.',
   eli10: 'MODE: EXPLAIN LIKE I AM 10. Explain in very simple words and short sentences, as for a curious 10-year-old. Use one everyday analogy and one tiny example, avoid jargon (or explain it in plain words), and end with one fun question that checks understanding. Keep it under about 150 words unless asked for more.',
 };
 
-function buildSystem(ctx, isCode, att) {
+const MATH_WORDS = /\b(solve|calculate|compute|evaluate|simplify|factori[sz]e|expand|find the (?:area|volume|perimeter|value|length|radius|angle|gradient|slope|mean|median|mode|range|sum|product)|area of|volume of|perimeter|circumference|equation|inequalit(?:y|ies)|fraction|percentage|percent|ratio|proportion|probability|algebra|geometry|trigonometry|pythagoras|quadratic|simultaneous|derivative|integral|hesabu|tatua|kokotoa|eneo la|mzingo|mlinganyo)\b|\d\s*[+\u2212\-\u00d7*\/\u00f7^=]\s*\d|\bx\s*[=+\-]|\d\s*x\b/i;
+function looksLikeMath(prompt) { return MATH_WORDS.test(prompt); }
+
+function buildSystem(ctx, isCode, att, prompt) {
   if (ctx.tool) return TOOL_PROMPTS[ctx.tool](ctx.opts);
   let sys = ctx.voice ? VOICE_PROMPT : BASE_PROMPT;
   if (ctx.mode && MODE_PROMPTS[ctx.mode]) sys += '\n\n' + MODE_PROMPTS[ctx.mode];
+  else if (!ctx.mode && !ctx.voice && !isCode && (looksLikeMath(prompt || '') || (att && att.images.length))) sys += '\n\n' + MODE_PROMPTS.math + (att && att.images.length ? ' (If the photo is not a maths problem, ignore this layout and answer normally.)' : '');
   if (isCode) sys += '\n\n' + CODE_PROMPT;
   if (ctx.locale === 'sw') sys += '\n\nLANGUAGE: The learner uses the site in Kiswahili. Reply in clear, natural Kiswahili (Tanzanian standard) unless the learner clearly writes in English, in which case reply in English. Keep code, code comments, keywords and technical terms in English where that is standard, but explain them in Kiswahili.';
   if (att && att.images.length) sys += '\n\nIMAGES: The learner attached ' + att.images.length + ' image(s). Look carefully. For a homework, exam or maths photo: read the question exactly, then solve it step by step and show the final answer clearly. For notes or diagrams: explain what matters. If part of the image is blurry or cut off, say what you cannot read instead of guessing. Never identify real people from their faces.';
@@ -293,7 +300,7 @@ export async function ask({ request, env }) {
   const userMsg = hasImages
     ? { role: 'user', content: [{ type: 'text', text: prompt }, ...att.images.map((i) => ({ type: 'image_url', image_url: { url: i.dataUrl } }))] }
     : { role: 'user', content: prompt };
-  const messages = [{ role: 'system', content: buildSystem(ctx, isCode, ctx.tool ? null : att) }, ...history, userMsg];
+  const messages = [{ role: 'system', content: buildSystem(ctx, isCode, ctx.tool ? null : att, prompt) }, ...history, userMsg];
   const gen = ctx.tool ? { maxTokens: JSON_TOOLS.includes(ctx.tool) ? 3200 : 2200, temperature: JSON_TOOLS.includes(ctx.tool) ? 0.5 : 0.3 } : ctx.voice ? { maxTokens: 320, temperature: 0.75 } : isCode ? { maxTokens: 3000, temperature: 0.2 } : { maxTokens: 1500, temperature: 0.6 };
 
   const general = env.AI_MODEL || DEFAULT_MODEL;

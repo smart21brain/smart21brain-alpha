@@ -49,3 +49,26 @@
 .gi-lb .x-body { align-items: center; }
 .gi-big { max-width: 100%; max-height: 66dvh; border-radius: 12px; }
 .gi-cap { margin: 0; color: var(--soft); font-size: .88rem; text-align: center; }
+
+/* mode bar: smooth scrolling, fading edges, arrows */
+.mb-wrap { position: relative; }
+.mb-wrap .modes { scroll-behavior: smooth; scroll-snap-type: x proximity; padding: 2px 2px 6px; cursor: grab; -webkit-overflow-scrolling: touch; }
+.mb-wrap .modes > * { scroll-snap-align: center; }
+.mb-wrap .modes.dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
+.mb-wrap .modes button { transition: background .2s, border-color .2s, color .2s, transform .2s; }
+.mb-wrap .modes button:active { transform: scale(.96); }
+.mb-wrap::before, .mb-wrap::after { content: ''; position: absolute; top: 0; bottom: 4px; width: 44px; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .25s; }
+.mb-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+.mb-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+.mb-wrap.can-prev::before, .mb-wrap.can-next::after { opacity: 1; }
+.mb-arrow { position: absolute; top: calc(50% - 2px); transform: translateY(-50%) scale(.85); z-index: 3; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: .7rem; display: grid; place-items: center; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s, border-color .15s; }
+.mb-arrow:hover { border-color: var(--brand); color: var(--brand); }
+.mb-prev { left: 2px; } .mb-next { right: 2px; }
+.mb-wrap.can-prev .mb-prev, .mb-wrap.can-next .mb-next { opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1); }
+@media (hover: none) { .mb-arrow { display: none; } }
+@media (prefers-reduced-motion: reduce) { .mb-wrap .modes { scroll-behavior: auto; } .mb-wrap .modes button, .mb-arrow { transition: none; } }
+.mb-wrap { max-width: var(--col); margin: 0 auto .55rem; min-width: 0; }
+.mb-wrap > .modes { margin: 0; max-width: none; }
+
+/* welcome cards: five cards, the last one spans the full row */
+.cards .card:last-child:nth-child(odd) { grid-column: 1 / -1; }

@@ -85,7 +85,7 @@
     return fetch('/api/ai-image', { method: 'POST', signal: signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt: prompt, style: o.style || undefined, ratio: o.ratio || 'square', enhance: o.enhance !== false }) })
       .then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (d) {
-          if (!r.ok || !d.image) { var e = new Error(d.error || (r.status === 404 || r.status === 405 ? T('im_noroute') : T('im_fail'))); e.code = d.code || String(r.status); throw e; }
+          if (!r.ok || !d.image) { var e = new Error(r.status === 404 || r.status === 405 ? T('im_noroute') : (d.error || T('im_fail'))); e.code = d.code || String(r.status); throw e; }
           return d;
         });
       });
@@ -170,7 +170,35 @@
 
   /* "Image" mode button */
   var bar = $('#modes');
-  if (bar) { var mb = el('button', null, '<i class="fa-solid fa-image"></i> <span data-ai-t="mode_image"></span>'); mb.type = 'button'; mb.setAttribute('role', 'radio'); mb.setAttribute('aria-checked', 'false'); mb.setAttribute('data-mode', 'image'); var before = bar.querySelector('[data-mode="math"]'); bar.insertBefore(mb, before || null); }
+  if (bar) {
+    var mb = el('button', null, '<i class="fa-solid fa-image"></i> <span data-ai-t="mode_image"></span>'); mb.type = 'button'; mb.setAttribute('role', 'radio'); mb.setAttribute('aria-checked', 'false'); mb.setAttribute('data-mode', 'image'); bar.appendChild(mb);
+    // order of the buttons above the message box (anything not listed keeps its place after these)
+    ['quiz', 'homework', 'eli10', 'summarize', 'translate', 'math', 'write', 'image', 'code', 'learn'].forEach(function (k) { var x = bar.querySelector('[data-mode="' + k + '"]'); if (x) bar.insertBefore(x, bar.firstChild); });
+    ['quiz', 'homework', 'eli10'].forEach(function (k) { var x = bar.querySelector('[data-mode="' + k + '"]'); if (x) bar.appendChild(x); });
+  }
+
+  /* ---------------- mode bar: smooth sideways scrolling ---------------- */
+  if (bar && bar.parentNode) {
+    var wrap = el('div', 'mb-wrap'), prev = el('button', 'mb-arrow mb-prev', '<i class="fa-solid fa-chevron-left"></i>'), next = el('button', 'mb-arrow mb-next', '<i class="fa-solid fa-chevron-right"></i>');
+    prev.type = next.type = 'button'; prev.tabIndex = next.tabIndex = -1; prev.setAttribute('aria-hidden', 'true'); next.setAttribute('aria-hidden', 'true');
+    bar.parentNode.insertBefore(wrap, bar); wrap.appendChild(prev); wrap.appendChild(bar); wrap.appendChild(next);
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, beh = reduce ? 'auto' : 'smooth';
+    var edges = function () { var max = bar.scrollWidth - bar.clientWidth; wrap.classList.toggle('can-prev', bar.scrollLeft > 4); wrap.classList.toggle('can-next', bar.scrollLeft < max - 4); };
+    prev.addEventListener('click', function () { bar.scrollBy({ left: -bar.clientWidth * 0.7, behavior: beh }); });
+    next.addEventListener('click', function () { bar.scrollBy({ left: bar.clientWidth * 0.7, behavior: beh }); });
+    bar.addEventListener('scroll', edges, { passive: true }); window.addEventListener('resize', edges); L.onChange(function () { setTimeout(edges, 50); });
+    // mouse wheel scrolls the row sideways; drag with the mouse to slide it
+    bar.addEventListener('wheel', function (e) { if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && bar.scrollWidth > bar.clientWidth) { e.preventDefault(); bar.scrollBy({ left: e.deltaY, behavior: 'auto' }); } }, { passive: false });
+    var dragX = null, moved = false;
+    bar.addEventListener('mousedown', function (e) { dragX = e.clientX; moved = false; });
+    window.addEventListener('mousemove', function (e) { if (dragX == null) return; var dx = e.clientX - dragX; if (Math.abs(dx) > 4) { moved = true; bar.classList.add('dragging'); } if (moved) { bar.scrollLeft -= dx; dragX = e.clientX; } });
+    window.addEventListener('mouseup', function () { dragX = null; setTimeout(function () { bar.classList.remove('dragging'); }, 0); });
+    bar.addEventListener('click', function (e) { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+    // the chosen mode glides into view
+    bar.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setTimeout(function () { b.scrollIntoView({ behavior: beh, inline: 'center', block: 'nearest' }); }, 0); });
+    // first visit: a gentle nudge so learners see there is more to the right
+    setTimeout(function () { edges(); if (!reduce && bar.scrollWidth > bar.clientWidth + 20 && !sessionStorage.getItem('s21ai-mb-hint')) { try { sessionStorage.setItem('s21ai-mb-hint', '1'); } catch (e) {} bar.scrollTo({ left: 90, behavior: 'smooth' }); setTimeout(function () { bar.scrollTo({ left: 0, behavior: 'smooth' }); }, 700); } }, 600);
+  }
 
   /* ---------------- image studio (modal) ---------------- */
   var M = null, ctrl = null;

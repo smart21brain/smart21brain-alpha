@@ -329,9 +329,9 @@
   var CARDS = [
     { i: 'fa-graduation-cap', c: 'linear-gradient(135deg,#0B6E4F,#2fbf8a)', k: 'card1', m: 'learn' },
     { i: 'fa-code', c: 'linear-gradient(135deg,#7c5cff,#5b8def)', k: 'card2', m: 'code' },
+    { i: 'fa-image', c: 'linear-gradient(135deg,#00b4d8,#7c5cff)', k: 'card5', m: '' },
     { i: 'fa-feather-pointed', c: 'linear-gradient(135deg,#f5a623,#ef476f)', k: 'card3', m: 'write' },
-    { i: 'fa-circle-question', c: 'linear-gradient(135deg,#ef476f,#7c5cff)', k: 'card4', m: 'quiz' },
-    { i: 'fa-image', c: 'linear-gradient(135deg,#00b4d8,#7c5cff)', k: 'card5', m: '' }
+    { i: 'fa-circle-question', c: 'linear-gradient(135deg,#ef476f,#7c5cff)', k: 'card4', m: 'quiz' }
   ];
   function paintCards() { $('#cards').innerHTML = CARDS.map(function (k, n) { return '<button class="card" data-card="' + n + '"><i class="fa-solid ' + k.i + '" style="background:' + k.c + '"></i><div><b>' + esc(T(k.k + '_t')) + '</b><span>' + esc(T(k.k + '_d')) + '</span></div></button>'; }).join(''); }
   $('#cards').addEventListener('click', function (e) {
