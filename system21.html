@@ -14,6 +14,8 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=14">
+<link rel="stylesheet" href="css/system21-bg.css?v=1">
+<link rel="stylesheet" href="css/system21-img.css?v=1">
 <link rel="stylesheet" href="css/responsive.css?v=5">
 <link rel="stylesheet" href="css/animations.css?v=4">
 </head>
@@ -222,12 +224,44 @@
               <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
             </button>
             <div class="sx-name">Background Remover</div>
-            <div class="sx-sub">PNG · JPG · WebP</div>
+            <div class="sx-sub">AI · erase · backgrounds</div>
           </div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.02"><span><i class="fa-solid fa-plus"></i>IMG.02</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.03"><span><i class="fa-solid fa-plus"></i>IMG.03</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.04"><span><i class="fa-solid fa-plus"></i>IMG.04</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot IMG.05"><span><i class="fa-solid fa-plus"></i>IMG.05</span></div></div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="resize" aria-label="Open Resize">
+              <span class="id">IMG.02</span>
+              <i class="fa-solid fa-up-right-and-down-left-from-center ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Resize</div>
+            <div class="sx-sub">Size · presets · batch</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="crop" aria-label="Open Crop &amp; Rotate">
+              <span class="id">IMG.03</span>
+              <i class="fa-solid fa-crop-simple ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Crop &amp; Rotate</div>
+            <div class="sx-sub">Crop · rotate · flip</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="convert" aria-label="Open Convert">
+              <span class="id">IMG.04</span>
+              <i class="fa-solid fa-arrows-rotate ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Convert</div>
+            <div class="sx-sub">JPG · PNG · WebP</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="filters" aria-label="Open Photo Filters">
+              <span class="id">IMG.05</span>
+              <i class="fa-solid fa-sliders ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Photo Filters</div>
+            <div class="sx-sub">Adjust · looks · effects</div>
+          </div>
         </div>
       </section>
 
@@ -244,10 +278,42 @@
             <div class="sx-name">Compress</div>
             <div class="sx-sub">Shrink image files</div>
           </div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.02"><span><i class="fa-solid fa-plus"></i>DOC.02</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.03"><span><i class="fa-solid fa-plus"></i>DOC.03</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.04"><span><i class="fa-solid fa-plus"></i>DOC.04</span></div></div>
-          <div class="sx-slot"><div class="sx-empty" aria-label="Empty slot DOC.05"><span><i class="fa-solid fa-plus"></i>DOC.05</span></div></div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="img2pdf" aria-label="Open Image to PDF">
+              <span class="id">DOC.02</span>
+              <i class="fa-solid fa-file-image ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Image to PDF</div>
+            <div class="sx-sub">Images → one PDF</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="txt2pdf" aria-label="Open Text to PDF">
+              <span class="id">DOC.03</span>
+              <i class="fa-solid fa-file-lines ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Text to PDF</div>
+            <div class="sx-sub">Write · count words</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="merge" aria-label="Open Merge PDF">
+              <span class="id">DOC.04</span>
+              <i class="fa-solid fa-object-group ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Merge PDF</div>
+            <div class="sx-sub">Combine PDF files</div>
+          </div>
+          <div class="sx-slot">
+            <button class="sx-tile" type="button" data-open="split" aria-label="Open Split PDF">
+              <span class="id">DOC.05</span>
+              <i class="fa-solid fa-scissors ic" aria-hidden="true"></i>
+              <i class="fa-solid fa-arrow-up-right-from-square go" aria-hidden="true"></i>
+            </button>
+            <div class="sx-name">Split PDF</div>
+            <div class="sx-sub">Extract or split pages</div>
+          </div>
         </div>
       </section>
 
@@ -278,6 +344,9 @@
   <div class="sx-dlg-b" id="sxDlgB"></div>
 </dialog>
 
+<script src="js/system21-bg.js?v=1"></script>
+<script src="js/system21-img.js?v=1"></script>
+<script src="js/system21-doc.js?v=1"></script>
 <script>
 (function(){
   'use strict';
@@ -291,7 +360,7 @@
   var dlg=$('#sxDlg'),body=$('#sxDlgB'),title=$('#sxDlgT'),lastBtn=null,cleanup=null;
   function open(id,btn){
     lastBtn=btn;if(cleanup){cleanup();cleanup=null}
-    var tool=TOOLS[id];title.textContent='~/system21/'+tool.path;body.innerHTML='';
+    var tool=TOOLS[id];dlg.classList.toggle('sx-wide',!!tool.wide);title.textContent='~/system21/'+tool.path;body.innerHTML='';
     cleanup=tool.mount(body)||null;
     if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','');
     history.replaceState(null,'','#'+id);
@@ -363,79 +432,17 @@
     return function(){items.forEach(function(i){if(i.src)URL.revokeObjectURL(i.src.url)});items=[]};
   }
 
-  /* ================= BACKGROUND REMOVER ================= */
-  function mountBg(host){
-    host.innerHTML='<div class="sx-ctrl">'+
-      '<div><label for="bT">Tolerance <output id="bTo">40</output></label><input id="bT" type="range" min="1" max="140" value="40"></div>'+
-      '<div><label for="bE">Edge softness <output id="bEo">1 px</output></label><input id="bE" type="range" min="0" max="6" value="1"></div>'+
-      '<div><label for="bM">Mode</label><select id="bM"><option value="edge">Edge fill — keeps matching colours inside the subject</option><option value="all">Everywhere — remove this colour from the whole image</option></select></div>'+
-    '</div>';
-    var holder=document.createElement('div');host.appendChild(holder);
-    var st=null,key=null,tm;
-    var dz=dropzone(holder,'image/jpeg,image/png,image/webp',false,function(fs){load(fs[0])},'Choose an image');
-    var stage=document.createElement('div');stage.className='sx-stage';stage.hidden=true;
-    stage.innerHTML='<div class="sx-pane"><h3>Original — click to pick background colour</h3><div class="cv"><canvas id="bSrc"></canvas></div></div><div class="sx-pane"><h3>Result — transparent PNG</h3><div class="cv sx-checker"><canvas id="bOut" style="cursor:default"></canvas></div></div>';
-    var bar=document.createElement('div');bar.style.cssText='display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:1rem';bar.hidden=true;
-    bar.innerHTML='<button class="sx-btn" id="bDl" type="button"><i class="fa-solid fa-download"></i> Download PNG</button><button class="sx-btn ghost" id="bNew" type="button"><i class="fa-solid fa-rotate-left"></i> New image</button><span class="sx-hint" style="margin:0" id="bInfo"></span>';
-    var hint=document.createElement('p');hint.className='sx-hint';hint.hidden=true;
-    hint.innerHTML='<i class="fa-solid fa-circle-info"></i>Works best on plain backgrounds (studio shots, scans, logos). It is a colour-based remover, not AI — if edges are left behind, click the background on the left or raise the tolerance.';
-    host.appendChild(stage);host.appendChild(bar);host.appendChild(hint);
-    var src=$('#bSrc',host),out=$('#bOut',host),T=$('#bT',host),E=$('#bE',host),M=$('#bM',host);
-    function labels(){$('#bTo',host).textContent=T.value;$('#bEo',host).textContent=E.value+' px'}
-    function load(file){
-      loadImg(file).then(function(r){
-        var im=r.img,sc=Math.min(1,2400/Math.max(im.naturalWidth,im.naturalHeight)),W=Math.round(im.naturalWidth*sc),H=Math.round(im.naturalHeight*sc);
-        src.width=out.width=W;src.height=out.height=H;var x=src.getContext('2d',{willReadFrequently:true});x.clearRect(0,0,W,H);x.drawImage(im,0,0,W,H);
-        URL.revokeObjectURL(r.url);
-        st={name:file.name,W:W,H:H,data:x.getImageData(0,0,W,H)};key=autoKey(st.data,W,H);
-        dz.hidden=true;stage.hidden=bar.hidden=hint.hidden=false;render();
-      }).catch(function(e){alert(e.message)})
-    }
-    function autoKey(d,W,H){ // median colour of the border pixels
-      var rs=[],gs=[],bs=[],p=d.data,push=function(x,y){var i=(y*W+x)*4;rs.push(p[i]);gs.push(p[i+1]);bs.push(p[i+2])};
-      for(var x=0;x<W;x++){push(x,0);push(x,H-1)}for(var y=0;y<H;y++){push(0,y);push(W-1,y)}
-      var m=function(a){a.sort(function(a,b){return a-b});return a[a.length>>1]};return [m(rs),m(gs),m(bs)];
-    }
-    function render(){
-      var W=st.W,H=st.H,p=st.data.data,n=W*H,t=+T.value,t2=t*t,k=key,mask=new Uint8Array(n); // 1 = background
-      var near=function(i){var dr=p[i*4]-k[0],dg=p[i*4+1]-k[1],db=p[i*4+2]-k[2];return dr*dr+dg*dg+db*db<=t2&&(p[i*4+3]>0)};
-
-      if(M.value==='all'){for(var i=0;i<n;i++)if(near(i))mask[i]=1}
-      else{
-        var stack=new Int32Array(n),sp=0,seen=new Uint8Array(n),seed=function(i){if(!seen[i]&&near(i)){seen[i]=1;mask[i]=1;stack[sp++]=i}};
-        for(var x=0;x<W;x++){seed(x);seed((H-1)*W+x)}for(var y=0;y<H;y++){seed(y*W);seed(y*W+W-1)}
-        while(sp){var c=stack[--sp],cx=c%W,cy=(c/W)|0;
-          if(cx>0)seed(c-1);if(cx<W-1)seed(c+1);if(cy>0)seed(c-W);if(cy<H-1)seed(c+W)}
-      }
-      // alpha with optional box-blur feather
-      var a=new Float32Array(n),r=+E.value;for(var j=0;j<n;j++)a[j]=mask[j]?0:255;
-      if(r>0)a=blur(a,W,H,r);
-      var o=out.getContext('2d'),img=o.createImageData(W,H),d=img.data,cleared=0;
-      for(var q=0;q<n;q++){d[q*4]=p[q*4];d[q*4+1]=p[q*4+1];d[q*4+2]=p[q*4+2];d[q*4+3]=Math.round(a[q]*p[q*4+3]/255);if(mask[q])cleared++}
-      o.putImageData(img,0,0);
-      $('#bInfo',host).innerHTML='<span class="sx-sw" style="background:rgb('+k.join(',')+')"></span>background rgb('+k.join(', ')+') · removed '+Math.round(cleared/n*100)+'% · '+W+'×'+H;
-    }
-    function blur(a,W,H,r){ // separable box blur
-      var t=new Float32Array(a.length),o=new Float32Array(a.length),w=2*r+1,x,y,s,i;
-      for(y=0;y<H;y++){s=0;for(x=-r;x<=r;x++)s+=a[y*W+Math.min(W-1,Math.max(0,x))];
-        for(x=0;x<W;x++){t[y*W+x]=s/w;s+=a[y*W+Math.min(W-1,x+r+1)]-a[y*W+Math.max(0,x-r)]}}
-      for(x=0;x<W;x++){s=0;for(y=-r;y<=r;y++)s+=t[Math.min(H-1,Math.max(0,y))*W+x];
-        for(y=0;y<H;y++){o[y*W+x]=s/w;s+=t[Math.min(H-1,y+r+1)*W+x]-t[Math.max(0,y-r)*W+x]}}
-      return o;
-    }
-    [T,E,M].forEach(function(el){el.addEventListener('input',function(){labels();if(!st)return;clearTimeout(tm);tm=setTimeout(render,60)})});
-    src.addEventListener('click',function(e){
-      if(!st)return;var b=src.getBoundingClientRect(),x=Math.min(st.W-1,Math.max(0,Math.floor((e.clientX-b.left)*st.W/b.width))),y=Math.min(st.H-1,Math.max(0,Math.floor((e.clientY-b.top)*st.H/b.height))),i=(y*st.W+x)*4,p=st.data.data;
-      key=[p[i],p[i+1],p[i+2]];render();
-    });
-    $('#bDl',host).addEventListener('click',function(){toBlob(out,'image/png').then(function(b){dl(b,baseName(st.name)+'-no-bg.png')})});
-    $('#bNew',host).addEventListener('click',function(){st=null;stage.hidden=bar.hidden=hint.hidden=true;dz.hidden=false});
-    return function(){st=null};
-  }
-
   var TOOLS={
-    bg:{path:'img/background-remover',mount:mountBg},
-    zip:{path:'doc/compress',mount:mountCompress}
+    bg:{path:'img/background-remover',wide:true,mount:function(h){return window.SX_BG.mount(h)}},
+    zip:{path:'doc/compress',mount:mountCompress},
+    resize:{path:'img/resize',mount:function(h){return window.SX_IMG.resize(h)}},
+    crop:{path:'img/crop-rotate',wide:true,mount:function(h){return window.SX_IMG.crop(h)}},
+    convert:{path:'img/convert',mount:function(h){return window.SX_IMG.convert(h)}},
+    img2pdf:{path:'doc/image-to-pdf',mount:function(h){return window.SX_DOC.img2pdf(h)}},
+    txt2pdf:{path:'doc/text-to-pdf',mount:function(h){return window.SX_DOC.txt2pdf(h)}},
+    merge:{path:'doc/merge-pdf',mount:function(h){return window.SX_DOC.merge(h)}},
+    split:{path:'doc/split-pdf',mount:function(h){return window.SX_DOC.split(h)}},
+    filters:{path:'img/photo-filters',wide:true,mount:function(h){return window.SX_IMG.filters(h)}}
   };
   $('#sxCount').textContent=Object.keys(TOOLS).length;
   var h=location.hash.slice(1);if(TOOLS[h]){var b=document.querySelector('[data-open="'+h+'"]');if(b)open(h,b)}
