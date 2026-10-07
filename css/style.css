@@ -901,6 +901,13 @@ body {
 }
 .badge-pill.pink, .badge-pill.gold { background: linear-gradient(180deg, var(--s21-accent), var(--s21-accent-dark)); color: #fff; }
 
+/* Breadcrumb links: yellow (brand yellow on dark, a deeper gold on light so it stays readable). */
+.breadcrumb-item a { color: #A66A00; font-weight: 600; text-decoration: none; }
+.breadcrumb-item a:hover, .breadcrumb-item a:focus-visible { color: var(--s21-accent); text-decoration: underline; }
+[data-theme="dark"] .breadcrumb-item a { color: var(--s21-secondary); }
+[data-theme="dark"] .breadcrumb-item a:hover, [data-theme="dark"] .breadcrumb-item a:focus-visible { color: #fff; }
+.breadcrumb-item.active { color: var(--s21-text-soft); }
+
 .progress-s21 {
   height: 8px; border-radius: var(--radius-pill);
   background: var(--s21-border); overflow: hidden;
