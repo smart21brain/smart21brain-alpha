@@ -250,6 +250,9 @@
       dash_you_re_2_days_from_a_14_day_streak: 'You\'re 2 days from a 14-day streak!',
       dash_certificates: 'Certificates', dash_completed_3_weeks_ago: 'Completed 3 weeks ago',
       dash_view_all_certificates: 'View all certificates',
+      dash_cert_empty: 'Finish a course to earn your first certificate.', dash_cert_browse: 'Browse courses',
+      dash_cert_issued: 'Issued', dash_cert_download: 'Download', dash_cert_view: 'View',
+      dash_cert_load_failed: 'Couldn\'t load your certificates.',
       // ---- parents ----
       parents_subscription: 'Subscription', parents_premium_plan: 'Premium plan',
       parents_welcome_back_samuel: 'Welcome back, Samuel 👋',
@@ -1232,6 +1235,9 @@
       dash_you_re_2_days_from_a_14_day_streak: 'Umebakiwa siku 2 kufikia mfululizo wa siku 14!',
       dash_certificates: 'Vyeti', dash_completed_3_weeks_ago: 'Ilikamilika wiki 3 zilizopita',
       dash_view_all_certificates: 'Tazama vyeti vyote',
+      dash_cert_empty: 'Maliza kozi ili upate cheti chako cha kwanza.', dash_cert_browse: 'Angalia kozi',
+      dash_cert_issued: 'Imetolewa', dash_cert_download: 'Pakua', dash_cert_view: 'Tazama',
+      dash_cert_load_failed: 'Imeshindwa kupakia vyeti vyako.',
       // ---- parents ----
       parents_subscription: 'Usajili', parents_premium_plan: 'Mpango wa Premium',
       parents_welcome_back_samuel: 'Karibu tena, Samuel 👋',

@@ -88,7 +88,49 @@
     `).join('');
   }
 
+  // Real certificates from /api/certificates/my — one row per course the
+  // learner has completed, each with View and Download. Never shows demo
+  // data: with none earned yet it says so and points at the course catalog.
+  function renderCertificates(list) {
+    const box = document.getElementById('dash-certificates-list');
+    if (!box) return;
+    if (!list.length) {
+      box.innerHTML = `<p class="mb-2">${escapeHtml(t('dash_cert_empty', 'Finish a course to earn your first certificate.'))}</p>
+        <a href="courses.html" class="btn-s21 btn-s21-outline w-100 justify-content-center" style="font-size:.82rem">${escapeHtml(t('dash_cert_browse', 'Browse courses'))}</a>`;
+      return;
+    }
+    box.innerHTML = list.map((c) => {
+      const code = encodeURIComponent(c.code);
+      const date = c.issued_at ? new Date(String(c.issued_at).includes('T') ? c.issued_at : String(c.issued_at).replace(' ', 'T') + 'Z') : null;
+      const when = date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+      return `
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <i class="fa-solid fa-certificate fa-lg" style="color:var(--s21-secondary-dark)"></i>
+          <div class="flex-grow-1" style="min-width:0">
+            <div class="fw-bold" style="font-size:.85rem">${escapeHtml(c.course_title)}</div>
+            <div class="text-soft" style="font-size:.76rem">${escapeHtml(t('dash_cert_issued', 'Issued'))} ${escapeHtml(when)}</div>
+          </div>
+          <div class="d-flex gap-1 flex-shrink-0">
+            <a class="btn-s21 btn-s21-primary" style="padding:.3rem .65rem;font-size:.75rem" href="certificate.html?code=${code}&download=1" title="${escapeHtml(t('dash_cert_download', 'Download'))}" aria-label="${escapeHtml(t('dash_cert_download', 'Download'))}: ${escapeHtml(c.course_title)}"><i class="fa-solid fa-download"></i></a>
+            <a class="btn-s21 btn-s21-outline" style="padding:.3rem .65rem;font-size:.75rem" href="certificate.html?code=${code}">${escapeHtml(t('dash_cert_view', 'View'))}</a>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function loadCertificates() {
+    const box = document.getElementById('dash-certificates-list');
+    if (!box) return;
+    fetch('/api/certificates/my', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error('status ' + res.status))))
+      .then((data) => renderCertificates((data && data.certificates) || []))
+      .catch(() => {
+        box.textContent = t('dash_cert_load_failed', "Couldn't load your certificates.");
+      });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    loadCertificates();
     const avatarImg = document.getElementById('dash-avatar-img');
     const heading = document.getElementById('dash-welcome-heading');
 

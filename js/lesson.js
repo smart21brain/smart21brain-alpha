@@ -195,6 +195,16 @@
       els.completeBtn.className = isComplete ? 'btn-s21 btn-s21-outline w-100 justify-content-center mb-1' : 'btn-s21 btn-s21-primary w-100 justify-content-center mb-1';
       if (progress) {
         els.completeStatus.textContent = `${progress.completed_lessons} / ${progress.total_lessons} lessons complete (${progress.progress_percent}%)${progress.course_completed ? ' — course complete! 🎉' : ''}`;
+        // The server issues the certificate the moment the course is
+        // complete (only when the course has certificates switched on) and
+        // returns it here — link straight to it so it can be downloaded.
+        if (progress.course_completed && progress.certificate && progress.certificate.code) {
+          const code = encodeURIComponent(progress.certificate.code);
+          const wrap = document.createElement('div');
+          wrap.className = 'mt-2';
+          wrap.innerHTML = `<a class="btn-s21 btn-s21-primary w-100 justify-content-center" href="certificate.html?code=${code}&download=1"><i class="fa-solid fa-award"></i> Get your certificate</a>`;
+          els.completeStatus.appendChild(wrap);
+        }
       }
     }
   }

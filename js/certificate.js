@@ -7,6 +7,9 @@
 (function () {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
+  // ?download=1 — used by the "Download" buttons on the course page and
+  // dashboard: open this page and the PDF starts downloading straight away.
+  const autoDownload = params.get('download') === '1';
 
   const els = {
     loading: document.getElementById('cert-loading'),
@@ -17,6 +20,9 @@
     date: document.getElementById('cert-date'),
     code: document.getElementById('cert-code'),
     print: document.getElementById('cert-print'),
+    download: document.getElementById('cert-download'),
+    downloadLabel: document.getElementById('cert-download-label'),
+    downloadError: document.getElementById('cert-download-error'),
   };
 
   function show(el) { if (el) el.style.display = ''; }
@@ -27,6 +33,45 @@
     const d = new Date(iso.includes('T') ? iso : `${iso.replace(' ', 'T')}Z`);
     if (Number.isNaN(d.getTime())) return iso;
     return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  async function loadLogo() {
+    try {
+      const res = await fetch('images/logo/smart21brain-mascot.png');
+      if (!res.ok) return null;
+      return new Uint8Array(await res.arrayBuffer());
+    } catch { return null; }
+  }
+
+  function fileSlug(text) {
+    return String(text || 'course').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'course';
+  }
+
+  let busy = false;
+  async function downloadPdf(cert) {
+    if (busy) return;
+    busy = true;
+    els.downloadError.style.display = 'none';
+    els.download.disabled = true;
+    els.downloadLabel.textContent = 'Preparing…';
+    try {
+      if (!window.S21CertificatePDF) throw new Error('The PDF tools did not load. Check your connection and refresh the page.');
+      const bytes = await window.S21CertificatePDF.build({
+        name: cert.learner_name,
+        course: cert.course_title,
+        date: formatDate(cert.issued_at),
+        code: cert.code,
+        verifyUrl: `${window.location.origin}/certificate.html?code=${encodeURIComponent(cert.code)}`,
+      }, { logoBytes: await loadLogo() });
+      window.S21CertificatePDF.download(bytes, `Smart21Brain-Certificate-${fileSlug(cert.course_slug || cert.course_title)}.pdf`);
+    } catch (err) {
+      els.downloadError.textContent = (err && err.message) || 'Could not create the PDF. You can still use Print and choose "Save as PDF".';
+      els.downloadError.style.display = '';
+    } finally {
+      els.download.disabled = false;
+      els.downloadLabel.textContent = 'Download PDF';
+      busy = false;
+    }
   }
 
   async function main() {
@@ -50,6 +95,8 @@
     show(els.content);
 
     els.print.addEventListener('click', () => window.print());
+    els.download.addEventListener('click', () => downloadPdf(cert));
+    if (autoDownload) downloadPdf(cert);
   }
 
   main();

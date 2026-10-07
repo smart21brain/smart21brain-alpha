@@ -183,7 +183,10 @@
         <div class="fw-bold">You earned a certificate!</div>
         <div class="text-soft" style="font-size:.82rem">${esc(courseTitle)} — code ${esc(certificate.code)}</div>
       </div>
-      <a href="certificate.html?code=${encodeURIComponent(certificate.code)}" class="btn-s21 btn-s21-primary" style="padding:.55rem 1.1rem;font-size:.85rem">View certificate</a>`;
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="certificate.html?code=${encodeURIComponent(certificate.code)}&download=1" class="btn-s21 btn-s21-primary" style="padding:.55rem 1.1rem;font-size:.85rem"><i class="fa-solid fa-download"></i> Download</a>
+        <a href="certificate.html?code=${encodeURIComponent(certificate.code)}" class="btn-s21 btn-s21-outline" style="padding:.55rem 1.1rem;font-size:.85rem">View</a>
+      </div>`;
   }
 
   async function main() {
