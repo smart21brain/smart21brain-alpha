@@ -895,10 +895,12 @@ body {
   display: inline-flex; align-items: center; gap: .35rem;
   font-size: .75rem; font-weight: 700;
   padding: .3rem .7rem; border-radius: var(--radius-pill);
-  background: var(--s21-primary-light); color: var(--s21-primary);
+  /* Brand yellow, with dark text so it reads well in light and dark mode. */
+  background: linear-gradient(180deg, #FFE08A, var(--s21-secondary)); color: #3B2A0B;
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 2px 6px rgba(232,179,52,.28);
 }
-.badge-pill.pink { background: var(--s21-accent-tint); color: var(--s21-accent); }
-.badge-pill.gold { background: var(--s21-secondary-tint); color: #A66A00; }
+.badge-pill.pink { background: var(--s21-accent-tint); color: var(--s21-accent); box-shadow: none; }
+.badge-pill.gold { background: linear-gradient(180deg, #FFE08A, var(--s21-secondary)); color: #3B2A0B; }
 
 .progress-s21 {
   height: 8px; border-radius: var(--radius-pill);
