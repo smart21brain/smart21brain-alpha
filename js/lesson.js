@@ -160,6 +160,7 @@
         // Progress is stored in this browser — no server call, no server error.
         if (window.S21Progress) {
           window.S21Progress.setComplete(course.slug, lesson.id, nextState);
+          if (nextState && window.S21Progress.stampCompletion) window.S21Progress.stampCompletion(course.slug, lesson_total);
           setCompleteState(nextState, window.S21Progress.progress(course.slug, lesson_total));
           if (data.lessons) {
             const row = data.lessons.find((l) => String(l.id) === String(lesson.id));
@@ -203,6 +204,12 @@
           const wrap = document.createElement('div');
           wrap.className = 'mt-2';
           wrap.innerHTML = `<a class="btn-s21 btn-s21-primary w-100 justify-content-center" href="certificate.html?code=${code}&download=1"><i class="fa-solid fa-award"></i> Get your certificate</a>`;
+          els.completeStatus.appendChild(wrap);
+        } else if (progress.course_completed && course.certificate_enabled && !progress.certificate && isLocal) {
+          // Built-in catalog course: the certificate is made on the course page.
+          const wrap = document.createElement('div');
+          wrap.className = 'mt-2';
+          wrap.innerHTML = `<a class="btn-s21 btn-s21-primary w-100 justify-content-center" href="course.html?slug=${encodeURIComponent(course.slug)}#course-certificate-wrap"><i class="fa-solid fa-award"></i> Get your certificate</a>`;
           els.completeStatus.appendChild(wrap);
         }
       }

@@ -189,6 +189,77 @@
       </div>`;
   }
 
+  // Courses served from the built-in catalog keep progress in this
+  // browser only, so the server has nothing to issue a certificate from.
+  // Once every lesson is done we let the learner generate a PDF here,
+  // clearly marked as not verifiable online (no code, no QR).
+  function renderLocalCertificate(course, doneCount, totalCount) {
+    const P = window.S21Progress;
+    const earned = course.certificate_enabled && totalCount > 0 && doneCount >= totalCount;
+    if (!earned) { els.certificateWrap.style.display = 'none'; return; }
+    const completedAt = P && P.stampCompletion ? P.stampCompletion(course.slug, totalCount) : null;
+    const NAME_KEY = 's21.learnerName';
+    let saved = '';
+    try { saved = localStorage.getItem(NAME_KEY) || ''; } catch { /* ignore */ }
+
+    els.certificateWrap.style.display = '';
+    els.certificate.classList.add('flex-wrap');
+    els.certificate.innerHTML = `
+      <span class="d-flex align-items-center justify-content-center flex-shrink-0" style="width:52px;height:52px;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-award fa-lg"></i></span>
+      <div class="flex-grow-1" style="min-width:220px">
+        <div class="fw-bold">You finished the course — get your certificate!</div>
+        <label for="cert-local-name" class="text-soft d-block mt-1" style="font-size:.8rem">Name to print on the certificate</label>
+        <input id="cert-local-name" type="text" maxlength="60" class="form-control form-control-sm" style="max-width:320px" autocomplete="name" value="${esc(saved)}">
+        <div class="text-soft mt-1" style="font-size:.74rem">Made from the progress saved on this device, so it can't be checked online.</div>
+        <div id="cert-local-error" role="alert" style="display:none;font-size:.8rem;color:#c0392b" class="mt-1"></div>
+      </div>
+      <button type="button" id="cert-local-download" class="btn-s21 btn-s21-primary" style="padding:.55rem 1.1rem;font-size:.85rem"><i class="fa-solid fa-download"></i> <span>Download PDF</span></button>`;
+
+    const input = document.getElementById('cert-local-name');
+    const btn = document.getElementById('cert-local-download');
+    const err = document.getElementById('cert-local-error');
+
+    // Signed in? Pre-fill the real account name (best effort, optional).
+    if (!saved) {
+      fetch('/api/dashboard', { credentials: 'include' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (d && d.user && d.user.name && !input.value) input.value = d.user.name; })
+        .catch(() => {});
+    }
+
+    btn.addEventListener('click', async () => {
+      err.style.display = 'none';
+      const name = input.value.trim();
+      if (!name) { err.textContent = 'Please type your name first.'; err.style.display = ''; input.focus(); return; }
+      try { localStorage.setItem(NAME_KEY, name); } catch { /* ignore */ }
+      btn.disabled = true;
+      try {
+        if (!window.S21CertificatePDF) throw new Error('The PDF tools did not load. Check your connection and refresh the page.');
+        let logo = null;
+        try {
+          const res = await fetch('images/logo/smart21brain-mascot.png');
+          if (res.ok) logo = new Uint8Array(await res.arrayBuffer());
+        } catch { /* logo is optional */ }
+        const when = completedAt ? new Date(completedAt) : new Date();
+        const bytes = await window.S21CertificatePDF.build({
+          name,
+          course: course.title,
+          date: when.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }),
+          code: null,
+          verifyUrl: null,
+          note: 'Completion recorded on this device — not verifiable online.',
+        }, { logoBytes: logo });
+        const slug = String(course.slug || 'course').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+        window.S21CertificatePDF.download(bytes, `Smart21Brain-Certificate-${slug}.pdf`);
+      } catch (e) {
+        err.textContent = (e && e.message) || 'Could not create the PDF.';
+        err.style.display = '';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+
   async function main() {
     if (!key) { els.notFound.style.display = ''; return; }
 
@@ -287,7 +358,9 @@
       }
 
       renderFinalExam(progress ? progress.final_exam : null, true);
-      renderCertificate(progress ? progress.certificate : null, course.title);
+      if (progress) renderCertificate(progress.certificate, course.title);
+      else if (isLocal) renderLocalCertificate(course, doneCount, totalCount);
+      else renderCertificate(null, course.title);
     } else {
       els.priceBlock.style.display = '';
       els.priceLabel.textContent = course.is_free ? 'Free' : `TZS ${Number(course.price).toLocaleString()}`;

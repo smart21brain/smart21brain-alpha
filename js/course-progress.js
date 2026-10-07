@@ -75,7 +75,27 @@
     );
   }
 
+  /* Records the day a course was first completed on this device, so a
+     certificate can show the real date rather than today's. Never
+     un-records it — like the server, a certificate once earned stays. */
+  function stampCompletion(slug, totalLessons) {
+    const all = readAll();
+    const st = all[slug];
+    if (!st || !totalLessons) return null;
+    if (!st.completed_at && (st.completed || []).length >= totalLessons) {
+      st.completed_at = new Date().toISOString();
+      writeAll(all);
+    }
+    return st.completed_at || null;
+  }
+
+  function completedAt(slug) {
+    const st = courseState(slug);
+    return (st && st.completed_at) || null;
+  }
+
   window.S21Progress = {
     isEnrolled, enroll, isComplete, setComplete, progress, applyTo, completedIds,
+    stampCompletion, completedAt,
   };
 })();

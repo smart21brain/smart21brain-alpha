@@ -65,7 +65,7 @@
     const pdf = await PDFDocument.create();
     pdf.setTitle(`${data.course} — Certificate of Completion`);
     pdf.setAuthor('Smart21Brain');
-    pdf.setSubject(`Certificate ${data.code}`);
+    pdf.setSubject(data.code ? `Certificate ${data.code}` : 'Certificate of completion');
     const page = pdf.addPage([W, H]);
 
     const serifBold = await pdf.embedFont(StandardFonts.TimesRomanBold);
@@ -142,8 +142,10 @@
     const baseY = 78;
     page.drawText('ISSUED', { x: 80, y: baseY + 34, size: 8, font: sansBold, color: c(SOFT) });
     page.drawText(safe(sansBold, data.date), { x: 80, y: baseY + 16, size: 13, font: sansBold, color: c(INK) });
-    page.drawText('CERTIFICATE CODE', { x: 80, y: baseY - 4, size: 8, font: sansBold, color: c(SOFT) });
-    page.drawText(safe(mono, data.code), { x: 80, y: baseY - 20, size: 12, font: mono, color: c(INK) });
+    if (data.code) {
+      page.drawText('CERTIFICATE CODE', { x: 80, y: baseY - 4, size: 8, font: sansBold, color: c(SOFT) });
+      page.drawText(safe(mono, data.code), { x: 80, y: baseY - 20, size: 12, font: mono, color: c(INK) });
+    }
 
     const sigW = 170;
     page.drawLine({
@@ -184,6 +186,11 @@
       const shown = data.verifyUrl.replace(/^https?:\/\//, '');
       const size = fitSize(sans, shown, W - 120, 8, 5);
       centerText(safe(sans, shown), 40, sans, size, SOFT);
+    } else if (data.note) {
+      // No server record to point at (course completed from progress saved
+      // on this device) — say so on the certificate instead of implying
+      // it can be checked online.
+      centerText(safe(sans, data.note), 40, sans, 8, SOFT);
     }
 
     return pdf.save();
