@@ -200,8 +200,16 @@
       if (!local) { els.notFound.style.display = ''; return; }
       const P = window.S21Progress;
       const lessonList = P ? P.applyTo(local.slug, local.lessons) : (local.lessons || []);
+      const mods = [];
+      lessonList.forEach((l) => {
+        if (!l.module) return;
+        let m = mods.find((x) => x.title === l.module);
+        if (!m) { m = { id: `${local.slug}::m${mods.length + 1}`, title: l.module, lessons: [] }; mods.push(m); }
+        m.lessons.push(l);
+      });
       data = {
         course: local,
+        modules: mods.length === lessonList.length ? [] : (mods.length ? mods : []),
         lessons: lessonList,
         enrollment: (P && P.isEnrolled(local.slug)) ? { payment_status: 'active' } : null,
         local: true,

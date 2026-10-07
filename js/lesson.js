@@ -125,8 +125,14 @@
       renderQuiz(quiz, lesson, isLocal);
     }
 
+    if (quiz && lesson.content_type !== 'quiz') {
+      show(els.quizBlock);
+      renderQuiz(quiz, lesson, isLocal);
+    }
+
     if (lesson.body) {
-      els.bodyText.textContent = lesson.body;
+      if (window.S21Rich) els.bodyText.innerHTML = window.S21Rich.render(lesson.body);
+      else { els.bodyText.style.whiteSpace = 'pre-line'; els.bodyText.textContent = lesson.body; }
     } else if (lesson.content_type === 'text') {
       els.bodyText.textContent = 'No content has been added to this lesson yet.';
     }
@@ -228,7 +234,13 @@
         questions.forEach((q, qi) => {
           const chosen = els.quizForm.querySelector(`input[name="q${qi}"]:checked`);
           const fs = els.quizForm.querySelectorAll('fieldset')[qi];
-          if (fs) fs.style.borderLeft = `4px solid ${chosen && Number(chosen.value) === q.answer ? 'var(--s21-primary)' : '#EF476F'}`;
+          const ok = chosen && Number(chosen.value) === q.answer;
+          if (fs) {
+            fs.style.borderLeft = `4px solid ${ok ? 'var(--s21-primary)' : '#EF476F'}`;
+            let note = fs.querySelector('.q-why');
+            if (!note) { note = document.createElement('div'); note.className = 'q-why text-soft mt-2'; note.style.fontSize = '.85rem'; fs.appendChild(note); }
+            note.innerHTML = (ok ? '<strong style="color:var(--s21-primary)">Correct.</strong> ' : '<strong style="color:#EF476F">Not quite.</strong> The answer is <strong>' + esc(q.options[q.answer]) + '</strong>. ') + (q.why ? esc(q.why) : '');
+          }
         });
         els.quizSubmit.disabled = false;
         return;
@@ -254,12 +266,21 @@
 
   function renderCurriculum(course, lessons, currentLessonId) {
     els.curriculumTitle.textContent = course.title;
-    els.curriculumList.innerHTML = (lessons || []).map((l) => `
-      <a href="lesson.html?id=${encodeURIComponent(l.id)}" class="d-flex align-items-center gap-2 py-2 text-reset text-decoration-none ${String(l.id) === String(currentLessonId) ? 'fw-bold' : ''}" style="font-size:.85rem;${String(l.id) === String(currentLessonId) ? 'color:var(--s21-primary)' : ''}">
-        <i class="fa-solid ${l.completed ? 'fa-circle-check' : 'fa-circle'}" style="color:${l.completed ? 'var(--s21-primary)' : '#C9CFD6'};font-size:.7rem"></i>
-        ${esc(l.title)}
-      </a>
-    `).join('');
+    const list = lessons || [];
+    const done = list.filter((l) => l.completed).length;
+    const pct = list.length ? Math.round((done / list.length) * 100) : 0;
+    let lastMod = null;
+    const rows = list.map((l, i) => {
+      const cur = String(l.id) === String(currentLessonId);
+      const head = l.module && l.module !== lastMod ? `<div class="side-mod">${esc(l.module)}</div>` : '';
+      lastMod = l.module || lastMod;
+      return head + `
+      <a href="lesson.html?id=${encodeURIComponent(l.id)}" class="d-flex align-items-center gap-2 py-2 text-reset text-decoration-none ${cur ? 'fw-bold' : ''}" style="font-size:.85rem;${cur ? 'color:var(--s21-primary)' : ''}">
+        <i class="fa-solid ${l.completed ? 'fa-circle-check' : (cur ? 'fa-circle-play' : 'fa-circle')}" style="color:${l.completed || cur ? 'var(--s21-primary)' : '#C9CFD6'};font-size:.75rem"></i>
+        ${i + 1}. ${esc(l.title)}
+      </a>`;
+    }).join('');
+    els.curriculumList.innerHTML = `<div class="text-soft" style="font-size:.78rem">${done} of ${list.length} lessons done (${pct}%)</div><div class="lesson-progress-bar"><span style="width:${pct}%"></span></div>` + rows;
   }
 
   async function loadCurriculum(course, currentLessonId) {
