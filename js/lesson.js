@@ -175,6 +175,12 @@
       postComplete(next);
     }
 
+    // Finishing a course lands the learner on course-complete.html: the
+    // golden certificate, upcoming courses and a way into the dashboard.
+    const completionHref = `course-complete.html?slug=${encodeURIComponent(course.slug)}`;
+    let courseDone = false;
+    let redirectTimer = null;
+
     async function postComplete(nextState) {
       els.completeBtn.disabled = true;
       if (isLocal) {
@@ -312,7 +318,7 @@
           ok = await postComplete(true);
           if (!ok) currentCompleted = false;
         }
-        if (ok) { window.location.href = afterHref; return; }
+        if (ok) { window.location.href = courseDone ? completionHref : afterHref; return; }
         delete els.nextLink.dataset.busy;
         els.nextLink.style.opacity = '';
       });
@@ -327,21 +333,17 @@
       els.completeBtn.className = isComplete ? 'btn-s21 btn-s21-outline w-100 justify-content-center mb-1' : 'btn-s21 btn-s21-primary w-100 justify-content-center mb-1';
       if (progress) {
         els.completeStatus.textContent = `${progress.completed_lessons} / ${progress.total_lessons} lessons complete (${progress.progress_percent}%)${progress.course_completed ? ' — course complete! 🎉' : ''}`;
-        // The server issues the certificate the moment the course is
-        // complete (only when the course has certificates switched on) and
-        // returns it here — link straight to it so it can be downloaded.
-        if (progress.course_completed && progress.certificate && progress.certificate.code) {
-          const code = encodeURIComponent(progress.certificate.code);
+        // The moment the last piece of the course is done, take the learner
+        // to the celebration / certificate page (the link is there too, in
+        // case the automatic redirect is too quick or they want it now).
+        courseDone = !!(isComplete && progress.course_completed);
+        if (courseDone) {
+          const hasCert = !!(progress.certificate || (isLocal && course.certificate_enabled));
           const wrap = document.createElement('div');
           wrap.className = 'mt-2';
-          wrap.innerHTML = `<a class="btn-s21 btn-s21-primary w-100 justify-content-center" href="certificate.html?code=${code}&download=1"><i class="fa-solid fa-award"></i> Get your certificate</a>`;
+          wrap.innerHTML = `<a class="btn-s21 btn-s21-primary w-100 justify-content-center" href="${completionHref}"><i class="fa-solid fa-award"></i> ${hasCert ? 'Get your certificate' : 'See what\'s next'}</a>`;
           els.completeStatus.appendChild(wrap);
-        } else if (progress.course_completed && course.certificate_enabled && !progress.certificate && isLocal) {
-          // Built-in catalog course: the certificate is made on the course page.
-          const wrap = document.createElement('div');
-          wrap.className = 'mt-2';
-          wrap.innerHTML = `<a class="btn-s21 btn-s21-primary w-100 justify-content-center" href="course.html?slug=${encodeURIComponent(course.slug)}#course-certificate-wrap"><i class="fa-solid fa-award"></i> Get your certificate</a>`;
-          els.completeStatus.appendChild(wrap);
+          if (!redirectTimer) redirectTimer = setTimeout(() => { window.location.href = completionHref; }, 2500);
         }
       }
     }

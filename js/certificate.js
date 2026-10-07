@@ -35,18 +35,6 @@
     return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
-  async function loadLogo() {
-    try {
-      const res = await fetch('images/logo/smart21brain-mascot.png');
-      if (!res.ok) return null;
-      return new Uint8Array(await res.arrayBuffer());
-    } catch { return null; }
-  }
-
-  function fileSlug(text) {
-    return String(text || 'course').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'course';
-  }
-
   let busy = false;
   async function downloadPdf(cert) {
     if (busy) return;
@@ -62,8 +50,8 @@
         date: formatDate(cert.issued_at),
         code: cert.code,
         verifyUrl: `${window.location.origin}/certificate.html?code=${encodeURIComponent(cert.code)}`,
-      }, { logoBytes: await loadLogo() });
-      window.S21CertificatePDF.download(bytes, `Smart21Brain-Certificate-${fileSlug(cert.course_slug || cert.course_title)}.pdf`);
+      }, { logoBytes: await window.S21CertificatePDF.loadLogo() });
+      window.S21CertificatePDF.download(bytes, `Smart21Brain-Certificate-${window.S21CertificatePDF.fileSlug(cert.course_slug || cert.course_title)}.pdf`);
     } catch (err) {
       els.downloadError.textContent = (err && err.message) || 'Could not create the PDF. You can still use Print and choose "Save as PDF".';
       els.downloadError.style.display = '';

@@ -118,10 +118,10 @@
         els.result.style.display = '';
         let html = `<strong>Score: ${out.score} / ${out.total} (${percent}%)</strong> — ${passed ? 'passed!' : `needs ${mod.passing_score}% to pass — you can retake it.`}`;
         if (passed && courseUpdate && courseUpdate.course_completed) {
-          html += `<div class="mt-2"><i class="fa-solid fa-award" style="color:var(--s21-primary)"></i> That completed the course! <a href="course.html?slug=${encodeURIComponent(course.slug)}">Go see your certificate</a>.</div>`;
-          if (courseUpdate.certificate && courseUpdate.certificate.code) {
-            html += `<div class="mt-2"><a class="btn-s21 btn-s21-primary" href="certificate.html?code=${encodeURIComponent(courseUpdate.certificate.code)}&download=1"><i class="fa-solid fa-download"></i> Download your certificate</a></div>`;
-          }
+          // Finished the course: take the learner to the certificate / next-courses page.
+          const doneHref = `course-complete.html?slug=${encodeURIComponent(course.slug)}`;
+          html += `<div class="mt-2"><i class="fa-solid fa-award" style="color:var(--s21-primary)"></i> That completed the course! Taking you to your certificate… <a class="btn-s21 btn-s21-primary ms-1" href="${doneHref}">Go now</a></div>`;
+          setTimeout(() => { window.location.href = doneHref; }, 4000);
         } else if (passed) {
           html += `<div class="mt-2"><a href="course.html?slug=${encodeURIComponent(course.slug)}">Back to course</a></div>`;
         }

@@ -14,17 +14,11 @@
 <link rel="stylesheet" href="css/style.css?v=14">
 <link rel="stylesheet" href="css/responsive.css?v=5">
 <link rel="stylesheet" href="css/animations.css?v=4">
+<link rel="stylesheet" href="css/certificate.css?v=1">
 <style>
-  .cert-frame { border: 2px solid var(--s21-primary); border-radius: 18px; padding: 3rem 2rem; text-align: center; position: relative; background: linear-gradient(180deg, rgba(11,110,79,.04), transparent 40%); }
-  .cert-frame::before, .cert-frame::after { content: ''; position: absolute; width: 40px; height: 40px; border: 3px solid var(--s21-primary); opacity: .5; }
-  .cert-frame::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
-  .cert-frame::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
-  .cert-serif { font-family: 'Playfair Display', serif; }
-  .cert-code { letter-spacing: .12em; font-family: monospace; }
   @media print {
     header, footer, .no-print, .floating-stack { display: none !important; }
     body { background: #fff !important; }
-    .cert-frame { border-color: #0B6E4F !important; }
   }
 </style>
 </head>
@@ -56,16 +50,20 @@
       </div>
 
       <div id="cert-content" style="display:none">
-        <div class="cert-frame mb-4">
-          <div class="text-soft mb-3" style="letter-spacing:.15em;font-size:.75rem;text-transform:uppercase">Certificate of Completion</div>
-          <div class="cert-serif h4 mb-1" style="color:var(--s21-primary)">Smart21Brain</div>
-          <p class="text-soft mb-4" style="font-size:.85rem">This certifies that</p>
-          <div class="cert-serif h2 mb-4" id="cert-name">—</div>
-          <p class="text-soft mb-1" style="font-size:.9rem">has successfully completed the course</p>
-          <div class="h4 mb-4" id="cert-course">—</div>
-          <div class="d-flex justify-content-center gap-4 flex-wrap text-soft" style="font-size:.82rem">
-            <span>Issued <span id="cert-date">—</span></span>
-            <span>Code <span class="cert-code" id="cert-code">—</span></span>
+        <div class="s21-cert mb-4">
+          <img class="s21-cert-logo" src="images/logo/s21-certificate-logo.png" alt="Smart21Brain logo" width="84" height="84">
+          <h1 class="s21-cert-title">CERTIFICATE</h1>
+          <div class="s21-cert-sub">of completion</div>
+          <p class="s21-cert-lead">This certifies that</p>
+          <div class="s21-cert-name" id="cert-name">—</div>
+          <p class="s21-cert-lead mt-2">has successfully completed the course</p>
+          <div class="s21-cert-course" id="cert-course">—</div>
+          <div class="s21-cert-foot">
+            <div>
+              <span>ISSUED</span><strong id="cert-date">—</strong>
+              <span class="d-block mt-2">CERTIFICATE CODE</span><span class="s21-cert-code" id="cert-code">—</span>
+            </div>
+            <div class="s21-cert-seal" aria-hidden="true"><i class="fa-solid fa-star"></i><span>S21</span></div>
           </div>
         </div>
 
@@ -95,7 +93,7 @@
 <script src="js/nav-account.js"></script>
 <script src="js/vendor/pdf-lib.min.js"></script>
 <script src="js/vendor/qrcode.min.js"></script>
-<script src="js/certificate-pdf.js?v=2"></script>
-<script src="js/certificate.js?v=2"></script>
+<script src="js/certificate-pdf.js?v=3"></script>
+<script src="js/certificate.js?v=3"></script>
 </body>
 </html>

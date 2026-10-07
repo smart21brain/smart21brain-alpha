@@ -1,0 +1,36 @@
+/* Smart21Brain — course-complete.css (page shown right after finishing a course) */
+.cc-hero {
+  position: relative; overflow: hidden; color: #fff; text-align: center; padding: 4.5rem 0 5.5rem;
+  /* gradient layers first, so the page still looks right if the photo can't load */
+  background:
+    linear-gradient(135deg, rgba(8,79,57,.93), rgba(122,90,8,.80)),
+    url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=70') center / cover no-repeat,
+    #084F39;
+}
+.cc-hero-inner { position: relative; z-index: 1; max-width: 760px; }
+#cc-confetti { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.cc-trophy {
+  width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 1rem; display: grid; place-items: center; font-size: 2.1rem; color: #3B2A0B;
+  background: radial-gradient(circle at 35% 30%, #FBE9A6, #D4AF37 60%, #9A7410); box-shadow: 0 0 0 6px rgba(255,255,255,.18), 0 10px 26px rgba(0,0,0,.35);
+  animation: ccPop .7s cubic-bezier(.2,1.4,.4,1) both;
+}
+.cc-kicker { text-transform: uppercase; letter-spacing: .28em; font-size: .78rem; font-weight: 700; color: #F1DC8A; margin: 0 0 .4rem; }
+.cc-hero h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 700; margin: 0 0 .6rem; color: #fff; }
+.cc-hero p.cc-sub { font-size: 1.1rem; opacity: .95; margin: 0 auto 1.6rem; max-width: 560px; }
+.cc-btn-gold, .cc-btn-ghost { display: inline-flex; align-items: center; gap: .5rem; padding: .75rem 1.5rem; border-radius: 999px; font-weight: 700; text-decoration: none; transition: transform .15s ease, box-shadow .15s ease; }
+.cc-btn-gold { background: linear-gradient(180deg, #F5D76E, #D4AF37); color: #3B2A0B; box-shadow: 0 8px 20px rgba(0,0,0,.28); }
+.cc-btn-ghost { background: rgba(255,255,255,.12); color: #fff; border: 2px solid rgba(255,255,255,.7); }
+.cc-btn-gold:hover, .cc-btn-ghost:hover { transform: translateY(-2px); color: inherit; }
+.cc-btn-ghost:hover { color: #fff; background: rgba(255,255,255,.22); }
+.cc-btn-gold:focus-visible, .cc-btn-ghost:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.cc-credit { position: absolute; right: .8rem; bottom: .5rem; z-index: 1; font-size: .65rem; opacity: .6; color: #fff; }
+.cc-credit a { color: inherit; }
+.cc-cert-section { margin-top: -3rem; position: relative; z-index: 2; }
+.cc-actions { display: flex; flex-direction: column; gap: .8rem; justify-content: center; height: 100%; }
+.cc-course-card { overflow: hidden; height: 100%; display: flex; flex-direction: column; padding: 0; }
+.cc-course-card .cc-thumb { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; background: linear-gradient(135deg, var(--s21-primary-light), var(--s21-secondary-tint)); display: block; }
+.cc-course-card .cc-body { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+.cc-chip { align-self: flex-start; font-size: .68rem; font-weight: 700; letter-spacing: .04em; padding: .15rem .6rem; border-radius: 99px; background: var(--s21-secondary-tint); color: #8A6508; }
+@keyframes ccPop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .cc-trophy { animation: none; } .cc-btn-gold:hover, .cc-btn-ghost:hover { transform: none; } }
+@media (max-width: 575px) { .cc-hero { padding: 3rem 0 4.5rem; } }
