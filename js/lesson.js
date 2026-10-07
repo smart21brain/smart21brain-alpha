@@ -96,6 +96,17 @@
     render(data);
   }
 
+  // Cuts lesson markdown into one section per "## heading". Text before
+  // the first heading (if any) becomes an "Overview" step.
+  function splitSections(md) {
+    const text = String(md || '').replace(/\r/g, '').trim();
+    if (!text) return [];
+    return text.split(/\n(?=## )/).map((part) => {
+      const m = /^##\s+(.+)$/m.exec(part.split('\n')[0]);
+      return { name: m ? m[1].replace(/[*_`]/g, '').trim() : 'Overview', md: part.trim() };
+    }).filter((sec) => sec.md);
+  }
+
   function render(data) {
     const { lesson, video, material, quiz, completed, course, previous, next, lesson_index, lesson_total } = data;
     const isLocal = !!data.local;
@@ -130,25 +141,35 @@
       renderQuiz(quiz, lesson, isLocal);
     }
 
-    if (lesson.body) {
-      if (window.S21Rich) els.bodyText.innerHTML = window.S21Rich.render(lesson.body);
-      else { els.bodyText.style.whiteSpace = 'pre-line'; els.bodyText.textContent = lesson.body; }
-    } else if (lesson.content_type === 'text') {
-      els.bodyText.textContent = 'No content has been added to this lesson yet.';
-    }
+    // The lesson text is cut into sections at each "## heading", one
+    // element per section. Showing one at a time is what makes the lesson
+    // step-by-step (see initSteps below); a lesson with a single section
+    // simply looks as it always did.
+    const sections = [];
+    els.bodyText.innerHTML = '';
+    const bodyMd = lesson.body || (lesson.content_type === 'text' ? 'No content has been added to this lesson yet.' : '');
+    splitSections(bodyMd).forEach((sec) => {
+      const el = document.createElement('div');
+      el.className = 'lesson-step-section';
+      if (window.S21Rich) el.innerHTML = window.S21Rich.render(sec.md);
+      else { el.style.whiteSpace = 'pre-line'; el.textContent = sec.md; }
+      els.bodyText.appendChild(el);
+      sections.push({ name: sec.name, el });
+    });
 
     if (previous) { els.prevLink.href = `lesson.html?id=${previous.id}`; els.prevLink.style.visibility = 'visible'; }
     if (next) { els.nextLink.href = `lesson.html?id=${next.id}`; els.nextLink.style.visibility = 'visible'; }
     else { els.nextLink.href = `course.html?slug=${encodeURIComponent(course.slug)}`; els.nextLink.textContent = 'Back to course'; els.nextLink.style.visibility = 'visible'; }
 
     setCompleteState(completed);
-    els.completeBtn.addEventListener('click', () => toggleComplete(!completed));
+    els.completeBtn.addEventListener('click', () => toggleComplete(!currentCompleted));
 
     // Mini curriculum sidebar, current lesson highlighted.
     if (isLocal) renderCurriculum(course, data.lessons, lesson.id);
     else loadCurriculum(course, lesson.id);
 
     let currentCompleted = completed;
+    initSteps();
     function toggleComplete(next) {
       currentCompleted = next;
       postComplete(next);
@@ -171,7 +192,7 @@
           setCompleteState(nextState);
         }
         els.completeBtn.disabled = false;
-        return;
+        return true;
       }
       try {
         const res = await fetch(`/api/lessons/${lesson.id}/complete`, {
@@ -182,11 +203,121 @@
         const out = await res.json();
         if (!res.ok) throw new Error(out.error || 'Could not update progress');
         setCompleteState(nextState, out);
+        return true;
       } catch (err) {
         els.completeStatus.textContent = err.message || 'Something went wrong.';
+        return false;
       } finally {
         els.completeBtn.disabled = false;
       }
+    }
+
+    // ---- Step-by-step player ------------------------------------------
+    // Steps, in order: video / resource (if any) -> each text section ->
+    // quiz (if any). One step is on screen at a time; Back/Next move
+    // between steps, and Next on the last step marks the lesson complete
+    // and goes straight on to the next lesson (or back to the course).
+    function initSteps() {
+      const textBlock = document.getElementById('lesson-text-block');
+      const stepper = document.getElementById('lesson-stepper');
+      const labelEl = document.getElementById('lesson-step-label');
+      const nameEl = document.getElementById('lesson-step-name');
+      const trackEl = document.getElementById('lesson-step-track');
+      const fillEl = document.getElementById('lesson-step-fill');
+      const dotsEl = document.getElementById('lesson-step-dots');
+      const shown = (el) => el && el.style.display !== 'none';
+
+      const steps = [];
+      if (shown(els.videoBlock)) steps.push({ name: 'Watch the video', block: els.videoBlock });
+      if (shown(els.pdfBlock)) steps.push({ name: els.pdfTitle.textContent || 'Resource', block: els.pdfBlock });
+      // A lone one-line intro ("Answer every question…") isn't worth a
+      // step of its own — show it above the quiz instead.
+      const introOnly = sections.length === 1 && shown(els.quizBlock) && sections[0].el.textContent.trim().length < 300;
+      if (!introOnly) sections.forEach((sec) => steps.push({ name: sec.name, block: textBlock, child: sec.el }));
+      if (shown(els.quizBlock)) steps.push({ name: els.quizTitle.textContent || 'Quiz', block: els.quizBlock, withIntro: introOnly ? sections[0].el : null });
+      if (steps.length < 1) return; // nothing to show (should not happen)
+
+      const last = steps.length - 1;
+      const visited = new Set([0]);
+      const blocks = [els.videoBlock, els.pdfBlock, textBlock, els.quizBlock];
+      let cur = 0;
+      const afterHref = next ? `lesson.html?id=${encodeURIComponent(next.id)}` : `course.html?slug=${encodeURIComponent(course.slug)}`;
+
+      function paint(scroll) {
+        blocks.forEach((b) => { if (b) b.style.display = 'none'; });
+        sections.forEach((sec) => { sec.el.style.display = 'none'; });
+        const st = steps[cur];
+        st.block.style.display = '';
+        if (st.child) st.child.style.display = '';
+        if (st.withIntro) { textBlock.style.display = ''; st.withIntro.style.display = ''; }
+
+        // A single-step lesson has nothing to step through, so the progress
+        // strip stays hidden — but it still gets Complete & continue.
+        stepper.style.display = steps.length > 1 ? '' : 'none';
+        labelEl.textContent = `Step ${cur + 1} of ${steps.length}`;
+        nameEl.textContent = st.name;
+        const pct = Math.round(((cur + 1) / steps.length) * 100);
+        fillEl.style.width = `${pct}%`;
+        trackEl.setAttribute('aria-valuenow', String(pct));
+        dotsEl.innerHTML = steps.map((s, i) =>
+          `<button type="button" class="lesson-dot ${i === cur ? 'is-current' : (visited.has(i) ? 'is-done' : '')}" data-step="${i}" aria-label="Step ${i + 1}: ${esc(s.name)}"${i === cur ? ' aria-current="step"' : ''}>${i + 1}</button>`
+        ).join('');
+
+        // Back / Next buttons
+        const hasPrevLesson = !!previous;
+        if (cur > 0) {
+          els.prevLink.style.visibility = 'visible';
+          els.prevLink.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Back';
+        } else if (hasPrevLesson) {
+          els.prevLink.style.visibility = 'visible';
+          els.prevLink.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Previous lesson';
+        } else {
+          els.prevLink.style.visibility = 'hidden';
+        }
+        els.nextLink.style.visibility = 'visible';
+        els.nextLink.className = 'btn-s21 btn-s21-primary';
+        if (cur < last) els.nextLink.innerHTML = 'Next <i class="fa-solid fa-arrow-right"></i>';
+        else if (!currentCompleted) els.nextLink.innerHTML = next
+          ? '<i class="fa-solid fa-circle-check"></i> Complete &amp; continue'
+          : '<i class="fa-solid fa-flag-checkered"></i> Finish course';
+        else els.nextLink.innerHTML = next ? 'Next lesson <i class="fa-solid fa-arrow-right"></i>' : 'Back to course';
+        els.nextLink.href = cur < last ? '#' : afterHref;
+
+        if (scroll) els.title.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function go(i) {
+        cur = Math.max(0, Math.min(last, i));
+        visited.add(cur);
+        paint(true);
+      }
+
+      dotsEl.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-step]');
+        if (b) go(Number(b.dataset.step));
+      });
+      els.prevLink.addEventListener('click', (e) => {
+        if (cur > 0) { e.preventDefault(); go(cur - 1); }
+        // on the first step the link's own href goes to the previous lesson
+      });
+      els.nextLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (cur < last) { go(cur + 1); return; }
+        if (els.nextLink.dataset.busy) return;
+        els.nextLink.dataset.busy = '1';
+        els.nextLink.style.opacity = '.7';
+        let ok = true;
+        if (!currentCompleted) {
+          currentCompleted = true;
+          ok = await postComplete(true);
+          if (!ok) currentCompleted = false;
+        }
+        if (ok) { window.location.href = afterHref; return; }
+        delete els.nextLink.dataset.busy;
+        els.nextLink.style.opacity = '';
+      });
+
+      paint(false);
     }
 
     function setCompleteState(isComplete, progress) {

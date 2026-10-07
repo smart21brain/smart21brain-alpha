@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="css/style.css?v=14">
 <link rel="stylesheet" href="css/responsive.css?v=5">
 <link rel="stylesheet" href="css/animations.css?v=4">
-<link rel="stylesheet" href="css/lesson-rich.css?v=1">
+<link rel="stylesheet" href="css/lesson-rich.css?v=2">
 
 </head>
 <body>
@@ -117,6 +117,16 @@
         <div class="col-lg-8">
           <span class="badge-pill mb-2" id="lesson-position">Lesson</span>
           <h1 class="h3 mb-3" id="lesson-title">Loading…</h1>
+
+          <!-- STEP-BY-STEP PROGRESS (shown only when the lesson has 2+ steps) -->
+          <div id="lesson-stepper" class="lesson-stepper mb-4" style="display:none" aria-label="Lesson steps">
+            <div class="d-flex justify-content-between gap-2 text-soft mb-1" style="font-size:.8rem">
+              <span id="lesson-step-label" class="fw-bold">Step 1 of 1</span>
+              <span id="lesson-step-name" class="text-end"></span>
+            </div>
+            <div class="lesson-step-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="lesson-step-track"><span id="lesson-step-fill"></span></div>
+            <div class="lesson-step-dots" id="lesson-step-dots"></div>
+          </div>
 
           <!-- VIDEO -->
           <div id="lesson-video-block" style="display:none" class="mb-4">
@@ -280,7 +290,7 @@
 <script src="js/courses-data.js?v=2"></script>
 <script src="js/course-progress.js"></script>
 <script src="js/lesson-rich.js?v=1"></script>
-<script src="js/lesson.js?v=2"></script>
+<script src="js/lesson.js?v=3"></script>
 <script src="js/cookie-consent.js"></script>
 </body>
 </html>

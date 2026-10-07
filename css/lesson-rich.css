@@ -77,3 +77,17 @@
 .side-mod { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; color: var(--s21-text-soft); padding: .7rem 0 .2rem; }
 .lesson-progress-bar { height: 8px; border-radius: 99px; background: var(--s21-primary-light); overflow: hidden; margin: .4rem 0 1rem; }
 .lesson-progress-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--s21-primary), var(--s21-secondary)); }
+
+
+/* ---- Step-by-step lesson player ---- */
+.lesson-step-track { height: 8px; border-radius: 99px; background: var(--s21-primary-light); overflow: hidden; }
+.lesson-step-track > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--s21-primary), var(--s21-secondary)); transition: width .35s ease; }
+.lesson-step-dots { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.lesson-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #C9CFD6; background: transparent; color: inherit; font-size: .75rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: background .2s, border-color .2s, color .2s; }
+.lesson-dot:hover { border-color: var(--s21-primary); }
+.lesson-dot.is-done { background: var(--s21-primary-light); border-color: var(--s21-primary); color: var(--s21-primary); }
+.lesson-dot.is-current { background: var(--s21-primary); border-color: var(--s21-primary); color: #fff; }
+.lesson-dot:focus-visible { outline: 3px solid var(--s21-secondary); outline-offset: 2px; }
+.lesson-step-section { animation: lessonStepIn .3s ease both; }
+@keyframes lessonStepIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lesson-step-section, .lesson-step-track > span { animation: none; transition: none; } }
