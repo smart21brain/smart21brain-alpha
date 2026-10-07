@@ -895,12 +895,11 @@ body {
   display: inline-flex; align-items: center; gap: .35rem;
   font-size: .75rem; font-weight: 700;
   padding: .3rem .7rem; border-radius: var(--radius-pill);
-  /* Brand yellow, with dark text so it reads well in light and dark mode. */
-  background: linear-gradient(180deg, #FFE08A, var(--s21-secondary)); color: #3B2A0B;
-  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 2px 6px rgba(232,179,52,.28);
+  /* Brand pink (--s21-accent #EF476F) with white text; works in light and dark mode. */
+  background: linear-gradient(180deg, var(--s21-accent), var(--s21-accent-dark)); color: #fff;
+  box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 2px 6px rgba(239,71,111,.30);
 }
-.badge-pill.pink { background: var(--s21-accent-tint); color: var(--s21-accent); box-shadow: none; }
-.badge-pill.gold { background: linear-gradient(180deg, #FFE08A, var(--s21-secondary)); color: #3B2A0B; }
+.badge-pill.pink, .badge-pill.gold { background: linear-gradient(180deg, var(--s21-accent), var(--s21-accent-dark)); color: #fff; }
 
 .progress-s21 {
   height: 8px; border-radius: var(--radius-pill);
