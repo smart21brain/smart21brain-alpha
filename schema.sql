@@ -1379,3 +1379,23 @@ UPDATE courses SET
   final_exam_passing_score = 70
 WHERE slug = 'fractions-made-fun'
   AND EXISTS (SELECT 1 FROM quizzes WHERE title = 'Fractions Made Fun — Final Exam');
+
+-- Account-level progress for the built-in course catalog (see catalog-progress-schema.sql)
+CREATE TABLE IF NOT EXISTS catalog_enrollments (
+  user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  course_slug  TEXT    NOT NULL,
+  enrolled_at  INTEGER NOT NULL,              -- ms since epoch, as the browser records it
+  updated_at   INTEGER NOT NULL,              -- ms since epoch; newest write wins when devices disagree
+  completed_at TEXT,                          -- set once every lesson is done; never cleared (like a certificate)
+  PRIMARY KEY (user_id, course_slug)
+);
+
+CREATE TABLE IF NOT EXISTS catalog_progress (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  course_slug  TEXT    NOT NULL,
+  lesson_id    TEXT    NOT NULL,              -- e.g. 'fractions-made-fun::3'
+  completed_at TEXT    NOT NULL,              -- ISO timestamp
+  UNIQUE (user_id, lesson_id)
+);
+CREATE INDEX IF NOT EXISTS idx_catalog_progress_user ON catalog_progress(user_id);

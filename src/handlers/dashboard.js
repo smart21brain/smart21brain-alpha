@@ -1,12 +1,24 @@
 import { getSessionUser, json, unauthorized } from '../lib/auth.js';
+import { CATALOG } from '../lib/catalog-index.js';
 
 // XP is a simple, transparent formula (no separate xp table): every quiz
 // attempt and game play earns XP, computed on the fly from the activity
 // that's already logged. Levels are just XP / 200, rounded down.
+// Lessons count too: +10 XP per lesson completed (database courses AND the
+// built-in catalog, whose progress is synced to the account) and +50 XP the
+// first time a whole course is finished.
 const XP_PER_LEVEL = 200;
 const QUIZ_XP_BASE = 15;
 const QUIZ_XP_ACCURACY_BONUS = 15; // up to +15 for a perfect score
 const GAME_XP = 12;
+const LESSON_XP = 10;
+const COURSE_XP = 50;
+
+// The catalog tables only exist once catalog-progress-schema.sql has been
+// applied. Until then this must not break the dashboard — treat as "nothing yet".
+async function safely(run, fallback) {
+  try { return await run(); } catch { return fallback; }
+}
 
 // Computes the current day-streak (consecutive calendar days, ending
 // today or yesterday, with at least one quiz attempt or game play) from
@@ -96,6 +108,25 @@ export async function getDashboard({ request, env }) {
     ).bind(user.id, user.id).first(),
   ]);
 
+  // --- Course activity: lessons + finished courses (database courses and the built-in catalog) ---
+  const uid = user.id;
+  const [dbLessons, catalogLessons, dbCompleted, catalogCompleted] = await Promise.all([
+    safely(() => env.DB.prepare('SELECT completed_at FROM lesson_progress WHERE user_id = ? AND completed = 1').bind(uid).all(), { results: [] }),
+    safely(() => env.DB.prepare('SELECT completed_at FROM catalog_progress WHERE user_id = ?').bind(uid).all(), { results: [] }),
+    safely(() => env.DB.prepare(
+      `SELECT cc.slug AS category FROM course_enrollments e
+       JOIN courses c ON c.id = e.course_id LEFT JOIN course_categories cc ON cc.id = c.category_id
+       WHERE e.user_id = ? AND e.status = 'completed'`
+    ).bind(uid).all(), { results: [] }),
+    safely(() => env.DB.prepare('SELECT course_slug FROM catalog_enrollments WHERE user_id = ? AND completed_at IS NOT NULL').bind(uid).all(), { results: [] }),
+  ]);
+  const lessonsCompleted = dbLessons.results.length + catalogLessons.results.length;
+  const completedCategories = new Set([
+    ...dbCompleted.results.map((r) => r.category),
+    ...catalogCompleted.results.map((r) => (CATALOG[r.course_slug] || {}).category),
+  ].filter(Boolean));
+  const coursesCompleted = dbCompleted.results.length + catalogCompleted.results.length;
+
   // --- XP & level ---
   let xp = 0;
   for (const attempt of quizAttemptsForXp.results) {
@@ -103,25 +134,31 @@ export async function getDashboard({ request, env }) {
     xp += QUIZ_XP_BASE + Math.round(ratio * QUIZ_XP_ACCURACY_BONUS);
   }
   xp += (gamePlaysForXp.plays || 0) * GAME_XP;
+  xp += lessonsCompleted * LESSON_XP + coursesCompleted * COURSE_XP;
   const level = Math.floor(xp / XP_PER_LEVEL) + 1;
   const xpIntoLevel = xp % XP_PER_LEVEL;
 
   // --- Streak ---
-  const streakDays = computeStreak(activityDates.results.map((r) => r.day));
+  // A day with a finished lesson keeps the streak alive, just like a quiz or a game does.
+  const lessonDays = [...dbLessons.results, ...catalogLessons.results]
+    .map((r) => String(r.completed_at || '').slice(0, 10)).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d));
+  const allDays = [...new Set([...activityDates.results.map((r) => r.day), ...lessonDays])].sort().reverse();
+  const streakDays = computeStreak(allDays);
 
   // --- Badges ---
   const quizAttempts = quizStats.attempts || 0;
+  // Subject badges are earned by passing a quiz in that subject OR by
+  // finishing a whole course in it. The reading / coding / creative badges
+  // come from finishing a Languages / Computer Studies / Creative course.
   const badges = {
-    math_master: mathBadge.n > 0,
-    science_star: scienceBadge.n > 0,
+    math_master: mathBadge.n > 0 || completedCategories.has('mathematics'),
+    science_star: scienceBadge.n > 0 || completedCategories.has('science'),
     quiz_champion: quizAttempts >= 10,
     streak_7: streakDays >= 7,
     explorer: distinctGames.n >= 3,
-    // Not tracked by the backend yet — always locked until a reading /
-    // coding / creative-work activity log exists.
-    book_explorer: false,
-    coding_hero: false,
-    creative_star: false,
+    book_explorer: completedCategories.has('languages'),
+    coding_hero: completedCategories.has('computer-studies'),
+    creative_star: completedCategories.has('creative'),
   };
   const earnedBadges = Object.keys(badges).filter((k) => badges[k]);
 
@@ -134,6 +171,8 @@ export async function getDashboard({ request, env }) {
     recent_quizzes: recentQuizzes.results,
     recent_games: [...recentGameActivity.results, ...recentGameScores.results],
     xp,
+    lessons_completed: lessonsCompleted,
+    courses_completed: coursesCompleted,
     level,
     xp_into_level: xpIntoLevel,
     xp_per_level: XP_PER_LEVEL,

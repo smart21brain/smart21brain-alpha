@@ -6,6 +6,12 @@
 
    When a real API is added later, course-detail.js / lesson.js prefer the
    server response and this store is simply not consulted.
+
+   Signed-in learners: js/progress-sync.js mirrors this store to their account
+   (/api/progress/catalog) so it follows them to other devices and counts
+   toward XP / streak / badges. Every change made here is stamped with
+   updated_at and announced with a 's21:progress-changed' event so the sync
+   can push it straight away.
 */
 (function () {
   const KEY = 's21.courseProgress.v1';
@@ -28,10 +34,14 @@
     return !!courseState(slug);
   }
 
+  function changed(slug) {
+    try { window.dispatchEvent(new CustomEvent('s21:progress-changed', { detail: { slug } })); } catch { /* old browser */ }
+  }
+
   function enroll(slug) {
     const all = readAll();
-    if (!all[slug]) all[slug] = { enrolled_at: Date.now(), completed: [] };
-    writeAll(all);
+    const isNew = !all[slug];
+    if (isNew) { all[slug] = { enrolled_at: Date.now(), updated_at: Date.now(), completed: [] }; writeAll(all); changed(slug); }
     return all[slug];
   }
 
@@ -50,7 +60,14 @@
     const list = new Set(all[slug].completed || []);
     if (done) list.add(String(lessonId)); else list.delete(String(lessonId));
     all[slug].completed = Array.from(list);
+    // remember WHEN each lesson was finished (the dashboard's activity feed uses it)
+    const times = all[slug].times || {};
+    if (done) { if (!times[String(lessonId)]) times[String(lessonId)] = new Date().toISOString(); }
+    else delete times[String(lessonId)];
+    all[slug].times = times;
+    all[slug].updated_at = Date.now();
     writeAll(all);
+    changed(slug);
     return all[slug].completed;
   }
 
@@ -94,8 +111,17 @@
     return (st && st.completed_at) || null;
   }
 
+  /* Used by progress-sync.js only: adopt the account's copy without announcing a change. */
+  function replace(slug, state) {
+    const all = readAll();
+    all[slug] = state;
+    writeAll(all);
+  }
+  function replaceAll(states) { writeAll(states || {}); }
+
   window.S21Progress = {
+    replace, replaceAll,
     isEnrolled, enroll, isComplete, setComplete, progress, applyTo, completedIds,
-    stampCompletion, completedAt,
+    stampCompletion, completedAt, all: readAll,
   };
 })();

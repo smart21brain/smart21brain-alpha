@@ -201,7 +201,7 @@
 
           <!-- Recommended -->
           <h2 class="h5 mb-3" id="recommended" data-aos="fade-up"><i class="fa-solid fa-sparkles" style="color:var(--s21-accent)"></i> <span data-i18n="dash_recommended_for_you">Recommended for you</span></h2>
-          <div class="row g-3">
+          <div class="row g-3" id="dash-recommended-list">
             <div class="col-md-4" data-aos="fade-up">
               <div class="s21-card media-card">
                 <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=400&q=70&auto=format&fit=crop" alt="Child typing code on a laptop" loading="lazy"><span class="cat-badge" data-i18n="dash_coding">Coding</span></div>
@@ -234,17 +234,15 @@
 
             <div class="s21-card p-4 mb-4" data-aos="fade-up">
               <h3 class="h6 mb-3"><i class="fa-solid fa-bullseye" style="color:var(--s21-primary)"></i> <span data-i18n="dash_weekly_goal">Weekly goal</span></h3>
-              <div class="progress-s21 mb-2"><span style="width:80%"></span></div>
-              <div class="d-flex justify-content-between text-soft" style="font-size:.8rem"><span data-i18n="dash_4_5_lessons">4 / 5 lessons</span><span>80%</span></div>
+              <div class="progress-s21 mb-2"><span id="dash-weekly-bar" style="width:0%"></span></div>
+              <div class="d-flex justify-content-between text-soft" style="font-size:.8rem"><span id="dash-weekly-label">0 / 5 lessons</span><span id="dash-weekly-pct">0%</span></div>
             </div>
           </div>
 
           <div class="s21-card p-4 mb-4" id="notifications" data-aos="fade-up" data-aos-delay="60">
             <h3 class="h6 mb-3"><i class="fa-solid fa-bell" style="color:var(--s21-accent)"></i> <span data-i18n="dash_notifications">Notifications</span></h3>
-            <ul class="list-unstyled d-flex flex-column gap-3" style="font-size:.85rem">
-              <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-soft mt-1"></i> <span data-i18n="dash_new_quiz_added_solar_system">New quiz added: Solar System</span></li>
-              <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-soft mt-1"></i> <span data-i18n="dash_ms_amina_posted_an_announcement">Ms. Amina posted an announcement</span></li>
-              <li class="d-flex gap-2"><i class="fa-solid fa-circle-check text-soft mt-1"></i> <span data-i18n="dash_you_re_2_days_from_a_14_day_streak">You're 2 days from a 14-day streak!</span></li>
+            <ul class="list-unstyled d-flex flex-column gap-3 mb-0" style="font-size:.85rem" id="dash-notifications-list" aria-live="polite">
+              <li class="text-soft" data-i18n="dash_notif_none">No notifications yet — start a course to see updates here.</li>
             </ul>
           </div>
 
@@ -359,7 +357,10 @@
 <script src="js/ai-assistant.js?v=4"></script>
 <script src="js/main.js"></script>
 <script src="js/nav-account.js"></script>
-<script src="js/dashboard.js"></script>
+<script src="js/courses-data.js?v=2"></script>
+<script src="js/course-progress.js?v=3"></script>
+<script src="js/progress-sync.js?v=1"></script>
+<script src="js/dashboard.js?v=2"></script>
 <script src="js/sidebar-nav.js"></script>
 <script src="js/sidebar-collapse.js"></script>
 

@@ -8,6 +8,7 @@ import * as courses from './handlers/courses.js';
 import * as courseLessons from './handlers/course-lessons.js';
 import * as courseModules from './handlers/course-modules.js';
 import * as certificates from './handlers/certificates.js';
+import * as catalogProgress from './handlers/catalog-progress.js';
 import * as videos from './handlers/videos.js';
 import * as books from './handlers/books.js';
 import * as users from './handlers/users.js';
@@ -147,6 +148,10 @@ router.get('/api/courses/:id/modules', courseModules.listModules);
 router.post('/api/courses/:id/modules', courseModules.createModule);
 router.put('/api/course-modules/:moduleId', courseModules.updateModule);
 router.delete('/api/course-modules/:moduleId', courseModules.deleteModule);
+
+// ---- Account-level progress for the built-in course catalog (syncs across devices; feeds XP/streak/badges) ----
+router.get('/api/progress/catalog', catalogProgress.getCatalogProgress);
+router.post('/api/progress/catalog', catalogProgress.saveCatalogProgress);
 
 // ---- PHASE 8: certificates ----
 router.get('/api/courses/:id/certificate', certificates.myCertificate);

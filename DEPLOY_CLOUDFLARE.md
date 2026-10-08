@@ -49,6 +49,35 @@ wrangler d1 execute smart21brain-db --file=./schema.sql --remote
 > re-run as usual to pick up new seed data. A brand-new database
 > created from this repo already has everything and doesn't need it.
 
+### Learner progress that follows the account (built-in courses)
+
+The built-in course catalog (`js/courses-data.js`) used to keep a learner's
+enrolment and lesson progress only in their browser. Two small tables now
+store it against the **account**, so it appears on any phone/laptop they sign
+in on, and the dashboard's **XP, level, streak and badges** count it
+(+10 XP per lesson, +50 XP the first time a course is finished; a day with a
+finished lesson keeps the streak alive; finishing a Mathematics / Science /
+Languages / Computer Studies / Creative course unlocks that subject's badge).
+
+An existing database needs this one extra step (safe to re-run; brand-new
+databases already get it from `schema.sql`):
+
+```bash
+wrangler d1 execute smart21brain-db --file=./catalog-progress-schema.sql --remote
+```
+
+Until it is run the site keeps working exactly as before — the dashboard just
+doesn't count built-in lessons yet and nothing is synced.
+
+If you add or remove a built-in course or lesson in `js/courses-data.js`,
+refresh the server's small copy of its shape and redeploy:
+
+```bash
+node scripts/gen-catalog-index.mjs
+```
+
+Server tests (real SQLite built from `schema.sql`): `node --test tests/catalog-progress.test.mjs`
+
 ## 2. Create the R2 buckets
 
 ```bash
