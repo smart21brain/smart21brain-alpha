@@ -42,6 +42,9 @@
         </div>
       `).join('');
       section.style.display = '';
+      // Respect a filter that was already chosen (e.g. ?category= deep link)
+      const active = document.querySelector('[data-book-filter][aria-pressed="true"]');
+      if (active && typeof window.applyBookFilter === 'function') window.applyBookFilter(active.dataset.bookFilter);
     } catch (e) { /* API not reachable yet — leave static content as-is */ }
   }
 
