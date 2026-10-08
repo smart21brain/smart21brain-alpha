@@ -572,14 +572,25 @@
                     </select>
                   </div>
                   <div class="col-12"><label class="form-label">Description</label><input class="form-control s21-input" name="description"></div>
-                  <div class="col-12"><label class="form-label">Cover image URL (optional)</label><input class="form-control s21-input" type="url" name="cover_url" placeholder="https://…"></div>
-                  <div class="col-12">
-                    <label class="form-label">Pages (JSON array)</label>
-                    <textarea class="form-control s21-input" name="pages" rows="6" required
-                      placeholder='[{"heading":"Chapter 1","text":"Once upon a time…"}]'></textarea>
-                    <div class="form-text">Each page needs: heading (optional), text.</div>
+                  <div class="col-md-6">
+                    <label class="form-label"><i class="fa-solid fa-file-pdf"></i> Upload PDF book from your computer</label>
+                    <input class="form-control s21-input" type="file" name="pdf" accept="application/pdf,.pdf">
+                    <div class="form-text">PDF only, up to 50&nbsp;MB.</div>
                   </div>
-                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit">Publish Book</button></div>
+                  <div class="col-md-6">
+                    <label class="form-label"><i class="fa-solid fa-image"></i> Cover page image (optional)</label>
+                    <input class="form-control s21-input" type="file" name="cover" id="book-cover-file" accept="image/png,image/jpeg,image/webp,image/gif">
+                    <div class="form-text">PNG, JPG or WEBP up to 5&nbsp;MB. If you skip this, the first page of the PDF is used as the cover.</div>
+                    <img id="book-cover-preview" alt="Cover preview" style="display:none;max-height:140px;margin-top:.5rem;border-radius:8px;border:1px solid var(--s21-border)">
+                  </div>
+                  <div class="col-12" id="book-pages-wrap">
+                    <label class="form-label">Or type the pages yourself (JSON array, only when no PDF is chosen)</label>
+                    <textarea class="form-control s21-input" name="pages" rows="5"
+                      placeholder='[{"heading":"Chapter 1","text":"Once upon a time…"}]'></textarea>
+                    <div class="form-text">Each page needs: heading (optional), text. Cover image URL for typed books:</div>
+                    <input class="form-control s21-input mt-1" type="url" name="cover_url" placeholder="https://… (optional)">
+                  </div>
+                  <div class="col-12"><button class="btn-s21 btn-s21-primary" type="submit" id="book-submit-btn">Publish Book</button></div>
                 </form>
               </div>
             </div>

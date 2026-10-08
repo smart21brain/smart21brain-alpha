@@ -180,6 +180,9 @@ router.put('/api/videos/:id/progress', videos.saveProgress);
 // ---- Books (digital library; :id accepts a numeric id OR a slug) ----
 router.get('/api/books', books.listBooks);
 router.post('/api/books', books.createBook);
+router.post('/api/books/upload', books.uploadPdfBook);
+router.get('/api/books/:id/pdf', books.getBookPdf);
+router.get('/api/books/:id/cover', books.getBookCover);
 router.get('/api/books/:id', books.getBook);
 router.put('/api/books/:id', books.updateBook);
 router.delete('/api/books/:id', books.deleteBook);

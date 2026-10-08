@@ -225,7 +225,10 @@ CREATE TABLE IF NOT EXISTS books (
   pages       TEXT NOT NULL,                     -- JSON array: [{heading, text}]
   published   INTEGER NOT NULL DEFAULT 1,
   created_by  INTEGER REFERENCES users(id) ON DELETE SET NULL,
-  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+  created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  pdf_key     TEXT,                              -- R2 key of an uploaded PDF book
+  cover_key   TEXT,                              -- R2 key of an uploaded cover image
+  pdf_pages   INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS book_progress (

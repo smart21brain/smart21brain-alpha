@@ -126,11 +126,12 @@
         <div class="col-6 col-md-4 col-lg-3">
           <a href="book.html?slug=${encodeURIComponent(b.slug)}" class="text-reset text-decoration-none">
             <div class="s21-card book-card" data-category="${esc((b.subject || '').toLowerCase().trim().replace(/\s+/g, '-'))}">
+              ${b.cover_url ? `<div class="cover-wrap"><img src="${esc(b.cover_url)}" alt="Cover of ${esc(b.title)}" loading="lazy"></div>` : ''}
               <div class="body">
                 <h3 class="h6 mb-1">${esc(b.title)}</h3>
                 ${b.subject ? `<span class="text-soft" style="font-size:.78rem">${esc(b.subject)}</span>` : ''}
                 ${b.description ? `<p class="text-soft mt-1" style="font-size:.8rem">${esc(b.description)}</p>` : ''}
-                <div class="text-soft mt-1" style="font-size:.76rem">${b.page_count} page${b.page_count === 1 ? '' : 's'}</div>
+                <div class="text-soft mt-1" style="font-size:.76rem">${b.is_pdf ? 'PDF book' + (b.page_count ? ' · ' + b.page_count + ' pages' : '') : b.page_count + ' page' + (b.page_count === 1 ? '' : 's')}</div>
               </div>
             </div>
           </a>

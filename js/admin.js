@@ -170,16 +170,100 @@
       loadVideos();
     });
 
-    // Add Book
+    // Add Book (PDF upload from computer, or typed JSON pages)
+    const PDFJS_VER = '3.11.174';
+    let pdfjsPromise = null;
+    function loadPdfJs() {
+      if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+      if (pdfjsPromise) return pdfjsPromise;
+      pdfjsPromise = new Promise((resolve, reject) => {
+        const sc = document.createElement('script');
+        sc.src = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VER}/pdf.min.js`;
+        sc.onload = () => {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VER}/pdf.worker.min.js`;
+          resolve(window.pdfjsLib);
+        };
+        sc.onerror = () => reject(new Error('pdf.js failed to load'));
+        document.head.appendChild(sc);
+      });
+      return pdfjsPromise;
+    }
+    // Reads page count and renders page 1 to a JPEG blob (used as the cover
+    // when no cover image is chosen). Never throws: returns {} on failure.
+    async function inspectPdf(file) {
+      try {
+        const lib = await loadPdfJs();
+        const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+        const page = await pdf.getPage(1);
+        const base = page.getViewport({ scale: 1 });
+        const viewport = page.getViewport({ scale: 600 / base.width });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width; canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
+        return { pages: pdf.numPages, cover: blob };
+      } catch (e) {
+        return {};
+      }
+    }
+
+    const coverInput = document.getElementById('book-cover-file');
+    const coverPreview = document.getElementById('book-cover-preview');
+    coverInput?.addEventListener('change', () => {
+      const f = coverInput.files[0];
+      if (f && coverPreview) { coverPreview.src = URL.createObjectURL(f); coverPreview.style.display = ''; }
+      else if (coverPreview) coverPreview.style.display = 'none';
+    });
+
     document.getElementById('admin-book-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const f = new FormData(e.target);
+      const form = e.target;
+      const f = new FormData(form);
+      const pdfFile = f.get('pdf');
+      const hasPdf = pdfFile && typeof pdfFile !== 'string' && pdfFile.size > 0;
+      const btn = document.getElementById('book-submit-btn');
+      const setBusy = (b, label) => { if (btn) { btn.disabled = b; btn.textContent = label || 'Publish Book'; } };
+
+      if (hasPdf) {
+        if (!/\.pdf$/i.test(pdfFile.name) && pdfFile.type !== 'application/pdf') { say('❌ The book file must be a PDF.', true); return; }
+        if (pdfFile.size > 50 * 1024 * 1024) { say('❌ PDF is too large (50MB max).', true); return; }
+        setBusy(true, 'Uploading…');
+        say('Preparing your PDF…');
+        try {
+          const info = await inspectPdf(pdfFile);
+          const out = new FormData();
+          out.append('title', f.get('title'));
+          out.append('subject', f.get('subject') || '');
+          out.append('description', f.get('description') || '');
+          out.append('pdf', pdfFile);
+          const chosenCover = f.get('cover');
+          if (chosenCover && typeof chosenCover !== 'string' && chosenCover.size > 0) out.append('cover', chosenCover);
+          else if (info.cover) out.append('cover', info.cover, 'cover.jpg');
+          if (info.pages) out.append('pdf_pages', String(info.pages));
+          say('Uploading to the library…');
+          const res = await fetch('/api/books/upload', { method: 'POST', credentials: 'include', body: out });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(data.error || 'Upload failed.');
+          say('✅ PDF book published' + (info.pages ? ` (${info.pages} pages).` : '.'));
+          form.reset();
+          if (coverPreview) coverPreview.style.display = 'none';
+          loadBooks();
+        } catch (err) {
+          say('❌ ' + err.message, true);
+        } finally {
+          setBusy(false);
+        }
+        return;
+      }
+
       let pages;
       try {
         pages = JSON.parse(f.get('pages'));
         if (!Array.isArray(pages) || pages.length === 0) throw new Error();
       } catch {
-        say('❌ Pages must be valid JSON — an array of {heading, text}.', true);
+        say('❌ Choose a PDF file to upload, or enter pages as a JSON array of {heading, text}.', true);
         return;
       }
       try {
@@ -191,7 +275,8 @@
           pages,
         });
         say('✅ Book published.');
-        e.target.reset();
+        form.reset();
+        if (coverPreview) coverPreview.style.display = 'none';
         loadBooks();
       } catch (err) {
         say('❌ ' + err.message, true);
@@ -276,7 +361,7 @@
       if (!el) return;
       try {
         const { books } = await (await fetch('/api/books', { credentials: 'include' })).json();
-        el.innerHTML = books.length ? books.map((b) => row(b.title, [b.subject, `${b.page_count} page${b.page_count === 1 ? '' : 's'}`].filter(Boolean).join(' · '), `/api/books/${b.id}`, loadBooks)).join('')
+        el.innerHTML = books.length ? books.map((b) => row(b.title, [b.subject, b.is_pdf ? 'PDF' : '', b.page_count ? `${b.page_count} page${b.page_count === 1 ? '' : 's'}` : ''].filter(Boolean).join(' · '), `/api/books/${b.id}`, loadBooks)).join('')
           : '<p class="text-soft" style="font-size:.85rem">No books yet.</p>';
         wireRowDeletes(el);
       } catch { el.innerHTML = '<p class="text-soft" style="font-size:.85rem">Couldn\'t load books.</p>'; }

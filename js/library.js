@@ -76,6 +76,47 @@
     syncProgress();
   }
 
+  // Uploaded PDF book: swap the text reader for the PDF itself, and use
+  // the uploaded cover + a real download link.
+  function showPdfBook(live) {
+    document.title = `${live.title} — Smart21Brain Library`;
+    document.querySelector('h1[data-i18n]')?.removeAttribute('data-i18n');
+    const h1 = document.querySelector('h1'); if (h1) h1.textContent = live.title;
+    const crumb = document.querySelector('.breadcrumb-item.active');
+    if (crumb) { crumb.removeAttribute('data-i18n'); crumb.textContent = live.title; }
+
+    const cover = document.querySelector('.cover-wrap img');
+    if (cover && live.cover_url) { cover.src = live.cover_url; cover.alt = `Cover of ${live.title}`; }
+
+    const dl = Array.from(document.querySelectorAll('a.btn-s21')).find((a) => a.querySelector('.fa-download'));
+    if (dl) { dl.href = live.pdf_url + '?download=1'; dl.setAttribute('download', ''); }
+
+    const about = document.querySelector('.col-lg-8 > p.text-soft');
+    if (about) { about.removeAttribute('data-i18n'); about.textContent = live.description || ''; }
+
+    const detail = (label) => Array.from(document.querySelectorAll('.s21-card ul li')).find((li) => li.firstElementChild && li.firstElementChild.textContent.trim().toLowerCase() === label);
+    const setDetail = (label, value) => { const li = detail(label); if (li && li.lastElementChild) { li.lastElementChild.removeAttribute('data-i18n'); li.lastElementChild.textContent = value; } };
+    setDetail('category', live.subject || '—');
+    setDetail('pages', live.page_count ? String(live.page_count) : '—');
+    ['author', 'age level', 'language', 'rating'].forEach((l) => { const li = detail(l); if (li) li.remove(); });
+
+    const shell = $('reader-page-area')?.closest('.reader-shell');
+    if (shell) {
+      shell.innerHTML = '';
+      const frame = document.createElement('iframe');
+      frame.src = live.pdf_url;
+      frame.title = live.title;
+      frame.style.cssText = 'width:100%;height:80vh;min-height:520px;border:0;border-radius:12px;background:#f4f4f4';
+      shell.appendChild(frame);
+      const note = document.createElement('p');
+      note.className = 'text-soft px-3 pb-3 mb-0';
+      note.style.fontSize = '.82rem';
+      note.innerHTML = `Can't see the book? <a href="${live.pdf_url}" target="_blank" rel="noopener">Open the PDF in a new tab</a> or use Download PDF.`;
+      shell.appendChild(note);
+    }
+    document.getElementById('reader-scroll-btn')?.addEventListener('click', () => shell?.scrollIntoView({ behavior: 'smooth' }));
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     if (!$('reader-page-area')) return; // not on a reader page
 
@@ -88,6 +129,7 @@
     // book isn't found, or the API isn't reachable yet.
     if (window.S21_loadLiveBook) {
       const live = await window.S21_loadLiveBook();
+      if (live && live.pdf_url) { showPdfBook(live); return; }
       if (live && Array.isArray(live.pages) && live.pages.length > 0) {
         PAGES = live.pages;
         liveBookId = live.id;

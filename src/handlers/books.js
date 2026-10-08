@@ -1,10 +1,18 @@
 import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound, slugify } from '../lib/auth.js';
 
+// Books are either "text" books (pages JSON) or uploaded PDF books (file
+// kept in R2, with an optional uploaded cover image).
 function withPageCount(book) {
   let pageCount = 0;
   try { pageCount = JSON.parse(book.pages).length; } catch { /* leave 0 */ }
-  const { pages, ...rest } = book;
-  return { ...rest, page_count: pageCount };
+  const { pages, pdf_key, cover_key, ...rest } = book;
+  const isPdf = !!pdf_key;
+  return {
+    ...rest,
+    page_count: isPdf ? (book.pdf_pages || 0) : pageCount,
+    is_pdf: isPdf,
+    cover_url: cover_key ? `/api/books/${book.id}/cover` : (book.cover_url || null),
+  };
 }
 
 export async function listBooks({ env }) {
@@ -41,6 +49,97 @@ export async function createBook({ request, env }) {
   return json({ id: result.meta.last_row_id, slug }, { status: 201 });
 }
 
+
+const MAX_PDF_BYTES = 50 * 1024 * 1024;   // 50 MB
+const MAX_COVER_BYTES = 5 * 1024 * 1024;  // 5 MB
+const COVER_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+
+function safeName(name) { return String(name || 'file').replace(/[^\w.\-]/g, '_').slice(0, 80); }
+
+// Admin: upload a PDF book (and optionally its cover image) from a computer.
+// multipart/form-data: title, subject, description, pdf_pages (optional),
+// file "pdf" (required), file "cover" (optional image).
+export async function uploadPdfBook({ request, env }) {
+  const user = await getSessionUser(request, env.DB);
+  if (!user) return unauthorized();
+  if (user.role !== 'admin') return forbidden();
+
+  const form = await request.formData().catch(() => null);
+  const pdf = form?.get('pdf');
+  const cover = form?.get('cover');
+  const title = (form?.get('title') || '').toString().trim();
+  if (!form || !title || !pdf || typeof pdf === 'string') {
+    return badRequest('A title and a PDF file are required.');
+  }
+  const looksPdf = pdf.type === 'application/pdf' || /\.pdf$/i.test(pdf.name || '');
+  if (!looksPdf) return badRequest('The book file must be a PDF.');
+  if (pdf.size > MAX_PDF_BYTES) return badRequest('PDF is too large (50MB max).');
+
+  const hasCover = cover && typeof cover !== 'string' && cover.size > 0;
+  if (hasCover) {
+    if (!COVER_TYPES.includes(cover.type)) return badRequest('Cover must be a PNG, JPG, WEBP or GIF image.');
+    if (cover.size > MAX_COVER_BYTES) return badRequest('Cover image is too large (5MB max).');
+  }
+
+  const stamp = `${Date.now()}-${crypto.randomUUID()}`;
+  const pdfKey = `books/${stamp}-${safeName(pdf.name)}`;
+  await env.MATERIALS.put(pdfKey, await pdf.arrayBuffer(), { httpMetadata: { contentType: 'application/pdf' } });
+
+  let coverKey = null;
+  if (hasCover) {
+    coverKey = `books/covers/${stamp}-${safeName(cover.name)}`;
+    await env.MATERIALS.put(coverKey, await cover.arrayBuffer(), { httpMetadata: { contentType: cover.type } });
+  }
+
+  // Unique slug: add a short suffix if the title was used before.
+  let slug = slugify(form.get('slug') || title);
+  const taken = await env.DB.prepare('SELECT id FROM books WHERE slug = ?').bind(slug).first();
+  if (taken) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
+
+  const pdfPages = Math.max(0, parseInt(form.get('pdf_pages'), 10) || 0);
+  try {
+    const result = await env.DB.prepare(
+      `INSERT INTO books (title, slug, subject, description, cover_url, pages, published, created_by, pdf_key, cover_key, pdf_pages)
+       VALUES (?, ?, ?, ?, NULL, '[]', 1, ?, ?, ?, ?)`
+    ).bind(
+      title, slug, form.get('subject') || null, form.get('description') || null,
+      user.id, pdfKey, coverKey, pdfPages
+    ).run();
+    return json({ id: result.meta.last_row_id, slug }, { status: 201 });
+  } catch (err) {
+    // Don't leave orphaned files behind if the database insert fails.
+    await env.MATERIALS.delete(pdfKey);
+    if (coverKey) await env.MATERIALS.delete(coverKey);
+    return badRequest('Could not save the book. Has the books table been updated? (run migrations/phase9-book-pdf.sql)');
+  }
+}
+
+async function streamBookFile(env, key, fallbackType, disposition) {
+  const object = await env.MATERIALS.get(key);
+  if (!object) return notFound('File missing from storage.');
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  if (!headers.get('Content-Type')) headers.set('Content-Type', fallbackType);
+  if (disposition) headers.set('Content-Disposition', disposition);
+  headers.set('Cache-Control', 'public, max-age=3600');
+  headers.set('X-Content-Type-Options', 'nosniff');
+  return new Response(object.body, { headers });
+}
+
+export async function getBookPdf({ params, env, url }) {
+  const book = await env.DB.prepare('SELECT title, pdf_key, published FROM books WHERE id = ?').bind(params.id).first();
+  if (!book || !book.pdf_key || !book.published) return notFound();
+  const name = safeName(book.title) + '.pdf';
+  const dl = url && url.searchParams.get('download') === '1';
+  return streamBookFile(env, book.pdf_key, 'application/pdf', `${dl ? 'attachment' : 'inline'}; filename="${name}"`);
+}
+
+export async function getBookCover({ params, env }) {
+  const book = await env.DB.prepare('SELECT cover_key, published FROM books WHERE id = ?').bind(params.id).first();
+  if (!book || !book.cover_key || !book.published) return notFound();
+  return streamBookFile(env, book.cover_key, 'image/jpeg', null);
+}
+
 // Looked up by numeric id (admin "manage content" list, reader deep links
 // via ?id=) or by slug (reader deep links via ?slug=, book cards).
 export async function getBook({ params, env }) {
@@ -51,6 +150,13 @@ export async function getBook({ params, env }) {
   ).bind(key).first();
   if (!book) return notFound();
   book.pages = JSON.parse(book.pages);
+  if (book.pdf_key) {
+    book.is_pdf = true;
+    book.pdf_url = `/api/books/${book.id}/pdf`;
+    book.page_count = book.pdf_pages || 0;
+  }
+  if (book.cover_key) book.cover_url = `/api/books/${book.id}/cover`;
+  delete book.pdf_key; delete book.cover_key;
   return json({ book });
 }
 
@@ -82,6 +188,9 @@ export async function deleteBook({ request, params, env }) {
   if (!user) return unauthorized();
   if (user.role !== 'admin') return forbidden();
 
+  const book = await env.DB.prepare('SELECT pdf_key, cover_key FROM books WHERE id = ?').bind(params.id).first();
+  if (book?.pdf_key) await env.MATERIALS.delete(book.pdf_key);
+  if (book?.cover_key) await env.MATERIALS.delete(book.cover_key);
   await env.DB.prepare('DELETE FROM books WHERE id = ?').bind(params.id).run();
   return json({ ok: true });
 }
