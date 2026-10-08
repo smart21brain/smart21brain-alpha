@@ -191,10 +191,13 @@
       const fallback = added ? 'Added to favourites.' : 'Removed from favourites.';
       window.S21_toast?.(window.S21_t ? window.S21_t(key) : fallback, { icon: added ? 'fa-heart' : 'fa-heart-crack' });
     }
-    document.querySelectorAll('[data-fav-id]').forEach((btn) => {
+    function bindFav(btn) {
+      if (btn.dataset.favBound) return; // never bind twice
+      btn.dataset.favBound = '1';
       const id = btn.dataset.favId;
       if (getFavs().includes(id)) btn.classList.add('is-fav');
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault(); ev.stopPropagation(); // don't follow a surrounding link
         let favs = getFavs();
         let added;
         if (favs.includes(id)) { favs = favs.filter((f) => f !== id); btn.classList.remove('is-fav'); added = false; }
@@ -205,7 +208,10 @@
         btn.classList.add('is-popping');
         favToast(added);
       });
-    });
+    }
+    document.querySelectorAll('[data-fav-id]').forEach(bindFav);
+    // Cards added later by live-data.js (uploaded books etc.) call this.
+    window.S21_bindFavs = (root) => (root || document).querySelectorAll('[data-fav-id]').forEach(bindFav);
 
     /* Scroll-to-reader button (book.html) */
     document.getElementById('reader-scroll-btn')?.addEventListener('click', () => {

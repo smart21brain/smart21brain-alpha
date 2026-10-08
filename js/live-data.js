@@ -125,6 +125,117 @@
     try {
       const { books } = await getJSON('/api/books');
       if (!books || books.length === 0) return;
+      grid.innerHTML = books.map((b) => {
+        const href = `book.html?slug=${encodeURIComponent(b.slug)}`;
+        const cat = esc((b.subject || '').toLowerCase().trim().replace(/\s+/g, '-'));
+        const pages = b.page_count ? `${b.page_count} page${b.page_count === 1 ? '' : 's'}` : '';
+        const meta = [b.is_pdf ? 'PDF book' : '', pages].filter(Boolean).join(' · ');
+        const placeholder = '<div class="d-flex align-items-center justify-content-center h-100 w-100" style="background:linear-gradient(135deg,var(--s21-primary),var(--s21-primary-dark,#0f5132));color:#fff;font-size:3rem"><i class="fa-solid fa-book"></i></div>';
+        return `
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="s21-card book-card h-100" data-category="${cat}">
+            <div class="cover-wrap">
+              <a href="${href}" class="d-block w-100 h-100" aria-label="Open ${esc(b.title)}">
+                ${b.cover_url ? `<img src="${esc(b.cover_url)}" alt="Cover of ${esc(b.title)}" loading="lazy">` : placeholder}
+              </a>
+              <button class="fav-btn position-absolute" style="top:.6rem;right:.6rem" data-fav-id="book-${b.id}" aria-label="Save to favorites" type="button"><i class="fa-solid fa-heart"></i></button>
+            </div>
+            <div class="body p-3">
+              ${b.subject ? `<span class="badge-pill mb-2">${esc(b.subject)}</span>` : ''}
+              <h3 class="h6 mb-1"><a href="${href}" class="text-reset text-decoration-none">${esc(b.title)}</a></h3>
+              ${b.description ? `<p class="text-soft mb-1" style="font-size:.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(b.description)}</p>` : ''}
+              ${meta ? `<div class="meta text-soft" style="font-size:.78rem">${esc(meta)}</div>` : ''}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      // main.js defines S21_bindFavs; if it hasn't loaded yet, bind once the page has.
+      if (window.S21_bindFavs) window.S21_bindFavs(grid);
+      else window.addEventListener('load', () => window.S21_bindFavs && window.S21_bindFavs(grid));
+      section.style.display = '';
+      // Respect a filter that was already chosen (e.g. ?category= deep link)
+      const active = document.querySelector('[data-book-filter][aria-pressed="true"]');
+      if (active && typeof window.applyBookFilter === 'function') window.applyBookFilter(active.dataset.bookFilter);
+    } catch (e) { /* API not reachable yet — leave static content as-is */ }
+  }
+
+  // ---- blog.html: append live posts below the curated ones ----
+  async function wireBlogListPage() {
+    const grid = document.getElementById('live-blog-grid');
+    const section = document.getElementById('live-blog-section');
+    if (!grid || !section) return;
+    try {
+      const { posts } = await getJSON('/api/blog');
+      if (!posts || posts.length === 0) return;
+      grid.innerHTML = posts.map((p) => `
+        <div class="col-md-6">
+          <a href="blog-post.html?slug=${encodeURIComponent(p.slug)}" class="text-reset text-decoration-none">
+            <div class="s21-card p-3">
+              <h3 class="h6 mb-1">${esc(p.title)}</h3>
+              ${p.excerpt ? `<p class="text-soft mb-0" style="font-size:.85rem">${esc(p.excerpt)}</p>` : ''}
+              <span class="text-soft" style="font-size:.76rem">${esc(new Date(p.created_at).toLocaleDateString())}</span>
+            </div>
+          </a>
+        </div>
+      `).join('');
+      section.style.display = '';
+    } catch (e) { /* ignore */ }
+  }
+
+  // ---- blog-post.html?slug=... : render a live post in place of the demo article ----
+  async function wireBlogPostPage() {
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('slug');
+    const liveSection = document.getElementById('live-post-section');
+    if (!slug || !liveSection) return;
+    try {
+      const { post } = await getJSON(`/api/blog/${encodeURIComponent(slug)}`);
+      document.getElementById('live-post-title').textContent = post.title;
+      document.getElementById('live-post-date').textContent = new Date(post.created_at).toLocaleDateString();
+      document.getElementById('live-post-body').textContent = post.content;
+      document.title = post.title + ' — Smart21Brain';
+
+      document.getElementById('post-hero-static')?.style.setProperty('display', 'none');
+      document.getElementById('post-body-static')?.style.setProperty('display', 'none');
+      liveSection.style.display = '';
+    } catch (e) { /* slug not found or API unreachable — keep the static demo article */ }
+  }
+
+  // ---- quiz.html: try to load a real quiz; fall back to the built-in demo ----
+  async function loadLiveQuiz() {
+    try {
+      const { quizzes } = await getJSON('/api/quizzes');
+      if (!quizzes || quizzes.length === 0) return null;
+      const { quiz } = await getJSON(`/api/quizzes/${quizzes[0].id}`);
+      const questions = quiz.questions.map((q) => ({
+        question: q.prompt, options: q.options, correct: q.correct_index, explanation: q.explanation || '',
+      }));
+      return { id: quiz.id, questions };
+    } catch (e) {
+      return null;
+    }
+  }
+  async function submitQuizAttempt(quizId, answers) {
+    if (!quizId) return;
+    try {
+      await fetch(`/api/quizzes/${quizId}/attempt`, {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers }),
+      });
+    } catch (e) { /* not signed in, or API unreachable — score just won't be recorded */ }
+  }
+  window.S21_loadLiveQuiz = loadLiveQuiz;
+  window.S21_submitQuizAttempt = submitQuizAttempt;
+
+  // ---- library.html: append live-created books below the curated ones ----
+  async function wireLibraryPage() {
+    const grid = document.getElementById('live-books-grid');
+    const section = document.getElementById('live-books-section');
+    if (!grid || !section) return;
+    try {
+      const { books } = await getJSON('/api/books');
+      if (!books || books.length === 0) return;
       grid.innerHTML = books.map((b) => `
         <div class="col-6 col-md-4 col-lg-3">
           <a href="book.html?slug=${encodeURIComponent(b.slug)}" class="text-reset text-decoration-none">
