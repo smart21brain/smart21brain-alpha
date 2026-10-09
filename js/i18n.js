@@ -32,7 +32,7 @@
 
       // ---- Homepage: hero ----
       hero_badge: 'Nursery to University · Math · Science · Languages · Coding',
-      hero_title_html: 'A good lesson doesn\'t <em>need a classroom</em><br>to feel like one.',
+      hero_title_html: '21st Century of getting <em>Knowledge, Achievement</em><br>and Skills',
       hero_subline: 'It just needs to make sense. We make sure it does.',
       hero_lead: 'One safe home for video lessons, storybooks, games, courses and quizzes — for every level from nursery to university, guided for parents, and powered for teachers.',
       hero_search_placeholder: 'Search videos, books, games, subjects…',
@@ -1049,7 +1049,7 @@
 
       // ---- Homepage: hero ----
       hero_badge: 'Awali hadi Chuo Kikuu · Hisabati · Sayansi · Lugha · Kuandika Msimbo',
-      hero_title_html: 'Somo zuri <em>halihitaji darasa</em><br>ili lieleweke.',
+      hero_title_html: 'Karne ya 21 ya kupata <em>Maarifa, Mafanikio</em><br>na Ujuzi',
       hero_subline: 'Linahitaji tu kueleweka. Sisi tunahakikisha linaeleweka.',
       hero_lead: 'Nyumbani salama moja kwa masomo ya video, vitabu vya hadithi, michezo, kozi na maswali — kwa ngazi zote kuanzia awali hadi chuo kikuu, ikiongozwa na wazazi, na kuendeshwa na walimu.',
       hero_search_placeholder: 'Tafuta video, vitabu, michezo, masomo…',
