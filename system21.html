@@ -117,6 +117,25 @@
 .sx-pill{font:600 .74rem var(--sx-mono);padding:.4rem .75rem;border:1px solid var(--s21-border);border-radius:999px;background:var(--s21-white);color:var(--s21-text-soft)}
 .sx-pill i{color:var(--sx-glow);margin-right:.4rem}
 
+
+/* tool search */
+.sx-search{position:relative;display:flex;align-items:center;gap:.7rem;max-width:640px;margin:1.5rem 0 0;padding:.35rem .5rem .35rem 1.1rem;background:#fff;border:1.5px solid var(--s21-accent);border-radius:999px;box-shadow:0 8px 26px rgba(0,0,0,.18)}
+.sx-search:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--s21-accent) 35%,transparent),0 8px 26px rgba(0,0,0,.18)}
+.sx-search>i{color:#6B7280}
+.sx-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:.6rem 0;font:500 .95rem var(--sx-mono);color:#000!important;-webkit-text-fill-color:#000;caret-color:#000}
+.sx-search input::placeholder{color:#6B7280;opacity:1;-webkit-text-fill-color:#6B7280}
+.sx-search input::-webkit-search-cancel-button{display:none}
+.sx-search kbd{font:600 .7rem var(--sx-mono);color:#5B6470;background:#F1F3F5;border:1px solid #E1E4E8;border-radius:6px;padding:.15rem .45rem}
+.sx-search .sx-clear{appearance:none;border:0;background:#F1F3F5;color:#111;width:34px;height:34px;border-radius:50%;cursor:pointer;display:none}
+.sx-search .sx-clear:hover{background:var(--s21-accent);color:#fff}
+.sx-search.has-text .sx-clear{display:inline-grid;place-items:center}
+.sx-search.has-text kbd{display:none}
+.sx-result-note{font:500 .78rem var(--sx-mono);color:var(--s21-text-soft);margin:.8rem 0 0;min-height:1.1em}
+.sx-noresult{display:none;text-align:center;padding:3rem 1rem;font:500 .95rem var(--sx-mono);color:var(--s21-text-soft)}
+.sx-noresult i{display:block;font-size:2rem;margin-bottom:.8rem;color:var(--s21-accent)}
+.sx-noresult.show{display:block}
+@media(max-width:575px){.sx-search kbd{display:none}}
+
 /* category sections — same structure as the paper sketch */
 .sx-cat{border-top:1px solid var(--s21-border);padding:1.6rem 0 2rem}
 .sx-chip{display:inline-flex;align-items:center;gap:.55rem;font:700 .86rem var(--sx-mono);color:var(--s21-text);border:1.5px solid var(--s21-accent);border-radius:999px;padding:.4rem 1rem;background:color-mix(in srgb,var(--s21-accent) 7%,transparent)}
@@ -205,6 +224,13 @@
       <div class="sx-prompt"><span>root@smart21:~$</span> ./system21 --list-tools</div>
       <h1 class="sx-title" id="sxTitle">System<span class="n">21</span><span class="sx-caret" aria-hidden="true"></span></h1>
       <p class="sx-tag"><strong>All tools you need are here.</strong> Pick a tool, drop in your file, get the result. Everything runs inside your browser — your files never leave your device.</p>
+      <form class="sx-search" role="search" aria-label="Search System21 tools" onsubmit="return false">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input id="sxSearch" type="search" placeholder="Search tools… e.g. resize, pdf, convert, json" aria-label="Search tools" autocomplete="off" spellcheck="false">
+        <kbd aria-hidden="true">/</kbd>
+        <button type="button" class="sx-clear" id="sxClear" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></button>
+      </form>
+      <p class="sx-result-note" id="sxNote" aria-live="polite"></p>
       <div class="sx-meta">
         <span class="sx-pill"><i class="fa-solid fa-shield-halved"></i>Private by design</span>
         <span class="sx-pill"><i class="fa-solid fa-bolt"></i>No sign-up</span>
@@ -213,6 +239,7 @@
     </section>
 
     <main id="main" tabindex="-1">
+      <div class="sx-noresult" id="sxNoResult" role="status"><i class="fa-regular fa-face-frown"></i>No tool matches your search.<br>Try another word like “image”, “pdf” or “convert”.</div>
 
       <!-- ===== Image tool ===== -->
       <section class="sx-cat" aria-labelledby="catImg">
@@ -656,6 +683,48 @@
   </form>
 </div>
 
+<script>
+/* System21 tool search: filters the tiles on this page as you type */
+(function(){
+  var input=document.getElementById('sxSearch'),form=input&&input.closest('.sx-search'),clear=document.getElementById('sxClear'),
+      note=document.getElementById('sxNote'),none=document.getElementById('sxNoResult');
+  if(!input)return;
+  var slots=[].slice.call(document.querySelectorAll('.sx-slot')),
+      cats=[].slice.call(document.querySelectorAll('.sx-cat'));
+  function norm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim()}
+  var data=slots.map(function(el){
+    var tile=el.querySelector('.sx-tile');
+    return {el:el,tile:tile,text:norm([el.querySelector('.sx-name')?.textContent,el.querySelector('.sx-sub')?.textContent,tile&&tile.dataset.open,tile&&tile.getAttribute('aria-label'),el.closest('.sx-cat')?.querySelector('.sx-chip')?.textContent].join(' '))};
+  });
+  function run(){
+    var q=norm(input.value),tokens=q?q.split(' '):[],shown=0,first=null;
+    form.classList.toggle('has-text',!!input.value);
+    data.forEach(function(d){
+      var ok=tokens.every(function(t){return d.text.indexOf(t)>-1});
+      d.el.style.display=ok?'':'none';
+      if(ok){shown++;if(!first)first=d}
+    });
+    document.querySelectorAll('.sx-empty').forEach(function(e){e.style.display=q?'none':''});
+    cats.forEach(function(c){
+      var any=[].some.call(c.querySelectorAll('.sx-slot'),function(s){return s.style.display!=='none'});
+      c.style.display=(!q||any)?'':'none';
+    });
+    none.classList.toggle('show',!!q&&!shown);
+    note.textContent=q?(shown?shown+' tool'+(shown===1?'':'s')+' found — press Enter to open the first one':''):'';
+    return first;
+  }
+  input.addEventListener('input',run);
+  input.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();var f=run();if(f&&f.tile)f.tile.click()}
+    else if(e.key==='Escape'){input.value='';run()}
+  });
+  clear.addEventListener('click',function(){input.value='';run();input.focus()});
+  document.addEventListener('keydown',function(e){
+    var tag=(document.activeElement&&document.activeElement.tagName)||'';
+    if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(tag)&&!document.querySelector('dialog[open]')){e.preventDefault();input.focus()}
+  });
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script src="js/darkmode.js"></script>
