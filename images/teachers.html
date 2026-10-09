@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard | Smart21Brain</title>
+<meta name="description" content="Smart21Brain's teacher dashboard — manage courses, track student progress, upload videos and quizzes, and view analytics and revenue in one place.">
+<link rel="canonical" href="https://smart21brain.com/teachers.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=18">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+
+</head>
+<body>
+<a href="#main" class="skip-link" data-i18n="blog_skip_to_main_content">Skip to main content</a>
+
+<header class="s21-navbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      Smart<span class="brand-21">21</span>Brain
+    </a>
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu"><i class="fa-solid fa-bars fa-lg"></i></button>
+    <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <span data-guest-nav="desktop" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </nav>
+</header>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-label="Menu">
+  <div class="offcanvas-header">
+    <div class="s21-mobile-user flex-grow-1 d-flex align-items-center gap-2 me-3"><span data-guest-nav="mobile" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline w-100" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary w-100" data-i18n="nav_start">Get Started</a></span></div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <div class="fw-bold text-soft mb-2" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em">On this page</div>
+    <nav class="d-flex flex-column gap-1 mb-3" data-section-nav>
+      <a href="#overview" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-gauge me-2"></i> Overview</a>
+      <a href="#courses" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-book-open me-2"></i> My courses</a>
+      <a href="#students" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-users me-2"></i> Students</a>
+      <a href="#reviews" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-comment-dots me-2"></i> Reviews</a>
+      <a href="#announcements" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-bell me-2"></i> Announcements</a>
+      <a href="#settings" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-gear me-2"></i> Settings</a>
+    </nav>
+    <hr class="w-100">
+    <ul class="navbar-nav gap-1 mb-4">
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    </div>
+</div>
+
+<main id="main">
+
+  <div class="admin-shell" data-role-access="teacher,admin">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-head">
+        <div class="fw-bold text-soft admin-sidebar-title" style="font-size:.72rem;text-transform:uppercase;letter-spacing:.06em">Teacher</div>
+        <button type="button" class="admin-sidebar-toggle" data-sidebar-toggle aria-label="Toggle sidebar" aria-expanded="true"><i class="fa-solid fa-angles-left"></i></button>
+      </div>
+      <nav class="d-flex flex-column gap-1" data-section-nav>
+        <a href="#overview" class="nav-link active"><i class="fa-solid fa-gauge"></i> <span class="nav-label">Overview</span></a>
+        <a href="#courses" class="nav-link"><i class="fa-solid fa-book-open"></i> <span class="nav-label">My courses</span></a>
+        <a href="#students" class="nav-link"><i class="fa-solid fa-users"></i> <span class="nav-label">Students</span></a>
+        <a href="#reviews" class="nav-link"><i class="fa-solid fa-comment-dots"></i> <span class="nav-label">Reviews</span></a>
+        <a href="#announcements" class="nav-link"><i class="fa-solid fa-bell"></i> <span class="nav-label">Announcements</span></a>
+        <a href="#settings" class="nav-link"><i class="fa-solid fa-gear"></i> <span class="nav-label">Settings</span></a>
+      </nav>
+    </aside>
+
+    <div class="admin-content">
+
+      <!-- Welcome banner -->
+      <div class="dash-welcome mb-4" data-aos="fade-up">
+        <div class="row align-items-center g-4">
+          <div class="col-md-8">
+            <div class="d-flex align-items-center gap-3">
+              <img src="https://i.pravatar.cc/120?img=25" class="dash-avatar" alt="Ms. Amina Hassan's profile picture" loading="lazy">
+              <div>
+                <h1 class="h3 text-white mb-1" data-i18n="teachers_welcome_back_ms_hassan">Welcome back, Ms. Hassan 👋</h1>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="streak-flame"><i class="fa-solid fa-chalkboard-user" style="color:var(--s21-secondary)"></i> <span data-i18n="teachers_mathematics_teacher">Mathematics teacher</span></span>
+                  <span class="streak-flame"><i class="fa-solid fa-users" style="color:var(--s21-secondary)"></i> <span data-i18n="teachers_214_students">214 students</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <a href="#" class="btn-s21 btn-s21-secondary"><i class="fa-solid fa-plus"></i> <span data-i18n="teachers_create_new_course">Create new course</span></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="row g-3 mb-4" id="overview">
+        <div class="col-6 col-md-3" data-aos="fade-up">
+          <div class="s21-card dash-stat-card">
+            <div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-book-open"></i></div>
+            <div class="stat-num">6</div>
+            <div class="text-soft" style="font-size:.8rem" data-i18n="teachers_published_courses">Published courses</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card dash-stat-card">
+            <div class="stat-icon" style="background:#FDECF1;color:var(--s21-accent)"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-num">214</div>
+            <div class="text-soft" style="font-size:.8rem" data-i18n="teachers_enrolled_students">Enrolled students</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card dash-stat-card">
+            <div class="stat-icon" style="background:#FFF6E0;color:#A66A00"><i class="fa-solid fa-star"></i></div>
+            <div class="stat-num">4.9</div>
+            <div class="text-soft" style="font-size:.8rem" data-i18n="teachers_average_rating">Average rating</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card dash-stat-card">
+            <div class="stat-icon" style="background:#E7F1FF;color:#3A86FF"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="stat-num" data-i18n="teachers_1_240">$1,240</div>
+            <div class="text-soft" style="font-size:.8rem" data-i18n="admin_revenue_this_month">Revenue this month</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 align-items-start">
+        <div class="col-lg-8">
+
+          <!-- My courses -->
+          <div class="s21-card p-4 mb-4" id="courses" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5 mb-0"><i class="fa-solid fa-book-open" style="color:var(--s21-primary)"></i> <span data-i18n="teachers_my_courses">My courses</span></h2>
+              <a href="#" class="text-soft" style="font-size:.85rem" data-i18n="teachers_manage_all">Manage all</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table dash-table mb-0">
+                <thead><tr><th data-i18n="teachers_course">Course</th><th data-i18n="teachers_students">Students</th><th data-i18n="book_rating">Rating</th><th data-i18n="admin_status">Status</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td class="d-flex align-items-center gap-2"><img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?w=100&q=60&auto=format&fit=crop" width="40" height="40" style="border-radius:8px;object-fit:cover" alt="" loading="lazy"> <span data-i18n="dash_fractions_made_fun">Fractions Made Fun</span></td>
+                    <td>612</td><td><i class="fa-solid fa-star" style="color:var(--s21-secondary-dark)"></i> 4.9</td>
+                    <td><span class="status-chip active" data-i18n="teachers_published">Published</span></td>
+                  </tr>
+                  <tr>
+                    <td class="d-flex align-items-center gap-2"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&q=60&auto=format&fit=crop" width="40" height="40" style="border-radius:8px;object-fit:cover" alt="" loading="lazy"> <span data-i18n="dash_geometry_through_play">Geometry Through Play</span></td>
+                    <td>322</td><td><i class="fa-solid fa-star" style="color:var(--s21-secondary-dark)"></i> 4.8</td>
+                    <td><span class="status-chip active" data-i18n="teachers_published">Published</span></td>
+                  </tr>
+                  <tr>
+                    <td class="d-flex align-items-center gap-2"><img src="https://images.unsplash.com/photo-1509266272358-7701da638078?w=100&q=60&auto=format&fit=crop" width="40" height="40" style="border-radius:8px;object-fit:cover" alt="" loading="lazy"> <span data-i18n="teachers_algebra_foundations">Algebra Foundations</span></td>
+                    <td>—</td><td>—</td>
+                    <td><span class="status-chip pending" data-i18n="teachers_draft">Draft</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Student progress -->
+          <div class="s21-card p-4 mb-4" id="students" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5 mb-0"><i class="fa-solid fa-chart-line" style="color:var(--s21-accent)"></i> <span data-i18n="teachers_students_needing_attention">Students needing attention</span></h2>
+              <a href="#" class="text-soft" style="font-size:.85rem" data-i18n="teachers_view_all_students">View all students</a>
+            </div>
+            <div class="table-responsive">
+              <table class="table dash-table mb-0">
+                <thead><tr><th data-i18n="admin_student">Student</th><th data-i18n="teachers_course">Course</th><th data-i18n="teachers_progress">Progress</th><th data-i18n="teachers_last_active">Last active</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td class="d-flex align-items-center gap-2"><img src="https://i.pravatar.cc/60?img=32" width="32" height="32" class="rounded-circle" alt="" loading="lazy"> <span data-i18n="video_halima_r">Halima R.</span></td>
+                    <td data-i18n="dash_fractions_made_fun">Fractions Made Fun</td>
+                    <td style="min-width:120px"><div class="progress-s21"><span style="width:22%;background:var(--s21-accent)"></span></div></td>
+                    <td data-i18n="teachers_9_days_ago">9 days ago</td>
+                  </tr>
+                  <tr>
+                    <td class="d-flex align-items-center gap-2"><img src="https://i.pravatar.cc/60?img=15" width="32" height="32" class="rounded-circle" alt="" loading="lazy"> <span data-i18n="teachers_james_k">James K.</span></td>
+                    <td data-i18n="dash_geometry_through_play">Geometry Through Play</td>
+                    <td style="min-width:120px"><div class="progress-s21"><span style="width:15%;background:var(--s21-accent)"></span></div></td>
+                    <td data-i18n="teachers_12_days_ago">12 days ago</td>
+                  </tr>
+                  <tr>
+                    <td class="d-flex align-items-center gap-2"><img src="https://i.pravatar.cc/60?img=48" width="32" height="32" class="rounded-circle" alt="" loading="lazy"> <span data-i18n="teachers_zawadi_m">Zawadi M.</span></td>
+                    <td data-i18n="dash_fractions_made_fun">Fractions Made Fun</td>
+                    <td style="min-width:120px"><div class="progress-s21"><span style="width:88%"></span></div></td>
+                    <td data-i18n="teachers_today">Today</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Reviews -->
+          <div class="s21-card p-4" id="reviews" data-aos="fade-up">
+            <h2 class="h5 mb-3"><i class="fa-solid fa-comment-dots" style="color:var(--s21-primary)"></i> <span data-i18n="teachers_recent_reviews">Recent reviews</span></h2>
+            <div class="d-flex gap-3 mb-3">
+              <img src="https://i.pravatar.cc/60?img=47" width="40" height="40" class="rounded-circle" alt="" loading="lazy">
+              <div>
+                <div class="fw-bold" style="font-size:.88rem"><span data-i18n="teachers_grace_m">Grace M.</span> <span class="text-soft fw-normal" style="font-size:.78rem" data-i18n="teachers_on_fractions_made_fun">on Fractions Made Fun</span></div>
+                <p class="mb-0 text-soft" style="font-size:.85rem" data-i18n="teachers_my_daughter_used_to_dread_maths_home">My daughter used to dread maths homework — now she asks to do the lessons herself.</p>
+              </div>
+            </div>
+            <div class="d-flex gap-3">
+              <img src="https://i.pravatar.cc/60?img=21" width="40" height="40" class="rounded-circle" alt="" loading="lazy">
+              <div>
+                <div class="fw-bold" style="font-size:.88rem"><span data-i18n="video_peter_o">Peter O.</span> <span class="text-soft fw-normal" style="font-size:.78rem" data-i18n="teachers_on_geometry_through_play">on Geometry Through Play</span></div>
+                <p class="mb-0 text-soft" style="font-size:.85rem" data-i18n="teachers_great_pacing_for_a_mixed_ability_cla">Great pacing for a mixed-ability classroom. Would love a printable worksheet pack next.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="s21-card p-4 mb-4" data-aos="fade-up">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-bolt" style="color:var(--s21-secondary-dark)"></i> <span data-i18n="teachers_quick_actions">Quick actions</span></h3>
+            <div class="d-flex flex-column gap-2">
+              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-clapperboard"></i> <span data-i18n="teachers_upload_a_video">Upload a video</span></a>
+              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-book"></i> <span data-i18n="teachers_upload_a_book_resource">Upload a book/resource</span></a>
+              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-circle-question"></i> <span data-i18n="teachers_create_a_quiz">Create a quiz</span></a>
+              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-list-check"></i> <span data-i18n="teachers_create_an_assignment">Create an assignment</span></a>
+            </div>
+          </div>
+
+          <div class="s21-card p-4 mb-4" data-aos="fade-up" data-aos-delay="60">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-chart-pie" style="color:var(--s21-primary)"></i> <span data-i18n="teachers_this_month_at_a_glance">This month at a glance</span></h3>
+            <ul class="list-unstyled d-flex flex-column gap-3" style="font-size:.85rem">
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="teachers_new_enrollments">New enrollments</span><span class="fw-bold">+48</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="teachers_lessons_completed">Lessons completed</span><span class="fw-bold">1,204</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="dash_avg_quiz_score">Avg. quiz score</span><span class="fw-bold">86%</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="teachers_comments_to_answer">Comments to answer</span><span class="fw-bold">7</span></li>
+            </ul>
+          </div>
+
+          <div class="s21-card p-4 mb-4" id="announcements" data-aos="fade-up" data-aos-delay="120">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-bell" style="color:var(--s21-accent)"></i> <span data-i18n="teachers_announcements">Announcements</span></h3>
+            <p class="text-soft mb-3" style="font-size:.85rem" data-i18n="teachers_post_an_update_your_students_and_the">Post an update your students and their parents will see on their dashboards.</p>
+            <textarea class="form-control s21-input mb-2" rows="3" placeholder="Write an announcement…" data-i18n-placeholder="teachers_ph_write_an_announcement"></textarea>
+            <button class="btn-s21 btn-s21-primary w-100 justify-content-center" style="font-size:.85rem" data-i18n="teachers_post_announcement">Post announcement</button>
+          </div>
+
+          <!-- Settings -->
+          <div class="s21-card p-4" id="settings" data-aos="fade-up" data-aos-delay="180">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-gear" style="color:var(--s21-text-soft)"></i> Teacher settings</h3>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span style="font-size:.85rem">Show my profile to parents</span>
+              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span style="font-size:.85rem">Email me new student comments</span>
+              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="d-flex justify-content-between align-items-center py-2">
+              <span style="font-size:.85rem">Weekly performance summary email</span>
+              <label class="s21-switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+            <a href="profile.html" class="btn-s21 btn-s21-outline w-100 justify-content-center mt-3" style="font-size:.85rem"><i class="fa-solid fa-user-gear"></i> Manage account &amp; payout details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for learners of every level, from nursery to university, and for teachers and parents to learn together.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_learning">Learning</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="subjects.html" data-i18n="footer_mathematics">Mathematics</a></li>
+          <li><a href="subjects.html" data-i18n="book_science">Science</a></li>
+          <li><a href="subjects.html" data-i18n="book_english">English</a></li>
+          <li><a href="subjects.html" data-i18n="footer_kiswahili">Kiswahili</a></li>
+          <li><a href="subjects.html" data-i18n="dash_coding">Coding</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> <span data-i18n="blog_study_buddy">Study Buddy</span></span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai" data-i18n="blog_hi_ask_me_to_explain_a_topic_or_sugg">Hi! Ask me to explain a topic or suggest a video or book to try next.</div></div>
+  <p class="ai-disclaimer" data-i18n="blog_ai_generated_answers_are_separate_fr">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" data-i18n-placeholder="blog_ph_ask_a_question" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/search.js"></script>
+<script src="js/voice-search.js"></script>
+<script src="js/ai-assistant.js?v=4"></script>
+<script src="js/main.js?v=20261008"></script>
+<script src="js/nav-account.js"></script>
+<script src="js/sidebar-nav.js"></script>
+<script src="js/sidebar-collapse.js"></script>
+
+<script>AOS.init({duration:650,once:true,offset:60});</script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

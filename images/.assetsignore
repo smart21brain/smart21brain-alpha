@@ -1,0 +1,18 @@
+# Cloudflare Pages/Workers static assets — files listed here are never
+# uploaded as public static files, even though [assets] directory = "."
+# Without this, schema.sql (seed admin credentials), wrangler.toml, and
+# the Worker's own source code would be publicly downloadable.
+
+src/
+*.sql
+wrangler.toml
+DEPLOY_CLOUDFLARE.md
+README.md
+.git/
+.gitignore
+node_modules/
+package.json
+package-lock.json
+*.md
+scripts/
+tests/

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-shop-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Smart21Shop</title>
+<meta name="description" content="Sign in to Smart21Shop, or set up your shop in a minute.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#4F46E5">
+<link rel="manifest" href="shop-manifest.json">
+<link rel="apple-touch-icon" href="icons/shop-apple-touch.png" data-shop="1">
+<link rel="icon" href="images/shop/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/shop-app.css?v=1">
+</head>
+<body class="sp-body">
+<div class="sp-auth">
+  <aside class="sp-auth-art">
+    <div class="sp-row" style="gap:.8rem"><img src="images/shop/logo.svg" width="46" height="46" alt="" style="border-radius:14px"><b style="font-family:var(--sp-font-display);font-size:1.15rem">Smart21Shop</b></div>
+    <div>
+      <h1>Run your shop from one place.</h1>
+      <p>Point of sale, customers, products, stock and expenses — connected, secure and easy enough for anyone on your team to use.</p>
+      <ul>
+        <li><i class="fa-solid fa-cash-register"></i> A fast till that prints receipts and tracks stock automatically</li>
+        <li><i class="fa-solid fa-users"></i> Save every customer and see what they've bought and owe</li>
+        <li><i class="fa-solid fa-boxes-stacked"></i> Know what's low or out of stock before customers ask</li>
+        <li><i class="fa-solid fa-chart-pie"></i> Real profit reports — sales, cost, expenses, all in one number</li>
+      </ul>
+    </div>
+    <a href="shop.html" style="color:#fff;font-weight:700"><i class="fa-solid fa-circle-play"></i> See how it works</a>
+  </aside>
+
+  <main class="sp-auth-form">
+    <div class="sp-auth-box">
+      <div class="sp-row" style="margin-bottom:1.2rem;gap:.7rem"><span class="sp-logo" id="lgLogo"><i class="fa-solid fa-shop"></i></span><div><div class="sp-brand-name" id="lgName">Smart21Shop</div><div class="sp-brand-sub">Secure sign in</div></div></div>
+      <div class="sp-tabs" role="tablist"><button class="on" data-tab="in" role="tab">Sign in</button><button data-tab="up" role="tab">Register your shop</button></div>
+
+      <form class="sp-form" id="inForm" novalidate>
+        <div class="sp-form-error" role="alert"></div>
+        <div class="sp-field" data-field="email"><label for="f_email">Email<span class="req">*</span></label><input class="sp-input" id="f_email" name="email" type="email" autocomplete="username" required data-label="your email" placeholder="you@shop.com"><span class="err"></span></div>
+        <div class="sp-field" data-field="password"><label for="f_password">Password<span class="req">*</span></label><div style="position:relative"><input class="sp-input" id="f_password" name="password" type="password" autocomplete="current-password" required data-label="your password" style="padding-right:3rem"><button type="button" class="sp-icon-btn" id="eye" style="position:absolute;right:4px;top:3px;width:36px;height:36px;border:0;background:none" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err"></span></div>
+        <div class="sp-spread"><label class="sp-check"><input type="checkbox" name="remember" checked> Remember me</label><a href="forgot-password.html" class="sp-small sp-strong">Forgot password?</a></div>
+        <button class="sp-btn primary block lg" type="submit">Login</button>
+        <p class="sp-small sp-muted sp-center" style="margin:0">Staff: use the email and password the shop owner gave you.</p>
+      </form>
+
+      <form class="sp-form sp-hide" id="upForm" novalidate>
+        <div class="sp-form-error" role="alert"></div>
+        <p class="sp-muted" style="margin:0">Create your shop in under a minute. You become its owner and get ready-made categories and staff roles you can change anytime.</p>
+        <div class="sp-field" data-field="shop_name"><label for="f_shop_name">Shop name<span class="req">*</span></label><input class="sp-input" id="f_shop_name" name="shop_name" required data-label="the shop name" placeholder="e.g. Mama Neema Store" maxlength="120"><span class="err"></span></div>
+        <div class="cols"><div class="sp-field" data-field="name"><label for="f_name">Your name<span class="req">*</span></label><input class="sp-input" id="f_name" name="name" required data-label="your name" autocomplete="name"><span class="err"></span></div>
+        <div class="sp-field" data-field="phone"><label for="f_phone">Phone (optional)</label><input class="sp-input" id="f_phone" name="phone" type="tel" data-kind="phone" autocomplete="tel" placeholder="+255 …"><span class="err"></span></div></div>
+        <div class="sp-field" data-field="remail"><label for="f_remail">Email<span class="req">*</span></label><input class="sp-input" id="f_remail" name="email" type="email" required data-label="your email" autocomplete="email"><span class="err"></span></div>
+        <div class="sp-field" data-field="rpass"><label for="f_rpass">Password<span class="req">*</span></label><input class="sp-input" id="f_rpass" name="password" type="password" required minlength="8" data-label="a password" autocomplete="new-password"><span class="hint">At least 8 characters.</span><span class="err"></span></div>
+        <button class="sp-btn primary block lg" type="submit">Create my shop</button>
+      </form>
+
+      <p class="sp-small sp-center" style="margin-top:1.4rem"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to Smart21Brain</a> &nbsp;·&nbsp; <a href="shop.html">About Smart21Shop</a></p>
+    </div>
+  </main>
+</div>
+<script src="js/shop/core.js?v=1"></script>
+<script>
+(function () {
+  var SP = window.SP;
+  // Already signed in to a shop? Go straight in.
+  SP.api.get('/context').then(function (c) { if (c && c.shop) location.replace('shop-app.html'); }).catch(function () {});
+  var params = new URLSearchParams(location.search);
+  if (params.get('shop')) { // optional co-branding: shop-login.html?shop=12
+    var img = new Image(); img.onload = function () { document.getElementById('lgLogo').innerHTML = '<img src="' + img.src + '" alt="">'; }; img.src = '/api/shop/public/logo/' + encodeURIComponent(params.get('shop'));
+  }
+  var inForm = document.getElementById('inForm'), upForm = document.getElementById('upForm');
+  function show(tab) {
+    document.querySelectorAll('.sp-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === tab); });
+    inForm.classList.toggle('sp-hide', tab !== 'in'); upForm.classList.toggle('sp-hide', tab !== 'up');
+  }
+  document.querySelector('.sp-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) show(b.dataset.tab); });
+  if (location.hash === '#register') show('up');
+  document.getElementById('eye').addEventListener('click', function () {
+    var p = document.getElementById('f_password'); var on = p.type === 'password'; p.type = on ? 'text' : 'password';
+    this.innerHTML = '<i class="fa-solid ' + (on ? 'fa-eye-slash' : 'fa-eye') + '"></i>'; this.setAttribute('aria-label', on ? 'Hide password' : 'Show password');
+  });
+  function submit(form, path, label) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = form.querySelector('.sp-form-error'); err.classList.remove('show');
+      if (!SP.validate(form)) return;
+      var btn = form.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<span class="sp-spin"></span> Please wait…';
+      SP.api.post(path, SP.formData(form)).then(function () {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Success';
+        location.href = 'shop-app.html';
+      }).catch(function (ex) {
+        err.textContent = ex.message; err.classList.add('show'); btn.disabled = false; btn.textContent = label;
+      });
+    });
+  }
+  submit(inForm, '/login', 'Login'); submit(upForm, '/register-shop', 'Create my shop');
+})();
+</script>
+<script src="js/shop-install.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+/* Smart21brain AI — image generation */
+.gi-studio .x-body { gap: .8rem; }
+.gi-tabs { display: flex; gap: .4rem; border-bottom: 1px solid var(--line); }
+.gi-tabs button { border: 0; background: transparent; padding: .55rem .9rem; font-weight: 600; font-size: .88rem; color: var(--soft); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.gi-tabs button.on { color: var(--brand); border-bottom-color: var(--brand); }
+.gi-pane { display: flex; flex-direction: column; gap: .9rem; }
+.gi-pane[hidden] { display: none; }
+.gi-styles { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: .45rem; }
+.gi-style { display: flex; flex-direction: column; align-items: center; gap: .3rem; padding: .6rem .3rem; border-radius: 12px; border: 1px solid var(--line); background: var(--side); font-size: .75rem; font-weight: 600; color: var(--soft); text-align: center; }
+.gi-style i { font-size: 1.05rem; color: var(--brand-2); }
+.gi-style:hover { border-color: var(--brand); }
+.gi-style.on { border-color: var(--brand); color: var(--text); background: color-mix(in srgb, var(--brand) 14%, transparent); }
+.gi-two { display: grid; grid-template-columns: 2fr 1fr; gap: .8rem; }
+@media (max-width: 520px) { .gi-two { grid-template-columns: 1fr; } }
+.gi-results, .gi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .7rem; }
+.gi-results:empty { display: none; }
+.gi-tile { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: var(--side); }
+.gi-tile .gi-open { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
+.gi-tile img { display: block; width: 100%; height: auto; }
+.gi-acts { position: absolute; right: 6px; bottom: 6px; display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
+.gi-tile:hover .gi-acts, .gi-tile:focus-within .gi-acts { opacity: 1; }
+@media (hover: none) { .gi-acts { opacity: 1; } }
+.gi-acts .icon-btn { background: rgba(10,15,12,.72); color: #fff; backdrop-filter: blur(4px); width: 34px; height: 34px; }
+.gi-acts .icon-btn:hover { background: var(--brand); color: var(--on-brand); }
+.gi-skel { display: grid; place-items: center; min-height: 160px; background: linear-gradient(110deg, var(--side) 30%, color-mix(in srgb, var(--brand-2) 18%, var(--side)) 50%, var(--side) 70%); background-size: 220% 100%; animation: giShimmer 1.4s linear infinite; color: var(--soft); font-size: .85rem; border-radius: 14px; border: 1px solid var(--line); }
+.gi-skel span { display: inline-flex; gap: .45rem; align-items: center; padding: .4rem .8rem; border-radius: 999px; background: var(--panel); }
+.gi-skel i { color: var(--brand-2); }
+@keyframes giShimmer { to { background-position: -220% 0; } }
+@media (prefers-reduced-motion: reduce) { .gi-skel { animation: none; } }
+.gi-square { aspect-ratio: 1 / 1; } .gi-wide { aspect-ratio: 16 / 9; } .gi-tall { aspect-ratio: 9 / 16; }
+.gi-tile:not(.gi-skel).gi-square, .gi-tile:not(.gi-skel).gi-wide, .gi-tile:not(.gi-skel).gi-tall, .gi-fig { aspect-ratio: auto; }
+.gi-msg { color: #ef476f; }
+
+/* inline image inside an AI answer */
+.gi-slot { margin-top: .7rem; }
+.gi-fig { margin: 0; max-width: min(460px, 100%); }
+.gi-fig.gi-wide { max-width: min(560px, 100%); } .gi-fig.gi-tall { max-width: min(300px, 100%); }
+.gi-fig .gi-open { display: block; width: 100%; padding: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--side); cursor: zoom-in; }
+.gi-fig img { display: block; width: 100%; height: auto; }
+.gi-fig figcaption { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; margin-top: .55rem; }
+.gi-used { flex-basis: 100%; font-size: .8rem; color: var(--soft); }
+.gi-used summary { cursor: pointer; }
+.gi-used p { margin: .3rem 0 0; line-height: 1.5; }
+.gi-gone { color: var(--soft); font-size: .85rem; }
+.md .gi-skel { max-width: min(460px, 100%); }
+.md .gi-skel.gi-wide { max-width: min(560px, 100%); } .md .gi-skel.gi-tall { max-width: min(300px, 100%); }
+
+/* lightbox */
+.gi-lb .x-body { align-items: center; }
+.gi-big { max-width: 100%; max-height: 66dvh; border-radius: 12px; }
+.gi-cap { margin: 0; color: var(--soft); font-size: .88rem; text-align: center; }
+
+/* mode bar: smooth scrolling, fading edges, arrows */
+.mb-wrap { position: relative; }
+.mb-wrap .modes { scroll-behavior: smooth; scroll-snap-type: x proximity; padding: 2px 2px 6px; cursor: grab; -webkit-overflow-scrolling: touch; }
+.mb-wrap .modes > * { scroll-snap-align: center; }
+.mb-wrap .modes.dragging { cursor: grabbing; scroll-behavior: auto; user-select: none; }
+.mb-wrap .modes button { transition: background .2s, border-color .2s, color .2s, transform .2s; }
+.mb-wrap .modes button:active { transform: scale(.96); }
+.mb-wrap::before, .mb-wrap::after { content: ''; position: absolute; top: 0; bottom: 4px; width: 44px; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .25s; }
+.mb-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+.mb-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+.mb-wrap.can-prev::before, .mb-wrap.can-next::after { opacity: 1; }
+.mb-arrow { position: absolute; top: calc(50% - 2px); transform: translateY(-50%) scale(.85); z-index: 3; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: .7rem; display: grid; place-items: center; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s, border-color .15s; }
+.mb-arrow:hover { border-color: var(--brand); color: var(--brand); }
+.mb-prev { left: 2px; } .mb-next { right: 2px; }
+.mb-wrap.can-prev .mb-prev, .mb-wrap.can-next .mb-next { opacity: 1; pointer-events: auto; transform: translateY(-50%) scale(1); }
+@media (hover: none) { .mb-arrow { display: none; } }
+@media (prefers-reduced-motion: reduce) { .mb-wrap .modes { scroll-behavior: auto; } .mb-wrap .modes button, .mb-arrow { transition: none; } }
+.mb-wrap { max-width: var(--col); margin: 0 auto .55rem; min-width: 0; }
+.mb-wrap > .modes { margin: 0; max-width: none; }
+
+/* welcome cards: five cards, the last one spans the full row */
+.cards .card:last-child:nth-child(odd) { grid-column: 1 / -1; }

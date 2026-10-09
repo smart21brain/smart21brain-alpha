@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In | Smart21Brain</title>
+<meta name="description" content="Log in to Smart21Brain to continue your courses, videos, books and games.">
+<link rel="canonical" href="https://smart21brain.com/login.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=18">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+</head>
+<body class="p-0">
+<a href="#main" class="skip-link" data-i18n="blog_skip_to_main_content">Skip to main content</a>
+<main id="main">
+  <div class="auth-shell">
+    <div class="auth-visual d-none d-lg-flex">
+      <a href="index.html" class="s21-logo" style="color:#fff">
+        <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+        Smart<span class="brand-21">21</span>Brain
+      </a>
+      <div>
+        <h2 class="text-white mb-2" data-i18n="login_welcome_back_to_a_safer_way_to_learn">Welcome back to a safer way to learn.</h2>
+        <p style="color:rgba(255,255,255,.85);max-width:380px" data-i18n="login_pick_up_your_courses_continue_your_r">Pick up your courses, continue your reading streak, and jump back into your favorite game — right where you left off.</p>
+      </div>
+      <div class="d-flex gap-4" style="color:rgba(255,255,255,.8);font-size:.85rem">
+        <span><i class="fa-solid fa-shield-heart me-1"></i> <span data-i18n="login_child_safe_by_design">Child-safe by design</span></span>
+        <span><i class="fa-solid fa-users me-1"></i> <span data-i18n="login_40_000_learners">Growing every day</span></span>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <div class="auth-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <a href="index.html" class="s21-logo" style="margin-bottom:0">
+            <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+            Smart<span class="brand-21">21</span>Brain
+          </a>
+          <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+          <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+        </div>
+        <h1 class="h3 mb-1" data-i18n="login_log_in">Log in</h1>
+        <p class="text-soft mb-4" data-i18n="login_good_to_see_you_again_let_s_keep_lea">Good to see you again — let's keep learning.</p>
+        <div class="social-auth-group d-flex flex-column gap-2 mb-3">
+          <button type="button" class="btn-s21 btn-s21-outline w-100 justify-content-center" data-social-auth="google">
+            <i class="fa-brands fa-google"></i> <span data-i18n="login_continue_with_google">Continue with Google</span>
+          </button>
+          <button type="button" class="btn-s21 btn-s21-outline w-100 justify-content-center" data-social-auth="apple">
+            <i class="fa-brands fa-apple"></i> <span data-i18n="login_continue_with_apple">Continue with Apple</span>
+          </button>
+        </div>
+        <div class="d-flex align-items-center gap-2 mb-3" style="font-size:.78rem">
+          <hr class="flex-grow-1 m-0"> <span class="text-soft" data-i18n="login_or">or</span> <hr class="flex-grow-1 m-0">
+        </div>
+        <form class="needs-validation" id="login-form" novalidate>
+          <div class="mb-3">
+            <label for="login-email" class="form-label fw-bold" style="font-size:.85rem" data-i18n="login_email_address">Email address</label>
+            <input type="email" class="form-control s21-input" id="login-email" placeholder="you@example.com" data-i18n-placeholder="login_ph_you_example_com" required>
+            <div class="invalid-feedback" data-i18n="login_please_enter_a_valid_email_address">Please enter a valid email address.</div>
+          </div>
+          <div class="mb-2">
+            <label for="login-password" class="form-label fw-bold" style="font-size:.85rem" data-i18n="login_password">Password</label>
+            <div class="auth-input-group">
+              <input type="password" class="form-control s21-input" id="login-password" placeholder="••••••••" minlength="6" required>
+              <button type="button" class="toggle-pw" data-toggle-password="#login-password" aria-label="Show password"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <div class="invalid-feedback" data-i18n="login_password_must_be_at_least_6_characte">Password must be at least 6 characters.</div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-4" style="font-size:.85rem">
+            <label class="d-flex align-items-center gap-2"><input type="checkbox" class="form-check-input m-0"> <span data-i18n="login_remember_me">Remember me</span></label>
+            <a href="forgot-password.html" class="fw-bold" data-i18n="login_forgot_password">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-s21 btn-s21-primary w-100 justify-content-center mb-3" data-i18n="login_log_in">Log In</button>
+          <p class="text-center text-soft" style="font-size:.85rem"><span data-i18n="login_don_t_have_an_account">Don't have an account?</span> <a href="register.html" class="fw-bold" data-i18n="login_sign_up_free">Sign up free</a></p>
+        </form>
+        <div class="d-flex align-items-center gap-2 my-3" style="font-size:.78rem">
+          <hr class="flex-grow-1 m-0"> <span class="text-soft" data-i18n="login_or_continue_as">Or continue as</span> <hr class="flex-grow-1 m-0">
+        </div>
+        <button type="button" id="guest-login-btn" class="btn-s21-guest-cta">
+          <span class="guest-cta-icon"><i class="fa-solid fa-compass"></i></span>
+          <span class="guest-cta-text">
+            <strong data-i18n="login_continue_as_guest">Continue as Guest</strong>
+            <small data-i18n="login_guest_no_signup_needed">No sign-up needed — just start exploring</small>
+          </span>
+          <i class="fa-solid fa-arrow-right guest-cta-arrow"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
+<script src="js/auth-guard.js?v=20260902-2"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/social-auth.js"></script>
+<script>
+  document.getElementById('guest-login-btn')?.addEventListener('click', function () {
+    try {
+      localStorage.setItem('s21-onboarded', '1');
+      localStorage.removeItem('s21-needs-onboarding');
+      localStorage.setItem('s21-account-type', 'guest');
+    } catch (e) { /* ignore — storage unavailable, still let them through */ }
+    window.location.href = 'index.html';
+  });
+</script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<script>
+  // Entry gate: play the splash screen once per browser session, then
+  // show onboarding only once per browser. A newly registered account
+  // gets an explicit one-time onboarding flag; logged-in users and
+  // returning visitors go straight to the homepage after the splash.
+  (function () {
+    try {
+      var arrivingFromSplash = sessionStorage.getItem('s21-from-splash');
+      var splashSeen = sessionStorage.getItem('s21-splash-seen');
+
+      if (arrivingFromSplash === '1') {
+        sessionStorage.removeItem('s21-from-splash');
+      } else if (splashSeen !== '1') {
+        // First load this session and not coming from splash — show it first.
+        window.location.replace('splash.html');
+        return;
+      }
+
+      if (localStorage.getItem('s21-onboarded') !== '1') {
+        window.location.replace('onboarding.html');
+      }
+      // else: let index.html load normally
+    } catch (e) { /* storage unavailable — just show the homepage */ }
+  })();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart21Brain — Learn, Watch, Read & Play | Online Education Platform</title>
+<meta name="description" content="Smart21Brain is a safe, fun learning platform for every level, from nursery and primary to secondary, college and university: video lessons, a digital book library, educational games, courses and quizzes across Math, Science, Languages and more.">
+<meta name="keywords" content="online learning, kids education, educational videos, digital library, educational games, courses for children, Smart21Brain">
+<link rel="canonical" href="https://smart21brain.com/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Smart21Brain — Learn, Watch, Read & Play">
+<meta property="og:description" content="A safe, fun education platform for every level, nursery to university, for students, teachers and parents — videos, books, games, courses and quizzes in one place.">
+<meta property="og:url" content="https://smart21brain.com/">
+<meta property="og:image" content="https://smart21brain.com/images/logo/coool.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart21Brain — Learn, Watch, Read & Play">
+<meta name="twitter:description" content="Videos, books, games, courses and quizzes for curious minds of every age.">
+
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<!-- Bootstrap 5 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<!-- AOS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css?v=18">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+<link rel="stylesheet" href="css/school-bg.css?v=1">
+<link rel="stylesheet" href="css/shop-bg.css?v=1">
+<link rel="stylesheet" href="css/institution-bg.css?v=1">
+<link rel="stylesheet" href="css/featured-symbols.css?v=1">
+<link rel="stylesheet" href="css/library-planets.css?v=1">
+<link rel="stylesheet" href="css/gamification-symbols.css?v=1">
+<link rel="stylesheet" href="css/videohub-formula.css?v=1">
+
+<style>
+  /* Squishy "kuminya" press effect for every button on the home page */
+  #page-home .btn-s21,
+  #page-home .icon-btn,
+  #page-home .play-btn,
+  #page-home .player-btn,
+  #page-home .fab,
+  #page-home .navbar-toggler,
+  #page-home .btn-close,
+  #page-home button {
+    transition: transform .16s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease, background .25s ease;
+    transform-origin: center;
+    will-change: transform;
+  }
+  #page-home .btn-s21:active,
+  #page-home .icon-btn:active,
+  #page-home .play-btn:active,
+  #page-home .player-btn:active,
+  #page-home .fab:active,
+  #page-home .navbar-toggler:active,
+  #page-home .btn-close:active,
+  #page-home button:active {
+    transform: scale(.88);
+  }
+  #page-home .btn-s21-guest-cta:active { transform: scale(.88); }
+</style>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Smart21Brain",
+  "url": "https://smart21brain.com",
+  "logo": "https://smart21brain.com/images/logo/coool.png",
+  "sameAs": [
+    "https://facebook.com/smart21brain",
+    "https://instagram.com/smart21brain",
+    "https://youtube.com/@smart21brain"
+  ]
+}
+</script>
+</head>
+<body id="page-home">
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- ============ NAVBAR ============ -->
+<header class="s21-navbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="index.html">
+      <span class="mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Smart<span class="brand-21">21</span>Brain
+    </a>
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu">
+      <i class="fa-solid fa-bars fa-lg"></i>
+    </button>
+
+    <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link s21-nav-link active" href="index.html" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <span data-guest-nav="desktop" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </nav>
+</header>
+
+<!-- Mobile offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-label="Menu">
+  <div class="offcanvas-header">
+    <div class="s21-mobile-user flex-grow-1 d-flex align-items-center gap-2 me-3"><span data-guest-nav="mobile" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline w-100" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary w-100" data-i18n="nav_start">Get Started</a></span></div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <ul class="navbar-nav gap-1 mb-4">
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    </div>
+</div>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" style="background-image:url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1800&q=75&auto=format&fit=crop')">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-9 col-xl-8">
+          <span class="hero-badge eyebrow rounded-pill"><img src="images/logo/coool.png" alt="" aria-hidden="true" class="hero-badge-logo" width="22" height="22"> <span data-i18n="hero_badge">Nursery to University · Math · Science · Languages · Coding</span></span>
+          <h1 class="mt-3 mb-3" data-i18n-html="hero_title_html">21st Century of getting <em>Knowledge, Achievement</em><br>and Skills</h1>
+          <p class="lead-sub mb-2" data-i18n="hero_subline">Big library of knowledge, search now</p>
+
+          <form class="hero-search s21-search-wrap mt-4" role="search" aria-label="Site search">
+            <i class="fa-solid fa-magnifying-glass text-soft ms-1" aria-hidden="true"></i>
+            <input type="search" placeholder="Search videos, books, games, subjects…" data-i18n-placeholder="hero_search_placeholder" aria-label="Search Smart21Brain">
+            <button type="button" class="icon-btn" style="background:transparent;border:none;color:#5B6470" data-voice-search aria-label="Search by voice"><i class="fa-solid fa-microphone"></i></button>
+            <button type="submit" aria-label="Search"><i class="fa-solid fa-arrow-right"></i></button>
+            <div class="s21-search-panel" role="listbox"></div>
+          </form>
+
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a href="courses.html" class="btn-s21 btn-s21-secondary"><i class="fa-solid fa-book-open"></i> <span data-i18n="cta_start_learning">Start Learning</span></a>
+            <a href="videos.html" class="btn-s21" style="background:var(--s21-accent);color:#fff;box-shadow:0 8px 20px rgba(239,71,111,.35)"><i class="fa-solid fa-play"></i> <span data-i18n="cta_watch_videos">Watch Videos</span></a>
+            <a href="games.html" class="btn-s21 btn-s21-ghost-white"><i class="fa-solid fa-gamepad"></i> <span data-i18n="cta_play_games">Play Games</span></a>
+            <a href="ai.html" class="btn-s21 s21-ai-hero-btn" id="heroAiBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="cta_ask_ai">S21brain AI</span></a>
+            <a href="school-app.html" data-school-install class="btn-s21" style="background:#0B6E4F;color:#fff;border:2px solid #fff;box-shadow:0 8px 20px rgba(11,110,79,.4)"><i class="fa-solid fa-download"></i> <span>Download School App</span></a>
+          </div>
+
+          <div class="hero-divider-link">
+            <a href="subjects.html" data-i18n="cta_explore_subjects">Explore All Subjects</a>
+          </div>
+
+          <div class="stat-strip">
+            <div><div class="num" data-live-stat="active_learners" data-suffix="+">0</div><div class="label" data-i18n="stat_learners">Active learners</div></div>
+            <div><div class="num" data-live-stat="video_lessons">0</div><div class="label" data-i18n="stat_videos">Video lessons</div></div>
+            <div><div class="num" data-live-stat="digital_books">0</div><div class="label" data-i18n="stat_books">Digital books</div></div>
+            <div><div class="num" data-live-stat="quizzes_completed" data-suffix="+">0</div><div class="label" data-i18n="stat_quizzes">Quizzes completed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEARN AT EVERY LEVEL ============ -->
+  <section class="section-tight section-levels-bg" aria-labelledby="levels-head" style="padding-top:4rem;padding-bottom:4rem">
+    <div class="container text-center">
+      <span class="eyebrow"><i class="fa-solid fa-layer-group"></i> Nursery to university</span>
+      <h2 class="mt-2 mb-3" id="levels-head">Learn at every level</h2>
+      <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+        <a href="courses.html?edu=pre-primary" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-child-reaching me-1"></i> Pre-Primary</a>
+        <a href="courses.html?edu=primary" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-school me-1"></i> Primary</a>
+        <a href="courses.html?edu=secondary" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-book-open-reader me-1"></i> Secondary</a>
+        <a href="courses.html?edu=advanced" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-flask me-1"></i> A-Level</a>
+        <a href="courses.html?edu=college" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-screwdriver-wrench me-1"></i> College</a>
+        <a href="courses.html?edu=university" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-building-columns me-1"></i> University</a>
+        <a href="courses.html?edu=professional" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-briefcase me-1"></i> Adult</a>
+        <a href="levels.html" class="btn-s21 btn-s21-primary">See all levels <i class="fa-solid fa-arrow-right ms-1"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCHOOL SYSTEM (for schools & tuition centers) ============ -->
+  <section class="section section-school-system s21-school-bg" aria-labelledby="schoolsystem-head">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5" data-aos="fade-right">
+          <span class="eyebrow"><i class="fa-solid fa-school"></i> <span data-i18n="eyebrow_schoolsystem">For Schools &amp; Tuition Centers</span></span>
+          <h2 id="schoolsystem-head" class="mt-2" data-i18n="head_schoolsystem">Run your whole school from Smart21Brain</h2>
+          <p class="text-soft" data-i18n="body_schoolsystem">Students, teachers, parents, attendance, fees, examinations, timetables and reports — connected in one secure system. Any school can set it up in minutes and make it their own.</p>
+          <ul class="list-unstyled d-flex flex-column gap-2 my-4" style="font-size:.92rem">
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> <span data-i18n="li_schoolsystem_1">Register students &amp; print ID cards with QR codes</span></li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> <span data-i18n="li_schoolsystem_2">Record fees, print receipts, track overdue balances</span></li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> <span data-i18n="li_schoolsystem_3">Enter marks — positions &amp; report cards, automatically</span></li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> <span data-i18n="li_schoolsystem_4">A parent portal for attendance, fees and results</span></li>
+          </ul>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="school.html" class="btn-s21 btn-s21-primary"><i class="fa-solid fa-circle-play"></i> <span data-i18n="btn_schoolsystem_open">Open the School System</span></a>
+            <a href="school-login.html#register" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-school-flag"></i> <span data-i18n="btn_schoolsystem_register">Register your school</span></a>
+            <a href="school-app.html" data-school-install class="btn-s21 btn-s21-outline"><i class="fa-solid fa-download"></i> <span>Download the app</span></a>
+          </div>
+          <p class="text-soft mt-3" style="font-size:.8rem"><i class="fa-solid fa-circle-info"></i> <span data-i18n="p_schoolsystem_note">Every school gets its own private, secure workspace — built into Smart21Brain, ready to modify.</span></p>
+        </div>
+        <div class="col-lg-7" data-aos="fade-left">
+        <div class="player-shell" id="player-shell">
+          <video id="player-video" preload="metadata" poster="images/school/demo-poster.jpg" playsinline>
+            <source src="videos/school-system-demo.mp4" type="video/mp4">
+            <span data-i18n="video_your_browser_doesn_t_support_html5_v">Your browser doesn't support HTML5 video.</span>
+          </video>
+          <button class="player-big-play" id="player-play-big" aria-label="Play video"><span><i class="fa-solid fa-play"></i></span></button>
+          <div class="player-controls">
+            <input type="range" class="player-seek" id="player-seek" min="0" max="100" value="0" step="0.1" aria-label="Seek">
+            <div class="player-row">
+              <button class="player-btn" id="player-toggle" aria-label="Play/pause"><i class="fa-solid fa-play"></i></button>
+              <button class="player-btn" id="player-mute" aria-label="Mute/unmute"><i class="fa-solid fa-volume-high"></i></button>
+              <input type="range" class="player-volume" id="player-volume" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+              <span class="player-time" id="player-time">0:00 / 0:00</span>
+              <span class="player-spacer"></span>
+              <div class="player-menu">
+                <button class="player-btn" id="player-speed-btn" style="width:auto;padding:0 .5rem;font-size:.78rem" aria-label="Playback speed">1x</button>
+                <div class="player-menu-list" id="player-speed-menu">
+                  <button type="button" data-speed="0.5">0.5x</button>
+                  <button type="button" data-speed="0.75">0.75x</button>
+                  <button type="button" data-speed="1" class="active">Normal</button>
+                  <button type="button" data-speed="1.25">1.25x</button>
+                  <button type="button" data-speed="1.5">1.5x</button>
+                  <button type="button" data-speed="2">2x</button>
+                </div>
+              </div>
+              <button class="player-btn" id="player-pip" aria-label="Picture in picture" title="Picture-in-picture"><i class="fa-regular fa-square"></i></button>
+              <button class="player-btn" id="player-theater" aria-label="Theater mode" title="Theater mode"><i class="fa-solid fa-rectangle-list"></i></button>
+              <button class="player-btn" id="player-fullscreen" aria-label="Fullscreen" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="s21-card p-2 mt-3" id="school-video-chapters" style="max-height:230px;overflow-y:auto">
+          <div class="chapter-marker active" data-start="0" data-end="4.2"><span><i class="fa-solid fa-star" style="font-size:.72rem;color:var(--s21-secondary)"></i> Introduction</span><span class="text-soft">0:00</span></div>
+          <div class="chapter-marker" data-start="4.2" data-end="8.4"><span>Secure sign-in for every school</span><span class="text-soft">0:04</span></div>
+          <div class="chapter-marker" data-start="8.4" data-end="16.8"><span>Live dashboard &amp; charts</span><span class="text-soft">0:08</span></div>
+          <div class="chapter-marker" data-start="16.8" data-end="21.0"><span>Search &amp; manage students</span><span class="text-soft">0:17</span></div>
+          <div class="chapter-marker" data-start="21.0" data-end="25.2"><span>Full student profile</span><span class="text-soft">0:21</span></div>
+          <div class="chapter-marker" data-start="25.2" data-end="29.4"><span>ID cards with QR codes</span><span class="text-soft">0:25</span></div>
+          <div class="chapter-marker" data-start="29.4" data-end="33.6"><span>Attendance &amp; absence alerts</span><span class="text-soft">0:29</span></div>
+          <div class="chapter-marker" data-start="33.6" data-end="42.0"><span>Fees, payments &amp; receipts</span><span class="text-soft">0:34</span></div>
+          <div class="chapter-marker" data-start="42.0" data-end="50.4"><span>Marks, positions &amp; report cards</span><span class="text-soft">0:42</span></div>
+          <div class="chapter-marker" data-start="50.4" data-end="54.6"><span>One-click reports</span><span class="text-soft">0:50</span></div>
+          <div class="chapter-marker" data-start="54.6" data-end="58.8"><span>Weekly timetable</span><span class="text-soft">0:54</span></div>
+          <div class="chapter-marker" data-start="58.8" data-end="63.0"><span>Roles &amp; permissions</span><span class="text-soft">0:58</span></div>
+          <div class="chapter-marker" data-start="63.0" data-end="999"><span>Parent portal, on any phone</span><span class="text-soft">1:03</span></div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ POPULAR SUBJECTS ============ -->
+  <section class="section section-subjects-bg" aria-labelledby="subjects-head">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 section-head mb-4" style="max-width:none">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-shapes"></i> <span data-i18n="eyebrow_subjects">Popular subjects</span></span>
+          <h2 id="subjects-head" class="mt-2 mb-0" data-i18n="head_subjects">Pick a strand, start exploring</h2>
+        </div>
+        <a href="subjects.html" class="btn-s21 btn-s21-outline"><span data-i18n="link_view_all_subjects">View all subjects</span> <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <img src="https://images.unsplash.com/photo-1756032433560-56547efed550?w=1600&q=75&auto=format&fit=crop" alt="Student studying with books at a desk" loading="lazy" class="rounded-xl w-100 mb-4" style="aspect-ratio:21/6;object-fit:cover" data-aos="fade-up">
+
+      <div class="row g-4">
+        <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up">
+          <div class="s21-card subject-card" style="--tint:var(--subj-math)">
+            <div class="subject-icon"><i class="fa-solid fa-calculator"></i></div>
+            <h3 class="h6 mb-0">Mathematics</h3>
+            <span class="text-soft" style="font-size:.82rem">210 lessons</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card subject-card" style="--tint:var(--subj-science)">
+            <div class="subject-icon"><i class="fa-solid fa-flask"></i></div>
+            <h3 class="h6 mb-0">Science</h3>
+            <span class="text-soft" style="font-size:.82rem">180 lessons</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card subject-card" style="--tint:var(--subj-language)">
+            <div class="subject-icon"><i class="fa-solid fa-language"></i></div>
+            <h3 class="h6 mb-0">Languages</h3>
+            <span class="text-soft" style="font-size:.82rem">English &amp; Kiswahili</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card subject-card" style="--tint:var(--subj-computer)">
+            <div class="subject-icon"><i class="fa-solid fa-laptop-code"></i></div>
+            <h3 class="h6 mb-0">Computer Studies</h3>
+            <span class="text-soft" style="font-size:.82rem">Coding &amp; AI basics</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="240">
+          <div class="s21-card subject-card" style="--tint:var(--subj-social)">
+            <div class="subject-icon"><i class="fa-solid fa-earth-africa"></i></div>
+            <h3 class="h6 mb-0">Social Studies</h3>
+            <span class="text-soft" style="font-size:.82rem">Geography &amp; History</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2" data-aos="fade-up" data-aos-delay="300">
+          <div class="s21-card subject-card" style="--tint:var(--subj-creative)">
+            <div class="subject-icon"><i class="fa-solid fa-palette"></i></div>
+            <h3 class="h6 mb-0">Creative</h3>
+            <span class="text-soft" style="font-size:.82rem">Art, music &amp; stories</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED COURSES ============ -->
+  <section class="section section-symbols" aria-labelledby="courses-head">
+    <div class="symbols-canvas" id="symbolsCanvas" aria-hidden="true"></div>
+    <div class="container">
+      <div class="section-head" data-aos="fade-up">
+        <span class="eyebrow"><i class="fa-solid fa-book-open"></i> <span data-i18n="eyebrow_courses">Featured courses</span></span>
+        <h2 id="courses-head" class="mt-2" data-i18n="head_courses">Structured learning paths, built by real teachers</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3" data-aos="fade-up">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&q=70&auto=format&fit=crop" alt="Student solving fraction problems on a whiteboard" loading="lazy"><span class="cat-badge">Beginner</span></div>
+            <div class="body">
+              <span class="badge-pill mb-2"><i class="fa-solid fa-calculator"></i> Mathematics</span>
+              <h3>Fractions Made Fun</h3>
+              <div class="meta"><i class="fa-regular fa-clock"></i> 18 lessons · Ages 7–10</div>
+              <div class="progress-s21 mt-3"><span style="width:0%"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&q=70&auto=format&fit=crop" alt="Child looking through a microscope in a science class" loading="lazy"><span class="cat-badge">Intermediate</span></div>
+            <div class="body">
+              <span class="badge-pill mb-2"><i class="fa-solid fa-flask"></i> Science</span>
+              <h3>The Human Body Explorers</h3>
+              <div class="meta"><i class="fa-regular fa-clock"></i> 24 lessons · Ages 9–12</div>
+              <div class="progress-s21 mt-3"><span style="width:0%"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=600&q=70&auto=format&fit=crop" alt="Child typing code on a laptop keyboard" loading="lazy"><span class="cat-badge">Beginner</span></div>
+            <div class="body">
+              <span class="badge-pill mb-2"><i class="fa-solid fa-laptop-code"></i> Computer Studies</span>
+              <h3>Coding for Kids: Scratch Basics</h3>
+              <div class="meta"><i class="fa-regular fa-clock"></i> 15 lessons · Ages 8–13</div>
+              <div class="progress-s21 mt-3"><span style="width:0%"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&q=70&auto=format&fit=crop" alt="Open storybook with colourful illustrations" loading="lazy"><span class="cat-badge">All levels</span></div>
+            <div class="body">
+              <span class="badge-pill mb-2"><i class="fa-solid fa-language"></i> Languages</span>
+              <h3>Kiswahili Storytelling Circle</h3>
+              <div class="meta"><i class="fa-regular fa-clock"></i> 12 lessons · Ages 6–11</div>
+              <div class="progress-s21 mt-3"><span style="width:0%"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-4" data-aos="fade-up"><a href="courses.html" class="btn-s21 btn-s21-primary"><span data-i18n="link_browse_courses">Browse all courses</span> <i class="fa-solid fa-arrow-right"></i></a></div>
+    </div>
+  </section>
+
+  <!-- ============ VIDEOHUB ============ -->
+  <section class="section section-videohub-formula" aria-labelledby="videohub-head">
+    <div class="videohub-formula-canvas" id="videohubFormulaCanvas" aria-hidden="true"></div>
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4" data-aos="fade-up">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-clapperboard"></i> <span data-i18n="eyebrow_videohub">Smart21Brain VideoHub</span></span>
+          <h2 id="videohub-head" class="mt-2 mb-0" data-i18n="head_videohub">Trending lessons this week</h2>
+        </div>
+        <a href="videos.html" class="btn-s21 btn-s21-outline"><span data-i18n="link_open_videohub">Open VideoHub</span> <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3" data-aos="fade-up">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=600&q=70&auto=format&fit=crop" alt="Volcano diagram used to explain plate tectonics" loading="lazy">
+              <span class="cat-badge">Science</span>
+              <a href="video.html" class="play-btn" aria-label="Play: How Volcanoes Work"><span><i class="fa-solid fa-play"></i></span></a>
+              <span class="duration-badge">6:42</span>
+            </div>
+            <div class="body">
+              <h3><a href="video.html" class="text-reset">How Volcanoes Work</a></h3>
+              <div class="meta"><img src="https://i.pravatar.cc/40?img=12" class="rounded-circle" width="20" height="20" alt="" loading="lazy"> Mr. Juma Kileo · 82K views</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1509869175650-a1d97972541a?w=600&q=70&auto=format&fit=crop" alt="Multiplication table chart on a classroom wall" loading="lazy">
+              <span class="cat-badge">Mathematics</span>
+              <a href="video.html" class="play-btn" aria-label="Play: Times Tables in 5 Minutes"><span><i class="fa-solid fa-play"></i></span></a>
+              <span class="duration-badge">5:10</span>
+            </div>
+            <div class="body">
+              <h3><a href="video.html" class="text-reset">Times Tables in 5 Minutes</a></h3>
+              <div class="meta"><img src="https://i.pravatar.cc/40?img=25" class="rounded-circle" width="20" height="20" alt="" loading="lazy"> Ms. Amina Hassan · 120K views</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=70&auto=format&fit=crop" alt="Illustrated map of Africa used in a geography lesson" loading="lazy">
+              <span class="cat-badge">Geography</span>
+              <a href="video.html" class="play-btn" aria-label="Play: Exploring East Africa"><span><i class="fa-solid fa-play"></i></span></a>
+              <span class="duration-badge">8:03</span>
+            </div>
+            <div class="body">
+              <h3><a href="video.html" class="text-reset">Exploring East Africa</a></h3>
+              <div class="meta"><img src="https://i.pravatar.cc/40?img=33" class="rounded-circle" width="20" height="20" alt="" loading="lazy"> Mr. David Mrema · 54K views</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card media-card">
+            <div class="thumb-wrap">
+              <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=600&q=70&auto=format&fit=crop" alt="Child typing code on a laptop keyboard" loading="lazy">
+              <span class="cat-badge">Coding</span>
+              <a href="video.html" class="play-btn" aria-label="Play: Your First Line of Code"><span><i class="fa-solid fa-play"></i></span></a>
+              <span class="duration-badge">7:25</span>
+            </div>
+            <div class="body">
+              <h3><a href="video.html" class="text-reset">Your First Line of Code</a></h3>
+              <div class="meta"><img src="https://i.pravatar.cc/40?img=8" class="rounded-circle" width="20" height="20" alt="" loading="lazy"> Ms. Zawadi Mushi · 39K views</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SMART21BRAIN KIDS ============ -->
+  <section class="section position-relative" style="background-image:linear-gradient(120deg, rgba(122,74,0,.82) 10%, rgba(255,159,28,.62) 55%, rgba(122,74,0,.5) 100%), url('https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=1800&q=75&auto=format&fit=crop');background-size:cover;background-position:center;" aria-labelledby="kids-head">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5" data-aos="fade-right">
+          <span class="eyebrow" style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)"><i class="fa-solid fa-child-reaching"></i> <span data-i18n="eyebrow_kids">Smart21Brain Kids</span></span>
+          <h2 class="mt-2" style="color:#fff" data-i18n="head_kids">Big buttons, bright stories, safe screen time</h2>
+          <p style="color:rgba(255,255,255,.9)" data-i18n="kids_paragraph">A simplified zone for the youngest learners — alphabet songs, number play, nursery rhymes and gentle moral stories, all in one tap.</p>
+          <a href="kids.html" class="btn-s21 btn-s21-secondary"><span data-i18n="link_enter_kids">Enter Kids Zone</span> <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="col-lg-7">
+          <div class="row g-3">
+            <div class="col-6 col-md-3" data-aos="zoom-in">
+              <div class="s21-card text-center p-3">
+                <div class="game-emoji" style="background:linear-gradient(135deg,#FF9F1C,#FFB703)"><i class="fa-solid fa-font"></i></div>
+                <div class="fw-bold" style="font-size:.9rem">ABC Songs</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="60">
+              <div class="s21-card text-center p-3">
+                <div class="game-emoji" style="background:linear-gradient(135deg,#3A86FF,#4DABF7)"><i class="fa-solid fa-calculator"></i></div>
+                <div class="fw-bold" style="font-size:.9rem">Number Play</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="120">
+              <div class="s21-card text-center p-3">
+                <div class="game-emoji" style="background:linear-gradient(135deg,#06A77D,#2DD4A7)"><i class="fa-solid fa-paw"></i></div>
+                <div class="fw-bold" style="font-size:.9rem">Animal Facts</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="180">
+              <div class="s21-card text-center p-3">
+                <div class="game-emoji" style="background:linear-gradient(135deg,#EF476F,#FF7A9C)"><i class="fa-solid fa-moon"></i></div>
+                <div class="fw-bold" style="font-size:.9rem">Bedtime Stories</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIGITAL LIBRARY ============ -->
+  <section class="section section-planets" aria-labelledby="library-head">
+    <div class="planets-canvas" id="planetsCanvas" aria-hidden="true"></div>
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4" data-aos="fade-up">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-book"></i> <span data-i18n="eyebrow_library">Smart21Brain Library</span></span>
+          <h2 id="library-head" class="mt-2 mb-0" data-i18n="head_library">Featured books this month</h2>
+        </div>
+        <a href="library.html" class="btn-s21 btn-s21-outline"><span data-i18n="link_browse_library">Browse the library</span> <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="row g-4">
+        <div class="col-6 col-md-3" data-aos="fade-up">
+          <div class="s21-card book-card">
+            <div class="cover-wrap"><img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&q=70&auto=format&fit=crop" alt="Cover of a picture book about the solar system" loading="lazy"></div>
+            <div class="body p-3">
+              <span class="badge-pill mb-2">Science</span>
+              <h3 class="h6">The Solar System Storybook</h3>
+              <div class="meta text-soft" style="font-size:.8rem">Ages 6–9 · 32 pages</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card book-card">
+            <div class="cover-wrap"><img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500&q=70&auto=format&fit=crop" alt="Cover of a folk tales collection" loading="lazy"></div>
+            <div class="body p-3">
+              <span class="badge-pill mb-2">Stories</span>
+              <h3 class="h6">Tales from the Baobab Tree</h3>
+              <div class="meta text-soft" style="font-size:.8rem">Ages 7–11 · 48 pages</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card book-card">
+            <div class="cover-wrap"><img src="https://images.unsplash.com/photo-1509266272358-7701da638078?w=500&q=70&auto=format&fit=crop" alt="Cover of a mathematics revision guide" loading="lazy"></div>
+            <div class="body p-3">
+              <span class="badge-pill mb-2">Exam Prep</span>
+              <h3 class="h6">Primary Maths Revision Guide</h3>
+              <div class="meta text-soft" style="font-size:.8rem">Ages 10–13 · 96 pages</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card book-card">
+            <div class="cover-wrap"><img src="https://images.unsplash.com/photo-1516414447565-b14be0adf13e?w=500&q=70&auto=format&fit=crop" alt="Cover of a Kiswahili children's book" loading="lazy"></div>
+            <div class="body p-3">
+              <span class="badge-pill mb-2">Kiswahili</span>
+              <h3 class="h6">Rafiki Zangu Wanyama</h3>
+              <div class="meta text-soft" style="font-size:.8rem">Ages 5–8 · 24 pages</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EDUCATIONAL GAMES ============ -->
+  <section class="section section-games-bg" aria-labelledby="games-head">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4 section-head" style="max-width:none" data-aos="fade-up">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-gamepad"></i> <span data-i18n="eyebrow_games">Smart21Brain Games</span></span>
+          <h2 id="games-head" class="mt-2 mb-0" data-i18n="head_games">Learning that feels like play</h2>
+        </div>
+        <a href="games.html" class="btn-s21 btn-s21-outline"><span data-i18n="link_see_games">See all games</span> <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <img src="https://images.unsplash.com/photo-1560961911-ba7ef651a56c?w=1600&q=75&auto=format&fit=crop" alt="Colorful building blocks used for learning through play" loading="lazy" class="rounded-xl w-100 mb-4" style="aspect-ratio:21/6;object-fit:cover" data-aos="fade-up">
+      <div class="row g-4">
+        <div class="col-6 col-md-3" data-aos="zoom-in">
+          <a href="game.html" class="text-reset text-decoration-none">
+            <div class="s21-card game-card">
+              <div class="game-emoji"><i class="fa-solid fa-plus"></i></div>
+              <h3 class="h6 mb-1">Addition Race</h3>
+              <span class="text-soft" style="font-size:.8rem">Mathematics</span>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="60">
+          <a href="game.html" class="text-reset text-decoration-none">
+            <div class="s21-card game-card">
+              <div class="game-emoji" style="background:linear-gradient(135deg,#06A77D,#2DD4A7)"><i class="fa-solid fa-dna"></i></div>
+              <h3 class="h6 mb-1">Human Body Match</h3>
+              <span class="text-soft" style="font-size:.8rem">Science</span>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="120">
+          <a href="game.html" class="text-reset text-decoration-none">
+            <div class="s21-card game-card">
+              <div class="game-emoji" style="background:linear-gradient(135deg,#EF476F,#FF7A9C)"><i class="fa-solid fa-font"></i></div>
+              <h3 class="h6 mb-1">Spelling Bee</h3>
+              <span class="text-soft" style="font-size:.8rem">Language</span>
+            </div>
+          </a>
+        </div>
+        <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="180">
+          <a href="game.html" class="text-reset text-decoration-none">
+            <div class="s21-card game-card">
+              <div class="game-emoji" style="background:linear-gradient(135deg,#7B61FF,#A78BFA)"><i class="fa-solid fa-puzzle-piece"></i></div>
+              <h3 class="h6 mb-1">Logic Maze</h3>
+              <span class="text-soft" style="font-size:.8rem">Logic &amp; Puzzles</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTINUE LEARNING / RECOMMENDED ============ -->
+  <section class="section" aria-labelledby="continue-head">
+    <div class="container">
+      <span class="eyebrow" data-aos="fade-up"><i class="fa-solid fa-rotate"></i> <span data-i18n="eyebrow_continue">Personalized for you</span></span>
+      <h2 id="continue-head" class="mt-2 mb-4" data-aos="fade-up" data-i18n="head_continue">Continue learning</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">
+          <div class="s21-card p-3 d-flex gap-3 align-items-center">
+            <img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&q=70&auto=format&fit=crop" alt="" width="84" height="84" style="border-radius:12px;object-fit:cover" loading="lazy">
+            <div class="flex-grow-1">
+              <h3 class="h6 mb-1">Fractions Made Fun</h3>
+              <div class="progress-s21 mb-1"><span style="width:68%"></span></div>
+              <span class="text-soft" style="font-size:.78rem">68% complete</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card p-3 d-flex gap-3 align-items-center">
+            <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=200&q=70&auto=format&fit=crop" alt="" width="84" height="84" style="border-radius:12px;object-fit:cover" loading="lazy">
+            <div class="flex-grow-1">
+              <h3 class="h6 mb-1">Human Body Explorers</h3>
+              <div class="progress-s21 mb-1"><span style="width:35%"></span></div>
+              <span class="text-soft" style="font-size:.78rem">35% complete</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card p-3 d-flex gap-3 align-items-center">
+            <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=200&q=70&auto=format&fit=crop" alt="" width="84" height="84" style="border-radius:12px;object-fit:cover" loading="lazy">
+            <div class="flex-grow-1">
+              <h3 class="h6 mb-1">Coding for Kids</h3>
+              <div class="progress-s21 mb-1"><span style="width:12%"></span></div>
+              <span class="text-soft" style="font-size:.78rem">12% complete</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ACHIEVEMENTS / GAMIFICATION ============ -->
+  <section class="section section-gamification" aria-labelledby="achievements-head">
+    <div class="gamification-canvas" id="gamificationCanvas" aria-hidden="true"></div>
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-5" data-aos="fade-right">
+          <img src="https://images.unsplash.com/photo-1607453998774-d533f65dac99?w=700&q=75&auto=format&fit=crop" alt="Child smiling while holding up a certificate" loading="lazy" class="rounded-xl w-100" style="aspect-ratio:4/5;object-fit:cover">
+        </div>
+        <div class="col-lg-7">
+          <div class="section-head" data-aos="fade-up">
+            <span class="eyebrow"><i class="fa-solid fa-trophy"></i> <span data-i18n="eyebrow_achievements">Gamification</span></span>
+            <h2 id="achievements-head" class="mt-2" data-i18n="head_achievements">Every lesson earns something</h2>
+            <p class="text-soft" data-i18n="achievements_paragraph">Points, streaks and badges keep learners coming back — parents and teachers can see it all from the dashboard.</p>
+          </div>
+          <div class="row g-4">
+            <div class="col-6 col-md-3 text-center" data-aos="zoom-in">
+              <div class="game-emoji mx-auto" style="background:linear-gradient(135deg,#3A86FF,#4DABF7)"><i class="fa-solid fa-calculator"></i></div>
+              <div class="fw-bold mt-2 achievement-title" style="font-size:.9rem">Math Master</div>
+            </div>
+            <div class="col-6 col-md-3 text-center" data-aos="zoom-in" data-aos-delay="60">
+              <div class="game-emoji mx-auto"><i class="fa-solid fa-book"></i></div>
+              <div class="fw-bold mt-2 achievement-title" style="font-size:.9rem">Book Explorer</div>
+            </div>
+            <div class="col-6 col-md-3 text-center" data-aos="zoom-in" data-aos-delay="120">
+              <div class="game-emoji mx-auto" style="background:linear-gradient(135deg,#06A77D,#2DD4A7)"><i class="fa-solid fa-flask"></i></div>
+              <div class="fw-bold mt-2 achievement-title" style="font-size:.9rem">Science Star</div>
+            </div>
+            <div class="col-6 col-md-3 text-center" data-aos="zoom-in" data-aos-delay="180">
+              <div class="game-emoji mx-auto" style="background:linear-gradient(135deg,#7B61FF,#A78BFA)"><i class="fa-solid fa-laptop-code"></i></div>
+              <div class="fw-bold mt-2 achievement-title" style="font-size:.9rem">Coding Hero</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SMART21SHOP (for shops, kiosks & stores) ============ -->
+  <section class="section section-school-system s21-shop-bg" aria-labelledby="shopsystem-head">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5 order-lg-2" data-aos="fade-left">
+          <span class="eyebrow"><i class="fa-solid fa-shop"></i> Part of Earth21 · For Shops, Kiosks &amp; Stores</span>
+          <h2 id="shopsystem-head" class="mt-2">Run your shop from Smart21Brain</h2>
+          <p class="text-soft">A fast point of sale, customer records, product &amp; stock control, expenses and real profit reports — connected in one secure system. Any shop can set it up in minutes and make it their own.</p>
+          <ul class="list-unstyled d-flex flex-column gap-2 my-4" style="font-size:.92rem">
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> A fast till that prints receipts &amp; updates stock automatically</li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> Save every customer — see what they've bought and what they owe</li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> Get warned before a product runs low or out of stock</li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> Real profit &amp; loss reports — sales, cost and expenses in one place</li>
+          </ul>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="shop.html" class="btn-s21 btn-s21-primary"><i class="fa-solid fa-circle-play"></i> Open Smart21Shop</a>
+            <a href="shop-login.html#register" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-store"></i> Register your shop</a>
+            <a href="shop-app.html" data-shop-install class="btn-s21 btn-s21-outline"><i class="fa-solid fa-download"></i> <span>Download the app</span></a>
+          </div>
+          <p class="text-soft mt-3" style="font-size:.8rem"><i class="fa-solid fa-circle-info"></i> Every shop gets its own private, secure workspace — built into Smart21Brain, ready to modify.</p>
+        </div>
+        <div class="col-lg-7 order-lg-1" data-aos="fade-right">
+          <div class="s21-card p-3 p-lg-4" style="border-radius:20px">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#6366F1,#3730A3);display:grid;place-items:center;color:#fff;font-size:1.1rem"><i class="fa-solid fa-shop"></i></span>
+              <div><b>Mama Neema Store</b><div class="text-soft" style="font-size:.8rem">Dashboard · Today</div></div>
+              <span class="ms-auto badge rounded-pill" style="background:var(--s21-primary-light);color:var(--s21-primary);font-weight:700;padding:.4rem .8rem"><i class="fa-solid fa-circle" style="font-size:.5rem"></i> Live</span>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Today's Sales</div><div style="font-size:1.15rem;font-weight:800">TZS 486,000</div></div></div>
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Received Today</div><div style="font-size:1.15rem;font-weight:800;color:#10805C">TZS 394,000</div></div></div>
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Customers Owing</div><div style="font-size:1.15rem;font-weight:800;color:#C77700">TZS 92,000</div></div></div>
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Low Stock</div><div style="font-size:1.15rem;font-weight:800;color:#E5484D">3 items</div></div></div>
+            </div>
+            <div class="p-3" style="border:1px solid var(--s21-border,#eee);border-radius:14px">
+              <div class="d-flex justify-content-between align-items-center mb-2"><b style="font-size:.86rem">Recent sales</b><span class="text-soft" style="font-size:.76rem">Just now</span></div>
+              <ul class="list-unstyled d-flex flex-column gap-2 mb-0" style="font-size:.86rem">
+                <li class="d-flex justify-content-between"><span><i class="fa-solid fa-receipt text-soft me-2"></i>RCT-000482 · Amina Juma</span><b>TZS 24,500</b></li>
+                <li class="d-flex justify-content-between"><span><i class="fa-solid fa-receipt text-soft me-2"></i>RCT-000481 · Walk-in customer</span><b>TZS 8,000</b></li>
+                <li class="d-flex justify-content-between"><span><i class="fa-solid fa-receipt text-soft me-2"></i>RCT-000480 · Hassan Ally</span><b>TZS 61,000</b></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SMART21INSTITUTION (for schools, colleges, libraries & training centres) ============ -->
+  <section class="section section-school-system s21-inst-bg" aria-labelledby="instsystem-head">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5" data-aos="fade-right">
+          <span class="eyebrow"><i class="fa-solid fa-building-columns"></i> Part of Earth21 · For Schools, Colleges &amp; Libraries</span>
+          <h2 id="instsystem-head" class="mt-2">Run your institution from Smart21Brain</h2>
+          <p class="text-soft">A modern library with a public catalogue and lending, a secure e-library, student records, academic results, reports and backups — connected in one secure system. Any school, college, library or training centre can set it up in minutes and make it their own.</p>
+          <ul class="list-unstyled d-flex flex-column gap-2 my-4" style="font-size:.92rem">
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> Search the catalogue and see instantly if a book is on the shelf</li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> Issue, return, renew and reserve books — with fines and overdue alerts</li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> Read PDFs, notes and journals in a secure e-library</li>
+            <li><i class="fa-solid fa-circle-check" style="color:var(--s21-primary)"></i> Student records, marks and results — with roles you control</li>
+          </ul>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="institution.html" class="btn-s21 btn-s21-primary"><i class="fa-solid fa-circle-play"></i> Open Smart21Institution</a>
+            <a href="institution-login.html#register" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-building-columns"></i> Register your institution</a>
+            <a href="institution-app.html" data-institution-install class="btn-s21 btn-s21-outline"><i class="fa-solid fa-download"></i> <span>Download the app</span></a>
+          </div>
+          <p class="text-soft mt-3" style="font-size:.8rem"><i class="fa-solid fa-circle-info"></i> Every institution gets its own private, secure workspace — built into Smart21Brain, ready to modify.</p>
+        </div>
+        <div class="col-lg-7" data-aos="fade-left">
+          <div class="s21-card p-3 p-lg-4" style="border-radius:20px">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#14B8A6,#0F766E);display:grid;place-items:center;color:#fff;font-size:1.1rem"><i class="fa-solid fa-building-columns"></i></span>
+              <div><b>Kilimani Technical College</b><div class="text-soft" style="font-size:.8rem">Library · Today</div></div>
+              <span class="ms-auto badge rounded-pill" style="background:var(--s21-primary-light);color:var(--s21-primary);font-weight:700;padding:.4rem .8rem"><i class="fa-solid fa-circle" style="font-size:.5rem"></i> Live</span>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Book titles</div><div style="font-size:1.15rem;font-weight:800">4,280</div></div></div>
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">On loan</div><div style="font-size:1.15rem;font-weight:800;color:#0F766E">128</div></div></div>
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Overdue</div><div style="font-size:1.15rem;font-weight:800;color:#E5484D">7</div></div></div>
+              <div class="col-6 col-md-3"><div class="p-3 h-100" style="border:1px solid var(--s21-border,#eee);border-radius:14px"><div class="text-soft" style="font-size:.74rem">Students</div><div style="font-size:1.15rem;font-weight:800">1,246</div></div></div>
+            </div>
+            <ul class="list-unstyled d-flex flex-column gap-2 mb-0" style="font-size:.86rem">
+              <li class="d-flex justify-content-between"><span><i class="fa-solid fa-book text-soft me-2"></i>Clean Code — Baraka Mushi</span><b>Due today</b></li>
+              <li class="d-flex justify-content-between"><span><i class="fa-solid fa-bookmark text-soft me-2"></i>Reservation ready — Esther M.</span><span class="text-soft">Hold 3 days</span></li>
+              <li class="d-flex justify-content-between"><span><i class="fa-solid fa-laptop-file text-soft me-2"></i>New in e-library: Structural Analysis notes</span><span class="text-soft">PDF</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TOP TEACHERS ============ -->
+  <section class="section" aria-labelledby="teachers-head">
+    <div class="container">
+      <div class="section-head mx-auto text-center" data-aos="fade-up">
+        <span class="eyebrow"><i class="fa-solid fa-chalkboard-user"></i> <span data-i18n="eyebrow_teachers">Top teachers</span></span>
+        <h2 id="teachers-head" class="mt-2" data-i18n="head_teachers">Learn from educators students love</h2>
+      </div>
+      <div class="row g-4 justify-content-center text-center">
+        <div class="col-6 col-md-3" data-aos="fade-up">
+          <img src="https://i.pravatar.cc/160?img=25" class="rounded-circle mb-3 avatar-ring" style="width:96px;height:96px" alt="Portrait of Ms. Amina Hassan" loading="lazy">
+          <h3 class="h6 mb-0">Amina Hassan</h3>
+          <span class="text-soft" style="font-size:.82rem">Mathematics</span>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60">
+          <img src="https://i.pravatar.cc/160?img=12" class="rounded-circle mb-3 avatar-ring" style="width:96px;height:96px" alt="Portrait of Mr. Juma Kileo" loading="lazy">
+          <h3 class="h6 mb-0">Juma Kileo</h3>
+          <span class="text-soft" style="font-size:.82rem">Science</span>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120">
+          <img src="https://i.pravatar.cc/160?img=33" class="rounded-circle mb-3 avatar-ring" style="width:96px;height:96px" alt="Portrait of Mr. David Mrema" loading="lazy">
+          <h3 class="h6 mb-0">David Mrema</h3>
+          <span class="text-soft" style="font-size:.82rem">Geography</span>
+        </div>
+        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180">
+          <img src="https://i.pravatar.cc/160?img=8" class="rounded-circle mb-3 avatar-ring" style="width:96px;height:96px" alt="Portrait of Ms. Zawadi Mushi" loading="lazy">
+          <h3 class="h6 mb-0">Zawadi Mushi</h3>
+          <span class="text-soft" style="font-size:.82rem">Computer Studies</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="section section-testimonials-bg" aria-labelledby="testimonials-head">
+    <div class="container">
+      <div class="section-head mx-auto text-center" data-aos="fade-up">
+        <span class="eyebrow"><i class="fa-solid fa-heart"></i> <span data-i18n="eyebrow_testimonials">Loved by families</span></span>
+        <h2 id="testimonials-head" class="mt-2" data-i18n="head_testimonials">What parents and teachers say</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up">
+          <div class="s21-card testimonial-card">
+            <span class="quote-mark">“</span>
+            <p>My daughter used to dread maths homework. After two weeks on Smart21Brain she asks to do the fraction games herself.</p>
+            <div class="d-flex align-items-center gap-2 mt-3">
+              <span class="avatar-ring"><img src="https://i.pravatar.cc/80?img=47" alt="" loading="lazy"></span>
+              <div><div class="fw-bold" style="font-size:.9rem">Grace M.</div><div class="text-soft" style="font-size:.78rem">Parent, Dar es Salaam</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card testimonial-card">
+            <span class="quote-mark">“</span>
+            <p>The teacher dashboard makes it easy to see exactly where each student is stuck, without extra marking.</p>
+            <div class="d-flex align-items-center gap-2 mt-3">
+              <span class="avatar-ring"><img src="https://i.pravatar.cc/80?img=15" alt="" loading="lazy"></span>
+              <div><div class="fw-bold" style="font-size:.9rem">Mr. Peter O.</div><div class="text-soft" style="font-size:.78rem">Primary school teacher</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card testimonial-card">
+            <span class="quote-mark">“</span>
+            <p>Screen time finally feels productive. The parent controls let me set limits without a single argument.</p>
+            <div class="d-flex align-items-center gap-2 mt-3">
+              <span class="avatar-ring"><img src="https://i.pravatar.cc/80?img=5" alt="" loading="lazy"></span>
+              <div><div class="fw-bold" style="font-size:.9rem">Samuel K.</div><div class="text-soft" style="font-size:.78rem">Parent, Arusha</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BLOG ============ -->
+  <section class="section" aria-labelledby="blog-head">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4" data-aos="fade-up">
+        <div>
+          <span class="eyebrow"><i class="fa-solid fa-pen-nib"></i> <span data-i18n="eyebrow_blog">From the blog</span></span>
+          <h2 id="blog-head" class="mt-2 mb-0" data-i18n="head_blog">Guides for parents &amp; teachers</h2>
+        </div>
+        <a href="blog.html" class="btn-s21 btn-s21-outline"><span data-i18n="link_read_blog">Read the blog</span> <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4" data-aos="fade-up">
+          <a href="blog-post.html" class="text-reset text-decoration-none">
+            <div class="s21-card media-card">
+              <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=70&auto=format&fit=crop" alt="Parent reading with a child" loading="lazy"><span class="cat-badge">Parenting</span></div>
+              <div class="body"><h3>How to Help Children Love Learning</h3><div class="meta"><i class="fa-regular fa-calendar"></i> 5 min read</div></div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="60">
+          <a href="blog-post.html" class="text-reset text-decoration-none">
+            <div class="s21-card media-card">
+              <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=70&auto=format&fit=crop" alt="Children playing an educational board game" loading="lazy"><span class="cat-badge">Games</span></div>
+              <div class="body"><h3>Best Educational Games for Kids</h3><div class="meta"><i class="fa-regular fa-calendar"></i> 4 min read</div></div>
+            </div>
+          </a>
+        </div>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="120">
+          <a href="blog-post.html" class="text-reset text-decoration-none">
+            <div class="s21-card media-card">
+              <div class="thumb-wrap"><img src="https://images.unsplash.com/photo-1503676382389-4809596d5290?w=600&q=70&auto=format&fit=crop" alt="Teacher explaining a coding concept" loading="lazy"><span class="cat-badge">Technology</span></div>
+              <div class="body"><h3>Introduction to Coding for Kids</h3><div class="meta"><i class="fa-regular fa-calendar"></i> 6 min read</div></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NEWSLETTER + CTA ============ -->
+  <section class="section-tight">
+    <div class="container">
+      <div class="cta-band" data-aos="zoom-in" style="background-image:linear-gradient(120deg, rgba(210,47,88,.90) 10%, rgba(239,71,111,.78) 55%, rgba(122,20,45,.6) 100%), url('https://images.unsplash.com/photo-1758687126499-9ff30d1c5762?w=1600&q=75&auto=format&fit=crop');background-size:cover;background-position:center;">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <h2 class="text-white mb-2" data-i18n="newsletter_title">Get a free learning report every week</h2>
+            <p class="mb-0" style="color:rgba(255,255,255,.88)" data-i18n="newsletter_sub">Short, useful tips for parents and teachers — no spam, unsubscribe any time.</p>
+          </div>
+          <div class="col-lg-5">
+            <form class="newsletter-form d-flex gap-2">
+              <input type="email" required placeholder="you@example.com" data-i18n-placeholder="newsletter_placeholder" aria-label="Email address" class="form-control" style="border-radius:999px;border:none;padding:.8rem 1.2rem">
+              <button type="submit" class="btn-s21 btn-s21-secondary flex-shrink-0"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          </span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for learners of every level, from nursery to university, and for teachers and parents to learn together.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_learning">Learning</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="subjects.html" data-i18n="footer_mathematics">Mathematics</a></li>
+          <li><a href="subjects.html" data-i18n="book_science">Science</a></li>
+          <li><a href="subjects.html" data-i18n="book_english">English</a></li>
+          <li><a href="subjects.html" data-i18n="footer_kiswahili">Kiswahili</a></li>
+          <li><a href="subjects.html" data-i18n="dash_coding">Coding</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ FLOATING ACTIONS ============ -->
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+
+<!-- ============ AI ASSISTANT PANEL ============ -->
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> Study Buddy</span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log">
+    <div class="ai-bubble ai-bubble-ai">Hi! Ask me to explain a topic or suggest a video or book to try next.</div>
+  </div>
+  <p class="ai-disclaimer">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/featured-symbols-three.js"></script>
+<script src="js/library-planets-three.js"></script>
+<script src="js/gamification-three.js"></script>
+<script src="js/videohub-formula-three.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/search.js"></script>
+<script src="js/voice-search.js"></script>
+<script src="js/ai-assistant.js?v=4"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/main.js?v=20261008"></script>
+<script src="js/live-data.js?v=20261008"></script>
+<script src="js/nav-account.js"></script>
+<script src="js/video.js"></script>
+<script src="js/school-install.js?v=1"></script>
+<script src="js/shop-install.js?v=1"></script>
+<script src="js/institution-install.js?v=1"></script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

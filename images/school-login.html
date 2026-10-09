@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-school-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Smart21Brain School System</title>
+<meta name="description" content="Sign in to the Smart21Brain School System, or register your school in a minute.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B6E4F">
+<link rel="manifest" href="school-manifest.json">
+<link rel="apple-touch-icon" href="icons/school-apple-touch.png" data-school="1">
+<link rel="icon" href="images/school/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/school-app.css?v=2">
+</head>
+<body class="sc-body">
+<div class="sc-auth">
+  <aside class="sc-auth-art">
+    <div class="sc-row" style="gap:.8rem"><img src="images/school/logo.svg" width="46" height="46" alt="" style="border-radius:14px"><b style="font-family:var(--sc-font-display);font-size:1.15rem">Smart21Brain <span style="opacity:.8;font-weight:500">School System</span></b></div>
+    <div>
+      <h1>Run your whole school from one place.</h1>
+      <p>Students, teachers, parents, attendance, fees, examinations and reports — connected, secure and easy enough for anyone to use.</p>
+      <ul>
+        <li><i class="fa-solid fa-user-graduate"></i> Register students & print ID cards with QR codes</li>
+        <li><i class="fa-solid fa-coins"></i> Record fees, print receipts, spot overdue balances</li>
+        <li><i class="fa-solid fa-ranking-star"></i> Enter marks, get positions & report cards automatically</li>
+        <li><i class="fa-solid fa-people-roof"></i> A parent portal for attendance, fees and results</li>
+      </ul>
+    </div>
+    <a href="school.html" style="color:#fff;font-weight:700"><i class="fa-solid fa-circle-play"></i> Watch how it works</a>
+  </aside>
+
+  <main class="sc-auth-form">
+    <div class="sc-auth-box">
+      <div class="sc-row" style="margin-bottom:1.2rem;gap:.7rem"><span class="sc-logo" id="lgLogo"><i class="fa-solid fa-graduation-cap"></i></span><div><div class="sc-brand-name" id="lgName">Smart21Brain School System</div><div class="sc-brand-sub">Secure sign in</div></div></div>
+      <div class="sc-tabs" role="tablist"><button class="on" data-tab="in" role="tab">Sign in</button><button data-tab="up" role="tab">Register your school</button></div>
+
+      <form class="sc-form" id="inForm" novalidate>
+        <div class="sc-form-error" role="alert"></div>
+        <div class="sc-field" data-field="email"><label for="f_email">Email or username<span class="req">*</span></label><input class="sc-input" id="f_email" name="email" type="email" autocomplete="username" required data-label="your email" placeholder="you@school.com"><span class="err"></span></div>
+        <div class="sc-field" data-field="password"><label for="f_password">Password<span class="req">*</span></label><div style="position:relative"><input class="sc-input" id="f_password" name="password" type="password" autocomplete="current-password" required data-label="your password" style="padding-right:3rem"><button type="button" class="sc-icon-btn" id="eye" style="position:absolute;right:4px;top:3px;width:36px;height:36px;border:0;background:none" aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div><span class="err"></span></div>
+        <div class="sc-spread"><label class="sc-check"><input type="checkbox" name="remember" checked> Remember me</label><a href="forgot-password.html" class="sc-small sc-strong">Forgot password?</a></div>
+        <button class="sc-btn primary block lg" type="submit">Login</button>
+        <p class="sc-small sc-muted sc-center" style="margin:0">Teachers, receptionists and parents: use the email and password the school gave you.</p>
+      </form>
+
+      <form class="sc-form sc-hide" id="upForm" novalidate>
+        <div class="sc-form-error" role="alert"></div>
+        <p class="sc-muted" style="margin:0">Create a school workspace in under a minute. You become its administrator and get ready-made classes, subjects, fees and roles you can change anytime.</p>
+        <div class="sc-field" data-field="school_name"><label for="f_school_name">School name<span class="req">*</span></label><input class="sc-input" id="f_school_name" name="school_name" required data-label="the school name" placeholder="e.g. Smart Hills Secondary School" maxlength="120"><span class="err"></span></div>
+        <div class="cols"><div class="sc-field" data-field="name"><label for="f_name">Your name<span class="req">*</span></label><input class="sc-input" id="f_name" name="name" required data-label="your name" autocomplete="name"><span class="err"></span></div>
+        <div class="sc-field" data-field="phone"><label for="f_phone">Phone (optional)</label><input class="sc-input" id="f_phone" name="phone" type="tel" data-kind="phone" autocomplete="tel" placeholder="+255 …"><span class="err"></span></div></div>
+        <div class="sc-field" data-field="remail"><label for="f_remail">Email<span class="req">*</span></label><input class="sc-input" id="f_remail" name="email" type="email" required data-label="your email" autocomplete="email"><span class="err"></span></div>
+        <div class="sc-field" data-field="rpass"><label for="f_rpass">Password<span class="req">*</span></label><input class="sc-input" id="f_rpass" name="password" type="password" required minlength="8" data-label="a password" autocomplete="new-password"><span class="hint">At least 8 characters.</span><span class="err"></span></div>
+        <button class="sc-btn primary block lg" type="submit">Create my school</button>
+      </form>
+
+      <p class="sc-small sc-center" style="margin-top:1.4rem"><a href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to Smart21Brain</a> &nbsp;·&nbsp; <a href="school.html">About the School System</a></p>
+    </div>
+  </main>
+</div>
+<script src="js/school/core.js?v=1"></script>
+<script>
+(function () {
+  var SC = window.SC;
+  // Already signed in to a school? Go straight in.
+  SC.api.get('/context').then(function (c) { if (c && c.school) location.replace('school-app.html'); }).catch(function () {});
+  var params = new URLSearchParams(location.search);
+  if (params.get('school')) { // optional co-branding: school-login.html?school=12
+    var img = new Image(); img.onload = function () { document.getElementById('lgLogo').innerHTML = '<img src="' + img.src + '" alt="">'; }; img.src = '/api/school/public/logo/' + encodeURIComponent(params.get('school'));
+  }
+  var inForm = document.getElementById('inForm'), upForm = document.getElementById('upForm');
+  function show(tab) {
+    document.querySelectorAll('.sc-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === tab); });
+    inForm.classList.toggle('sc-hide', tab !== 'in'); upForm.classList.toggle('sc-hide', tab !== 'up');
+  }
+  document.querySelector('.sc-tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) show(b.dataset.tab); });
+  if (location.hash === '#register') show('up');
+  document.getElementById('eye').addEventListener('click', function () {
+    var p = document.getElementById('f_password'); var on = p.type === 'password'; p.type = on ? 'text' : 'password';
+    this.innerHTML = '<i class="fa-solid ' + (on ? 'fa-eye-slash' : 'fa-eye') + '"></i>'; this.setAttribute('aria-label', on ? 'Hide password' : 'Show password');
+  });
+  function submit(form, path, label) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var err = form.querySelector('.sc-form-error'); err.classList.remove('show');
+      if (!SC.validate(form)) return;
+      var btn = form.querySelector('button[type=submit]'); btn.disabled = true; btn.innerHTML = '<span class="sc-spin"></span> Please wait…';
+      SC.api.post(path, SC.formData(form)).then(function (r) {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Success';
+        location.href = 'school-app.html' + (path === '/login' && r.role === 'parent' ? '#home' : '');
+      }).catch(function (ex) {
+        err.textContent = ex.message; err.classList.add('show'); btn.disabled = false; btn.textContent = label;
+      });
+    });
+  }
+  submit(inForm, '/login', 'Login'); submit(upForm, '/register-school', 'Create my school');
+})();
+</script>
+<script src="js/school-install.js?v=1"></script>
+</body>
+</html>

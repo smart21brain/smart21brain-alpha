@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart21Brain</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=18">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+</head>
+<body class="p-0">
+
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+
+<div class="splash-shell">
+  <video class="splash-video" src="videos/splash-intro.mp4" autoplay muted playsinline preload="auto"></video>
+</div>
+
+<script>
+  // One-time pass so index.html's entry gate lets this specific hand-off
+  // through instead of bouncing back to splash/onboarding. index.html
+  // deletes 's21-from-splash' the instant it reads it, so that flag only
+  // ever covers this one transition. 's21-splash-seen' persists for the
+  // rest of the browser session so the splash doesn't replay on every
+  // internal navigation back to index.html.
+  function goToIndex() {
+    if (goToIndex.done) return;
+    goToIndex.done = true;
+    try {
+      sessionStorage.setItem('s21-from-splash', '1');
+      sessionStorage.setItem('s21-splash-seen', '1');
+    } catch (e) { /* ignore */ }
+    window.location.href = 'index.html';
+  }
+
+  var introVideo = document.querySelector('.splash-video');
+  if (introVideo) {
+    // Move on as soon as the intro finishes playing.
+    introVideo.addEventListener('ended', goToIndex);
+    // If the video can't load or play (blocked autoplay, slow network,
+    // offline), don't strand the visitor on the splash screen.
+    introVideo.addEventListener('error', function () { setTimeout(goToIndex, 2200); });
+    introVideo.play().catch(function () { setTimeout(goToIndex, 2200); });
+  } else {
+    setTimeout(goToIndex, 2200);
+  }
+  // Hard safety net in case the 'ended' event never fires for any reason.
+  setTimeout(goToIndex, 12000);
+</script>
+
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

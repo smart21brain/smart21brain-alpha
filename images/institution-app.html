@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-institution-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Smart21Institution — Smart21Brain</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0F766E">
+<link rel="manifest" href="institution-manifest.json">
+<link rel="apple-touch-icon" href="icons/institution-apple-touch.png">
+<link rel="icon" href="images/institution/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/institution-app.css?v=1">
+<script>
+  // Dark mode is the default. A saved choice is used after the first visit (no flash before paint).
+  try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}
+</script>
+</head>
+<body class="in-body">
+<noscript><p style="padding:2rem;font-family:sans-serif">Smart21Institution needs JavaScript. Please turn it on in your browser.</p></noscript>
+<!--
+  The whole app is drawn by js/institution/*.js into <body>. Each file is one
+  area of the system (library, e-library, students, academics, reports,
+  administration) so an institution can change a part without touching the rest.
+-->
+<script src="js/institution/core.js?v=3"></script>
+<script src="js/institution/extras.js?v=3"></script>
+<script src="js/institution/app.js?v=3"></script>
+<script src="js/institution/dashboard.js?v=3"></script>
+<script src="js/institution/library.js?v=3"></script>
+<script src="js/institution/circulation.js?v=3"></script>
+<script src="js/institution/elibrary.js?v=3"></script>
+<script src="js/institution/people.js?v=3"></script>
+<script src="js/institution/academics.js?v=3"></script>
+<script src="js/institution/reports.js?v=3"></script>
+<script src="js/institution/admin.js?v=3"></script>
+<script src="js/institution/site-render.js?v=2"></script>
+<script src="js/institution/site-builder.js?v=2"></script>
+<link rel="stylesheet" href="css/institution-site.css?v=1">
+<script src="js/institution-install.js?v=2"></script>
+</body>
+</html>

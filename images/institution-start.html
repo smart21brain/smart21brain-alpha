@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Welcome — Smart21Institution</title>
+<meta name="theme-color" content="#0B1F1E">
+<link rel="manifest" href="institution-manifest.json">
+<link rel="icon" href="images/institution/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<style>
+  :root { --p: #0F766E; --a: #F59E0B; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; color: #fff; background: #0B1F1E; -webkit-text-size-adjust: 100%; }
+  .bg { position: fixed; inset: 0; background: url("https://images.unsplash.com/photo-1762512346988-045f4d5ad2b3?auto=format&fit=crop&w=1920&q=70") center/cover no-repeat, linear-gradient(135deg, #0F766E, #0B1F1E); }
+  .bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,20,30,.55), rgba(5,20,30,.88)); }
+  main { position: relative; min-height: 100%; display: grid; place-items: center; padding: max(1.5rem, env(safe-area-inset-top)) 1.2rem max(1.5rem, env(safe-area-inset-bottom)); }
+  .box { width: min(920px, 100%); text-align: center; }
+  .logo { width: 84px; height: 84px; border-radius: 22px; background: var(--p); display: grid; place-items: center; margin: 0 auto 1rem; font-size: 1.8rem; font-weight: 800; position: relative; overflow: hidden; box-shadow: 0 14px 40px rgba(0,0,0,.4); }
+  .logo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 2.6rem); margin: 0 0 .4rem; letter-spacing: -.01em; }
+  .sub { margin: 0 auto 2rem; opacity: .85; max-width: 52ch; }
+  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
+  .card { display: flex; flex-direction: column; align-items: center; gap: .6rem; text-align: center; padding: 2rem 1.4rem; border-radius: 22px; text-decoration: none; color: #fff; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); backdrop-filter: blur(10px); transition: transform .18s, background .18s, border-color .18s; }
+  .card:hover, .card:focus-visible { transform: translateY(-4px); background: rgba(255,255,255,.18); border-color: var(--a); outline: none; }
+  .card i.big { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; font-size: 1.7rem; background: var(--a); color: #111; }
+  .card.dash i.big { background: var(--p); color: #fff; }
+  .card b { font-size: 1.3rem; } .card span { opacity: .85; font-size: .95rem; line-height: 1.45; }
+  .card .go { margin-top: .4rem; font-weight: 700; color: var(--a); }
+  .links { margin-top: 1.6rem; display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; font-size: .92rem; }
+  .links a, .links button { color: #fff; opacity: .85; text-decoration: none; background: none; border: 0; font: inherit; cursor: pointer; } .links a:hover, .links button:hover { opacity: 1; text-decoration: underline; }
+  .pick { display: grid; gap: .7rem; max-width: 520px; margin: 0 auto; }
+  .pick a { padding: 1rem 1.2rem; border-radius: 16px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: #fff; text-decoration: none; font-weight: 700; display: flex; justify-content: space-between; } .pick a:hover { border-color: var(--a); background: rgba(255,255,255,.2); }
+  .continue { display: inline-flex; align-items: center; gap: .7rem; margin: 0 auto 1.1rem; padding: .95rem 1.6rem; border-radius: 999px; background: var(--a); color: #111; font-weight: 800; text-decoration: none; box-shadow: 0 12px 30px rgba(0,0,0,.4); transition: transform .15s; } .continue:hover, .continue:focus-visible { transform: translateY(-2px); outline: none; }
+  .hello { display: inline-block; margin-bottom: 1.2rem; padding: .4rem .9rem; border-radius: 999px; background: rgba(255,255,255,.14); font-size: .9rem; }
+  @media (max-width: 640px) { .cards { grid-template-columns: 1fr; } .card { padding: 1.4rem 1rem; } }
+  @media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+</style>
+<script>try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}</script>
+</head>
+<body>
+<div class="bg" id="bg"></div>
+<main><div class="box" id="box"><div class="sub">…</div></div></main>
+<script>
+(function () {
+  'use strict';
+  var sw = false; try { sw = localStorage.getItem('s21-lang') === 'sw'; } catch (e) {}
+  var t = function (en, s) { return sw ? s : en; };
+  var box = document.getElementById('box');
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
+  var qs0 = new URLSearchParams(location.search);
+  var want = qs0.get('i') || '';
+  var go = ['login', 'admin-register', 'register'].indexOf(qs0.get('go')) > -1 ? qs0.get('go') : '';
+  try { localStorage.setItem('in-gate', String(Date.now())); } catch (e) {}   // "passed through the entry page" (valid 30 min; login/registration pages check it)
+  var getJson = function (u) { return fetch(u, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+
+  function show(site, me) {
+    var sl = encodeURIComponent(site.slug);
+    document.title = site.name + ' — Smart21Institution';
+    var logo = '<span class="logo">' + esc((site.name || 'S').slice(0, 2).toUpperCase()) + '<img src="/api/institution/public/logo/' + site.id + '" alt="" onerror="this.remove()"></span>';
+    var loginUrl = 'institution-login.html?via=start&i=' + site.id + '&s=' + sl;
+    var dashHref = me && me.institution ? 'institution-app.html' : loginUrl;
+    var target = go === 'register' ? '/s/' + sl + '/register?via=start' : go === 'admin-register' ? loginUrl + '#register' : go === 'login' ? dashHref : '';
+    var goText = go === 'register' ? t('Continue to student registration', 'Endelea kujisajili kama mwanafunzi') : go === 'admin-register' ? t('Continue to register your institution', 'Endelea kusajili taasisi yako') : t('Continue to sign in', 'Endelea kuingia');
+    var goIcon = go === 'register' ? 'fa-user-plus' : go === 'admin-register' ? 'fa-building-columns' : 'fa-right-to-bracket';
+    var dashText = me && me.institution ? t('Continue to your dashboard', 'Endelea kwenye dashibodi yako') : t('Sign in with your email and password', 'Ingia kwa barua pepe na nenosiri');
+    box.innerHTML = logo + '<h1>' + esc(site.name) + '</h1>' +
+      (me && me.user ? '<div class="hello"><i class="fa-solid fa-circle-user"></i> ' + t('Signed in as', 'Umeingia kama') + ' ' + esc(me.user.name) + '</div>' : '') +
+      (target ? '<a class="continue" href="' + target + '"><i class="fa-solid ' + goIcon + '"></i> ' + goText + ' <i class="fa-solid fa-arrow-right"></i></a><p class="sub" style="margin-top:.2rem">' + t('or choose where to go:', 'au chagua unakotaka kwenda:') + '</p>' : '<p class="sub">' + t('Where would you like to go?', 'Ungependa kwenda wapi?') + '</p>') +
+      '<div class="cards"><a class="card" href="/s/' + sl + '"><i class="big fa-solid fa-house"></i><b>' + t('Home page', 'Home page') + '</b><span>' + t('Our website: programmes, library catalogue, e-books, news and student registration.', 'Tovuti yetu: programu, katalogi ya maktaba, vitabu vya kidijitali, habari na usajili wa wanafunzi.') + '</span><span class="go">' + t('Open the website', 'Fungua tovuti') + ' →</span></a>' +
+      '<a class="card dash" href="' + dashHref + '"><i class="big fa-solid fa-gauge"></i><b>' + t('Dashboard', 'Dashibodi') + '</b><span>' + dashText + '. ' + t('For students, teachers, librarians and administrators.', 'Kwa wanafunzi, walimu, wasimamizi wa maktaba na wasimamizi.') + '</span><span class="go">' + (me && me.institution ? t('Continue', 'Endelea') : t('Sign in', 'Ingia')) + ' →</span></a></div>' +
+      '<div class="links"><a href="/s/' + sl + '/register?via=start"><i class="fa-solid fa-user-plus"></i> ' + t('New student? Register', 'Mwanafunzi mpya? Jisajili') + '</a><a href="/institution-opac.html?i=' + sl + '"><i class="fa-solid fa-book"></i> ' + t('Library catalogue', 'Katalogi ya maktaba') + '</a><button id="lang" type="button"><i class="fa-solid fa-language"></i> ' + (sw ? 'English' : 'Kiswahili') + '</button></div>';
+    document.getElementById('lang').addEventListener('click', function () { try { localStorage.setItem('s21-lang', sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
+    // Background photo = first picture of the website's home slider, if any.
+    getJson('/api/institution/public/' + sl + '/site?page=home').then(function (d) {
+      if (!d) return;
+      var th = d.theme || {}; if (/^#[0-9a-f]{6}$/i.test(th.primary || '')) document.documentElement.style.setProperty('--p', th.primary);
+      if (/^#[0-9a-f]{6}$/i.test(th.accent || '')) document.documentElement.style.setProperty('--a', th.accent);
+      var blocks = (d.page && d.page.blocks) || []; var img = '';
+      blocks.forEach(function (b) { if (!img && b.type === 'slider' && b.items && b.items[0] && /^https:\/\//.test(b.items[0].image || '')) img = b.items[0].image; if (!img && b.type === 'hero' && /^https:\/\//.test(b.image || '')) img = b.image; });
+      if (img) document.getElementById('bg').style.backgroundImage = 'url("' + img.replace(/"/g, '%22') + '")';
+    });
+  }
+
+  // Neutral entry page: shown to anyone who did not come through a specific institution's own link.
+  // It never lists or names any institution — every person signs in with their own account and
+  // lands in their own institution's workspace (their own data, nobody else's).
+  function generic() {
+    var loginUrl = 'institution-login.html?via=start';
+    box.innerHTML = '<span class="logo"><i class="fa-solid fa-building-columns"></i></span><h1>Smart21Institution</h1>' +
+      '<p class="sub">' + t('Sign in to your own institution, or register a new one. Each institution has its own private records.', 'Ingia kwenye taasisi yako mwenyewe, au sajili taasisi mpya. Kila taasisi ina rekodi zake binafsi.') + '</p>' +
+      '<div class="cards">' +
+      '<a class="card dash" href="' + loginUrl + '"><i class="big fa-solid fa-right-to-bracket"></i><b>' + t('Sign in', 'Ingia') + '</b><span>' + t('Administrators, teachers, librarians and students: use your email and password.', 'Wasimamizi, walimu, wasimamizi wa maktaba na wanafunzi: tumia barua pepe na nenosiri lako.') + '</span><span class="go">' + t('Continue', 'Endelea') + ' <i class="fa-solid fa-arrow-right"></i></span></a>' +
+      '<a class="card" href="' + loginUrl + '#register"><i class="big fa-solid fa-building-columns"></i><b>' + t('Register my institution', 'Sajili taasisi yangu') + '</b><span>' + t('Create a new, empty workspace that only you and the people you add can open.', 'Fungua nafasi mpya tupu ambayo ni wewe na uliowaongeza tu wanaweza kuifungua.') + '</span><span class="go">' + t('Start', 'Anza') + ' <i class="fa-solid fa-arrow-right"></i></span></a>' +
+      '</div>' +
+      '<div class="links"><span style="opacity:.75">' + t('Student? Open the link your institution gave you.', 'Mwanafunzi? Fungua kiungo ulichopewa na taasisi yako.') + '</span>' +
+      '<button id="lang" type="button"><i class="fa-solid fa-language"></i> ' + (sw ? 'English' : 'Kiswahili') + '</button></div>';
+    document.getElementById('lang').addEventListener('click', function () { try { localStorage.setItem('s21-lang', sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
+  }
+
+  // Which institution (if any) is this visit about? Only (1) the institution whose own link was opened
+  // (?i=...) or (2) the institution the signed-in person already belongs to. Never "the first one in the database".
+  getJson('/api/institution/context').then(function (me) {
+    me = me && me.user ? me : null;
+    var slug = want || (me && me.institution ? me.institution.slug : '');
+    if (!slug) return generic();
+    getJson('/api/institution/public-sites?i=' + encodeURIComponent(slug)).then(function (r) {
+      var site = r && r.sites && r.sites[0] ? r.sites[0] : null;
+      // A signed-in person may only see their OWN institution's page; a stranger's link falls back to the neutral page.
+      if (site && me && me.institution && want && String(site.id) !== String(me.institution.id)) me = null;
+      if (site) return show(site, me);
+      if (me && me.institution && !want) return location.replace('institution-app.html');
+      generic();
+    });
+  });
+})();
+</script>
+</body>
+</html>

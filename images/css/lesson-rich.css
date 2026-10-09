@@ -1,0 +1,93 @@
+/* Smart21Brain — rich lesson + curriculum styles (light and dark mode) */
+.s21-rich { color: var(--s21-text); font-size: 1.02rem; line-height: 1.75; }
+.s21-rich .rc-h { font-size: 1.28rem; font-weight: 800; margin: 2rem 0 .7rem; padding-left: .7rem; border-left: 5px solid var(--s21-primary); }
+.s21-rich .rc-h2 { font-size: 1.05rem; font-weight: 700; margin: 1.4rem 0 .4rem; color: var(--s21-primary); }
+.s21-rich .rc-p { margin: 0 0 1rem; }
+.s21-rich .rc-list { margin: 0 0 1.1rem; padding-left: 1.2rem; }
+.s21-rich .rc-list li { margin-bottom: .35rem; }
+.s21-rich .rc-steps { list-style: none; counter-reset: rcs; padding-left: 0; }
+.s21-rich .rc-steps li { counter-increment: rcs; position: relative; padding: .55rem .8rem .55rem 3rem; margin-bottom: .5rem; background: var(--s21-primary-light); border-radius: 12px; }
+.s21-rich .rc-steps li::before { content: counter(rcs); position: absolute; left: .7rem; top: 50%; transform: translateY(-50%); width: 1.8rem; height: 1.8rem; border-radius: 50%; background: var(--s21-primary); color: #fff; font-weight: 700; font-size: .9rem; display: grid; place-items: center; }
+.s21-rich code { background: var(--s21-primary-light); padding: .08rem .38rem; border-radius: 6px; font-size: .92em; }
+.s21-rich .rc-code { background: #0F1712; color: #E4F3EC; padding: 1rem 1.1rem; border-radius: 12px; overflow-x: auto; margin: 0 0 1.2rem; font-size: .9rem; line-height: 1.55; }
+.s21-rich .rc-code code { background: none; padding: 0; color: inherit; }
+
+.rc-box { border-radius: 14px; padding: .9rem 1.1rem; margin: 0 0 1.2rem; border: 1px solid transparent; border-left-width: 6px; }
+.rc-box p { margin: 0; }
+.rc-box-title { font-weight: 800; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .3rem; }
+.rc-box-title i { margin-right: .35rem; }
+.rc-example { background: var(--s21-secondary-tint); border-color: var(--s21-secondary); }
+.rc-example .rc-box-title { color: #9A6B00; }
+.rc-tip { background: var(--s21-primary-light); border-color: var(--s21-primary); }
+.rc-tip .rc-box-title { color: var(--s21-primary); }
+.rc-remember { background: color-mix(in srgb, #4F7CFF 12%, var(--s21-white) 88%); border-color: #4F7CFF; }
+.rc-remember .rc-box-title { color: #3B63D6; }
+.rc-careful { background: var(--s21-accent-tint); border-color: var(--s21-accent); }
+.rc-careful .rc-box-title { color: var(--s21-accent-dark); }
+.rc-try { background: var(--s21-white); border: 2px dashed var(--s21-primary); border-left-width: 2px; }
+.rc-try .rc-box-title { color: var(--s21-primary); }
+.rc-try details { margin-top: .6rem; }
+.rc-try summary { cursor: pointer; display: inline-block; font-weight: 700; font-size: .88rem; color: #fff; background: var(--s21-primary); padding: .3rem .85rem; border-radius: 999px; list-style: none; }
+.rc-try summary::-webkit-details-marker { display: none; }
+.rc-answer { margin-top: .6rem; padding: .6rem .8rem; border-radius: 10px; background: var(--s21-primary-light); font-weight: 600; }
+
+.rc-table-wrap { overflow-x: auto; margin: 0 0 1.2rem; }
+.rc-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.rc-table th { background: var(--s21-primary); color: #fff; text-align: left; padding: .55rem .8rem; }
+.rc-table td { padding: .5rem .8rem; border-bottom: 1px solid var(--s21-border); }
+.rc-table tr:nth-child(even) td { background: color-mix(in srgb, var(--s21-primary) 5%, transparent); }
+.rc-table th:first-child { border-top-left-radius: 10px; } .rc-table th:last-child { border-top-right-radius: 10px; }
+
+/* diagrams */
+.rc-diagram { margin: 0 0 1.3rem; padding: 1rem; background: var(--s21-white); border: 1px solid var(--s21-border); border-radius: 16px; text-align: center; }
+.rc-diagram svg { max-width: 100%; height: auto; max-height: 320px; }
+.d-fill { fill: var(--s21-primary); stroke: var(--s21-white); stroke-width: 2; }
+.d-empty { fill: var(--s21-primary-light); stroke: var(--s21-primary); stroke-width: 1.5; }
+.d-line { stroke: var(--s21-text-soft); stroke-width: 2; fill: none; }
+.d-dot { fill: var(--s21-accent); stroke: var(--s21-white); stroke-width: 2; }
+.d-node { fill: var(--s21-secondary-tint); stroke: var(--s21-secondary-dark); stroke-width: 2; }
+.d-curve { fill: none; stroke: var(--s21-primary); stroke-width: 3; }
+.d-arrow { fill: var(--s21-primary); }
+.d-text { fill: var(--s21-text); font: 600 15px system-ui, sans-serif; }
+.d-big { font-size: 20px; font-weight: 800; }
+.d-small { font-size: 11px; }
+.d-mark { fill: var(--s21-accent-dark); font-weight: 800; }
+.d-light { fill: #fff; font-size: 13px; font-weight: 800; }
+.rc-flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem; }
+.rc-flow-box { background: var(--s21-primary-light); border: 2px solid var(--s21-primary); border-radius: 12px; padding: .5rem .8rem; font-weight: 600; font-size: .92rem; display: inline-flex; align-items: center; gap: .5rem; }
+.rc-flow-box b { background: var(--s21-primary); color: #fff; width: 1.4rem; height: 1.4rem; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; }
+.rc-flow-arrow { font-style: normal; font-size: 1.4rem; color: var(--s21-primary); font-weight: 800; }
+.rc-stack { max-width: 420px; margin: 0 auto; }
+.rc-stack-row { padding: .6rem 1rem; margin-bottom: 4px; border-radius: 10px; font-weight: 700; background: var(--s21-primary-light); border: 2px solid var(--s21-primary); }
+.rc-stack-row:nth-child(even) { background: var(--s21-secondary-tint); border-color: var(--s21-secondary-dark); }
+.rc-timeline { list-style: none; margin: 0 auto; padding: 0 0 0 1.5rem; max-width: 460px; text-align: left; border-left: 3px solid var(--s21-primary); }
+.rc-timeline li { position: relative; padding: .35rem 0 .35rem .8rem; font-weight: 600; }
+.rc-timeline li::before { content: ''; position: absolute; left: -1.95rem; top: .75rem; width: .8rem; height: .8rem; border-radius: 50%; background: var(--s21-accent); border: 2px solid var(--s21-white); }
+
+/* lesson in-page check quiz + module curriculum */
+.lesson-check-title { font-weight: 800; margin: 2rem 0 .8rem; }
+.mod-block { border: 1px solid var(--s21-border); border-radius: 16px; overflow: hidden; margin-bottom: .9rem; background: var(--s21-white); }
+.mod-head { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .8rem 1rem; background: var(--s21-primary-light); font-weight: 800; }
+.mod-head small { font-weight: 600; color: var(--s21-text-soft); }
+.mod-row { display: flex; align-items: center; gap: .7rem; padding: .6rem 1rem; border-top: 1px solid var(--s21-border); text-decoration: none; color: inherit; font-size: .92rem; }
+.mod-row:hover { background: color-mix(in srgb, var(--s21-primary) 6%, transparent); }
+.mod-row .mod-num { width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--s21-primary-light); color: var(--s21-primary); font-weight: 800; font-size: .78rem; display: grid; place-items: center; flex: none; }
+.mod-row.current { background: var(--s21-primary-light); font-weight: 700; }
+.mod-row .mod-time { margin-left: auto; color: var(--s21-text-soft); font-size: .78rem; white-space: nowrap; }
+.side-mod { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; color: var(--s21-text-soft); padding: .7rem 0 .2rem; }
+.lesson-progress-bar { height: 8px; border-radius: 99px; background: var(--s21-primary-light); overflow: hidden; margin: .4rem 0 1rem; }
+.lesson-progress-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--s21-primary), var(--s21-secondary)); }
+
+
+/* ---- Step-by-step lesson player ---- */
+.lesson-step-track { height: 8px; border-radius: 99px; background: var(--s21-primary-light); overflow: hidden; }
+.lesson-step-track > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--s21-primary), var(--s21-secondary)); transition: width .35s ease; }
+.lesson-step-dots { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.lesson-dot { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #C9CFD6; background: transparent; color: inherit; font-size: .75rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; transition: background .2s, border-color .2s, color .2s; }
+.lesson-dot:hover { border-color: var(--s21-primary); }
+.lesson-dot.is-done { background: var(--s21-primary-light); border-color: var(--s21-primary); color: var(--s21-primary); }
+.lesson-dot.is-current { background: var(--s21-primary); border-color: var(--s21-primary); color: #fff; }
+.lesson-dot:focus-visible { outline: 3px solid var(--s21-secondary); outline-offset: 2px; }
+.lesson-step-section { animation: lessonStepIn .3s ease both; }
+@keyframes lessonStepIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lesson-step-section, .lesson-step-track > span { animation: none; transition: none; } }

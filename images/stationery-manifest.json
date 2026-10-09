@@ -1,0 +1,16 @@
+{
+  "name": "smart21brain Stationery OS",
+  "short_name": "Stationery OS",
+  "description": "All-in-one digital stationery operating system — POS, inventory, photo studio, PDF tools, academy and ChopaAI.",
+  "start_url": "/stationery-app.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "orientation": "any",
+  "icons": [
+    { "src": "icons/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

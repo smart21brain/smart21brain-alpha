@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" class="sx-html" data-theme="dark" data-font="sans" data-radius="soft">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Website</title>
+<meta name="description" content="">
+<meta name="theme-color" content="#0F766E">
+<link rel="icon" href="/images/institution/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/css/institution-site.css?v=1">
+<script>try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}</script>
+</head>
+<body class="sx-body">
+<noscript><p style="padding:2rem;font-family:sans-serif">This website needs JavaScript. Please turn it on in your browser.</p></noscript>
+<div id="site"><div class="sx-notfound">…</div></div>
+<script src="/js/institution/site-render.js?v=1"></script>
+<script>
+/* Public institution website. Address forms:
+     /s/<institution-slug>            -> home page
+     /s/<institution-slug>/<page>     -> a page made in the website builder
+     /institution-site?i=<slug>&p=<page>  (also works)
+   All content is loaded from /api/institution/public/<slug>/site and drawn by S21Site (escaped). */
+(function () {
+  'use strict';
+  var S = window.S21Site, esc = S.esc;
+  var sw = false; try { sw = localStorage.getItem('s21-lang') === 'sw'; } catch (e) {}
+  var t = function (en, s) { return sw ? s : en; };
+  var qs = new URLSearchParams(location.search);
+  var parts = location.pathname.split('/').filter(Boolean);
+  var slug = (parts[0] === 's' && parts[1]) || qs.get('i') || '';
+  var pageSlug = ((parts[0] === 's' && parts[2]) || qs.get('p') || 'home').toLowerCase();
+  var root = document.getElementById('site');
+  var startUrl = function (go) { return '/institution-start.html?go=' + go + '&i=' + encodeURIComponent(slug); };
+  var gateOk = function () { var ok = qs.get('via') === 'start'; try { var g = +localStorage.getItem('in-gate'); if (g && Date.now() - g < 1800000) ok = true; if (qs.get('via') === 'start') localStorage.setItem('in-gate', String(Date.now())); } catch (e) {} return ok; };
+  var href = function (p) { return '/s/' + encodeURIComponent(slug) + (p === 'home' ? '' : '/' + encodeURIComponent(p)); };
+
+  function fail(title, text) {
+    root.innerHTML = '<div class="sx-notfound sx-wrap"><h1>' + esc(title) + '</h1><p>' + esc(text) + '</p></div>';
+  }
+  if (!/^[a-z0-9-]{1,40}$/i.test(slug)) { fail(t('Which website?', 'Tovuti gani?'), t('Open the link your institution gave you.', 'Fungua kiungo ulichopewa na taasisi yako.')); return; }
+
+  function applyTheme(th, inst) {
+    var r = document.documentElement;
+    var hex = function (v) { return /^#[0-9a-f]{6}$/i.test(v || '') ? v : ''; };
+    var p = hex(th.primary) || hex(inst.primary_color) || '#0F766E';
+    r.style.setProperty('--sx-primary', p);
+    if (hex(th.accent)) r.style.setProperty('--sx-accent', th.accent);
+    if (['sans', 'serif', 'rounded'].indexOf(th.font) > -1) r.dataset.font = th.font;
+    if (['sharp', 'soft', 'round'].indexOf(th.radius) > -1) r.dataset.radius = th.radius;
+    var m = document.querySelector('meta[name=theme-color]'); if (m) m.content = p;
+  }
+
+  var SOC = { facebook: 'fa-facebook-f', instagram: 'fa-instagram', x: 'fa-x-twitter', youtube: 'fa-youtube', linkedin: 'fa-linkedin-in', whatsapp: 'fa-whatsapp', tiktok: 'fa-tiktok' };
+
+  function header(d) {
+    var i = d.institution, h = d.header || {};
+    var logo = '<span class="sx-logo">' + esc((i.short_name || i.name || 'S').slice(0, 2)) + (i.has_logo ? '<img src="/api/institution/public/logo/' + i.id + '" alt="" onerror="this.remove()">' : '') + '</span>';
+    var nav = d.menu.map(function (m) {
+      if (m.children && m.children.length) {
+        return '<div class="dd"><a href="' + href(m.slug) + '" class="' + (m.slug === pageSlug ? 'on' : '') + '">' + esc(m.title) + '</a><div class="menu">' + [m].concat(m.children).map(function (c) { return '<a href="' + href(c.slug) + '">' + esc(c.title) + '</a>'; }).join('') + '</div></div>';
+      }
+      return '<a href="' + href(m.slug) + '" class="' + (m.slug === pageSlug ? 'on' : '') + '">' + esc(m.title) + '</a>';
+    }).join('');
+    var applyLink = S.safeLink(h.apply_link) || startUrl('register');
+    if (h.show_library !== false) nav += '<a href="/institution-opac.html?i=' + encodeURIComponent(slug) + '">' + t('Catalogue', 'Katalogi') + '</a>';
+    if (h.show_apply) nav += '<a class="sx-btn primary" style="margin-left:.4rem;padding:.5rem 1rem" href="' + esc(applyLink) + '">' + esc(h.apply_label || t('Apply', 'Omba nafasi')) + '</a>';
+    return '<div class="sx-top"><div class="sx-wrap"><span>' + esc(h.topbar_text || [i.phone, i.email].filter(Boolean).join(' · ')) + '</span><span><button id="lang" type="button">' + (sw ? 'English' : 'Kiswahili') + '</button> <button id="themeBtn" class="sx-theme" type="button" aria-label="' + t('Switch light / dark mode', 'Badilisha mwanga / giza') + '"><i class="fa-solid ' + (document.documentElement.dataset.theme === 'dark' ? 'fa-sun' : 'fa-moon') + '"></i></button> · <a href="/institution-start.html?i=' + encodeURIComponent(slug) + '"><i class="fa-solid fa-gauge"></i> ' + t('Dashboard', 'Dashibodi') + '</a></span></div></div>' +
+      '<header class="sx-header"><div class="sx-wrap"><a class="sx-brand" href="' + href('home') + '">' + logo + '<span>' + esc(i.name) + '</span></a><button class="sx-burger" id="burger" aria-label="Menu" aria-expanded="false"><i class="fa-solid fa-bars"></i></button><nav class="sx-nav" id="nav" aria-label="Main">' + nav + '</nav></div></header>';
+  }
+
+  function footer(d) {
+    var i = d.institution, f = d.footer || {};
+    var links = (f.links || []).map(function (l) { var u = S.safeLink(l.link); return u ? '<li><a href="' + esc(u) + '">' + esc(l.label) + '</a></li>' : ''; }).join('');
+    var quick = d.menu.slice(0, 7).map(function (m) { return '<li><a href="' + href(m.slug) + '">' + esc(m.title) + '</a></li>'; }).join('');
+    var soc = (f.socials || []).map(function (s) { var u = S.safeLink(s.url); return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(s.kind) + '"><i class="fa-brands ' + (SOC[s.kind] || 'fa-link') + '"></i></a>' : ''; }).join('');
+    return '<footer class="sx-footer"><div class="sx-wrap"><div class="cols"><div><h4>' + esc(i.name) + '</h4><p>' + esc(f.text || i.about || '') + '</p>' + (soc ? '<div class="soc">' + soc + '</div>' : '') + '</div>' +
+      '<div><h4>' + t('Quick links', 'Viungo vya haraka') + '</h4><ul>' + quick + links + '<li><a href="/institution-opac.html?i=' + encodeURIComponent(slug) + '">' + t('Library catalogue', 'Katalogi ya maktaba') + '</a></li></ul></div>' +
+      '<div><h4>' + t('Contact', 'Mawasiliano') + '</h4><ul>' + [i.address, i.phone, i.email].filter(Boolean).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div>' +
+      '<div class="copy"><span>© ' + new Date().getFullYear() + ' ' + esc(i.name) + '</span><span>' + t('Powered by', 'Inaendeshwa na') + ' <a href="/institution.html">Smart21Institution</a></span></div></div></footer>';
+  }
+
+  fetch('/api/institution/public/' + encodeURIComponent(slug) + '/site?page=' + encodeURIComponent(pageSlug)).then(function (r) {
+    return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok) { var e = new Error(d.error || 'Error'); e.status = r.status; throw e; } return d; });
+  }).then(function (d) {
+    if (d.page && (d.page.blocks || []).some(function (b) { return b.type === 'register'; }) && !gateOk()) { location.replace(startUrl('register')); return; }
+    applyTheme(d.theme || {}, d.institution);
+    var ctx = { slug: slug, sw: sw, preview: false, inst: d.institution, programmes: d.programmes || [] };
+    var body;
+    if (d.page) {
+      document.title = d.page.title + ' — ' + d.institution.name;
+      var md = document.querySelector('meta[name=description]'); if (md) md.content = d.page.seo_description || d.institution.about || '';
+      body = S.render(d.page.blocks, ctx);
+    } else {
+      document.title = t('Page not found', 'Ukurasa haupatikani') + ' — ' + d.institution.name;
+      body = '<div class="sx-notfound sx-wrap"><h1>' + t('Page not found', 'Ukurasa haupatikani') + '</h1><p><a href="' + href('home') + '">' + t('Go to the home page', 'Rudi mwanzo') + '</a></p></div>';
+    }
+    root.innerHTML = header(d) + '<main id="main">' + body + '</main>' + footer(d);
+    S.hydrate(root, ctx);
+    var up = document.createElement('button'); up.className = 'sx-top-btn'; up.setAttribute('aria-label', 'Top'); up.innerHTML = '<i class="fa-solid fa-chevron-up"></i>'; document.body.appendChild(up);
+    up.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () { up.classList.toggle('show', window.scrollY > 600); }, { passive: true });
+    // Every "register" or "sign in" link on the website goes through the entry page first.
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]'); if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey) return;
+      var u; try { u = new URL(a.href, location.href); } catch (x) { return; }
+      if (u.origin !== location.origin || u.searchParams.get('via') === 'start') return;
+      if (/^\/s\/[a-z0-9-]+\/register\/?$/i.test(u.pathname)) { e.preventDefault(); location.href = startUrl('register'); }
+      else if (/\/institution-login\.html$/.test(u.pathname)) { e.preventDefault(); location.href = startUrl(u.hash === '#register' ? 'admin-register' : 'login'); }
+    });
+    document.getElementById('themeBtn').addEventListener('click', function () {
+      var dark = document.documentElement.dataset.theme !== 'dark';
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      try { localStorage.setItem('in-theme', dark ? 'dark' : 'light'); } catch (e) {}
+      this.firstChild.className = 'fa-solid ' + (dark ? 'fa-sun' : 'fa-moon');
+    });
+    document.getElementById('lang').addEventListener('click', function () { try { localStorage.setItem('s21-lang', sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
+    var nav = document.getElementById('nav'), bg = document.getElementById('burger');
+    bg.addEventListener('click', function () { var o = nav.classList.toggle('open'); bg.setAttribute('aria-expanded', o ? 'true' : 'false'); });
+    if (location.hash) { var el = document.querySelector(location.hash.replace(/[^#a-z0-9_-]/gi, '')); if (el) el.scrollIntoView(); }
+  }).catch(function (e) {
+    fail(e.status === 404 ? t('Website not available', 'Tovuti haipatikani') : t('Something went wrong', 'Hitilafu imetokea'), e.message || '');
+  });
+})();
+</script>
+</body>
+</html>

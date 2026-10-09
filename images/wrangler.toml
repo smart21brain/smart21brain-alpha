@@ -1,0 +1,72 @@
+name = "smart21brain"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+[vars]
+# Set this to the Google OAuth Web Client ID from Google Cloud Console.
+GOOGLE_CLIENT_ID = ""
+
+# Invite code required to self-register as an admin (register.html's
+# "Admin" role option). This is a SECRET, not a var — don't add an
+# ADMIN_SIGNUP_CODE line here (a var and a secret can't share one name).
+# Set it with:
+#   wrangler secret put ADMIN_SIGNUP_CODE
+# Until it's set, admin self-registration is disabled entirely; admins
+# can still be created via the seeded account in schema.sql or by an
+# existing admin updating a user's role directly in D1.
+
+# Serves every static file in this folder (index.html, css/, js/, images/,
+# icons/, etc.) automatically. Requests to /api/* are intercepted by the
+# Worker code in src/index.js before falling through to these assets —
+# see the fetch() handler. Files listed in .assetsignore are excluded from
+# upload (the Worker source, config, docs — nothing the browser needs).
+[assets]
+directory = "."
+binding = "ASSETS"
+
+# D1 database binding — accessible in the Worker as `env.DB`.
+# Replace `database_id` with the id printed by:
+#   wrangler d1 create smart21brain-db
+[[d1_databases]]
+binding = "DB"
+database_name = "smart21brain-db"
+database_id = "8d1eb316-d826-419b-93c6-e1a90f014571"
+
+# R2 bucket binding — accessible in the Worker as `env.MATERIALS`.
+# Create it first with:
+#   wrangler r2 bucket create smart21brain-materials
+[[r2_buckets]]
+binding = "MATERIALS"
+bucket_name = "smart21brain-materials"
+
+# R2 bucket for Stationery OS (job files, photo studio exports, documents
+# vault, business logos). Create it with:
+#   wrangler r2 bucket create smart21brain-stationery-files
+[[r2_buckets]]
+binding = "STATIONERY_FILES"
+bucket_name = "smart21brain-stationery-files"
+
+# Workers AI binding used by /api/ai-assistant and /api/stationery/chopaai.
+[ai]
+binding = "AI"
+
+# Optional: override the default text model used by all three AI call sites
+# (default: @cf/meta/llama-3.3-70b-instruct-fp8-fast). The previous default,
+# @cf/meta/llama-3.1-8b-instruct, was retired by Cloudflare on 2026-05-30 --
+# check the current Workers AI model catalog before changing this again:
+# https://developers.cloudflare.com/workers-ai/models/
+# [vars]
+# AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+
+# Smart21Institution: daily check that creates a weekly automatic backup for every
+# institution whose last backup is older than 7 days (see src/handlers/institution/tools.js).
+[triggers]
+crons = ["0 2 * * *", "* * * * *"]   # 02:00 = weekly backups, every minute = send queued e-mail / SMS / push
+
+# Smart21Institution — notification channels (all optional; nothing is sent by a channel that is not set up).
+# Add these as SECRETS (never in this file):
+#   E-mail (Resend):        wrangler secret put RESEND_API_KEY        and   wrangler secret put EMAIL_FROM   ("Name <no-reply@your-domain>")
+#   SMS (Africa's Talking): wrangler secret put AT_API_KEY            and   wrangler secret put AT_USERNAME   (optional: AT_SENDER_ID)
+#   SMS (or Twilio):        TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM
+#   Push:                   node scripts/generate-vapid.mjs   then   wrangler secret put VAPID_PRIVATE_JWK   (optional: VAPID_SUBJECT = mailto:you@your-domain)
+#   Links in e-mails:       wrangler secret put SITE_URL   (e.g. https://smart21brain.com)

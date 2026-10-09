@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Item check — Smart21Shop</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#4F46E5">
+<link rel="icon" href="images/shop/logo.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/shop-app.css?v=2">
+<style>
+  .v-shop { display: flex; align-items: center; justify-content: center; gap: .7rem; margin-bottom: 1.1rem; }
+  .v-verdict { text-align: center; padding: .2rem 0 1.1rem; }
+  .v-verdict .ico { width: 64px; height: 64px; margin: 0 auto .7rem; border-radius: 20px; display: grid; place-items: center; font-size: 1.8rem; }
+  .v-verdict h1 { font-size: 1.25rem; }
+  .v-verdict.ok .ico { background: var(--sp-ok-bg); color: var(--sp-ok); }
+  .v-verdict.sold .ico { background: var(--sp-info-bg); color: var(--sp-info); }
+  .v-verdict.bad .ico { background: var(--sp-warn-bg); color: var(--sp-warn); }
+  .v-kv { display: grid; grid-template-columns: max-content 1fr; gap: .45rem 1rem; margin: 0; text-align: left; }
+  .v-kv dt { color: var(--sp-muted); font-weight: 600; } .v-kv dd { margin: 0; font-weight: 600; }
+  .v-lang { text-align: center; margin-top: .8rem; }
+</style>
+</head>
+<body class="sp-body">
+<main class="sp-verify-box" style="padding:0 1rem">
+  <div class="sp-card sp-center" id="box" style="padding:2rem 1.4rem"><span class="sp-spin" style="width:32px;height:32px"></span><p class="sp-muted" id="wait">Checking this item…</p></div>
+  <p class="sp-small sp-muted sp-center" id="note" style="margin-top:1rem"></p>
+  <div class="v-lang"><button class="sp-btn ghost sm" id="lang" type="button"></button></div>
+</main>
+<script>
+(function () {
+  var KEY = 's21-lang';
+  var lang = 'en';
+  try { lang = localStorage.getItem(KEY) || ((navigator.language || '').toLowerCase().indexOf('sw') === 0 ? 'sw' : 'en'); } catch (e) {}
+  var sw = lang === 'sw';
+  var T = function (en, s) { return sw ? s : en; };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  document.documentElement.lang = sw ? 'sw' : 'en';
+  document.title = T('Item check — Smart21Shop', 'Ukaguzi wa bidhaa — Smart21Shop');
+  document.getElementById('wait').textContent = T('Checking this item…', 'Inakagua bidhaa hii…');
+  document.getElementById('note').textContent = T('Only basic details are shown here. Customer, payment and stock information are never shown.', 'Hapa zinaonyeshwa taarifa za msingi tu. Taarifa za mteja, malipo na stoo hazionyeshwi kamwe.');
+  var lb = document.getElementById('lang'); lb.textContent = sw ? 'English' : 'Kiswahili';
+  lb.addEventListener('click', function () { try { localStorage.setItem(KEY, sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
+
+  var box = document.getElementById('box');
+  var code = new URLSearchParams(location.search).get('c');
+  function fail(title, text) {
+    box.innerHTML = '<div class="sp-empty"><div class="ico" style="background:var(--sp-danger-bg);color:var(--sp-danger)"><i class="fa-solid fa-circle-xmark"></i></div><h4>' + esc(title) + '</h4><p>' + esc(text) + '</p></div>';
+  }
+  if (!code) { fail(T('No QR code found', 'Hakuna msimbo wa QR'), T('Please scan the QR label on the item.', 'Tafadhali changanua lebo ya QR iliyo kwenye bidhaa.')); return; }
+  function fmtDate(ymd) {
+    var d = new Date(ymd + 'T00:00:00');
+    return isNaN(d.getTime()) ? ymd : d.toLocaleDateString(sw ? 'sw-TZ' : undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  fetch('/api/shop/public/qr/' + encodeURIComponent(code), { cache: 'no-store' })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (x) {
+      if (!x.ok || !x.d.valid) throw new Error((x.d && x.d.error) || T('This item could not be verified.', 'Bidhaa hii haikuweza kuthibitishwa.'));
+      var d = x.d, it = d.item, tone, icon, title, sub;
+      if (/^#[0-9a-f]{6}$/i.test(d.shop.color || '')) document.documentElement.style.setProperty('--sp-primary', d.shop.color);
+      if (it.status === 'available') { tone = 'ok'; icon = 'fa-circle-check'; title = T('Available — not sold yet', 'Ipo — haijauzwa bado'); sub = T('This item is still available at this shop.', 'Bidhaa hii bado ipo dukani.'); }
+      else if (it.status === 'sold') { tone = 'sold'; icon = 'fa-bag-shopping'; title = T('Already sold', 'Imeshauzwa tayari'); sub = T('This exact item has been sold.', 'Kipande hiki hasa kimeshauzwa.'); }
+      else { tone = 'bad'; icon = 'fa-triangle-exclamation'; title = T('Not available', 'Haipatikani'); sub = T('This label is not active. Please ask the shop.', 'Lebo hii haifanyi kazi. Tafadhali uliza dukani.'); }
+      var rows = [[T('Product', 'Bidhaa'), esc(d.product.name)]];
+      if (d.product.category) rows.push([T('Category', 'Jamii'), esc(d.product.category)]);
+      rows.push([T('Item number', 'Namba ya kipande'), '#' + String(it.serial).padStart(4, '0')]);
+      if (it.status === 'available' && it.price != null) rows.push([T('Price', 'Bei'), Number(it.price).toLocaleString(undefined, { maximumFractionDigits: 2 }) + ' ' + esc(d.shop.currency || '')]);
+      if (it.status === 'sold' && it.sold_on) rows.push([T('Sold on', 'Iliuzwa'), esc(fmtDate(it.sold_on))]);
+      box.innerHTML =
+        '<div class="v-shop"><span class="sp-logo" style="position:relative">' + esc((d.shop.name || 'S').slice(0, 2).toUpperCase()) +
+        (d.shop.has_logo ? '<img src="/api/shop/public/logo/' + d.shop.id + '" alt="" onerror="this.remove()" style="position:absolute;inset:0">' : '') +
+        '</span><b style="font-family:var(--sp-font-display)">' + esc(d.shop.name) + '</b></div>' +
+        '<div class="v-verdict ' + tone + '"><div class="ico"><i class="fa-solid ' + icon + '"></i></div><h1>' + esc(title) + '</h1><p class="sp-muted" style="margin:.3rem 0 0">' + esc(sub) + '</p></div>' +
+        '<dl class="v-kv">' + rows.map(function (r) { return '<dt>' + esc(r[0]) + '</dt><dd>' + r[1] + '</dd>'; }).join('') + '</dl>' +
+        (d.shop.phone ? '<p style="margin:1.1rem 0 0;text-align:center"><a class="sp-btn ghost sm" href="tel:' + esc(String(d.shop.phone).replace(/[^+\d]/g, '')) + '"><i class="fa-solid fa-phone"></i> ' + esc(d.shop.phone) + '</a></p>' : '');
+    })
+    .catch(function (e) { fail(T('Not verified', 'Haijathibitishwa'), e.message || T('Please try again.', 'Tafadhali jaribu tena.')); });
+})();
+</script>
+</body>
+</html>

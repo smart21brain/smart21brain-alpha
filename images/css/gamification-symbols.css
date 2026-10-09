@@ -1,0 +1,63 @@
+/* ============================================================
+   GAMIFICATION SECTION — dark blue theme + animated Three.js
+   game-icon background. A transparent WebGL layer of soft,
+   single-colour glowing icons (gamepad / ball / dice / trophy)
+   drifts behind the content and reacts to the cursor. The four
+   achievement badges keep their original brand colours.
+   ============================================================ */
+
+.section-gamification {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  --gami-accent: #2DD4BF;
+  background:
+    radial-gradient(900px 520px at 8% -10%, color-mix(in srgb, var(--gami-accent) 16%, transparent), transparent 60%),
+    radial-gradient(1000px 620px at 105% 110%, color-mix(in srgb, #3A86FF 14%, transparent), transparent 55%),
+    linear-gradient(160deg, #060F26 0%, #0C1E45 55%, #071231 100%);
+}
+
+/* Light-on-dark text treatment, scoped to this section only */
+.section-gamification .eyebrow {
+  background: color-mix(in srgb, #fff 14%, transparent);
+  color: #fff;
+  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+  backdrop-filter: blur(4px);
+}
+.section-gamification .section-head h2 {
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0,0,0,.5);
+}
+.section-gamification .section-head p.text-soft {
+  color: rgba(255,255,255,.72);
+}
+.section-gamification .achievement-title {
+  color: #fff;
+}
+
+/* Canvas host sits behind the content, fills the whole section */
+.gamification-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none; /* let clicks/hover pass through to real content */
+}
+.gamification-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Keep real content above the canvas */
+.section-gamification > .container {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gamification-canvas { opacity: .55; }
+}
+
+@media (max-width: 767.98px) {
+  .gamification-canvas { opacity: .8; }
+}

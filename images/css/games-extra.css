@@ -1,0 +1,172 @@
+/* Smart21Brain — games-extra.css
+   Additional styles for the new game types: multiple-choice quiz buttons,
+   memory-match card grid, word search grid, sentence builder chips,
+   pattern-match pad, and the logic maze. Loaded only on pages that need
+   them, alongside the shared .game-panel / .hud-chip rules in style.css. */
+
+/* ---- Multiple-choice quiz buttons (Animal Kingdom, Solar System, etc.) ---- */
+.quiz-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .7rem;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+@media (max-width: 480px) { .quiz-choices { grid-template-columns: 1fr; } }
+.quiz-choice-btn {
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.32);
+  border-radius: var(--radius-md);
+  color: #fff;
+  padding: .8rem 1rem;
+  font-weight: 700;
+  font-size: .95rem;
+  text-align: left;
+  transition: all .18s var(--ease);
+}
+.quiz-choice-btn:hover:not(:disabled) { background: rgba(255,255,255,.22); transform: translateY(-2px); }
+.quiz-choice-btn:disabled { opacity: .85; }
+.quiz-choice-btn.is-correct { background: #0B6E4F; border-color: #0B6E4F; color: #fff; }
+.quiz-choice-btn.is-wrong { background: var(--s21-accent); border-color: var(--s21-accent); color: #fff; }
+
+/* ---- Memory match grid (Memory Cards, Fractions Match, Human Body Match) ---- */
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .6rem;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+}
+@media (max-width: 420px) { .memory-grid { grid-template-columns: repeat(3, 1fr); } }
+.memory-card {
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  perspective: 800px;
+  cursor: pointer;
+}
+.memory-card-inner {
+  position: relative; width: 100%; height: 100%;
+  transition: transform .4s var(--ease);
+  transform-style: preserve-3d;
+}
+.memory-card.is-flipped .memory-card-inner,
+.memory-card.is-matched .memory-card-inner { transform: rotateY(180deg); }
+.memory-card-face {
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  backface-visibility: hidden;
+  font-size: 1.5rem; font-weight: 700; text-align: center; padding: .3rem;
+}
+.memory-card-front {
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.32);
+  color: #fff;
+  font-size: 1.8rem;
+}
+.memory-card-back {
+  background: #fff;
+  color: var(--s21-primary-dark);
+  transform: rotateY(180deg);
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+.memory-card.is-matched .memory-card-back { background: var(--s21-secondary); color: #3D2B00; }
+
+/* ---- Word search grid ---- */
+.ws-grid {
+  display: inline-grid;
+  gap: 3px;
+  margin: 0 auto;
+  user-select: none;
+  touch-action: none;
+}
+.ws-cell {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 700;
+  font-size: .95rem;
+  cursor: pointer;
+}
+.ws-cell.is-selected { background: rgba(255,255,255,.4); }
+.ws-cell.is-found { background: var(--s21-secondary); color: #3D2B00; }
+.ws-wordlist { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1.2rem; }
+.ws-wordlist span {
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.3);
+  border-radius: var(--radius-pill); padding: .3rem .8rem; font-size: .8rem; font-weight: 700; color: #fff;
+}
+.ws-wordlist span.is-found { background: var(--s21-secondary); color: #3D2B00; text-decoration: line-through; }
+
+/* ---- Sentence builder ---- */
+.sb-target {
+  min-height: 3.2rem;
+  border: 2px dashed rgba(255,255,255,.4);
+  border-radius: var(--radius-md);
+  display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; justify-content: center;
+  padding: .6rem; width: 100%; max-width: 520px; margin: 0 auto 1rem;
+}
+.sb-bank {
+  display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center;
+  width: 100%; max-width: 520px; margin: 0 auto;
+}
+.sb-chip {
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.34);
+  color: #fff;
+  border-radius: var(--radius-pill);
+  padding: .45rem 1rem;
+  font-weight: 700;
+  font-size: .95rem;
+}
+.sb-chip:disabled { opacity: .3; }
+.sb-target .sb-chip { background: var(--s21-secondary); color: #3D2B00; border-color: var(--s21-secondary); }
+
+/* ---- Pattern match pad (Simon-says) ---- */
+.pattern-pad {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .8rem;
+  width: 220px;
+  margin: 0 auto;
+}
+.pattern-pad-btn {
+  aspect-ratio: 1/1;
+  border-radius: 18px;
+  border: none;
+  opacity: .55;
+  transition: opacity .12s, transform .12s;
+}
+.pattern-pad-btn.is-lit { opacity: 1; transform: scale(1.04); box-shadow: 0 0 0 4px rgba(255,255,255,.5); }
+.pattern-pad-btn:nth-child(1) { background: #EF476F; border-radius: 18px 4px 4px 4px; }
+.pattern-pad-btn:nth-child(2) { background: #3A86FF; border-radius: 4px 18px 4px 4px; }
+.pattern-pad-btn:nth-child(3) { background: #FFD166; border-radius: 4px 4px 4px 18px; }
+.pattern-pad-btn:nth-child(4) { background: #06A77D; border-radius: 4px 4px 18px 4px; }
+
+/* ---- Logic maze ---- */
+.maze-grid {
+  display: inline-grid;
+  gap: 2px;
+  margin: 0 auto 1rem;
+  background: rgba(255,255,255,.15);
+  padding: 4px;
+  border-radius: 10px;
+}
+.maze-cell {
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.06);
+  font-size: 1.2rem;
+  border-radius: 4px;
+}
+.maze-cell.is-wall { background: rgba(0,0,0,.35); }
+.maze-cell.is-player { background: var(--s21-secondary); }
+.maze-cell.is-goal { background: #06A77D; }
+.maze-controls { display: grid; grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(2, 44px); gap: .4rem; justify-content: center; }
+.maze-controls button { border: none; border-radius: 10px; background: rgba(255,255,255,.16); color: #fff; font-size: 1.1rem; }
+.maze-controls button:active { background: rgba(255,255,255,.32); }

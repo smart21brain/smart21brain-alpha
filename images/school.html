@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-school-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School System — Smart21Brain</title>
+<meta name="description" content="The Smart21Brain School System: manage students, teachers, parents, attendance, fees, examinations, timetables and reports for any school or tuition center.">
+<link rel="canonical" href="https://smart21brain.com/school.html">
+<meta name="theme-color" content="#0B6E4F">
+<link rel="manifest" href="school-manifest.json">
+<link rel="apple-touch-icon" href="icons/school-apple-touch.png" data-school="1">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=18">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+<link rel="stylesheet" href="css/school-bg.css?v=1">
+
+</head>
+<body>
+<a href="#main" class="skip-link" data-i18n="blog_skip_to_main_content">Skip to main content</a>
+
+<header class="s21-navbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      Smart<span class="brand-21">21</span>Brain
+    </a>
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu"><i class="fa-solid fa-bars fa-lg"></i></button>
+    <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <span data-guest-nav="desktop" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </nav>
+</header>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-label="Menu">
+  <div class="offcanvas-header">
+    <div class="s21-mobile-user flex-grow-1 d-flex align-items-center gap-2 me-3"><span data-guest-nav="mobile" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline w-100" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary w-100" data-i18n="nav_start">Get Started</a></span></div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <ul class="navbar-nav gap-1 mb-4">
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    </div>
+</div>
+
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="section-tight s21-school-bg" style="padding-top:3rem;padding-bottom:3.2rem">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6" data-aos="fade-right">
+          <span class="eyebrow"><a href="earth21.html" style="color:inherit;text-decoration:none"><i class="fa-solid fa-globe"></i> Earth21</a> <i class="fa-solid fa-chevron-right" style="font-size:.6rem;opacity:.6"></i> School System</span>
+          <h1 class="mt-2 mb-3">Run your whole school from one place</h1>
+          <p class="text-soft" style="font-size:1.02rem">Students, teachers, parents, attendance, fees, examinations, timetables and reports — connected, secure, and easy enough for anyone to use. Any school or tuition center can register, set it up in minutes, and make it their own.</p>
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <a href="school-login.html#register" class="btn-s21 btn-s21-primary btn-lg"><i class="fa-solid fa-school-flag"></i> Register your school</a>
+            <a href="school-login.html" class="btn-s21 btn-s21-outline btn-lg"><i class="fa-solid fa-right-to-bracket"></i> Sign in</a>
+            <a href="school-app.html" data-school-install class="btn-s21 btn-s21-outline btn-lg"><i class="fa-solid fa-download"></i> Download the app</a>
+          </div>
+          <p class="text-soft mt-3" style="font-size:.82rem"><i class="fa-solid fa-circle-info"></i> Free to set up. Explore instantly with one-click sample data.</p>
+        </div>
+        <div class="col-lg-6" data-aos="fade-left">
+        <div class="player-shell" id="player-shell">
+          <video id="player-video" preload="metadata" poster="images/school/demo-poster.jpg" playsinline>
+            <source src="videos/school-system-demo.mp4" type="video/mp4">
+            <span data-i18n="video_your_browser_doesn_t_support_html5_v">Your browser doesn't support HTML5 video.</span>
+          </video>
+          <button class="player-big-play" id="player-play-big" aria-label="Play video"><span><i class="fa-solid fa-play"></i></span></button>
+          <div class="player-controls">
+            <input type="range" class="player-seek" id="player-seek" min="0" max="100" value="0" step="0.1" aria-label="Seek">
+            <div class="player-row">
+              <button class="player-btn" id="player-toggle" aria-label="Play/pause"><i class="fa-solid fa-play"></i></button>
+              <button class="player-btn" id="player-mute" aria-label="Mute/unmute"><i class="fa-solid fa-volume-high"></i></button>
+              <input type="range" class="player-volume" id="player-volume" min="0" max="1" step="0.05" value="1" aria-label="Volume">
+              <span class="player-time" id="player-time">0:00 / 0:00</span>
+              <span class="player-spacer"></span>
+              <div class="player-menu">
+                <button class="player-btn" id="player-speed-btn" style="width:auto;padding:0 .5rem;font-size:.78rem" aria-label="Playback speed">1x</button>
+                <div class="player-menu-list" id="player-speed-menu">
+                  <button type="button" data-speed="0.5">0.5x</button>
+                  <button type="button" data-speed="0.75">0.75x</button>
+                  <button type="button" data-speed="1" class="active">Normal</button>
+                  <button type="button" data-speed="1.25">1.25x</button>
+                  <button type="button" data-speed="1.5">1.5x</button>
+                  <button type="button" data-speed="2">2x</button>
+                </div>
+              </div>
+              <button class="player-btn" id="player-pip" aria-label="Picture in picture" title="Picture-in-picture"><i class="fa-regular fa-square"></i></button>
+              <button class="player-btn" id="player-theater" aria-label="Theater mode" title="Theater mode"><i class="fa-solid fa-rectangle-list"></i></button>
+              <button class="player-btn" id="player-fullscreen" aria-label="Fullscreen" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="s21-card p-2 mt-3" id="school-video-chapters" style="max-height:230px;overflow-y:auto">
+          <div class="chapter-marker active" data-start="0" data-end="4.2"><span><i class="fa-solid fa-star" style="font-size:.72rem;color:var(--s21-secondary)"></i> Introduction</span><span class="text-soft">0:00</span></div>
+          <div class="chapter-marker" data-start="4.2" data-end="8.4"><span>Secure sign-in for every school</span><span class="text-soft">0:04</span></div>
+          <div class="chapter-marker" data-start="8.4" data-end="16.8"><span>Live dashboard &amp; charts</span><span class="text-soft">0:08</span></div>
+          <div class="chapter-marker" data-start="16.8" data-end="21.0"><span>Search &amp; manage students</span><span class="text-soft">0:17</span></div>
+          <div class="chapter-marker" data-start="21.0" data-end="25.2"><span>Full student profile</span><span class="text-soft">0:21</span></div>
+          <div class="chapter-marker" data-start="25.2" data-end="29.4"><span>ID cards with QR codes</span><span class="text-soft">0:25</span></div>
+          <div class="chapter-marker" data-start="29.4" data-end="33.6"><span>Attendance &amp; absence alerts</span><span class="text-soft">0:29</span></div>
+          <div class="chapter-marker" data-start="33.6" data-end="42.0"><span>Fees, payments &amp; receipts</span><span class="text-soft">0:34</span></div>
+          <div class="chapter-marker" data-start="42.0" data-end="50.4"><span>Marks, positions &amp; report cards</span><span class="text-soft">0:42</span></div>
+          <div class="chapter-marker" data-start="50.4" data-end="54.6"><span>One-click reports</span><span class="text-soft">0:50</span></div>
+          <div class="chapter-marker" data-start="54.6" data-end="58.8"><span>Weekly timetable</span><span class="text-soft">0:54</span></div>
+          <div class="chapter-marker" data-start="58.8" data-end="63.0"><span>Roles &amp; permissions</span><span class="text-soft">0:58</span></div>
+          <div class="chapter-marker" data-start="63.0" data-end="999"><span>Parent portal, on any phone</span><span class="text-soft">1:03</span></div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="section" aria-labelledby="features-head">
+    <div class="container">
+      <div class="section-head text-center mx-auto mb-4" data-aos="fade-up">
+        <span class="eyebrow"><i class="fa-solid fa-shapes"></i> Everything a school needs</span>
+        <h2 id="features-head" class="mt-2">One system, every part of school life</h2>
+        <p class="text-soft">Built as a real, connected management system — not a basic prototype.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="0">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-user-graduate"></i></div>
+            <h3 class="h6 mb-1">Students</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Register students in one form — Student ID and admission number are generated automatically. Full profiles, ID cards with QR codes, and printable records.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="60">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-clipboard-user"></i></div>
+            <h3 class="h6 mb-1">Attendance</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Take daily attendance in seconds. Daily, weekly and monthly percentages are calculated automatically, with alerts for repeated absences.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="120">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-coins"></i></div>
+            <h3 class="h6 mb-1">Fees & Payments</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Set a fee structure per class, record payments by cash, bank, mobile money or card, and print a professional receipt instantly.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-ranking-star"></i></div>
+            <h3 class="h6 mb-1">Examinations & Results</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Enter marks per subject — totals, grades, positions and report cards are calculated automatically, ready to print or download as PDF.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="240">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-calendar-week"></i></div>
+            <h3 class="h6 mb-1">Timetable</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Build a clash-free weekly timetable by class, teacher or room, shown as a clear visual grid.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-people-roof"></i></div>
+            <h3 class="h6 mb-1">Parent Portal</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Parents get their own secure login to see attendance, fees, results and announcements for every child — on any device.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="360">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-chart-pie"></i></div>
+            <h3 class="h6 mb-1">Reports & Dashboard</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">A live dashboard with charts for attendance, fees and academic performance, plus a full reports centre exportable to PDF or Excel.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="420">
+          <div class="s21-card h-100 p-3">
+            <div class="subject-icon mb-2"><i class="fa-solid fa-user-shield"></i></div>
+            <h3 class="h6 mb-1">Roles & Permissions</h3>
+            <p class="text-soft mb-0" style="font-size:.85rem">Admins, teachers, receptionists and parents each see only what they need — and you control exactly what each role can do.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORKFLOW ============ -->
+  <section class="section" aria-labelledby="workflow-head" style="background:linear-gradient(180deg, rgba(11,110,79,.10), transparent)">
+    <div class="container">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5" data-aos="fade-right">
+          <span class="eyebrow"><i class="fa-solid fa-route"></i> How it works</span>
+          <h2 id="workflow-head" class="mt-2 mb-3">From sign-up to report cards</h2>
+          <p class="text-soft">Every step is connected — action taken in one screen shows up immediately in the dashboard, the student's profile and the parent portal.</p>
+        </div>
+        <div class="col-lg-7 d-flex flex-column gap-3" data-aos="fade-up">
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">1</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Register your school in under a minute</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">2</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Add classes, subjects and teachers (or start from ready-made defaults)</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">3</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Register students and link their parents or guardians</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">4</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Take attendance, record fees, enter results</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">5</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Report cards, receipts and ID cards generate themselves</p>
+          </div>
+          <div class="d-flex gap-3 align-items-start">
+            <span class="fw-bold" style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--s21-primary-light);color:var(--s21-primary);display:grid;place-items:center">6</span>
+            <p class="mb-0 pt-1" style="font-size:.92rem">Parents follow along from their own portal</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MULTI-SCHOOL ============ -->
+  <section class="section" aria-labelledby="multi-head">
+    <div class="container">
+      <div class="s21-card p-4 p-lg-5 text-center" data-aos="fade-up" style="max-width:820px;margin:0 auto">
+        <div class="subject-icon mx-auto mb-3"><i class="fa-solid fa-building-columns"></i></div>
+        <h2 id="multi-head" class="h4 mb-2">Built for any school, not just one</h2>
+        <p class="text-soft mb-4">Every school that registers gets its own private workspace — its own students, staff, classes, fees and settings, completely separate from every other school. Administrators can change the branding, grading scale, fee structure, payment methods and what each role is allowed to do.</p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+          <a href="school-login.html#register" class="btn-s21 btn-s21-primary"><i class="fa-solid fa-school-flag"></i> Register your school</a>
+          <a href="school-login.html" class="btn-s21 btn-s21-outline"><i class="fa-solid fa-right-to-bracket"></i> Sign in to an existing school</a>
+          <a href="school-app.html" data-school-install class="btn-s21 btn-s21-outline"><i class="fa-solid fa-download"></i> Download the app</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for learners of every level, from nursery to university, and for teachers and parents to learn together.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_learning">Learning</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="subjects.html" data-i18n="footer_mathematics">Mathematics</a></li>
+          <li><a href="subjects.html" data-i18n="book_science">Science</a></li>
+          <li><a href="subjects.html" data-i18n="book_english">English</a></li>
+          <li><a href="subjects.html" data-i18n="footer_kiswahili">Kiswahili</a></li>
+          <li><a href="subjects.html" data-i18n="dash_coding">Coding</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> <span data-i18n="blog_study_buddy">Study Buddy</span></span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai" data-i18n="blog_hi_ask_me_to_explain_a_topic_or_sugg">Hi! Ask me to explain a topic or suggest a video or book to try next.</div></div>
+  <p class="ai-disclaimer" data-i18n="blog_ai_generated_answers_are_separate_fr">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" data-i18n-placeholder="blog_ph_ask_a_question" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/live-data.js?v=20261008"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/search.js"></script>
+<script src="js/voice-search.js"></script>
+<script src="js/ai-assistant.js?v=4"></script>
+<script src="js/main.js?v=20261008"></script>
+<script src="js/nav-account.js"></script>
+<script src="js/video.js"></script>
+<script>AOS.init({duration:650,once:true,offset:60});</script>
+<script src="js/school-install.js?v=1"></script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>

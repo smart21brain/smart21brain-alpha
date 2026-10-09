@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Library catalogue — Smart21Institution</title>
+<meta name="description" content="Search an institution's public library catalogue and see whether a book is available.">
+<meta name="theme-color" content="#0F766E">
+<link rel="manifest" href="institution-manifest.json">
+<link rel="icon" href="images/institution/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/institution-app.css?v=1">
+<script>try{if(!localStorage.getItem('in-theme-v2')){localStorage.removeItem('in-theme');localStorage.setItem('in-theme-v2','1');}var t=localStorage.getItem('in-theme');document.documentElement.dataset.theme=(t==='light')?'light':'dark';}catch(e){document.documentElement.dataset.theme='dark';}</script>
+</head>
+<body class="in-body">
+<!--
+  Public catalogue (OPAC). No sign-in needed. It only ever receives information that
+  the institution has made public: book records, availability, public announcements
+  and resources marked "Public". The last results are kept in this browser so the
+  catalogue still opens when the connection drops (it is a cache, not full offline use).
+-->
+<div class="in-public" id="app"><div class="in-card" style="margin-top:3rem">Loading…</div></div>
+<div class="in-offline" id="off" role="status"></div>
+<script>
+(function () {
+  'use strict';
+  var sw = false; try { sw = localStorage.getItem('s21-lang') === 'sw'; } catch (e) {}
+  var t = function (en, s) { return sw ? s : en; };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
+  var slug = new URLSearchParams(location.search).get('i') || '';
+  var app = document.getElementById('app');
+  var st = { q: (new URLSearchParams(location.search).get('q') || '').slice(0, 120), field: 'all', status: '', sort: 'title', page: 1, tab: 'books' };
+  var info = null;
+  var STATUS = { available: t('Available', 'Ipo'), borrowed: t('Borrowed', 'Imekopwa'), reserved: t('Reserved', 'Imehifadhiwa'), lost: t('Lost', 'Imepotea'), damaged: t('Damaged', 'Imeharibika'), archived: t('Archived', 'Kumbukumbu'), unavailable: t('No copies', 'Hakuna nakala') };
+
+  function api(path, q) {
+    var qs = Object.keys(q || {}).filter(function (k) { return q[k] !== '' && q[k] != null; }).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(q[k]); }).join('&');
+    var url = '/api/institution/public/' + encodeURIComponent(slug) + path + (qs ? '?' + qs : '');
+    return fetch(url).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        if (!r.ok) { var e = new Error(d.error || t('Something went wrong. Please try again.', 'Hitilafu imetokea. Tafadhali jaribu tena.')); e.status = r.status; throw e; }
+        try { localStorage.setItem('in-pub:' + url, JSON.stringify(d)); } catch (x) {}
+        return d;
+      });
+    }).catch(function (e) {
+      if (e.status) throw e;                                     // a real answer from the server
+      try { var c = localStorage.getItem('in-pub:' + url); if (c) { var d = JSON.parse(c); d._cached = true; return d; } } catch (x) {}
+      throw new Error(t('You are offline and this page was not saved on your device yet.', 'Huna mtandao na ukurasa huu haujahifadhiwa kwenye kifaa chako bado.'));
+    });
+  }
+
+  function chip(s, label) { return '<span class="in-chip ' + esc(s) + '">' + esc(label || STATUS[s] || s) + '</span>'; }
+  function cover(b) { return '<span class="cover">' + esc((b.title || '?').charAt(0).toUpperCase()) + (b.has_cover ? '<img src="/api/institution/books/' + b.id + '/cover" alt="" loading="lazy" onerror="this.remove()">' : '') + '</span>'; }
+
+  function shell() {
+    var i = info.institution;
+    if (/^#[0-9a-f]{6}$/i.test(i.primary_color || '')) document.documentElement.style.setProperty('--in-primary', i.primary_color);
+    document.title = i.name + ' — ' + t('Library catalogue', 'Katalogi ya maktaba');
+    app.innerHTML =
+      '<div class="in-public-hero"><div class="in-row" style="gap:1rem;flex-wrap:wrap;align-items:center"><span class="in-logo" style="position:relative;width:56px;height:56px">' + esc((i.short_name || 'S').slice(0, 2)) + (i.has_logo ? '<img src="/api/institution/public/logo/' + i.id + '" alt="" style="position:absolute;inset:0" onerror="this.remove()">' : '') + '</span><div style="flex:1;min-width:200px"><h1 style="margin:0;font-size:1.6rem">' + esc(i.name) + '</h1><p style="margin:.2rem 0 0">' + esc(t('Library catalogue', 'Katalogi ya maktaba')) + ' · ' + info.counts.books + ' ' + t('books', 'vitabu') + (info.counts.resources ? ' · ' + info.counts.resources + ' ' + t('public digital resources', 'rasilimali za umma') : '') + '</p></div>' +
+      '<div class="in-row" style="gap:.5rem"><button class="in-btn" id="lang" style="background:#fff;color:var(--in-primary)">' + (sw ? 'EN' : 'SW') + '</button><a class="in-btn" style="background:#fff;color:var(--in-primary)" href="institution-login.html?i=' + i.id + '"><i class="fa-solid fa-right-to-bracket"></i> ' + t('Sign in', 'Ingia') + '</a></div></div>' +
+      (i.about ? '<p style="margin:.9rem 0 0;max-width:70ch">' + esc(i.about) + '</p>' : '') + '</div>' +
+      (info.announcements.length ? '<div class="in-card" style="margin-bottom:1rem"><div class="in-card-head"><h3>' + t('Announcements', 'Matangazo') + '</h3></div><div class="in-list">' + info.announcements.map(function (a) { return '<div><b>' + esc(a.title) + '</b><div class="in-small in-muted" style="white-space:pre-wrap">' + esc(a.body) + '</div></div>'; }).join('') + '</div></div>' : '') +
+      '<div class="in-tabs"><button class="' + (st.tab === 'books' ? 'on' : '') + '" data-tab="books">' + t('Books', 'Vitabu') + '</button><button class="' + (st.tab === 'res' ? 'on' : '') + '" data-tab="res">' + t('Digital resources', 'Rasilimali za kidijitali') + '</button></div>' +
+      '<div id="body"></div>' +
+      '<footer class="in-small in-muted" style="margin-top:1.5rem;text-align:center">' + [i.address, i.phone, i.email].filter(Boolean).map(esc).join(' · ') + '<br>' + t('Powered by', 'Inaendeshwa na') + ' <a href="institution.html">Smart21Institution</a></footer>';
+    app.querySelector('#lang').addEventListener('click', function () { try { localStorage.setItem('s21-lang', sw ? 'en' : 'sw'); } catch (e) {} location.reload(); });
+    app.querySelectorAll('[data-tab]').forEach(function (b) { b.addEventListener('click', function () { st.tab = b.dataset.tab; st.page = 1; shell(); draw(); }); });
+  }
+
+  function pager(page, limit, total) {
+    var pages = Math.ceil(total / limit); if (pages <= 1) return '';
+    return '<div class="in-row" style="justify-content:center;margin-top:1rem;gap:.4rem"><button class="in-btn ghost sm" data-p="' + (page - 1) + '" ' + (page <= 1 ? 'disabled' : '') + '>‹</button><span class="in-small in-muted">' + page + ' / ' + pages + '</span><button class="in-btn ghost sm" data-p="' + (page + 1) + '" ' + (page >= pages ? 'disabled' : '') + '>›</button></div>';
+  }
+
+  function draw() {
+    var body = document.getElementById('body');
+    if (st.tab === 'books') {
+      body.innerHTML = '<div class="in-card" style="margin-bottom:1rem"><div class="in-toolbar"><select class="in-select" id="field" aria-label="' + t('Search in', 'Tafuta katika') + '" style="max-width:150px">' +
+        [['all', t('Everything', 'Kila kitu')], ['title', t('Title', 'Kichwa')], ['author', t('Author', 'Mwandishi')], ['isbn', 'ISBN'], ['subject', t('Subject', 'Somo')], ['publisher', t('Publisher', 'Mchapishaji')], ['category', t('Category', 'Jamii')]].map(function (f) { return '<option value="' + f[0] + '"' + (st.field === f[0] ? ' selected' : '') + '>' + f[1] + '</option>'; }).join('') +
+        '</select><input class="in-input" id="q" type="search" value="' + esc(st.q) + '" placeholder="' + t('Title, author, ISBN, subject…', 'Kichwa, mwandishi, ISBN, somo…') + '" style="flex:1;min-width:200px" autocomplete="off">' +
+        '<select class="in-select" id="status" aria-label="' + t('Availability', 'Upatikanaji') + '"><option value="">' + t('Any availability', 'Upatikanaji wowote') + '</option><option value="available"' + (st.status === 'available' ? ' selected' : '') + '>' + STATUS.available + '</option><option value="borrowed"' + (st.status === 'borrowed' ? ' selected' : '') + '>' + STATUS.borrowed + '</option></select>' +
+        '<select class="in-select" id="sort" aria-label="' + t('Sort', 'Panga') + '"><option value="title">' + t('Title A–Z', 'Kichwa A–Z') + '</option><option value="author"' + (st.sort === 'author' ? ' selected' : '') + '>' + t('Author A–Z', 'Mwandishi A–Z') + '</option><option value="year"' + (st.sort === 'year' ? ' selected' : '') + '>' + t('Newest first', 'Mpya kwanza') + '</option></select></div></div><div id="out"></div>';
+      var load = function () {
+        var out = document.getElementById('out'); out.innerHTML = '<div class="in-card">' + t('Searching…', 'Inatafuta…') + '</div>';
+        api('/books', { q: st.q, field: st.field, status: st.status, sort: st.sort, page: st.page, limit: 12 }).then(function (r) {
+          out.innerHTML = (r._cached ? '<div class="in-alert info" style="margin-bottom:.8rem"><i class="fa-solid fa-wifi"></i><div>' + t('You are offline — showing the last results saved on this device. Availability may be out of date.', 'Huna mtandao — zinaonyeshwa matokeo ya mwisho yaliyohifadhiwa. Upatikanaji unaweza kuwa umebadilika.') + '</div></div>' : '') +
+            (r.books.length ? '<div class="in-books">' + r.books.map(function (b) {
+              return '<button class="in-book" data-id="' + b.id + '">' + cover(b) + '<span class="meta"><h4>' + esc(b.title) + '</h4><span class="by">' + esc(b.author) + (b.pub_year ? ' · ' + b.pub_year : '') + '</span><span class="by">' + esc(b.category || '') + (b.shelf ? ' · ' + t('Shelf', 'Rafu') + ' ' + esc(b.shelf) : '') + '</span><span class="foot">' + chip(b.status, b.status === 'available' ? STATUS.available + ' (' + b.available + '/' + b.copies + ')' : null) + '</span></span></button>';
+            }).join('') + '</div>' + pager(r.page, r.limit, r.total)
+              : '<div class="in-card"><div class="in-empty"><i class="fa-solid fa-book-open"></i><h4>' + t('No books found', 'Hakuna vitabu vilivyopatikana') + '</h4><p>' + t('Try fewer words, check the spelling, or search "Everything".', 'Jaribu maneno machache, hakiki tahajia, au tafuta "Kila kitu".') + '</p></div></div>');
+          out.querySelectorAll('[data-id]').forEach(function (b) { b.addEventListener('click', function () { detail(b.dataset.id); }); });
+          out.querySelectorAll('[data-p]').forEach(function (b) { b.addEventListener('click', function () { st.page = Number(b.dataset.p); load(); window.scrollTo({ top: 0, behavior: 'smooth' }); }); });
+        }).catch(function (e) { out.innerHTML = '<div class="in-card"><div class="in-empty"><i class="fa-solid fa-plug-circle-xmark"></i><h4>' + t('Unable to load records', 'Imeshindwa kupakia rekodi') + '</h4><p>' + esc(e.message) + '</p></div></div>'; });
+      };
+      var timer;
+      document.getElementById('q').addEventListener('input', function (e) { clearTimeout(timer); timer = setTimeout(function () { st.q = e.target.value.trim(); st.page = 1; load(); }, 300); });
+      [['field', 'field'], ['status', 'status'], ['sort', 'sort']].forEach(function (p) { document.getElementById(p[0]).addEventListener('change', function (e) { st[p[1]] = e.target.value; st.page = 1; load(); }); });
+      load();
+    } else {
+      body.innerHTML = '<div class="in-card" style="margin-bottom:1rem"><div class="in-toolbar"><input class="in-input" id="rq" type="search" placeholder="' + t('Search digital resources…', 'Tafuta rasilimali za kidijitali…') + '" style="flex:1"></div></div><div id="out"></div>';
+      var rl = function (q) {
+        var out = document.getElementById('out');
+        api('/resources', { q: q || '', page: st.page, limit: 12 }).then(function (r) {
+          var base = '/api/institution/public/' + encodeURIComponent(slug) + '/resources/';
+          out.innerHTML = r.resources.length ? '<div class="in-books" style="grid-template-columns:repeat(auto-fill,minmax(250px,1fr))">' + r.resources.map(function (x) {
+            return '<div class="in-res"><h4>' + esc(x.title) + '</h4><div class="in-small in-muted">' + esc(x.author || '') + (x.category ? ' · ' + esc(x.category) : '') + '</div>' + (x.description ? '<div class="in-small in-muted">' + esc(x.description.slice(0, 120)) + '</div>' : '') +
+              '<div class="in-row" style="gap:.4rem;margin-top:auto">' + (x.allow_view ? '<a class="in-btn primary sm" target="_blank" rel="noopener" href="' + base + x.id + '/file?mode=view"><i class="fa-solid fa-book-open"></i> ' + t('Read', 'Soma') + '</a>' : '') + (x.allow_download ? '<a class="in-btn ghost sm" href="' + base + x.id + '/file?mode=download"><i class="fa-solid fa-download"></i></a>' : '') + '</div></div>';
+          }).join('') + '</div>' + pager(r.page, r.limit, r.total) : '<div class="in-card"><div class="in-empty"><i class="fa-solid fa-laptop-file"></i><h4>' + t('No public resources', 'Hakuna rasilimali za umma') + '</h4><p>' + t('Members can sign in to see more.', 'Wanachama wanaweza kuingia kuona zaidi.') + '</p></div></div>';
+          out.querySelectorAll('[data-p]').forEach(function (b) { b.addEventListener('click', function () { st.page = Number(b.dataset.p); rl(q); }); });
+        }).catch(function (e) { out.innerHTML = '<div class="in-card">' + esc(e.message) + '</div>'; });
+      };
+      var rt; document.getElementById('rq').addEventListener('input', function (e) { clearTimeout(rt); rt = setTimeout(function () { st.page = 1; rl(e.target.value.trim()); }, 300); });
+      rl('');
+    }
+  }
+
+  function detail(id) {
+    api('/books/' + id).then(function (r) {
+      var b = r.book; var back = document.createElement('div'); back.className = 'in-modal-back';
+      back.innerHTML = '<div class="in-modal lg" role="dialog" aria-modal="true" aria-label="' + esc(b.title) + '"><div class="in-modal-head"><h3>' + esc(b.title) + '</h3><button class="in-icon-btn" data-x aria-label="' + t('Close', 'Funga') + '">&times;</button></div><div class="in-modal-body"><div class="in-book-hero">' + cover(b) + '<div style="min-width:0"><div class="in-muted">' + esc(b.author) + '</div><div style="margin:.6rem 0">' + chip(b.status, b.status === 'available' ? STATUS.available + ' (' + b.available + '/' + b.copies + ')' : null) + '</div><dl class="in-kv">' +
+        [[t('Category', 'Jamii'), b.category], [t('Subject', 'Somo'), b.subject], [t('Publisher', 'Mchapishaji'), [b.publisher, b.pub_year].filter(Boolean).join(', ')], ['ISBN', b.isbn], [t('Language', 'Lugha'), b.language], [t('Location', 'Mahali'), [b.shelf, b.classification_no].filter(Boolean).join(' · ')]].map(function (p) { return '<dt>' + p[0] + '</dt><dd>' + esc(p[1] || '—') + '</dd>'; }).join('') + '</dl></div></div>' + (b.description ? '<p style="margin-top:1rem">' + esc(b.description) + '</p>' : '') +
+        '<p class="in-small in-muted" style="margin-top:1rem"><i class="fa-solid fa-circle-info"></i> ' + t('To borrow or reserve this book, sign in or visit the library desk.', 'Kukopa au kuhifadhi kitabu hiki, ingia au tembelea dawati la maktaba.') + '</p></div></div>';
+      document.body.appendChild(back);
+      var close = function () { back.remove(); };
+      back.addEventListener('mousedown', function (e) { if (e.target === back) close(); }); back.querySelector('[data-x]').addEventListener('click', close);
+      document.addEventListener('keydown', function esc2(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc2); } });
+    }).catch(function (e) { alert(e.message); });
+  }
+
+  var off = document.getElementById('off');
+  var sync = function () { off.textContent = t('You are offline.', 'Huna mtandao.'); off.classList.toggle('show', !navigator.onLine); };
+  window.addEventListener('online', sync); window.addEventListener('offline', sync); sync();
+
+  if (!slug) { app.innerHTML = '<div class="in-card" style="margin-top:3rem"><div class="in-empty"><i class="fa-solid fa-building-columns"></i><h4>' + t('Which institution?', 'Taasisi gani?') + '</h4><p>' + t('Open the catalogue link your institution gave you. It looks like institution-opac.html?i=your-institution', 'Fungua kiungo cha katalogi ulichopewa na taasisi yako.') + '</p></div></div>'; return; }
+  api('').then(function (d) { info = d; shell(); draw(); }).catch(function (e) {
+    app.innerHTML = '<div class="in-card" style="margin-top:3rem"><div class="in-empty"><i class="fa-solid fa-lock"></i><h4>' + (e.status === 403 ? t('This catalogue is private', 'Katalogi hii ni ya faragha') : t('Catalogue not found', 'Katalogi haipatikani')) + '</h4><p>' + esc(e.message) + '</p><a class="in-btn primary" href="institution-login.html">' + t('Sign in', 'Ingia') + '</a></div></div>';
+  });
+})();
+</script>
+</body>
+</html>

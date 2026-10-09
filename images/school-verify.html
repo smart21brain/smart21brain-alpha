@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify student ID — Smart21Brain School System</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="images/school/logo.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/school-app.css?v=1">
+</head>
+<body class="sc-body">
+<main class="sc-verify-box" style="padding:0 1rem">
+  <div class="sc-card sc-center" id="box" style="padding:2rem 1.4rem"><span class="sc-spin" style="width:32px;height:32px"></span><p class="sc-muted">Checking this ID card…</p></div>
+  <p class="sc-small sc-muted sc-center" style="margin-top:1rem">Only basic details are shown here. Photos, contacts, fees and results are never shown on this page.</p>
+</main>
+<script>
+(function () {
+  var t = new URLSearchParams(location.search).get('t'); var box = document.getElementById('box');
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  if (!t) { box.innerHTML = '<div class="sc-empty"><div class="ico" style="background:var(--sc-danger-bg);color:var(--sc-danger)"><i class="fa-solid fa-circle-xmark"></i></div><h4>No ID code found</h4><p>Please scan the QR code on the student ID card.</p></div>'; return; }
+  fetch('/api/school/verify/' + encodeURIComponent(t)).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); }).then(function (x) {
+    if (!x.ok || !x.d.valid) throw new Error((x.d && x.d.error) || 'This ID card could not be verified.');
+    var d = x.d, ok = d.student.status === 'active', col = d.school.color || '#0B6E4F';
+    document.documentElement.style.setProperty('--sc-primary', col);
+    box.innerHTML = '<div class="sc-row" style="justify-content:center;margin-bottom:1rem;gap:.7rem"><span class="sc-logo">' + esc((d.school.name || 'S').slice(0, 2)) + (d.school.has_logo ? '<img src="/api/school/public/logo/' + d.school.id + '" alt="" onerror="this.remove()" style="position:absolute;inset:0">' : '') + '</span><b style="font-family:var(--sc-font-display)">' + esc(d.school.name) + '</b></div>' +
+      '<div class="sc-empty" style="padding:.4rem 0 1rem"><div class="ico" style="background:' + (ok ? 'var(--sc-ok-bg);color:var(--sc-ok)' : 'var(--sc-warn-bg);color:var(--sc-warn)') + '"><i class="fa-solid ' + (ok ? 'fa-circle-check' : 'fa-triangle-exclamation') + '"></i></div><h4>' + (ok ? 'Valid student ID' : 'ID found — student is not active') + '</h4></div>' +
+      '<dl class="sc-kv" style="text-align:left"><dt>Name</dt><dd>' + esc(d.student.full_name) + '</dd><dt>Student ID</dt><dd>' + esc(d.student.admission_no) + '</dd><dt>Class</dt><dd>' + esc(d.student.class_name || '—') + '</dd><dt>Academic year</dt><dd>' + esc(d.student.year_name || '—') + '</dd><dt>Status</dt><dd><span class="sc-chip ' + esc(d.student.status) + '">' + esc(d.student.status.charAt(0).toUpperCase() + d.student.status.slice(1)) + '</span></dd></dl>' +
+      (d.school.phone ? '<p class="sc-small sc-muted">School phone: ' + esc(d.school.phone) + '</p>' : '');
+  }).catch(function (e) {
+    box.innerHTML = '<div class="sc-empty"><div class="ico" style="background:var(--sc-danger-bg);color:var(--sc-danger)"><i class="fa-solid fa-circle-xmark"></i></div><h4>Not verified</h4><p>' + esc(e.message) + '</p></div>';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+const fs = require('fs');
+const text = fs.readFileSync('js/i18n.js', 'utf8');
+const enStart = text.indexOf('en: {');
+const swStart = text.indexOf('sw: {');
+const swEnd = text.lastIndexOf('\n    },\n  };');
+const en = text.slice(enStart + 'en: {'.length, swStart);
+const sw = text.slice(swStart + 'sw: {'.length, swEnd);
+const getKeys = (snippet) => [...new Set((snippet.match(/stationery_[A-Za-z0-9_]+(?=:\s*['"]/g) || []))];
+const enKeys = getKeys(en);
+const swKeys = getKeys(sw);
+const missing = enKeys.filter((key) => !swKeys.includes(key));
+console.log('EN keys:', enKeys.length);
+console.log('SW keys:', swKeys.length);
+console.log('Missing in Swahili:', missing.length ? missing.join(', ') : 'none');
+if (missing.length) process.exit(1);

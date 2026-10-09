@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-school-install-popup>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>School System — Smart21Brain</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B6E4F">
+<link rel="manifest" href="school-manifest.json">
+<link rel="apple-touch-icon" href="icons/school-apple-touch.png" data-school="1">
+<link rel="icon" href="images/school/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/school-app.css?v=2">
+<script>
+  // Apply the saved light/dark choice before the page paints (no flash).
+  try { var t = localStorage.getItem('sc-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body class="sc-body">
+<noscript><p style="padding:2rem;font-family:sans-serif">The School System needs JavaScript. Please turn it on in your browser.</p></noscript>
+<!--
+  The whole app is drawn by js/school/*.js into <body>. Each file is one part
+  of the system (students, fees, exams…) so another school can change or
+  replace a part without touching the rest. See SCHOOL_SYSTEM.md.
+-->
+<script src="js/school/core.js?v=1"></script>
+<script src="js/school/app.js?v=1"></script>
+<script src="js/school/dashboard.js?v=1"></script>
+<script src="js/school/students.js?v=1"></script>
+<script src="js/school/student-form.js?v=1"></script>
+<script src="js/school/people.js?v=1"></script>
+<script src="js/school/academics.js?v=1"></script>
+<script src="js/school/attendance.js?v=1"></script>
+<script src="js/school/fees.js?v=1"></script>
+<script src="js/school/exams.js?v=1"></script>
+<script src="js/school/notifications.js?v=1"></script>
+<script src="js/school/reports.js?v=1"></script>
+<script src="js/school/admin.js?v=1"></script>
+<script src="js/school-install.js?v=1"></script>
+</body>
+</html>

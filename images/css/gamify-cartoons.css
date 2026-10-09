@@ -1,0 +1,39 @@
+/* ============================================================
+   SMART21BRAIN — Gamification section
+   Interactive Three.js cartoon mascots layered ONLY on top of
+   the existing background (bg-secondary-soft is untouched here
+   on purpose so the section color stays exactly the same).
+   ============================================================ */
+
+.section-gamify {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  /* no background rule here — bg-secondary-soft keeps controlling the color */
+}
+
+.gamify-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.gamify-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Keep real content above the WebGL layer */
+.section-gamify > .container {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gamify-canvas { opacity: .7; }
+}
+
+@media (max-width: 767px) {
+  .gamify-canvas { opacity: .85; }
+}

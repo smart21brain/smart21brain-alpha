@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome | Smart21Brain</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=18">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+<style>
+  .welcome-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.25rem;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+      radial-gradient(1100px 620px at 15% -10%, rgba(123, 97, 255, .16), transparent 60%),
+      radial-gradient(900px 560px at 100% 10%, rgba(11, 110, 79, .22), transparent 55%),
+      radial-gradient(1000px 700px at 50% 115%, rgba(239, 71, 111, .14), transparent 55%),
+      linear-gradient(180deg, #05060a 0%, #0A0D14 45%, #05060a 100%);
+  }
+  .welcome-planets-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .welcome-planets-canvas canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .welcome-planets-canvas { opacity: .65; }
+  }
+  .welcome-card {
+    width: 100%;
+    max-width: 980px;
+    background: var(--s21-white);
+    border: 1px solid var(--s21-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow-hover);
+    padding: 2.25rem;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2rem;
+    align-items: stretch;
+    position: relative;
+    z-index: 1;
+  }
+  .welcome-videos {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .welcome-video-box {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--s21-border);
+  }
+  .welcome-video-box video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .welcome-video-box .welcome-video-label {
+    position: absolute;
+    top: .7rem;
+    left: .8rem;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: .3rem .65rem;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .welcome-video-box .welcome-video-label i { font-size: .65rem; color: var(--s21-secondary); }
+  .welcome-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1.5rem;
+    border-left: 1px solid var(--s21-border);
+    padding-left: 2rem;
+  }
+  .welcome-side .s21-logo {
+    font-size: 1.9rem;
+    margin-bottom: 0;
+  }
+  .welcome-ai-icon {
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: var(--card-shadow-hover);
+    border: 2px solid var(--s21-border);
+  }
+  .welcome-tagline {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    margin: 0;
+  }
+  .welcome-tagline span {
+    display: inline-block;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+  .welcome-tagline span:nth-child(1) { color: var(--s21-primary); }
+  .welcome-tagline span:nth-child(2) { color: var(--s21-secondary-dark); }
+  .welcome-tagline span:nth-child(3) { color: var(--s21-primary); }
+  .welcome-tagline span:nth-child(4) { color: var(--s21-secondary-dark); }
+  .welcome-greeting {
+    color: var(--s21-text-soft);
+    font-size: .95rem;
+    margin: 0;
+  }
+  .welcome-actions {
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    width: 100%;
+  }
+  .welcome-actions .btn-s21 {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem 1.4rem;
+    font-size: 1rem;
+  }
+  #welcome-go-dashboard {
+    background: linear-gradient(120deg, var(--s21-primary) 0%, var(--s21-secondary-dark) 100%);
+    border: none;
+  }
+  #welcome-go-dashboard:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+  }
+  @media (max-width: 767px) {
+    .welcome-card { grid-template-columns: 1fr; padding: 1.5rem; }
+    .welcome-side { border-left: none; border-top: 1px solid var(--s21-border); padding-left: 0; padding-top: 1.5rem; }
+  }
+</style>
+</head>
+<body class="p-0">
+<main id="main">
+  <div class="welcome-shell">
+    <div class="welcome-planets-canvas" id="welcomePlanetsCanvas" aria-hidden="true"></div>
+    <div class="welcome-card" data-aos="fade-up">
+
+      <div class="welcome-videos">
+        <div class="welcome-video-box">
+          <span class="welcome-video-label"><i class="fa-solid fa-circle"></i> Playing</span>
+          <video src="videos/splash-intro.mp4" autoplay muted loop playsinline preload="auto"></video>
+        </div>
+        <div class="welcome-video-box">
+          <span class="welcome-video-label"><i class="fa-solid fa-circle"></i> Playing</span>
+          <video src="videos/welcome-video-2.mp4" autoplay muted loop playsinline preload="auto"></video>
+        </div>
+      </div>
+
+      <div class="welcome-side">
+        <img src="images/logo/coool.png" alt="Smart21Brain AI" class="welcome-ai-icon">
+        <a href="index.html" class="s21-logo">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </a>
+        <p class="welcome-tagline">
+          <span>Learn,</span>
+          <span>Play,</span>
+          <span>Explore,</span>
+          <span>Grow.</span>
+        </p>
+        <p class="welcome-greeting" id="welcome-greeting">You're logged in. Where would you like to go?</p>
+        <div class="welcome-actions">
+          <a href="index.html" class="btn-s21 btn-s21-outline">
+            <i class="fa-solid fa-house"></i> Smart21Brain Home
+          </a>
+          <a href="dashboard.html" id="welcome-go-dashboard-secondary" class="btn-s21 btn-s21-outline" title="Go to Dashboard">
+            <i class="fa-solid fa-gauge"></i> Enter Dashboard
+          </a>
+          <a href="dashboard.html" id="welcome-go-dashboard" class="btn-s21 btn-s21-primary" title="Go to Dashboard">
+            <i class="fa-solid fa-rocket"></i> Enter into Universe
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<script>
+  // The login flow stashes where "Go to Dashboard" should point (it
+  // depends on the account's role: admin/teacher/parent/user), plus a
+  // display name for the greeting. Both are one-time — read and clear
+  // immediately so a manual visit to this page later doesn't get stuck
+  // reusing a stale target.
+  (function () {
+    try {
+      var target = sessionStorage.getItem('s21-welcome-dashboard');
+      var name = sessionStorage.getItem('s21-welcome-name');
+      sessionStorage.removeItem('s21-welcome-dashboard');
+      sessionStorage.removeItem('s21-welcome-name');
+      if (target) {
+        document.getElementById('welcome-go-dashboard').href = target;
+        var secondary = document.getElementById('welcome-go-dashboard-secondary');
+        if (secondary) secondary.href = target;
+      }
+      if (name) {
+        document.getElementById('welcome-greeting').textContent = 'Welcome back, ' + name + '! Where would you like to go?';
+      }
+    } catch (e) { /* sessionStorage unavailable — fall back to dashboard.html */ }
+  })();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/welcome-planets-three.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/darkmode.js"></script>
+</body>
+</html>

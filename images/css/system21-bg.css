@@ -1,0 +1,67 @@
+/* System21 — Background Remover editor (bg-) */
+.sx-dlg.sx-wide{width:min(1280px,calc(100vw - 16px))}
+.bg-app{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:1rem;align-items:start;font-family:var(--sx-mono)}
+@media(max-width:900px){.bg-app{grid-template-columns:1fr}}
+.bg-main{min-width:0}
+.bg-bar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.6rem}
+.bg-grp{display:flex;align-items:center;gap:.25rem;padding:.2rem;border:1px solid var(--s21-border);border-radius:12px;background:var(--s21-white)}
+.bg-ib{appearance:none;border:0;background:transparent;color:var(--s21-text);min-width:34px;height:34px;border-radius:9px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font:600 .72rem var(--sx-mono)}
+.bg-ib:hover{background:color-mix(in srgb,var(--s21-accent) 12%,transparent)}
+.bg-ib.on{background:var(--s21-accent);color:#fff}
+.bg-ib:disabled{opacity:.35;pointer-events:none}
+.bg-ib.wide{border:1px solid var(--s21-border);background:var(--s21-white);padding:0 .8rem;height:42px;border-radius:12px}
+.bg-ib:focus-visible,.bg-tabs button:focus-visible,.bg-seg button:focus-visible,.bg-types button:focus-visible,.bg-sw button:focus-visible{outline:2px solid var(--s21-secondary);outline-offset:2px}
+.bg-zv{font:600 .7rem var(--sx-mono);min-width:3.2rem;text-align:center;color:var(--s21-text-soft)}
+.bg-stage{position:relative;overflow:hidden;height:clamp(340px,64vh,680px);border:1px solid var(--s21-border);border-radius:16px;background:color-mix(in srgb,var(--s21-text) 6%,var(--s21-bg));touch-action:none;user-select:none;-webkit-user-select:none}
+.bg-stage[data-tool=erase],.bg-stage[data-tool=restore]{cursor:none}
+.bg-stage[data-tool=wand]{cursor:crosshair}
+.bg-stage[data-tool=pan],.bg-stage.grab{cursor:grab}
+.bg-cv{position:absolute;left:0;top:0;transform-origin:0 0;display:block;max-width:none;
+  background:conic-gradient(#9996 25%,transparent 0 50%,#9996 0 75%,transparent 0) 0 0/18px 18px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.bg-ring{position:absolute;pointer-events:none;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 1px rgba(0,0,0,.65),inset 0 0 0 1px rgba(0,0,0,.45);z-index:3}
+.bg-ring.restore{border-color:#3ddc97}
+.bg-busy{position:absolute;inset:0;display:flex;flex-direction:column;gap:.8rem;align-items:center;justify-content:center;background:rgba(8,14,11,.62);backdrop-filter:blur(2px);color:#fff;font:600 .8rem var(--sx-mono);z-index:5}
+.bg-busy[hidden],.bg-ring[hidden]{display:none}
+.bg-spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.25);border-top-color:var(--s21-accent);animation:bg-rot .8s linear infinite}
+@keyframes bg-rot{to{transform:rotate(360deg)}}
+.bg-note{min-height:1.4rem;margin-top:.55rem;font:500 .74rem/1.4 var(--sx-mono);color:var(--s21-text-soft)}
+.bg-note.ok{color:#3ddc97}.bg-note.warn{color:var(--s21-secondary)}.bg-note.err{color:var(--s21-accent)}
+
+.bg-side{border:1px solid var(--s21-border);border-radius:16px;background:var(--s21-white);overflow:hidden}
+.bg-tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--s21-border)}
+.bg-tabs button{appearance:none;border:0;background:transparent;color:var(--s21-text-soft);padding:.65rem .2rem;font:600 .62rem var(--sx-mono);cursor:pointer;display:flex;flex-direction:column;gap:.3rem;align-items:center;border-bottom:2px solid transparent}
+.bg-tabs button i{font-size:.95rem}
+.bg-tabs button[aria-selected=true]{color:var(--s21-text);border-bottom-color:var(--s21-accent)}
+.bg-panels{max-height:calc(64vh + 60px);overflow:auto}
+@media(max-width:900px){.bg-panels{max-height:none}}
+.bg-panel{padding:.9rem}
+.bg-panel[hidden]{display:none}
+.bg-sec{padding:.2rem 0 .9rem;margin-bottom:.9rem;border-bottom:1px dashed var(--s21-border)}
+.bg-sec:last-child{border-bottom:0;margin-bottom:0}
+.bg-sec h4{font:700 .68rem var(--sx-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--s21-text-soft);margin:0 0 .7rem}
+.bg-help{font:500 .68rem/1.5 var(--sx-mono);color:var(--s21-text-soft);margin:.5rem 0 0}
+.bg-ctl{margin:.6rem 0}
+.bg-ctl label{display:flex;justify-content:space-between;font:600 .72rem var(--sx-mono);margin-bottom:.3rem}
+.bg-ctl output{color:var(--s21-accent)}
+.bg-ctl input[type=range]{width:100%;accent-color:var(--s21-accent)}
+.bg-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--s21-border);border-radius:10px;overflow:hidden}
+.bg-seg button{appearance:none;border:0;border-right:1px solid var(--s21-border);background:transparent;color:var(--s21-text);padding:.5rem .3rem;font:600 .7rem var(--sx-mono);cursor:pointer}
+.bg-seg button:last-child{border-right:0}
+.bg-seg button.on{background:var(--s21-accent);color:#fff}
+.bg-two{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.bg-two .sx-btn,.bg-side .sx-btn{justify-content:center;font-size:.72rem;padding:.55rem .6rem}
+.bg-side .sx-btn.w-100{width:100%}
+.bg-side .sx-btn+.sx-btn{margin-top:.5rem}
+.bg-types{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem}
+.bg-types button{appearance:none;border:1px solid var(--s21-border);background:transparent;color:var(--s21-text);border-radius:10px;padding:.55rem .1rem;display:flex;flex-direction:column;align-items:center;gap:.3rem;font:600 .58rem var(--sx-mono);cursor:pointer}
+.bg-types button i{font-size:1rem}
+.bg-types button.on{border-color:var(--s21-accent);background:color-mix(in srgb,var(--s21-accent) 12%,transparent)}
+.bg-sw{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;margin-bottom:.7rem}
+.bg-sw button{aspect-ratio:1/1;border-radius:9px;border:1px solid var(--s21-border);cursor:pointer}
+.bg-sw button:hover{transform:scale(1.08)}
+.bg-col{display:flex;align-items:center;justify-content:space-between;font:600 .72rem var(--sx-mono);margin:.5rem 0}
+.bg-col input{width:46px;height:30px;border:1px solid var(--s21-border);border-radius:8px;background:transparent;padding:2px;cursor:pointer}
+.bg-tg{display:flex;align-items:center;gap:.55rem;font:600 .74rem var(--sx-mono);cursor:pointer;margin:.2rem 0 .5rem}
+.bg-tg input{width:17px;height:17px;accent-color:var(--s21-accent)}
+.bg-app [hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){.bg-spin{animation-duration:2.4s}}

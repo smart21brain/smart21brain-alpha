@@ -1,0 +1,213 @@
+/* ==========================================================================
+   Smart21Code — lesson data
+   A W3Schools-style "learn to code" reference embedded in courses.html.
+   Each language has an ordered list of topics; each topic has:
+     id          unique slug
+     title       sidebar + heading title
+     level       Beginner | Intermediate | Advanced (shown as a tiny badge)
+     explain     HTML string, plain-English explanation (kept short, clear)
+     syntax      one-line "syntax" snippet shown in a highlighted box
+     code        the starter code loaded into the Try it Yourself editor
+     output      only for languages we can't execute live in a browser
+                 (Python / SQL) — a pre-computed "expected output" string
+                 shown when the learner presses Run.
+   ========================================================================== */
+window.SMART21CODE_DATA = {
+  languages: [
+    { id: 'html',       name: 'HTML',       icon: 'fa-code',          color: '#E34F26', tagline: 'Structure every web page' },
+    { id: 'css',        name: 'CSS',        icon: 'fa-brush',         color: '#2965F1', tagline: 'Style, color & layout' },
+    { id: 'javascript', name: 'JavaScript', icon: 'fa-js',            color: '#F0B90B', tagline: 'Make pages interactive' },
+    { id: 'python',     name: 'Python',     icon: 'fa-terminal',      color: '#3776AB', tagline: 'A friendly first language' },
+    { id: 'sql',        name: 'SQL',        icon: 'fa-database',      color: '#7B61FF', tagline: 'Ask questions of data' }
+  ],
+
+  topics: {
+    /* ---------------------------------------------------------------- HTML */
+    html: [
+      { id:'html-intro', title:'Introduction', level:'Beginner',
+        explain:'HTML (HyperText Markup Language) is the skeleton of every website. It uses <strong>tags</strong> wrapped in angle brackets to tell the browser "this is a heading", "this is a paragraph", "this is a picture" — and so on. Tags usually come in pairs: an opening tag and a closing tag, with your content in between.',
+        syntax:'&lt;tagname&gt;content&lt;/tagname&gt;',
+        code:'<!DOCTYPE html>\n<html>\n  <head>\n    <title>My First Page</title>\n  </head>\n  <body>\n    <h1>Hello, Smart21Brain!</h1>\n    <p>This is my very first web page.</p>\n  </body>\n</html>' },
+      { id:'html-elements', title:'Elements & Tags', level:'Beginner',
+        explain:'An HTML <strong>element</strong> is an opening tag, its content, and a closing tag. Some elements are "empty" and never wrap anything, like <code>&lt;br&gt;</code> (line break) or <code>&lt;img&gt;</code> (image) — they don\'t need a closing tag.',
+        syntax:'&lt;p&gt;Some text&lt;/p&gt;',
+        code:'<h2>My Day</h2>\n<p>Today I learned about HTML elements.</p>\n<p>Line one.<br>Line two, right after a break.</p>' },
+      { id:'html-attributes', title:'Attributes', level:'Beginner',
+        explain:'Attributes add extra information to a tag. They live inside the opening tag as <code>name="value"</code> pairs. For example, the <code>href</code> attribute tells a link where to go, and <code>src</code> tells an image where its file is.',
+        syntax:'&lt;a href="url"&gt;link text&lt;/a&gt;',
+        code:'<a href="https://smart21brain.com" target="_blank">Visit Smart21Brain</a>\n<br><br>\n<img src="images/logo/coool.png" width="80" alt="Smart21Brain logo">' },
+      { id:'html-headings-text', title:'Headings & Paragraphs', level:'Beginner',
+        explain:'HTML gives you six heading levels, <code>&lt;h1&gt;</code> down to <code>&lt;h6&gt;</code>, from most to least important. Regular text goes inside <code>&lt;p&gt;</code> paragraphs.',
+        syntax:'&lt;h1&gt;...&lt;/h1&gt; … &lt;h6&gt;...&lt;/h6&gt;',
+        code:'<h1>Chapter 1</h1>\n<h2>Section A</h2>\n<p>Paragraphs hold the body text of your page. You can have as many as you like.</p>\n<h3>Sub-section</h3>\n<p>Smaller headings organise smaller ideas.</p>' },
+      { id:'html-lists', title:'Lists', level:'Beginner',
+        explain:'Use <code>&lt;ul&gt;</code> for a bulleted (unordered) list or <code>&lt;ol&gt;</code> for a numbered (ordered) list. Each item goes inside an <code>&lt;li&gt;</code> tag.',
+        syntax:'&lt;ul&gt;&lt;li&gt;item&lt;/li&gt;&lt;/ul&gt;',
+        code:'<h3>Shopping List</h3>\n<ul>\n  <li>Pencils</li>\n  <li>Notebook</li>\n  <li>Ruler</li>\n</ul>\n<h3>Steps to Log In</h3>\n<ol>\n  <li>Open the app</li>\n  <li>Type your username</li>\n  <li>Tap "Log In"</li>\n</ol>' },
+      { id:'html-links-images', title:'Links & Images', level:'Beginner',
+        explain:'Links (<code>&lt;a&gt;</code>) connect pages together — the web wouldn\'t be a "web" without them! Images (<code>&lt;img&gt;</code>) are empty elements that always need a <code>src</code> and an <code>alt</code> (a text description for accessibility).',
+        syntax:'&lt;img src="pic.jpg" alt="description"&gt;',
+        code:'<p>Learn more about <a href="https://en.wikipedia.org/wiki/HTML" target="_blank">HTML on Wikipedia</a>.</p>\n<img src="images/logo/coool.png" alt="Smart21Brain mascot" width="120">' },
+      { id:'html-tables', title:'Tables', level:'Intermediate',
+        explain:'Tables organise data into rows and columns. <code>&lt;table&gt;</code> wraps the whole thing, <code>&lt;tr&gt;</code> makes a row, <code>&lt;th&gt;</code> makes a bold header cell, and <code>&lt;td&gt;</code> makes a normal data cell.',
+        syntax:'&lt;table&gt;&lt;tr&gt;&lt;td&gt;..&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;',
+        code:'<table border="1" cellpadding="8">\n  <tr>\n    <th>Subject</th>\n    <th>Grade</th>\n  </tr>\n  <tr>\n    <td>Mathematics</td>\n    <td>A</td>\n  </tr>\n  <tr>\n    <td>Science</td>\n    <td>A-</td>\n  </tr>\n</table>' },
+      { id:'html-forms', title:'Forms', level:'Intermediate',
+        explain:'Forms collect input from a visitor. <code>&lt;input&gt;</code> makes text boxes, checkboxes and buttons; <code>&lt;label&gt;</code> describes each field so screen readers (and everyone else) know what to type.',
+        syntax:'&lt;input type="text" name="..."&gt;',
+        code:'<form>\n  <label for="name">Your name:</label><br>\n  <input type="text" id="name" name="name"><br><br>\n  <label for="fav">Favourite subject:</label><br>\n  <select id="fav" name="fav">\n    <option>Mathematics</option>\n    <option>Science</option>\n    <option>Coding</option>\n  </select><br><br>\n  <button type="button" onclick="alert(\'Thanks!\')">Submit</button>\n</form>' },
+      { id:'html-semantic', title:'Semantic Layout', level:'Intermediate',
+        explain:'"Semantic" tags describe the <em>meaning</em> of a section, not just its look — <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;footer&gt;</code>. This helps browsers, search engines and assistive tech understand your page structure.',
+        syntax:'&lt;header&gt;…&lt;/header&gt;',
+        code:'<header><h2>My Site</h2></header>\n<main>\n  <section>\n    <h3>About Me</h3>\n    <p>I am learning to build websites!</p>\n  </section>\n</main>\n<footer><small>&copy; 2026 My Site</small></footer>' },
+      { id:'html-div-span', title:'div & span', level:'Intermediate',
+        explain:'<code>&lt;div&gt;</code> is a generic block-level container used to group content for styling or layout. <code>&lt;span&gt;</code> does the same thing but inline, for styling a small piece of text inside a sentence.',
+        syntax:'&lt;div&gt;…&lt;/div&gt;   &lt;span&gt;…&lt;/span&gt;',
+        code:'<div style="background:#FFF6E0;padding:12px;border-radius:8px">\n  This whole box is a &lt;div&gt;.\n  <p>It can contain <span style="color:#EF476F;font-weight:bold">a highlighted span</span> inside a sentence.</p>\n</div>' }
+    ],
+
+    /* ----------------------------------------------------------------- CSS */
+    css: [
+      { id:'css-intro', title:'Introduction', level:'Beginner',
+        explain:'CSS (Cascading Style Sheets) controls how HTML <em>looks</em> — colors, fonts, spacing, layout. You target an element with a <strong>selector</strong>, then set one or more <strong>properties</strong> inside curly braces.',
+        syntax:'selector { property: value; }',
+        code:'<style>\n  h1 { color: #0B6E4F; }\n  p { font-family: Arial; font-size: 18px; }\n</style>\n<h1>Styled Heading</h1>\n<p>This paragraph uses a custom font and size.</p>' },
+      { id:'css-selectors', title:'Selectors', level:'Beginner',
+        explain:'A selector picks which elements to style. Use a tag name (<code>p</code>) for all paragraphs, a dot for a <code>.class</code> (reusable on many elements), or a hash for a unique <code>#id</code>.',
+        syntax:'.classname { … }   #idname { … }',
+        code:'<style>\n  .highlight { background: #FFF6E0; padding: 6px; }\n  #special { color: #EF476F; font-weight: bold; }\n</style>\n<p class="highlight">This paragraph is highlighted.</p>\n<p id="special">This one is special and pink.</p>' },
+      { id:'css-box-model', title:'The Box Model', level:'Beginner',
+        explain:'Every element is a box with four layers, from the inside out: <strong>content</strong>, <strong>padding</strong> (space inside the border), <strong>border</strong>, and <strong>margin</strong> (space outside the border).',
+        syntax:'padding: 10px; border: 2px solid; margin: 20px;',
+        code:'<style>\n  .box {\n    padding: 16px;\n    border: 3px solid #0B6E4F;\n    margin: 20px;\n    background: #E4F3EC;\n  }\n</style>\n<div class="box">I am a box with padding, a border and a margin.</div>' },
+      { id:'css-colors-text', title:'Colors & Text', level:'Beginner',
+        explain:'Colors can be named (<code>red</code>), hex (<code>#EF476F</code>) or <code>rgb(...)</code>. Text properties like <code>font-weight</code>, <code>text-align</code> and <code>line-height</code> control how words appear on the page.',
+        syntax:'color: #333; text-align: center;',
+        code:'<style>\n  .quote {\n    color: #084F39;\n    text-align: center;\n    font-style: italic;\n    font-size: 20px;\n  }\n</style>\n<p class="quote">"Learning never exhausts the mind."</p>' },
+      { id:'css-flexbox', title:'Flexbox Layout', level:'Intermediate',
+        explain:'Flexbox lines up items in a row or column and makes spacing between them easy. Set <code>display: flex</code> on the parent, then use <code>justify-content</code> and <code>align-items</code> to arrange the children.',
+        syntax:'display: flex; justify-content: space-between;',
+        code:'<style>\n  .row { display: flex; gap: 10px; justify-content: center; }\n  .card { background:#E4F3EC; padding:14px; border-radius:10px; width:100px; text-align:center }\n</style>\n<div class="row">\n  <div class="card">Math</div>\n  <div class="card">Science</div>\n  <div class="card">Coding</div>\n</div>' },
+      { id:'css-grid', title:'Grid Layout', level:'Intermediate',
+        explain:'CSS Grid arranges children into rows <em>and</em> columns at once. <code>grid-template-columns</code> defines how many columns and how wide each one is.',
+        syntax:'display: grid; grid-template-columns: 1fr 1fr;',
+        code:'<style>\n  .gallery {\n    display: grid;\n    grid-template-columns: repeat(3, 1fr);\n    gap: 8px;\n  }\n  .tile { background:#FFF6E0; padding:20px; text-align:center; border-radius:8px }\n</style>\n<div class="gallery">\n  <div class="tile">1</div><div class="tile">2</div><div class="tile">3</div>\n  <div class="tile">4</div><div class="tile">5</div><div class="tile">6</div>\n</div>' },
+      { id:'css-transitions', title:'Transitions & Hover', level:'Intermediate',
+        explain:'The <code>:hover</code> pseudo-class styles an element while the mouse is over it. Add <code>transition</code> so the change animates smoothly instead of snapping instantly.',
+        syntax:'.btn:hover { transform: scale(1.1); }',
+        code:'<style>\n  .btn {\n    background:#0B6E4F; color:#fff; padding:10px 18px;\n    border:none; border-radius:8px; cursor:pointer;\n    transition: transform .2s ease, background .2s ease;\n  }\n  .btn:hover { background:#084F39; transform: scale(1.08); }\n</style>\n<button class="btn">Hover over me</button>' },
+      { id:'css-responsive', title:'Responsive Design', level:'Advanced',
+        explain:'Media queries apply different CSS depending on screen width, so a page can rearrange itself for phones, tablets and desktops.',
+        syntax:'@media (max-width: 600px) { … }',
+        code:'<style>\n  .box { background:#E4F3EC; padding:20px; }\n  @media (max-width: 500px) {\n    .box { background:#FDECF1; }\n  }\n</style>\n<div class="box">Resize the preview panel width to see this box change color below 500px!</div>' }
+    ],
+
+    /* ------------------------------------------------------------ JavaScript */
+    javascript: [
+      { id:'js-intro', title:'Introduction', level:'Beginner',
+        explain:'JavaScript is the language that makes web pages <em>interactive</em> — reacting to clicks, updating content, validating forms. It runs inside <code>&lt;script&gt;</code> tags in the browser.',
+        syntax:'&lt;script&gt; // your code &lt;/script&gt;',
+        code:'<script>\n  document.write("Hello from JavaScript!");\n  console.log("Check the console too.");\n</script>' },
+      { id:'js-variables', title:'Variables', level:'Beginner',
+        explain:'Variables store values so you can reuse them. Use <code>let</code> for values that may change, and <code>const</code> for values that stay the same.',
+        syntax:'let name = "value"; const PI = 3.14;',
+        code:'<div id="out"></div>\n<script>\n  let studentName = "Amina";\n  const passMark = 50;\n  document.getElementById("out").innerHTML =\n    studentName + " needs at least " + passMark + " to pass.";\n</script>' },
+      { id:'js-operators', title:'Operators', level:'Beginner',
+        explain:'Arithmetic operators (<code>+ - * / %</code>) do math. Comparison operators (<code>=== &gt; &lt;</code>) compare values and return <code>true</code> or <code>false</code>.',
+        syntax:'a + b   a === b   a &gt; b',
+        code:'<div id="out"></div>\n<script>\n  let a = 12, b = 5;\n  document.getElementById("out").innerHTML =\n    a + " + " + b + " = " + (a + b) + "<br>" +\n    a + " is greater than " + b + "? " + (a > b);\n</script>' },
+      { id:'js-conditionals', title:'If / Else', level:'Beginner',
+        explain:'<code>if</code> runs a block of code only when a condition is true; <code>else</code> runs when it is false. Chain more checks with <code>else if</code>.',
+        syntax:'if (condition) { … } else { … }',
+        code:'<div id="out"></div>\n<script>\n  let score = 72;\n  let result;\n  if (score >= 80) { result = "A"; }\n  else if (score >= 60) { result = "B"; }\n  else { result = "Keep practising!"; }\n  document.getElementById("out").innerHTML = "Grade: " + result;\n</script>' },
+      { id:'js-functions', title:'Functions', level:'Beginner',
+        explain:'A function is a reusable block of code you can "call" whenever you need it, optionally passing in values (parameters) and getting a value back (return).',
+        syntax:'function name(param) { return value; }',
+        code:'<div id="out"></div>\n<script>\n  function greet(name) {\n    return "Karibu, " + name + "!";\n  }\n  document.getElementById("out").innerHTML = greet("Juma");\n</script>' },
+      { id:'js-loops', title:'Loops', level:'Intermediate',
+        explain:'Loops repeat a block of code. A <code>for</code> loop is great when you know how many times to repeat; a <code>while</code> loop repeats until a condition becomes false.',
+        syntax:'for (let i = 0; i &lt; 5; i++) { … }',
+        code:'<div id="out"></div>\n<script>\n  let list = "";\n  for (let i = 1; i <= 5; i++) {\n    list += "Lesson " + i + "<br>";\n  }\n  document.getElementById("out").innerHTML = list;\n</script>' },
+      { id:'js-arrays', title:'Arrays', level:'Intermediate',
+        explain:'An array stores an ordered list of values in one variable. Access items by index (starting at 0), and loop over them with <code>for</code> or <code>forEach</code>.',
+        syntax:'let subjects = ["Math", "Science"];',
+        code:'<div id="out"></div>\n<script>\n  let subjects = ["Math", "Science", "Coding", "Kiswahili"];\n  let out = "";\n  subjects.forEach(function(s, i) {\n    out += (i + 1) + ". " + s + "<br>";\n  });\n  document.getElementById("out").innerHTML = out;\n</script>' },
+      { id:'js-dom', title:'DOM & Events', level:'Intermediate',
+        explain:'The DOM (Document Object Model) lets JavaScript read and change the page. <code>addEventListener</code> runs your code when something happens, like a button click.',
+        syntax:'element.addEventListener("click", fn);',
+        code:'<button id="myBtn">Click me</button>\n<p id="msg"></p>\n<script>\n  let clicks = 0;\n  document.getElementById("myBtn").addEventListener("click", function() {\n    clicks++;\n    document.getElementById("msg").textContent = "Clicked " + clicks + " time(s)!";\n  });\n</script>' },
+      { id:'js-objects', title:'Objects', level:'Advanced',
+        explain:'An object groups related data (and sometimes functions) under named keys — perfect for describing "things" in your code, like a student record.',
+        syntax:'let obj = { key: "value" };',
+        code:'<div id="out"></div>\n<script>\n  let student = { name: "Zawadi", age: 12, grade: "A" };\n  document.getElementById("out").innerHTML =\n    student.name + " is " + student.age + " and scored " + student.grade;\n</script>' }
+    ],
+
+    /* -------------------------------------------------------------- Python */
+    python: [
+      { id:'py-intro', title:'Introduction', level:'Beginner',
+        explain:'Python is famous for being easy to read — it uses plain English keywords and indentation (spaces) instead of curly braces to group code. It runs on a server or your computer, not directly in the browser, so on this page we show you the code and its <strong>output</strong>.',
+        syntax:'print("text")',
+        code:'print("Hello, Smart21Brain!")\nprint("Learning Python is fun.")',
+        output:'Hello, Smart21Brain!\nLearning Python is fun.' },
+      { id:'py-variables', title:'Variables & Types', level:'Beginner',
+        explain:'Python variables need no special keyword — just assign a value with <code>=</code>. Common types are <code>str</code> (text), <code>int</code> (whole numbers), <code>float</code> (decimals) and <code>bool</code> (True/False).',
+        syntax:'name = "Amina"\nage = 12',
+        code:'name = "Amina"\nage = 12\nheight = 1.45\nprint(name, "is", age, "years old and", height, "m tall.")',
+        output:'Amina is 12 years old and 1.45 m tall.' },
+      { id:'py-conditionals', title:'If / Elif / Else', level:'Beginner',
+        explain:'Python uses <code>if</code>, <code>elif</code> (short for "else if") and <code>else</code> to branch. Indentation (4 spaces) shows which lines belong to which block — no curly braces needed.',
+        syntax:'if score >= 80:\n    print("A")',
+        code:'score = 72\nif score >= 80:\n    print("Grade: A")\nelif score >= 60:\n    print("Grade: B")\nelse:\n    print("Keep practising!")',
+        output:'Grade: B' },
+      { id:'py-loops', title:'Loops', level:'Beginner',
+        explain:'A <code>for</code> loop steps through a sequence (like a <code>range</code> of numbers or a list). A <code>while</code> loop repeats as long as a condition stays true.',
+        syntax:'for i in range(5):\n    print(i)',
+        code:'for i in range(1, 6):\n    print("Lesson", i)',
+        output:'Lesson 1\nLesson 2\nLesson 3\nLesson 4\nLesson 5' },
+      { id:'py-lists', title:'Lists', level:'Intermediate',
+        explain:'A list holds an ordered, changeable collection of items in square brackets. Loop over a list with <code>for item in list:</code>.',
+        syntax:'subjects = ["Math", "Science"]',
+        code:'subjects = ["Math", "Science", "Coding", "Kiswahili"]\nfor i, s in enumerate(subjects, start=1):\n    print(i, "-", s)',
+        output:'1 - Math\n2 - Science\n3 - Coding\n4 - Kiswahili' },
+      { id:'py-functions', title:'Functions', level:'Intermediate',
+        explain:'Define a reusable block of code with <code>def</code>. Functions can take parameters and send a value back with <code>return</code>.',
+        syntax:'def greet(name):\n    return "Hi " + name',
+        code:'def greet(name):\n    return "Karibu, " + name + "!"\n\nprint(greet("Juma"))\nprint(greet("Zawadi"))',
+        output:'Karibu, Juma!\nKaribu, Zawadi!' },
+      { id:'py-dictionaries', title:'Dictionaries', level:'Advanced',
+        explain:'A dictionary stores data as <code>key: value</code> pairs, so you can look values up by name instead of by position — great for describing "things" like a student record.',
+        syntax:'student = {"name": "Zawadi", "grade": "A"}',
+        code:'student = {"name": "Zawadi", "age": 12, "grade": "A"}\nprint(student["name"], "is", student["age"], "and scored", student["grade"])',
+        output:'Zawadi is 12 and scored A' }
+    ],
+
+    /* ---------------------------------------------------------------- SQL */
+    sql: [
+      { id:'sql-intro', title:'Introduction', level:'Beginner',
+        explain:'SQL (Structured Query Language) is how you talk to a database — asking for data, adding it, changing it, or removing it. Data lives in <strong>tables</strong> made of rows and columns, just like a spreadsheet.',
+        syntax:'SELECT column FROM table;',
+        code:'-- A students table already contains rows like:\n-- id | name    | grade\n-- 1  | Amina   | A\n-- 2  | Juma    | B\n-- 3  | Zawadi  | A\n\nSELECT name, grade FROM students;',
+        output:'name    | grade\n--------+------\nAmina   | A\nJuma    | B\nZawadi  | A' },
+      { id:'sql-where', title:'Filtering with WHERE', level:'Beginner',
+        explain:'Add a <code>WHERE</code> clause to only return rows that match a condition — like finding every student who scored an "A".',
+        syntax:'SELECT * FROM table WHERE condition;',
+        code:'SELECT name, grade FROM students\nWHERE grade = \'A\';',
+        output:'name    | grade\n--------+------\nAmina   | A\nZawadi  | A' },
+      { id:'sql-order-limit', title:'ORDER BY & LIMIT', level:'Intermediate',
+        explain:'<code>ORDER BY</code> sorts your results (add <code>DESC</code> for descending order). <code>LIMIT</code> caps how many rows come back — handy for "show me the top 3".',
+        syntax:'SELECT * FROM table ORDER BY col DESC LIMIT 3;',
+        code:'SELECT name, score FROM students\nORDER BY score DESC\nLIMIT 2;',
+        output:'name    | score\n--------+------\nZawadi  | 96\nAmina   | 91' },
+      { id:'sql-insert-update', title:'INSERT & UPDATE', level:'Intermediate',
+        explain:'<code>INSERT INTO</code> adds a brand-new row. <code>UPDATE</code> changes existing rows that match a <code>WHERE</code> clause — always include the WHERE, or you\'ll update every row!',
+        syntax:'INSERT INTO table (col) VALUES (val);',
+        code:'INSERT INTO students (name, grade)\nVALUES (\'Baraka\', \'B\');\n\nUPDATE students\nSET grade = \'A\'\nWHERE name = \'Baraka\';',
+        output:'1 row inserted.\n1 row updated. Baraka now has grade: A' },
+      { id:'sql-joins', title:'JOIN', level:'Advanced',
+        explain:'A <code>JOIN</code> combines rows from two related tables — for example, matching each student to the course they are enrolled in, using a shared id column.',
+        syntax:'SELECT * FROM a JOIN b ON a.id = b.a_id;',
+        code:'SELECT students.name, courses.title\nFROM students\nJOIN courses ON students.course_id = courses.id;',
+        output:'name    | title\n--------+------------------\nAmina   | Fractions Made Fun\nJuma    | Intro to Coding' }
+    ]
+  }
+};
