@@ -208,6 +208,12 @@
       if (!input || !panel) return;
       input.setAttribute('autocomplete', 'off');
 
+      // Let the dropdown hang outside banners/sections that clip their content (overflow:hidden).
+      for (let el = wrap.parentElement; el && el !== document.body; el = el.parentElement) {
+        const o = getComputedStyle(el);
+        if (o.overflow !== 'visible' || o.overflowY !== 'visible') el.classList.add('s21-search-host');
+      }
+
       if (fullBox) {
         input.value = params.get('q') || '';
         renderFullResults(fullBox, input.value);
