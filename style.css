@@ -2236,3 +2236,8 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
   border: 1.5px solid #fff;
 }
 .section-levels-bg .btn-s21-primary:hover { background: #E4F3EC; color: #084F39; }
+
+/* Mobile menu: account/login block sits at the top (no "Menu" label) */
+#mobileNav .s21-mobile-user { min-width: 0; }
+#mobileNav .s21-mobile-user .btn-s21 { padding: .5rem .75rem; font-size: .85rem; white-space: nowrap; }
+#mobileNav .s21-mobile-user .nav-account-link { min-width: 0; max-width: 100%; }
