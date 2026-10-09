@@ -808,7 +808,7 @@
       language: 'English',
       instructor_name: 'Smart21Brain',
       certificate_enabled: true,
-      thumbnail_url: IMG('photo-1523050854058-8df90110c9f1'),
+      thumbnail_url: 'images/courses/spanish-for-beginners.svg',
       objectives: ["Pronounce Spanish words correctly using the alphabet and stress rules", "Greet people, introduce yourself and ask simple questions", "Count to 100 and say the time, days, months and colours", "Use ser, estar and regular present-tense verbs correctly", "Talk about family, food, places and directions", "Hold a short everyday conversation in Spanish"],
       requirements: ["None. This course is for complete beginners", "A notebook to practise writing new words"],
       lessons: lessons('spanish-for-beginners', [

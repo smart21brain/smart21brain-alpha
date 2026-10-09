@@ -2198,3 +2198,14 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
 #mobileNav .s21-mobile-user { min-width: 0; }
 #mobileNav .s21-mobile-user .btn-s21 { padding: .5rem .75rem; font-size: .85rem; white-space: nowrap; }
 #mobileNav .s21-mobile-user .nav-account-link { min-width: 0; max-width: 100%; }
+
+/* "Learn at every level" section: illustrated background with a readable dark wash */
+.section-levels-bg {
+  background-color: #0b1d16;
+  background-image:
+    linear-gradient(180deg, rgba(9,22,16,.55) 0%, rgba(9,22,16,.25) 50%, rgba(9,22,16,.55) 100%),
+    url('../images/backgrounds/levels-bg.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

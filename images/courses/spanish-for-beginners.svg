@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C60B1E"/>
+      <stop offset="1" stop-color="#8E0716"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFC400"/>
+      <stop offset="1" stop-color="#FFD84D"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <rect y="150" width="900" height="300" fill="url(#gold)" opacity=".95"/>
+  <g fill="#fff" opacity=".10">
+    <circle cx="80" cy="60" r="90"/><circle cx="840" cy="540" r="120"/><circle cx="760" cy="40" r="50"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-weight="800" text-anchor="middle">
+    <!-- main bubble -->
+    <g filter="url(#sh)">
+      <rect x="215" y="170" width="470" height="170" rx="40" fill="#fff"/>
+      <path d="M330 338 L300 395 L398 338 Z" fill="#fff"/>
+    </g>
+    <text x="450" y="283" font-size="104" fill="#C60B1E">¡Hola!</text>
+    <!-- small bubbles -->
+    <g filter="url(#sh)">
+      <rect x="60" y="400" width="250" height="84" rx="30" fill="#fff"/>
+      <rect x="575" y="395" width="285" height="84" rx="30" fill="#fff"/>
+      <rect x="560" y="55" width="260" height="76" rx="28" fill="#fff"/>
+    </g>
+    <text x="185" y="458" font-size="40" fill="#8E0716">Gracias</text>
+    <text x="717" y="450" font-size="35" fill="#8E0716">¿Cómo estás?</text>
+    <text x="690" y="106" font-size="36" fill="#8E0716">Buenos días</text>
+    <!-- title -->
+    <text x="450" y="560" font-size="46" fill="#FFD84D" letter-spacing="3">ESPAÑOL · SPANISH</text>
+  </g>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520" preserveAspectRatio="xMidYMid slice">
+<defs>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1d16"/><stop offset=".55" stop-color="#0e2a1f"/><stop offset="1" stop-color="#0a1812"/></linearGradient>
+<radialGradient id="glow1" cx=".18" cy=".2" r=".5"><stop offset="0" stop-color="#1a8f62" stop-opacity=".45"/><stop offset="1" stop-color="#1a8f62" stop-opacity="0"/></radialGradient>
+<radialGradient id="glow2" cx=".85" cy=".85" r=".5"><stop offset="0" stop-color="#ffc400" stop-opacity=".16"/><stop offset="1" stop-color="#ffc400" stop-opacity="0"/></radialGradient>
+
+<symbol id="book" viewBox="0 0 48 48"><path d="M6 10h15a5 5 0 0 1 3 1 5 5 0 0 1 3-1h15v28H27a5 5 0 0 0-3 1 5 5 0 0 0-3-1H6z M24 11v28"/></symbol>
+<symbol id="cap" viewBox="0 0 48 48"><path d="M2 18 24 8l22 10-22 10z M10 23v10c0 3 7 6 14 6s14-3 14-6V23 M46 18v14"/></symbol>
+<symbol id="pencil" viewBox="0 0 48 48"><path d="M8 40l3-10L33 8l7 7-22 22z M28 13l7 7 M11 30l7 7"/></symbol>
+<symbol id="atom" viewBox="0 0 48 48"><ellipse cx="24" cy="24" rx="20" ry="8"/><ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(60 24 24)"/><ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(120 24 24)"/><circle cx="24" cy="24" r="2.5"/></symbol>
+<symbol id="globe" viewBox="0 0 48 48"><circle cx="24" cy="24" r="19"/><ellipse cx="24" cy="24" rx="8" ry="19"/><path d="M5 24h38 M8 14h32 M8 34h32"/></symbol>
+<symbol id="bulb" viewBox="0 0 48 48"><path d="M17 33c0-3-6-6-6-13a13 13 0 0 1 26 0c0 7-6 10-6 13z M18 39h12 M20 44h8"/></symbol>
+<symbol id="abc" viewBox="0 0 48 48"><path d="M24 4l6 13 14 2-10 10 3 14-13-7-13 7 3-14L4 19l14-2z"/></symbol>
+<symbol id="calc" viewBox="0 0 48 48"><rect x="9" y="4" width="30" height="40" rx="4"/><rect x="14" y="10" width="20" height="8"/><path d="M15 26h4 M24 26h4 M33 26h1 M15 33h4 M24 33h4 M15 39h4 M24 39h4"/></symbol>
+
+</defs>
+<rect width="1600" height="520" fill="url(#g)"/>
+<rect width="1600" height="520" fill="url(#glow1)"/>
+<rect width="1600" height="520" fill="url(#glow2)"/>
+<g fill="none" stroke="#3ddc97" stroke-opacity=".17" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<use href="#book" x="35" y="54" width="68" height="68" transform="rotate(1 69 88)"/>
+<use href="#atom" x="246" y="49" width="61" height="61" transform="rotate(-12 277 80)"/>
+<use href="#abc" x="433" y="61" width="62" height="62" transform="rotate(-14 464 92)"/>
+<use href="#cap" x="598" y="68" width="53" height="53" transform="rotate(25 624 95)"/>
+<use href="#globe" x="742" y="33" width="57" height="57" transform="rotate(12 770 62)"/>
+<use href="#calc" x="950" y="41" width="50" height="50" transform="rotate(25 975 66)"/>
+<use href="#pencil" x="1147" y="49" width="53" height="53" transform="rotate(19 1174 76)"/>
+<use href="#bulb" x="1271" y="54" width="69" height="69" transform="rotate(24 1305 89)"/>
+<use href="#book" x="1505" y="55" width="65" height="65" transform="rotate(3 1537 88)"/>
+<use href="#pencil" x="64" y="224" width="63" height="63" transform="rotate(6 96 256)"/>
+<use href="#bulb" x="283" y="209" width="66" height="66" transform="rotate(-2 316 242)"/>
+<use href="#book" x="416" y="210" width="69" height="69" transform="rotate(-20 450 244)"/>
+<use href="#atom" x="604" y="206" width="60" height="60" transform="rotate(-15 634 236)"/>
+<use href="#abc" x="812" y="253" width="56" height="56" transform="rotate(0 840 281)"/>
+<use href="#cap" x="988" y="218" width="51" height="51" transform="rotate(17 1014 244)"/>
+<use href="#globe" x="1136" y="238" width="53" height="53" transform="rotate(-21 1163 265)"/>
+<use href="#calc" x="1361" y="221" width="52" height="52" transform="rotate(18 1387 247)"/>
+<use href="#pencil" x="1532" y="242" width="70" height="70" transform="rotate(23 1567 277)"/>
+<use href="#globe" x="81" y="411" width="69" height="69" transform="rotate(-21 116 445)"/>
+<use href="#calc" x="213" y="413" width="61" height="61" transform="rotate(10 244 443)"/>
+<use href="#pencil" x="440" y="406" width="52" height="52" transform="rotate(-4 466 432)"/>
+<use href="#bulb" x="620" y="386" width="63" height="63" transform="rotate(1 651 417)"/>
+<use href="#book" x="758" y="401" width="60" height="60" transform="rotate(7 788 431)"/>
+<use href="#atom" x="941" y="398" width="61" height="61" transform="rotate(-1 972 428)"/>
+<use href="#abc" x="1119" y="385" width="48" height="48" transform="rotate(-15 1143 409)"/>
+<use href="#cap" x="1318" y="423" width="61" height="61" transform="rotate(-25 1348 453)"/>
+<use href="#globe" x="1481" y="381" width="63" height="63" transform="rotate(13 1512 412)"/>
+</g>
+</svg>
