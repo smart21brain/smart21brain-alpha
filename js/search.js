@@ -11,9 +11,9 @@
   const TYPE_ICON = {
     Course: 'fa-graduation-cap', Lesson: 'fa-book-open-reader', Game: 'fa-gamepad', Video: 'fa-circle-play',
     Book: 'fa-book', Kids: 'fa-child-reaching', Cartoon: 'fa-film', Subject: 'fa-shapes', Blog: 'fa-newspaper',
-    Quiz: 'fa-circle-question', Material: 'fa-file-lines', Page: 'fa-file', Section: 'fa-compass',
+    Level: 'fa-layer-group', Quiz: 'fa-circle-question', Material: 'fa-file-lines', Page: 'fa-file', Section: 'fa-compass',
   };
-  const TYPE_ORDER = ['Course', 'Lesson', 'Video', 'Kids', 'Cartoon', 'Book', 'Game', 'Quiz', 'Subject', 'Blog', 'Material', 'Section', 'Page'];
+  const TYPE_ORDER = ['Level', 'Course', 'Lesson', 'Video', 'Kids', 'Cartoon', 'Book', 'Game', 'Quiz', 'Subject', 'Blog', 'Material', 'Section', 'Page'];
 
   /* ---------- helpers ---------- */
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -81,7 +81,9 @@
   }
 
   function searchIndex(index, query) {
-    const tokens = norm(query).split(' ').filter(Boolean);
+    let tokens = norm(query).split(' ').filter(Boolean);
+    const longer = tokens.filter((t) => t.length > 1);
+    if (longer.length) tokens = longer; // ignore stray one-letter words like the "a" in "a level"
     if (!tokens.length) return [];
     const run = (fuzzy) => index
       .map((e) => ({ e, s: scoreEntry(e, tokens, fuzzy) }))
@@ -241,8 +243,8 @@
           history.replaceState(null, '', resultsUrl(q));
           document.title = `${q} — Search | Smart21Brain`;
           renderFullResults(fullBox, q);
-        } else {
-          location.href = resultsUrl(q);
+        } else if (!wrap.hasAttribute('data-local-search')) {
+          location.href = resultsUrl(q); // pages with their own list filter (data-local-search) keep it
         }
       });
     });

@@ -81,6 +81,14 @@ for (const c of sandbox.window.S21Courses.all) {
   for (const l of c.lessons || []) add(l.title, 'Lesson', `lesson.html?id=${encodeURIComponent(l.id)}`, `${c.title} ${l.module || ''}`);
 }
 
+// ---- education levels (js/levels-data.js) so "university", "college", "a-level", "primary"... find them
+const lsb = { window: {} };
+vm.createContext(lsb);
+vm.runInContext(read('js/levels-data.js'), lsb);
+for (const l of lsb.window.S21Levels.all) {
+  add(l.name, 'Level', `courses.html?edu=${l.id}`, `${l.stage} ${l.ageText} ${l.blurb} ${l.subjects.join(' ')} ${l.sw}`);
+}
+
 // ---- de-duplicate (same title+type) and write
 const uniq = new Map();
 for (const e of out) { const k = `${e[1]}|${e[0].toLowerCase()}`; if (!uniq.has(k)) uniq.set(k, e); }

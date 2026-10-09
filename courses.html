@@ -40,6 +40,7 @@
         <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
         <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
         <li class="nav-item"><a class="nav-link s21-nav-link active" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
         <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
@@ -71,6 +72,7 @@
       <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link active" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="levels.html" data-i18n="nav_levels">Levels</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
       <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
@@ -98,7 +100,7 @@
       </nav>
       <h1 class="mb-2" data-i18n="nav_courses">Courses</h1>
       <p class="lead mb-4" data-i18n="courses_structured_teacher_built_learning_pa">Structured, teacher-built learning paths — pick a subject, work through the lessons, and earn a certificate.</p>
-      <form class="hero-search s21-search-wrap" role="search" aria-label="Search courses" style="max-width:640px">
+      <form class="hero-search s21-search-wrap" data-local-search role="search" aria-label="Search courses" style="max-width:640px">
         <i class="fa-solid fa-magnifying-glass text-soft ms-1" aria-hidden="true"></i>
         <input type="search" placeholder="Search courses…" data-i18n-placeholder="courses_ph_search_courses" aria-label="Search courses">
         <button type="button" class="icon-btn" style="background:transparent;border:none;color:#5B6470" data-voice-search aria-label="Search by voice"><i class="fa-solid fa-microphone"></i></button>
@@ -132,6 +134,10 @@
 
   <section class="section-tight" id="allCourses">
     <div class="container">
+      <div class="mb-4">
+        <div class="text-soft mb-2" style="font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Education level</div>
+        <div class="d-flex flex-wrap gap-2" role="tablist" aria-label="Education level" id="eduLevelFilters"></div>
+      </div>
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div class="d-flex flex-wrap gap-2" role="tablist" aria-label="Course filters" id="courseLevelFilters">
           <button class="btn-s21 btn-s21-primary" type="button" data-course-level="all" aria-pressed="true" data-i18n="blog_all">All</button>
@@ -165,7 +171,8 @@
     </div>
   </section>
 
-  <script src="js/courses-data.js?v=3"></script>
+  <script src="js/levels-data.js?v=1"></script>
+  <script src="js/courses-data.js?v=4"></script>
   <script>
     (function () {
       const grid = document.getElementById('coursesGrid');
@@ -176,10 +183,20 @@
       const searchInput = document.querySelector('.hero-search input[type="search"]');
       const urlParams = new URLSearchParams(location.search);
       let activeLevel = urlParams.get('level') || 'all';
+      let activeEdu = urlParams.get('edu') || 'all';
+      const eduBox = document.getElementById('eduLevelFilters');
       const thumbFallback = 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&q=70&auto=format&fit=crop';
 
       function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
       const LEVEL_LABELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced', 'all-levels': 'All levels' };
+
+      function audienceText(c) {
+        const L = window.S21Levels;
+        const ids = L ? L.forCourse(c) : [];
+        const higher = ids.some((id) => ['advanced', 'college', 'university', 'professional'].includes(id));
+        if (higher) return ' · ' + esc(ids.slice(0, 3).map((id) => (L.byId[id] ? L.byId[id].short : id)).join(' · '));
+        return c.age_range ? ` · Ages ${esc(c.age_range)}` : '';
+      }
 
       function courseCard(c) {
         const priceLabel = c.is_free ? 'Free' : `TZS ${Number(c.price).toLocaleString()}`;
@@ -193,7 +210,7 @@
             <div class="body">
               ${c.category_name ? `<span class="badge-pill mb-2">${esc(c.category_name)}</span>` : ''}
               <h3><a href="course.html?slug=${encodeURIComponent(c.slug)}" class="text-reset">${esc(c.title)}</a></h3>
-              <div class="meta mb-2"><i class="fa-regular fa-clock"></i> ${c.lesson_count} lesson${c.lesson_count === 1 ? '' : 's'}${c.age_range ? ` · Ages ${esc(c.age_range)}` : ''}</div>
+              <div class="meta mb-2"><i class="fa-regular fa-clock"></i> ${c.lesson_count} lesson${c.lesson_count === 1 ? '' : 's'}${audienceText(c)}</div>
               <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-1" style="font-size:.82rem;color:var(--s21-text-soft)">
                   ${esc(c.instructor_name || 'Smart21Brain')}
@@ -209,6 +226,7 @@
         if (!grid) return;
         const opts = {
           level: activeLevel,
+          edu: activeEdu,
           category: categorySelect?.value || '',
           free: priceSelect?.value || '',
           sort: sortSelect?.value || 'new',
@@ -216,6 +234,7 @@
         };
         const params = new URLSearchParams();
         if (opts.level !== 'all') params.set('level', opts.level);
+        if (opts.edu !== 'all') params.set('edu', opts.edu);
         if (opts.category) params.set('category', opts.category);
         if (opts.free) params.set('free', opts.free);
         if (opts.sort) params.set('sort', opts.sort);
@@ -227,7 +246,16 @@
           const res = await fetch(`/api/courses?${params.toString()}`);
           if (res.ok) {
             const data = await res.json();
-            if (data && Array.isArray(data.courses)) { render(data.courses); served = true; }
+            if (data && Array.isArray(data.courses)) {
+              let list = data.courses.slice();
+              // Add bundled courses the database doesn't have yet (e.g. new college/university courses).
+              if (window.S21Courses) {
+                const have = new Set(list.map((c) => c.slug));
+                window.S21Courses.query(opts).forEach((c) => { if (!have.has(c.slug)) list.push(c); });
+              }
+              if (activeEdu !== 'all' && window.S21Levels) list = list.filter((c) => window.S21Levels.matches(c, activeEdu));
+              render(list); served = true;
+            }
           }
         } catch { /* backend unreachable — fall back below */ }
 
@@ -295,6 +323,28 @@
         if (cat && categorySelect) categorySelect.value = cat;
       }
 
+      /* Education-level chips (nursery to university), built from js/levels-data.js */
+      function buildEduChips() {
+        if (!eduBox || !window.S21Levels) return;
+        const items = [{ id: 'all', short: 'All levels', icon: 'fa-layer-group' }].concat(window.S21Levels.all);
+        eduBox.innerHTML = items.map((l) => `<button class="btn-s21 ${l.id === activeEdu ? 'btn-s21-primary' : 'btn-s21-outline'}" type="button" data-edu="${esc(l.id)}" aria-pressed="${l.id === activeEdu}" style="padding:.45rem 1rem;font-size:.85rem"><i class="fa-solid ${esc(l.icon)} me-1" aria-hidden="true"></i>${esc(l.short)}</button>`).join('');
+        eduBox.querySelectorAll('[data-edu]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            activeEdu = btn.dataset.edu;
+            eduBox.querySelectorAll('[data-edu]').forEach((b) => {
+              const on = b === btn;
+              b.className = 'btn-s21 ' + (on ? 'btn-s21-primary' : 'btn-s21-outline');
+              b.setAttribute('aria-pressed', String(on));
+            });
+            const u = new URL(location.href);
+            if (activeEdu === 'all') u.searchParams.delete('edu'); else u.searchParams.set('edu', activeEdu);
+            history.replaceState(null, '', u);
+            loadCourses();
+          });
+        });
+      }
+      buildEduChips();
+
       loadCategories().then(applyUrlCategory).then(loadCourses);
     })();
   </script>
@@ -309,7 +359,7 @@
           <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
           Smart<span class="brand-21">21</span>Brain
         </div>
-        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for kids, students, teachers and parents to learn together.</p>
+        <p style="font-size:.88rem" data-i18n="footer_tagline">A safe, joyful home for learners of every level, from nursery to university, and for teachers and parents to learn together.</p>
         <div class="d-flex gap-2 mt-3">
           <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
           <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>

@@ -14,12 +14,12 @@
     en: {
       // ---- Navbar ----
       nav_home: 'Home', nav_learn: 'Learn', nav_videos: 'Videos',
-      nav_books: 'Books', nav_games: 'Games', nav_courses: 'Courses',
+      nav_books: 'Books', nav_games: 'Games', nav_courses: 'Courses', nav_levels: 'Levels',
       nav_kids: 'Kids', nav_stationery: 'Stationery', nav_blog: 'Blog', nav_about: 'About',
       nav_contact: 'Contact', nav_login: 'Log In', nav_start: 'Get Started',
 
       // ---- Footer ----
-      footer_tagline: 'A safe, joyful home for kids, students, teachers and parents to learn together.',
+      footer_tagline: 'A safe, joyful home for learners of every level, from nursery to university, and for teachers and parents to learn together.',
       footer_quicklinks: 'Quick Links', footer_learning: 'Learning', footer_resources: 'Resources',
       footer_mathematics: 'Mathematics', footer_science: 'Science', footer_english: 'English',
       footer_kiswahili: 'Kiswahili', footer_coding: 'Coding',
@@ -31,10 +31,10 @@
       footer_childsafety: 'Child Safety', footer_community: 'Community Guidelines',
 
       // ---- Homepage: hero ----
-      hero_badge: 'Grades 1–8 · Math · Science · Languages · Coding',
+      hero_badge: 'Nursery to University · Math · Science · Languages · Coding',
       hero_title_html: 'A good lesson doesn\'t <em>need a classroom</em><br>to feel like one.',
       hero_subline: 'It just needs to make sense. We make sure it does.',
-      hero_lead: 'One safe home for video lessons, storybooks, games, courses and quizzes — built for kids, guided for parents, and powered for teachers.',
+      hero_lead: 'One safe home for video lessons, storybooks, games, courses and quizzes — for every level from nursery to university, guided for parents, and powered for teachers.',
       hero_search_placeholder: 'Search videos, books, games, subjects…',
       cta_start_learning: 'Start Learning', cta_watch_videos: 'Watch Videos', cta_play_games: 'Play Games', cta_ask_ai: 'Ask Smart21brain AI',
       cta_explore_subjects: 'Explore All Subjects',
@@ -446,7 +446,7 @@
       video_up_next: 'Up next', video_autoplay: 'Autoplay', video_ph_add_a_comment: 'Add a comment…',
       // ---- about ----
       about_our_story: 'Our story',
-      about_every_child_deserves_a_brilliant_tea: 'Every child deserves a brilliant teacher',
+      about_every_child_deserves_a_brilliant_tea: 'Every learner deserves a brilliant teacher',
       about_smart21brain_started_with_a_simple_q: 'Smart21Brain started with a simple question: what if quality education felt as fun and accessible as a favourite game? Here\'s what we\'ve built since.',
       about_mission: 'Mission',
       about_make_brilliant_teaching_reachable_fo: 'Make brilliant teaching reachable for every learner',
@@ -1031,12 +1031,12 @@
     sw: {
       // ---- Navbar ----
       nav_home: 'Nyumbani', nav_learn: 'Jifunze', nav_videos: 'Video',
-      nav_books: 'Vitabu', nav_games: 'Michezo', nav_courses: 'Kozi',
+      nav_books: 'Vitabu', nav_games: 'Michezo', nav_courses: 'Kozi', nav_levels: 'Ngazi',
       nav_kids: 'Watoto', nav_stationery: 'Stationery', nav_blog: 'Blogu', nav_about: 'Kuhusu',
       nav_contact: 'Wasiliana', nav_login: 'Ingia', nav_start: 'Anza Sasa',
 
       // ---- Footer ----
-      footer_tagline: 'Nyumbani salama na yenye furaha kwa watoto, wanafunzi, walimu na wazazi kujifunza pamoja.',
+      footer_tagline: 'Nyumbani salama na yenye furaha kwa wanafunzi wa ngazi zote, kuanzia awali hadi chuo kikuu, walimu na wazazi kujifunza pamoja.',
       footer_quicklinks: 'Viungo Muhimu', footer_learning: 'Kujifunza', footer_resources: 'Rasilimali',
       footer_mathematics: 'Hisabati', footer_science: 'Sayansi', footer_english: 'Kiingereza',
       footer_kiswahili: 'Kiswahili', footer_coding: 'Kuandika Msimbo',
@@ -1048,10 +1048,10 @@
       footer_childsafety: 'Usalama wa Watoto', footer_community: 'Miongozo ya Jamii',
 
       // ---- Homepage: hero ----
-      hero_badge: 'Darasa la 1–8 · Hisabati · Sayansi · Lugha · Kuandika Msimbo',
+      hero_badge: 'Awali hadi Chuo Kikuu · Hisabati · Sayansi · Lugha · Kuandika Msimbo',
       hero_title_html: 'Somo zuri <em>halihitaji darasa</em><br>ili lieleweke.',
       hero_subline: 'Linahitaji tu kueleweka. Sisi tunahakikisha linaeleweka.',
-      hero_lead: 'Nyumbani salama moja kwa masomo ya video, vitabu vya hadithi, michezo, kozi na maswali — imejengwa kwa watoto, ikiongozwa na wazazi, na kuendeshwa na walimu.',
+      hero_lead: 'Nyumbani salama moja kwa masomo ya video, vitabu vya hadithi, michezo, kozi na maswali — kwa ngazi zote kuanzia awali hadi chuo kikuu, ikiongozwa na wazazi, na kuendeshwa na walimu.',
       hero_search_placeholder: 'Tafuta video, vitabu, michezo, masomo…',
       cta_start_learning: 'Anza Kujifunza', cta_watch_videos: 'Tazama Video', cta_play_games: 'Cheza Michezo', cta_ask_ai: 'Uliza Smart21brain AI',
       cta_explore_subjects: 'Gundua Masomo Yote',
@@ -1475,7 +1475,7 @@
       video_up_next: 'Ijayo', video_autoplay: 'Cheza Kiotomatiki', video_ph_add_a_comment: 'Ongeza maoni…',
       // ---- about ----
       about_our_story: 'Hadithi yetu',
-      about_every_child_deserves_a_brilliant_tea: 'Kila mtoto anastahili mwalimu mahiri',
+      about_every_child_deserves_a_brilliant_tea: 'Kila mwanafunzi anastahili mwalimu mahiri',
       about_smart21brain_started_with_a_simple_q: 'Smart21Brain ilianza na swali rahisi: vipi kama elimu bora ingekuwa na furaha na urahisi wa kufikiwa kama mchezo unaopendwa? Hii ndiyo tuliyoijenga tangu wakati huo.',
       about_mission: 'Dhamira',
       about_make_brilliant_teaching_reachable_fo: 'Kufanya ufundishaji bora ufikike kwa kila mwanafunzi',
