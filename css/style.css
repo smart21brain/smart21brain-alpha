@@ -2193,3 +2193,8 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
 
 /* Logo mark inside the home hero badge (replaces the old location pin) */
 .hero-badge-logo { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; vertical-align: -5px; margin-right: .35rem; }
+
+/* Mobile menu: account/login block sits at the top (no "Menu" label) */
+#mobileNav .s21-mobile-user { min-width: 0; }
+#mobileNav .s21-mobile-user .btn-s21 { padding: .5rem .75rem; font-size: .85rem; white-space: nowrap; }
+#mobileNav .s21-mobile-user .nav-account-link { min-width: 0; max-width: 100%; }
