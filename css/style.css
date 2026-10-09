@@ -2190,3 +2190,6 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
   z-index: 20;
 }
 .s21-search-wrap .s21-search-panel { z-index: 60; }
+
+/* Logo mark inside the home hero badge (replaces the old location pin) */
+.hero-badge-logo { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; vertical-align: -5px; margin-right: .35rem; }
