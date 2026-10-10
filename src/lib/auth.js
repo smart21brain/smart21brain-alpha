@@ -91,6 +91,18 @@ export function notFound(message = 'Not found') {
   return json({ error: message }, { status: 404 });
 }
 
+// Admins and teachers can publish learning content (videos, resources, quizzes,
+// books, courses). Teachers can only change or delete what they created
+// themselves; admins can change anything.
+export function isStaff(user) {
+  return !!user && (user.role === 'admin' || user.role === 'teacher');
+}
+export function canEditOwned(user, ownerId) {
+  if (!user) return false;
+  if (user.role === 'admin') return true;
+  return user.role === 'teacher' && ownerId != null && Number(ownerId) === Number(user.id);
+}
+
 export function slugify(text) {
   return text.toLowerCase().trim()
     .replace(/[^a-z0-9]+/g, '-')

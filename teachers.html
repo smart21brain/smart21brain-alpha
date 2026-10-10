@@ -71,6 +71,8 @@
       <a href="#courses" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-book-open me-2"></i> My courses</a>
       <a href="#students" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-users me-2"></i> Students</a>
       <a href="#reviews" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-comment-dots me-2"></i> Reviews</a>
+      <a href="#assignments" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-list-check me-2"></i> Assignments</a>
+      <a href="#uploads" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-cloud-arrow-up me-2"></i> My uploads</a>
       <a href="#announcements" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-bell me-2"></i> Announcements</a>
       <a href="#settings" class="nav-link s21-nav-link" data-bs-dismiss="offcanvas"><i class="fa-solid fa-gear me-2"></i> Settings</a>
     </nav>
@@ -107,62 +109,69 @@
         <a href="#courses" class="nav-link"><i class="fa-solid fa-book-open"></i> <span class="nav-label">My courses</span></a>
         <a href="#students" class="nav-link"><i class="fa-solid fa-users"></i> <span class="nav-label">Students</span></a>
         <a href="#reviews" class="nav-link"><i class="fa-solid fa-comment-dots"></i> <span class="nav-label">Reviews</span></a>
+        <a href="#assignments" class="nav-link"><i class="fa-solid fa-list-check"></i> <span class="nav-label">Assignments</span></a>
+        <a href="#uploads" class="nav-link"><i class="fa-solid fa-cloud-arrow-up"></i> <span class="nav-label">My uploads</span></a>
         <a href="#announcements" class="nav-link"><i class="fa-solid fa-bell"></i> <span class="nav-label">Announcements</span></a>
         <a href="#settings" class="nav-link"><i class="fa-solid fa-gear"></i> <span class="nav-label">Settings</span></a>
       </nav>
     </aside>
 
-    <div class="admin-content">
+    <div class="admin-content" id="td-root">
+
+      <div id="td-alert" class="alert alert-warning d-none" role="alert"></div>
 
       <!-- Welcome banner -->
       <div class="dash-welcome mb-4" data-aos="fade-up">
         <div class="row align-items-center g-4">
           <div class="col-md-8">
             <div class="d-flex align-items-center gap-3">
-              <img src="https://i.pravatar.cc/120?img=25" class="dash-avatar" alt="Ms. Amina Hassan's profile picture" loading="lazy">
+              <img src="icons/default-avatar.svg" class="dash-avatar" id="td-avatar" alt="Your profile picture">
               <div>
-                <h1 class="h3 text-white mb-1" data-i18n="teachers_welcome_back_ms_hassan">Welcome back, Ms. Hassan 👋</h1>
+                <h1 class="h3 text-white mb-1" id="td-welcome">Welcome back 👋</h1>
                 <div class="d-flex flex-wrap gap-2">
-                  <span class="streak-flame"><i class="fa-solid fa-chalkboard-user" style="color:var(--s21-secondary)"></i> <span data-i18n="teachers_mathematics_teacher">Mathematics teacher</span></span>
-                  <span class="streak-flame"><i class="fa-solid fa-users" style="color:var(--s21-secondary)"></i> <span data-i18n="teachers_214_students">214 students</span></span>
+                  <span class="streak-flame"><i class="fa-solid fa-chalkboard-user" style="color:var(--s21-secondary)"></i> <span id="td-role">Teacher</span></span>
+                  <span class="streak-flame"><i class="fa-solid fa-users" style="color:var(--s21-secondary)"></i> <span id="td-student-count">0 students</span></span>
                 </div>
               </div>
             </div>
           </div>
           <div class="col-md-4 text-md-end">
-            <a href="#" class="btn-s21 btn-s21-secondary"><i class="fa-solid fa-plus"></i> <span data-i18n="teachers_create_new_course">Create new course</span></a>
+            <button type="button" class="btn-s21 btn-s21-secondary" id="td-new-course"><i class="fa-solid fa-plus"></i> <span>Create new course</span></button>
           </div>
         </div>
       </div>
 
-      <!-- Stat cards -->
+      <!-- Stat cards (live from the database) -->
       <div class="row g-3 mb-4" id="overview">
-        <div class="col-6 col-md-3" data-aos="fade-up">
+        <div class="col-6 col-md-3">
           <div class="s21-card dash-stat-card">
             <div class="stat-icon" style="background:var(--s21-primary-light);color:var(--s21-primary)"><i class="fa-solid fa-book-open"></i></div>
-            <div class="stat-num">6</div>
-            <div class="text-soft" style="font-size:.8rem" data-i18n="teachers_published_courses">Published courses</div>
+            <div class="stat-num" id="st-published">–</div>
+            <div class="text-soft" style="font-size:.8rem">Published courses</div>
+            <div class="text-soft" style="font-size:.72rem" id="st-drafts"></div>
           </div>
         </div>
-        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="60">
+        <div class="col-6 col-md-3">
           <div class="s21-card dash-stat-card">
             <div class="stat-icon" style="background:#FDECF1;color:var(--s21-accent)"><i class="fa-solid fa-users"></i></div>
-            <div class="stat-num">214</div>
-            <div class="text-soft" style="font-size:.8rem" data-i18n="teachers_enrolled_students">Enrolled students</div>
+            <div class="stat-num" id="st-students">–</div>
+            <div class="text-soft" style="font-size:.8rem">Enrolled students</div>
           </div>
         </div>
-        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="120">
+        <div class="col-6 col-md-3">
           <div class="s21-card dash-stat-card">
             <div class="stat-icon" style="background:#FFF6E0;color:#A66A00"><i class="fa-solid fa-star"></i></div>
-            <div class="stat-num">4.9</div>
-            <div class="text-soft" style="font-size:.8rem" data-i18n="teachers_average_rating">Average rating</div>
+            <div class="stat-num" id="st-rating">–</div>
+            <div class="text-soft" style="font-size:.8rem">Average rating</div>
+            <div class="text-soft" style="font-size:.72rem" id="st-reviews"></div>
           </div>
         </div>
-        <div class="col-6 col-md-3" data-aos="fade-up" data-aos-delay="180">
+        <div class="col-6 col-md-3">
           <div class="s21-card dash-stat-card">
             <div class="stat-icon" style="background:#E7F1FF;color:#3A86FF"><i class="fa-solid fa-sack-dollar"></i></div>
-            <div class="stat-num" data-i18n="teachers_1_240">$1,240</div>
-            <div class="text-soft" style="font-size:.8rem" data-i18n="admin_revenue_this_month">Revenue this month</div>
+            <div class="stat-num" id="st-revenue">–</div>
+            <div class="text-soft" style="font-size:.8rem">Revenue this month</div>
+            <div class="text-soft" style="font-size:.72rem" id="st-pending"></div>
           </div>
         </div>
       </div>
@@ -171,136 +180,267 @@
         <div class="col-lg-8">
 
           <!-- My courses -->
-          <div class="s21-card p-4 mb-4" id="courses" data-aos="fade-up">
+          <div class="s21-card p-4 mb-4" id="courses">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h2 class="h5 mb-0"><i class="fa-solid fa-book-open" style="color:var(--s21-primary)"></i> <span data-i18n="teachers_my_courses">My courses</span></h2>
-              <a href="#" class="text-soft" style="font-size:.85rem" data-i18n="teachers_manage_all">Manage all</a>
+              <h2 class="h5 mb-0"><i class="fa-solid fa-book-open" style="color:var(--s21-primary)"></i> <span>My courses</span></h2>
+              <button type="button" class="btn-s21 btn-s21-outline" style="font-size:.8rem;padding:.35rem .9rem" data-td-new-course><i class="fa-solid fa-plus"></i> New course</button>
             </div>
             <div class="table-responsive">
               <table class="table dash-table mb-0">
-                <thead><tr><th data-i18n="teachers_course">Course</th><th data-i18n="teachers_students">Students</th><th data-i18n="book_rating">Rating</th><th data-i18n="admin_status">Status</th></tr></thead>
-                <tbody>
-                  <tr>
-                    <td class="d-flex align-items-center gap-2"><img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?w=100&q=60&auto=format&fit=crop" width="40" height="40" style="border-radius:8px;object-fit:cover" alt="" loading="lazy"> <span data-i18n="dash_fractions_made_fun">Fractions Made Fun</span></td>
-                    <td>612</td><td><i class="fa-solid fa-star" style="color:var(--s21-secondary-dark)"></i> 4.9</td>
-                    <td><span class="status-chip active" data-i18n="teachers_published">Published</span></td>
-                  </tr>
-                  <tr>
-                    <td class="d-flex align-items-center gap-2"><img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=100&q=60&auto=format&fit=crop" width="40" height="40" style="border-radius:8px;object-fit:cover" alt="" loading="lazy"> <span data-i18n="dash_geometry_through_play">Geometry Through Play</span></td>
-                    <td>322</td><td><i class="fa-solid fa-star" style="color:var(--s21-secondary-dark)"></i> 4.8</td>
-                    <td><span class="status-chip active" data-i18n="teachers_published">Published</span></td>
-                  </tr>
-                  <tr>
-                    <td class="d-flex align-items-center gap-2"><img src="https://images.unsplash.com/photo-1509266272358-7701da638078?w=100&q=60&auto=format&fit=crop" width="40" height="40" style="border-radius:8px;object-fit:cover" alt="" loading="lazy"> <span data-i18n="teachers_algebra_foundations">Algebra Foundations</span></td>
-                    <td>—</td><td>—</td>
-                    <td><span class="status-chip pending" data-i18n="teachers_draft">Draft</span></td>
-                  </tr>
-                </tbody>
+                <thead><tr><th>Course</th><th>Students</th><th>Rating</th><th>Status</th><th class="text-end">Actions</th></tr></thead>
+                <tbody id="td-courses-body"><tr><td colspan="5" class="text-soft">Loading your courses…</td></tr></tbody>
               </table>
             </div>
           </div>
 
-          <!-- Student progress -->
-          <div class="s21-card p-4 mb-4" id="students" data-aos="fade-up">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h2 class="h5 mb-0"><i class="fa-solid fa-chart-line" style="color:var(--s21-accent)"></i> <span data-i18n="teachers_students_needing_attention">Students needing attention</span></h2>
-              <a href="#" class="text-soft" style="font-size:.85rem" data-i18n="teachers_view_all_students">View all students</a>
+          <!-- Students -->
+          <div class="s21-card p-4 mb-4" id="students">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <h2 class="h5 mb-0"><i class="fa-solid fa-chart-line" style="color:var(--s21-accent)"></i> <span id="td-students-title">Students needing attention</span></h2>
+              <button type="button" class="btn btn-link p-0 text-soft" style="font-size:.85rem" id="td-students-toggle">View all students</button>
             </div>
             <div class="table-responsive">
               <table class="table dash-table mb-0">
-                <thead><tr><th data-i18n="admin_student">Student</th><th data-i18n="teachers_course">Course</th><th data-i18n="teachers_progress">Progress</th><th data-i18n="teachers_last_active">Last active</th></tr></thead>
-                <tbody>
-                  <tr>
-                    <td class="d-flex align-items-center gap-2"><img src="https://i.pravatar.cc/60?img=32" width="32" height="32" class="rounded-circle" alt="" loading="lazy"> <span data-i18n="video_halima_r">Halima R.</span></td>
-                    <td data-i18n="dash_fractions_made_fun">Fractions Made Fun</td>
-                    <td style="min-width:120px"><div class="progress-s21"><span style="width:22%;background:var(--s21-accent)"></span></div></td>
-                    <td data-i18n="teachers_9_days_ago">9 days ago</td>
-                  </tr>
-                  <tr>
-                    <td class="d-flex align-items-center gap-2"><img src="https://i.pravatar.cc/60?img=15" width="32" height="32" class="rounded-circle" alt="" loading="lazy"> <span data-i18n="teachers_james_k">James K.</span></td>
-                    <td data-i18n="dash_geometry_through_play">Geometry Through Play</td>
-                    <td style="min-width:120px"><div class="progress-s21"><span style="width:15%;background:var(--s21-accent)"></span></div></td>
-                    <td data-i18n="teachers_12_days_ago">12 days ago</td>
-                  </tr>
-                  <tr>
-                    <td class="d-flex align-items-center gap-2"><img src="https://i.pravatar.cc/60?img=48" width="32" height="32" class="rounded-circle" alt="" loading="lazy"> <span data-i18n="teachers_zawadi_m">Zawadi M.</span></td>
-                    <td data-i18n="dash_fractions_made_fun">Fractions Made Fun</td>
-                    <td style="min-width:120px"><div class="progress-s21"><span style="width:88%"></span></div></td>
-                    <td data-i18n="teachers_today">Today</td>
-                  </tr>
-                </tbody>
+                <thead><tr><th>Student</th><th>Course</th><th>Progress</th><th>Last active</th></tr></thead>
+                <tbody id="td-students-body"><tr><td colspan="4" class="text-soft">Loading students…</td></tr></tbody>
               </table>
             </div>
           </div>
 
           <!-- Reviews -->
-          <div class="s21-card p-4" id="reviews" data-aos="fade-up">
-            <h2 class="h5 mb-3"><i class="fa-solid fa-comment-dots" style="color:var(--s21-primary)"></i> <span data-i18n="teachers_recent_reviews">Recent reviews</span></h2>
-            <div class="d-flex gap-3 mb-3">
-              <img src="https://i.pravatar.cc/60?img=47" width="40" height="40" class="rounded-circle" alt="" loading="lazy">
-              <div>
-                <div class="fw-bold" style="font-size:.88rem"><span data-i18n="teachers_grace_m">Grace M.</span> <span class="text-soft fw-normal" style="font-size:.78rem" data-i18n="teachers_on_fractions_made_fun">on Fractions Made Fun</span></div>
-                <p class="mb-0 text-soft" style="font-size:.85rem" data-i18n="teachers_my_daughter_used_to_dread_maths_home">My daughter used to dread maths homework — now she asks to do the lessons herself.</p>
-              </div>
+          <div class="s21-card p-4 mb-4" id="reviews">
+            <h2 class="h5 mb-3"><i class="fa-solid fa-comment-dots" style="color:var(--s21-primary)"></i> <span>Recent reviews</span></h2>
+            <div id="td-reviews-list"><p class="text-soft mb-0" style="font-size:.85rem">Loading reviews…</p></div>
+          </div>
+
+          <!-- Assignments -->
+          <div class="s21-card p-4 mb-4" id="assignments">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h5 mb-0"><i class="fa-solid fa-list-check" style="color:var(--s21-accent)"></i> <span>Assignments</span></h2>
+              <button type="button" class="btn-s21 btn-s21-outline" style="font-size:.8rem;padding:.35rem .9rem" data-td-open="assignment"><i class="fa-solid fa-plus"></i> New</button>
             </div>
-            <div class="d-flex gap-3">
-              <img src="https://i.pravatar.cc/60?img=21" width="40" height="40" class="rounded-circle" alt="" loading="lazy">
-              <div>
-                <div class="fw-bold" style="font-size:.88rem"><span data-i18n="video_peter_o">Peter O.</span> <span class="text-soft fw-normal" style="font-size:.78rem" data-i18n="teachers_on_geometry_through_play">on Geometry Through Play</span></div>
-                <p class="mb-0 text-soft" style="font-size:.85rem" data-i18n="teachers_great_pacing_for_a_mixed_ability_cla">Great pacing for a mixed-ability classroom. Would love a printable worksheet pack next.</p>
-              </div>
+            <div id="td-assignments-list"><p class="text-soft mb-0" style="font-size:.85rem">Loading…</p></div>
+          </div>
+
+          <!-- My uploads -->
+          <div class="s21-card p-4" id="uploads">
+            <h2 class="h5 mb-3"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--s21-primary)"></i> <span>My uploads</span></h2>
+            <div class="table-responsive">
+              <table class="table dash-table mb-0">
+                <thead><tr><th>Item</th><th>Type</th><th>Added</th><th class="text-end"></th></tr></thead>
+                <tbody id="td-uploads-body"><tr><td colspan="4" class="text-soft">Loading…</td></tr></tbody>
+              </table>
             </div>
           </div>
         </div>
 
         <div class="col-lg-4">
-          <div class="s21-card p-4 mb-4" data-aos="fade-up">
-            <h3 class="h6 mb-3"><i class="fa-solid fa-bolt" style="color:var(--s21-secondary-dark)"></i> <span data-i18n="teachers_quick_actions">Quick actions</span></h3>
+          <div class="s21-card p-4 mb-4">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-bolt" style="color:var(--s21-secondary-dark)"></i> <span>Quick actions</span></h3>
             <div class="d-flex flex-column gap-2">
-              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-clapperboard"></i> <span data-i18n="teachers_upload_a_video">Upload a video</span></a>
-              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-book"></i> <span data-i18n="teachers_upload_a_book_resource">Upload a book/resource</span></a>
-              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-circle-question"></i> <span data-i18n="teachers_create_a_quiz">Create a quiz</span></a>
-              <a href="#" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem"><i class="fa-solid fa-list-check"></i> <span data-i18n="teachers_create_an_assignment">Create an assignment</span></a>
+              <button type="button" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem" data-td-open="video"><i class="fa-solid fa-clapperboard"></i> <span>Upload a video</span></button>
+              <button type="button" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem" data-td-open="resource"><i class="fa-solid fa-book"></i> <span>Upload a book/resource</span></button>
+              <button type="button" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem" data-td-open="quiz"><i class="fa-solid fa-circle-question"></i> <span>Create a quiz</span></button>
+              <button type="button" class="btn-s21 btn-s21-outline justify-content-start" style="font-size:.85rem" data-td-open="assignment"><i class="fa-solid fa-list-check"></i> <span>Create an assignment</span></button>
             </div>
           </div>
 
-          <div class="s21-card p-4 mb-4" data-aos="fade-up" data-aos-delay="60">
-            <h3 class="h6 mb-3"><i class="fa-solid fa-chart-pie" style="color:var(--s21-primary)"></i> <span data-i18n="teachers_this_month_at_a_glance">This month at a glance</span></h3>
-            <ul class="list-unstyled d-flex flex-column gap-3" style="font-size:.85rem">
-              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="teachers_new_enrollments">New enrollments</span><span class="fw-bold">+48</span></li>
-              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="teachers_lessons_completed">Lessons completed</span><span class="fw-bold">1,204</span></li>
-              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="dash_avg_quiz_score">Avg. quiz score</span><span class="fw-bold">86%</span></li>
-              <li class="d-flex justify-content-between"><span class="text-soft" data-i18n="teachers_comments_to_answer">Comments to answer</span><span class="fw-bold">7</span></li>
+          <div class="s21-card p-4 mb-4">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-chart-pie" style="color:var(--s21-primary)"></i> <span>This month at a glance</span></h3>
+            <ul class="list-unstyled d-flex flex-column gap-3 mb-0" style="font-size:.85rem">
+              <li class="d-flex justify-content-between"><span class="text-soft">New enrollments</span><span class="fw-bold" id="gl-enroll">–</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft">Lessons completed</span><span class="fw-bold" id="gl-lessons">–</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft">Avg. quiz score</span><span class="fw-bold" id="gl-quiz">–</span></li>
+              <li class="d-flex justify-content-between"><span class="text-soft">Comments to answer</span><span class="fw-bold" id="gl-comments">–</span></li>
             </ul>
           </div>
 
-          <div class="s21-card p-4 mb-4" id="announcements" data-aos="fade-up" data-aos-delay="120">
-            <h3 class="h6 mb-3"><i class="fa-solid fa-bell" style="color:var(--s21-accent)"></i> <span data-i18n="teachers_announcements">Announcements</span></h3>
-            <p class="text-soft mb-3" style="font-size:.85rem" data-i18n="teachers_post_an_update_your_students_and_the">Post an update your students and their parents will see on their dashboards.</p>
-            <textarea class="form-control s21-input mb-2" rows="3" placeholder="Write an announcement…" data-i18n-placeholder="teachers_ph_write_an_announcement"></textarea>
-            <button class="btn-s21 btn-s21-primary w-100 justify-content-center" style="font-size:.85rem" data-i18n="teachers_post_announcement">Post announcement</button>
+          <div class="s21-card p-4 mb-4" id="announcements">
+            <h3 class="h6 mb-3"><i class="fa-solid fa-bell" style="color:var(--s21-accent)"></i> <span>Announcements</span></h3>
+            <p class="text-soft mb-3" style="font-size:.85rem">Post an update your students will see on their dashboard and on the course page.</p>
+            <select class="form-select s21-input mb-2" id="td-ann-course" aria-label="Who should see this?"><option value="">All my students</option></select>
+            <textarea class="form-control s21-input mb-2" rows="3" id="td-ann-text" maxlength="1500" placeholder="Write an announcement…"></textarea>
+            <button type="button" class="btn-s21 btn-s21-primary w-100 justify-content-center" style="font-size:.85rem" id="td-ann-post">Post announcement</button>
+            <div id="td-ann-list" class="mt-3" style="font-size:.82rem"></div>
           </div>
 
-          <!-- Settings -->
-          <div class="s21-card p-4" id="settings" data-aos="fade-up" data-aos-delay="180">
+          <div class="s21-card p-4" id="settings">
             <h3 class="h6 mb-3"><i class="fa-solid fa-gear" style="color:var(--s21-text-soft)"></i> Teacher settings</h3>
             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
               <span style="font-size:.85rem">Show my profile to parents</span>
-              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+              <label class="s21-switch"><input type="checkbox" data-td-setting="show_profile_to_parents"><span class="slider"></span></label>
             </div>
             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
               <span style="font-size:.85rem">Email me new student comments</span>
-              <label class="s21-switch"><input type="checkbox" checked><span class="slider"></span></label>
+              <label class="s21-switch"><input type="checkbox" data-td-setting="email_on_comments"><span class="slider"></span></label>
             </div>
             <div class="d-flex justify-content-between align-items-center py-2">
               <span style="font-size:.85rem">Weekly performance summary email</span>
-              <label class="s21-switch"><input type="checkbox"><span class="slider"></span></label>
+              <label class="s21-switch"><input type="checkbox" data-td-setting="weekly_summary_email"><span class="slider"></span></label>
             </div>
             <a href="profile.html" class="btn-s21 btn-s21-outline w-100 justify-content-center mt-3" style="font-size:.85rem"><i class="fa-solid fa-user-gear"></i> Manage account &amp; payout details</a>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- ============ Modals ============ -->
+
+  <!-- Course create / edit -->
+  <div class="modal fade" id="td-course-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="td-course-modal-title">New course</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12"><label class="form-label fw-bold" style="font-size:.85rem">Course title *</label><input class="form-control s21-input" id="cf-title" maxlength="120"></div>
+          <div class="col-12"><label class="form-label fw-bold" style="font-size:.85rem">Description</label><textarea class="form-control s21-input" id="cf-description" rows="3"></textarea></div>
+          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Category</label><select class="form-select s21-input" id="cf-category"><option value="">— none —</option></select></div>
+          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Level</label>
+            <select class="form-select s21-input" id="cf-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="all-levels">All levels</option></select></div>
+          <div class="col-md-4"><label class="form-label fw-bold" style="font-size:.85rem">Age range</label><input class="form-control s21-input" id="cf-age" placeholder="e.g. 7-10"></div>
+          <div class="col-md-4"><label class="form-label fw-bold" style="font-size:.85rem">Language</label><input class="form-control s21-input" id="cf-language" value="English"></div>
+          <div class="col-md-4"><label class="form-label fw-bold" style="font-size:.85rem">Price (TZS, 0 = free)</label><input type="number" min="0" step="500" class="form-control s21-input" id="cf-price" value="0"></div>
+          <div class="col-12">
+            <label class="form-label fw-bold" style="font-size:.85rem">Thumbnail</label>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <img id="cf-thumb-preview" src="" alt="" width="96" height="64" style="object-fit:cover;border-radius:8px;display:none">
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" id="cf-thumb-file" class="form-control s21-input" style="max-width:280px">
+              <span class="text-soft" style="font-size:.78rem">PNG/JPG/WEBP, up to 5MB</span>
+            </div>
+          </div>
+          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">What students will learn <span class="text-soft fw-normal">(one per line)</span></label><textarea class="form-control s21-input" id="cf-objectives" rows="4"></textarea></div>
+          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Requirements <span class="text-soft fw-normal">(one per line)</span></label><textarea class="form-control s21-input" id="cf-requirements" rows="4"></textarea></div>
+          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Final exam quiz</label><select class="form-select s21-input" id="cf-final-exam"><option value="">— none —</option></select></div>
+          <div class="col-md-3"><label class="form-label fw-bold" style="font-size:.85rem">Lessons needed (%)</label><input type="number" min="0" max="100" class="form-control s21-input" id="cf-passing" value="70"></div>
+          <div class="col-md-3"><label class="form-label fw-bold" style="font-size:.85rem">Exam pass mark (%)</label><input type="number" min="0" max="100" class="form-control s21-input" id="cf-exam-pass" value="70"></div>
+          <div class="col-12 d-flex flex-wrap gap-4">
+            <label class="d-flex align-items-center gap-2" style="font-size:.88rem"><input type="checkbox" id="cf-cert"> Give a certificate on completion</label>
+            <label class="d-flex align-items-center gap-2" style="font-size:.88rem"><input type="checkbox" id="cf-published"> Published (visible on the website)</label>
+          </div>
+        </div>
+        <div class="text-danger mt-3 d-none" id="cf-error" style="font-size:.85rem"></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn-s21 btn-s21-outline" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn-s21 btn-s21-primary" id="cf-save">Save course</button></div>
+    </div></div>
+  </div>
+
+  <!-- Lessons / curriculum manager -->
+  <div class="modal fade" id="td-lessons-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="lm-title">Lessons</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="d-flex justify-content-between align-items-center mb-2"><h6 class="mb-0">Curriculum</h6>
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="lm-add-module"><i class="fa-solid fa-layer-group"></i> Add module</button></div>
+            <div id="lm-list"></div>
+          </div>
+          <div class="col-lg-6">
+            <h6 class="mb-2">Add a lesson</h6>
+            <div class="row g-2">
+              <div class="col-12"><input class="form-control s21-input" id="ls-title" placeholder="Lesson title *" maxlength="120"></div>
+              <div class="col-md-6"><select class="form-select s21-input" id="ls-type"><option value="text">Text lesson</option><option value="video">Video</option><option value="pdf">PDF / resource</option><option value="quiz">Quiz</option></select></div>
+              <div class="col-md-6"><select class="form-select s21-input" id="ls-module"><option value="">No module</option></select></div>
+              <div class="col-12 ls-field" data-for="video"><select class="form-select s21-input" id="ls-video"></select></div>
+              <div class="col-12 ls-field" data-for="pdf"><select class="form-select s21-input" id="ls-material"></select></div>
+              <div class="col-12 ls-field" data-for="quiz"><select class="form-select s21-input" id="ls-quiz"></select></div>
+              <div class="col-12 ls-field" data-for="text"><textarea class="form-control s21-input" id="ls-body" rows="5" placeholder="Lesson text / instructions"></textarea></div>
+              <div class="col-md-6"><input type="number" min="0" class="form-control s21-input" id="ls-minutes" placeholder="Duration (minutes)"></div>
+              <div class="col-md-6 d-flex align-items-center"><label class="d-flex align-items-center gap-2" style="font-size:.85rem"><input type="checkbox" id="ls-preview"> Free preview</label></div>
+              <div class="col-12"><button type="button" class="btn-s21 btn-s21-primary" id="ls-add"><i class="fa-solid fa-plus"></i> Add lesson</button></div>
+              <div class="col-12 text-soft" style="font-size:.78rem" id="ls-hint"></div>
+              <div class="col-12 text-danger d-none" id="ls-error" style="font-size:.85rem"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Upload video -->
+  <div class="modal fade" id="td-video-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Upload a video</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div class="d-flex flex-column gap-3">
+          <input class="form-control s21-input" id="vf-title" placeholder="Video title *" maxlength="120">
+          <input class="form-control s21-input" id="vf-subject" placeholder="Subject (e.g. Mathematics)">
+          <textarea class="form-control s21-input" id="vf-description" rows="2" placeholder="Short description"></textarea>
+          <div>
+            <div class="d-flex gap-3 mb-2" style="font-size:.88rem">
+              <label class="d-flex align-items-center gap-2"><input type="radio" name="vf-source" value="file" checked> Upload a file</label>
+              <label class="d-flex align-items-center gap-2"><input type="radio" name="vf-source" value="url"> Link (YouTube, Vimeo…)</label>
+            </div>
+            <input type="file" class="form-control s21-input" id="vf-file" accept="video/mp4,video/webm,video/ogg">
+            <input type="url" class="form-control s21-input d-none" id="vf-url" placeholder="https://…">
+            <div class="text-soft mt-1" style="font-size:.76rem" id="vf-hint">MP4, WebM or OGG, up to 100MB. For bigger videos, use a link.</div>
+          </div>
+          <div style="font-size:.85rem">
+            <div class="fw-bold mb-1">Where should it appear?</div>
+            <label class="d-flex align-items-center gap-2"><input type="checkbox" id="vf-pl-courses" checked disabled> In my course lessons</label>
+            <label class="d-flex align-items-center gap-2"><input type="checkbox" id="vf-pl-videohub"> Also on the public Videos page</label>
+            <label class="d-flex align-items-center gap-2"><input type="checkbox" id="vf-pl-kids"> Also on the Kids page</label>
+          </div>
+          <div class="progress-s21 d-none" id="vf-progress"><span style="width:0%"></span></div>
+          <div class="text-danger d-none" id="vf-error" style="font-size:.85rem"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn-s21 btn-s21-outline" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn-s21 btn-s21-primary" id="vf-save">Upload</button></div>
+    </div></div>
+  </div>
+
+  <!-- Upload resource -->
+  <div class="modal fade" id="td-resource-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Upload a book / resource</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div class="d-flex flex-column gap-3">
+          <input class="form-control s21-input" id="rf-title" placeholder="Title *" maxlength="120">
+          <input class="form-control s21-input" id="rf-subject" placeholder="Subject">
+          <input type="file" class="form-control s21-input" id="rf-file" accept="application/pdf,image/png,image/jpeg,image/webp,image/gif">
+          <div class="text-soft" style="font-size:.76rem">PDF or image, up to 25MB. Attach it to a lesson of type “PDF / resource”.</div>
+          <div class="progress-s21 d-none" id="rf-progress"><span style="width:0%"></span></div>
+          <div class="text-danger d-none" id="rf-error" style="font-size:.85rem"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn-s21 btn-s21-outline" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn-s21 btn-s21-primary" id="rf-save">Upload</button></div>
+    </div></div>
+  </div>
+
+  <!-- Quiz builder -->
+  <div class="modal fade" id="td-quiz-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Create a quiz</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3">
+          <div class="col-md-8"><input class="form-control s21-input" id="qf-title" placeholder="Quiz title *" maxlength="120"></div>
+          <div class="col-md-4"><input class="form-control s21-input" id="qf-subject" placeholder="Subject"></div>
+          <div class="col-12"><input class="form-control s21-input" id="qf-description" placeholder="Short description (optional)"></div>
+        </div>
+        <div id="qf-questions" class="d-flex flex-column gap-3"></div>
+        <button type="button" class="btn btn-sm btn-outline-secondary mt-3" id="qf-add-q"><i class="fa-solid fa-plus"></i> Add question</button>
+        <div class="text-danger mt-3 d-none" id="qf-error" style="font-size:.85rem"></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn-s21 btn-s21-outline" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn-s21 btn-s21-primary" id="qf-save">Save quiz</button></div>
+    </div></div>
+  </div>
+
+  <!-- Assignment -->
+  <div class="modal fade" id="td-assignment-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Create an assignment</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body">
+        <div class="d-flex flex-column gap-3">
+          <select class="form-select s21-input" id="af-course" aria-label="Course"></select>
+          <input class="form-control s21-input" id="af-title" placeholder="Assignment title *" maxlength="160">
+          <textarea class="form-control s21-input" id="af-instructions" rows="4" placeholder="Instructions"></textarea>
+          <div><label class="form-label fw-bold" style="font-size:.85rem">Due date (optional)</label><input type="date" class="form-control s21-input" id="af-due"></div>
+          <div class="text-danger d-none" id="af-error" style="font-size:.85rem"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn-s21 btn-s21-outline" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn-s21 btn-s21-primary" id="af-save">Create assignment</button></div>
+    </div></div>
   </div>
 
 </main>
@@ -404,6 +544,7 @@
 <script src="js/ai-assistant.js?v=4"></script>
 <script src="js/main.js?v=20261008"></script>
 <script src="js/nav-account.js"></script>
+<script src="js/teacher-dashboard.js?v=1"></script>
 <script src="js/sidebar-nav.js"></script>
 <script src="js/sidebar-collapse.js"></script>
 

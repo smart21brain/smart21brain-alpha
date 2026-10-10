@@ -243,3 +243,21 @@ wrangler deploy
 
 It uses the same `DB` and `MATERIALS` (R2) bindings as the School System. Full documentation, manuals and the
 testing checklist are in `INSTITUTION_SYSTEM.md`.
+
+## Teacher dashboard (Phase 10)
+
+`teachers.html` now runs on real data (stats, courses, students, reviews,
+announcements, assignments, uploads). Run this migration **once** on your
+existing database before deploying:
+
+```
+wrangler d1 execute smart21brain-db --remote --file=./migrations/phase10-teacher-dashboard.sql
+```
+
+Fresh installs get the same tables from `schema.sql`. Until the migration is
+run the site keeps working; reviews, announcements, assignments and settings
+just show as empty.
+
+Teachers can now upload videos, resources (PDF/image) and quizzes, and
+create/publish courses. They can only edit or delete what they created;
+admins can edit everything.

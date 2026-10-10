@@ -1,4 +1,4 @@
-import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound } from '../lib/auth.js';
+import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound, isStaff, canEditOwned } from '../lib/auth.js';
 
 export async function listMaterials({ env }) {
   const { results } = await env.DB.prepare(
@@ -11,7 +11,7 @@ export async function listMaterials({ env }) {
 export async function uploadMaterial({ request, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden('Admins or teachers only.');
 
   const form = await request.formData().catch(() => null);
   const file = form?.get('file');
@@ -57,10 +57,11 @@ export async function getMaterial({ params, env }) {
 export async function deleteMaterial({ request, params, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden();
 
   const material = await env.DB.prepare('SELECT * FROM materials WHERE id = ?').bind(params.id).first();
   if (!material) return notFound();
+  if (!canEditOwned(user, material.uploaded_by)) return forbidden('You can only delete files you uploaded.');
 
   await env.MATERIALS.delete(material.file_key);
   await env.DB.prepare('DELETE FROM materials WHERE id = ?').bind(params.id).run();

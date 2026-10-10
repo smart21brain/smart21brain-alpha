@@ -1,4 +1,4 @@
-import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound } from '../lib/auth.js';
+import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound, isStaff, canEditOwned } from '../lib/auth.js';
 import { syncCoursesForQuiz } from '../lib/course-engine.js';
 
 export async function listQuizzes({ env }) {
@@ -11,7 +11,7 @@ export async function listQuizzes({ env }) {
 export async function createQuiz({ request, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden('Admins or teachers only.');
 
   const body = await request.json().catch(() => null);
   if (!body || !body.title || !Array.isArray(body.questions) || body.questions.length === 0) {
@@ -44,14 +44,19 @@ export async function getQuiz({ params, env }) {
 export async function updateQuiz({ request, params, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden();
+
+  const quiz = await env.DB.prepare('SELECT * FROM quizzes WHERE id = ?').bind(params.id).first();
+  if (!quiz) return notFound();
+  if (!canEditOwned(user, quiz.created_by)) return forbidden('You can only change quizzes you created.');
 
   const body = await request.json().catch(() => ({}));
   await env.DB.prepare(
     `UPDATE quizzes SET title = ?, subject = ?, description = ?, questions = ?, published = ? WHERE id = ?`
   ).bind(
-    body.title, body.subject || null, body.description || null,
-    JSON.stringify(body.questions || []), body.published === false ? 0 : 1, params.id
+    body.title ?? quiz.title, body.subject ?? quiz.subject, body.description ?? quiz.description,
+    Array.isArray(body.questions) && body.questions.length ? JSON.stringify(body.questions) : quiz.questions,
+    body.published != null ? (body.published ? 1 : 0) : quiz.published, params.id
   ).run();
   return json({ ok: true });
 }
@@ -59,7 +64,11 @@ export async function updateQuiz({ request, params, env }) {
 export async function deleteQuiz({ request, params, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden();
+
+  const quiz = await env.DB.prepare('SELECT created_by FROM quizzes WHERE id = ?').bind(params.id).first();
+  if (!quiz) return notFound();
+  if (!canEditOwned(user, quiz.created_by)) return forbidden('You can only delete quizzes you created.');
 
   await env.DB.prepare('DELETE FROM quizzes WHERE id = ?').bind(params.id).run();
   return json({ ok: true });

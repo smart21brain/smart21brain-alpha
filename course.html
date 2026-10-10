@@ -131,6 +131,25 @@
             <div class="p-3 text-soft" style="font-size:.85rem">Loading curriculum…</div>
           </div>
 
+          <div id="course-updates-wrap" style="display:none">
+            <h2 class="h5 mt-4 mb-3"><i class="fa-solid fa-bullhorn" style="color:var(--s21-accent)"></i> From your teacher</h2>
+            <div class="s21-card p-4" id="course-updates"></div>
+          </div>
+
+          <div id="course-reviews-wrap" style="display:none">
+            <h2 class="h5 mt-4 mb-3"><i class="fa-solid fa-star" style="color:var(--s21-secondary-dark)"></i> Reviews <span class="text-soft fw-normal" style="font-size:.85rem" id="course-reviews-summary"></span></h2>
+            <div class="s21-card p-4">
+              <div id="course-review-form" style="display:none" class="mb-4">
+                <div class="fw-bold mb-1" style="font-size:.9rem">Rate this course</div>
+                <div id="course-review-stars" class="mb-2" role="radiogroup" aria-label="Rating"></div>
+                <textarea class="form-control s21-input mb-2" id="course-review-text" rows="2" maxlength="1000" placeholder="Share what you liked (optional)"></textarea>
+                <button type="button" class="btn-s21 btn-s21-primary" id="course-review-send" style="font-size:.85rem">Submit review</button>
+                <span class="text-soft ms-2" style="font-size:.8rem" id="course-review-msg"></span>
+              </div>
+              <div id="course-reviews-list"></div>
+            </div>
+          </div>
+
           <div id="course-final-exam-wrap" style="display:none">
             <h2 class="h4 mt-4 mb-3">Final exam</h2>
             <div class="s21-card p-4" data-aos="fade-up" id="course-final-exam"></div>
@@ -289,6 +308,7 @@
 <script src="js/course-progress.js?v=3"></script>
 <script src="js/progress-sync.js?v=1"></script>
 <script src="js/course-detail.js?v=3"></script>
+<script src="js/course-feedback.js?v=1"></script>
 <script src="js/cookie-consent.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound, slugify } from '../lib/auth.js';
+import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound, slugify, isStaff, canEditOwned } from '../lib/auth.js';
 
 // Books are either "text" books (pages JSON) or uploaded PDF books (file
 // kept in R2, with an optional uploaded cover image).
@@ -25,7 +25,7 @@ export async function listBooks({ env }) {
 export async function createBook({ request, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden('Admins or teachers only.');
 
   const body = await request.json().catch(() => null);
   if (!body || !body.title || !Array.isArray(body.pages) || body.pages.length === 0) {
@@ -62,7 +62,7 @@ function safeName(name) { return String(name || 'file').replace(/[^\w.\-]/g, '_'
 export async function uploadPdfBook({ request, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden('Admins or teachers only.');
 
   const form = await request.formData().catch(() => null);
   const pdf = form?.get('pdf');
@@ -163,10 +163,11 @@ export async function getBook({ params, env }) {
 export async function updateBook({ request, params, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden();
 
   const book = await env.DB.prepare('SELECT * FROM books WHERE id = ?').bind(params.id).first();
   if (!book) return notFound();
+  if (!canEditOwned(user, book.created_by)) return forbidden('You can only change books you uploaded.');
 
   const body = await request.json().catch(() => ({}));
   await env.DB.prepare(
@@ -177,7 +178,7 @@ export async function updateBook({ request, params, env }) {
     body.description ?? book.description,
     body.cover_url ?? book.cover_url,
     body.pages ? JSON.stringify(body.pages) : book.pages,
-    body.published === false ? 0 : 1,
+    body.published != null ? (body.published ? 1 : 0) : book.published,
     params.id
   ).run();
   return json({ ok: true });
@@ -186,9 +187,11 @@ export async function updateBook({ request, params, env }) {
 export async function deleteBook({ request, params, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden();
 
-  const book = await env.DB.prepare('SELECT pdf_key, cover_key FROM books WHERE id = ?').bind(params.id).first();
+  const book = await env.DB.prepare('SELECT pdf_key, cover_key, created_by FROM books WHERE id = ?').bind(params.id).first();
+  if (!book) return notFound();
+  if (!canEditOwned(user, book.created_by)) return forbidden('You can only delete books you uploaded.');
   if (book?.pdf_key) await env.MATERIALS.delete(book.pdf_key);
   if (book?.cover_key) await env.MATERIALS.delete(book.cover_key);
   await env.DB.prepare('DELETE FROM books WHERE id = ?').bind(params.id).run();

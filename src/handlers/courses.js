@@ -75,17 +75,30 @@ export async function listCourses({ request, env, url }) {
 
   const sort = params.get('sort') === 'title' ? 'c.title ASC' : 'c.created_at DESC';
 
-  const { results } = await env.DB.prepare(
+  // Ratings come from course_reviews (migrations/phase10-teacher-dashboard.sql).
+  // If that migration hasn't been applied yet, still serve the catalog.
+  const build = (ratingCols) => env.DB.prepare(
     `SELECT c.*, cat.name AS category_name, cat.slug AS category_slug,
             u.name AS instructor_name,
             (SELECT COUNT(*) FROM course_lessons WHERE course_id = c.id) AS lesson_count,
-            (SELECT COUNT(*) FROM course_enrollments WHERE course_id = c.id) AS enrolled_count
+            (SELECT COUNT(*) FROM course_enrollments WHERE course_id = c.id) AS enrolled_count,
+            ${ratingCols}
      FROM courses c
      LEFT JOIN course_categories cat ON cat.id = c.category_id
      LEFT JOIN users u ON u.id = c.instructor_id
      WHERE ${clauses.join(' AND ')}
      ORDER BY ${sort}`
   ).bind(...binds).all();
+
+  let results;
+  try {
+    ({ results } = await build(
+      `(SELECT ROUND(AVG(rating), 1) FROM course_reviews WHERE course_id = c.id) AS avg_rating,
+       (SELECT COUNT(*) FROM course_reviews WHERE course_id = c.id) AS review_count`
+    ));
+  } catch {
+    ({ results } = await build('NULL AS avg_rating, 0 AS review_count'));
+  }
 
   return json({ courses: results.map((c) => ({ ...c, objectives: parseJsonArray(c.objectives), requirements: parseJsonArray(c.requirements) })) });
 }
@@ -102,7 +115,10 @@ export async function createCourse({ request, env }) {
   const instructorId = user.role === 'teacher' ? user.id : (body.instructor_id || user.id);
 
   const price = Number(body.price) || 0;
-  const slug = slugify(body.slug || body.title);
+  let slug = slugify(body.slug || body.title);
+  // slug is UNIQUE — two teachers can easily pick the same title.
+  const taken = await env.DB.prepare('SELECT id FROM courses WHERE slug = ?').bind(slug).first();
+  if (taken) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
 
   const result = await env.DB.prepare(
     `INSERT INTO courses (
@@ -186,10 +202,15 @@ export async function getCourse({ request, params, env }) {
   }));
   const ungroupedLessons = lessons.filter((l) => !l.module_id);
 
-  const reviewCount = 0; // reviews aren't tracked yet — surfaced honestly as 0, not a fake number
+  let reviewCount = 0;
+  let avgRating = null;
+  try {
+    const r = await env.DB.prepare('SELECT COUNT(*) AS n, ROUND(AVG(rating), 1) AS avg FROM course_reviews WHERE course_id = ?').bind(course.id).first();
+    reviewCount = r?.n || 0; avgRating = r?.avg ?? null;
+  } catch { /* phase10 migration not applied yet */ }
   return json({
     course, lessons, modules, ungrouped_lessons: ungroupedLessons,
-    enrollment, progress, review_count: reviewCount,
+    enrollment, progress, review_count: reviewCount, avg_rating: avgRating,
   });
 }
 
@@ -224,7 +245,7 @@ export async function updateCourse({ request, params, env }) {
     body.passing_score != null ? Number(body.passing_score) : course.passing_score,
     body.final_exam_quiz_id !== undefined ? body.final_exam_quiz_id : course.final_exam_quiz_id,
     body.final_exam_passing_score != null ? Number(body.final_exam_passing_score) : course.final_exam_passing_score,
-    body.published === false ? 0 : 1,
+    body.published != null ? (body.published ? 1 : 0) : course.published,
     params.id
   ).run();
 

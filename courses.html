@@ -209,8 +209,9 @@
               <h3><a href="course.html?slug=${encodeURIComponent(c.slug)}" class="text-reset">${esc(c.title)}</a></h3>
               <div class="meta mb-2"><i class="fa-regular fa-clock"></i> ${c.lesson_count} lesson${c.lesson_count === 1 ? '' : 's'}${audienceText(c)}</div>
               <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-1" style="font-size:.82rem;color:var(--s21-text-soft)">
+                <div class="d-flex align-items-center gap-2" style="font-size:.82rem;color:var(--s21-text-soft)">
                   ${esc(c.instructor_name || 'Smart21Brain')}
+                  ${c.avg_rating ? `<span title="${c.review_count} review${c.review_count === 1 ? '' : 's'}"><i class="fa-solid fa-star" style="color:var(--s21-secondary-dark)"></i> ${c.avg_rating}</span>` : ''}
                 </div>
                 <a href="course.html?slug=${encodeURIComponent(c.slug)}" class="btn-s21 btn-s21-primary" style="padding:.5rem 1.1rem;font-size:.82rem">${priceLabel === 'Free' ? 'Enroll free' : priceLabel}</a>
               </div>

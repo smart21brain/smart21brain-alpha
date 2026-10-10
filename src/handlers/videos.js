@@ -1,4 +1,4 @@
-import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound } from '../lib/auth.js';
+import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound, isStaff, canEditOwned } from '../lib/auth.js';
 
 // Workers/Pages Functions enforce a request-body ceiling (100MB on most plans).
 // Bigger files should go through the "External URL" path (host on YouTube/Vimeo/
@@ -53,7 +53,7 @@ export async function getVideo({ params, env }) {
 export async function createVideo({ request, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden('Admins or teachers only.');
 
   const contentType = request.headers.get('Content-Type') || '';
 
@@ -124,10 +124,11 @@ export async function createVideo({ request, env }) {
 export async function updateVideo({ request, params, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden();
 
   const video = await env.DB.prepare('SELECT * FROM videos WHERE id = ?').bind(params.id).first();
   if (!video) return notFound();
+  if (!canEditOwned(user, video.created_by)) return forbidden('You can only change videos you uploaded.');
 
   const body = await request.json().catch(() => ({}));
   await env.DB.prepare(
@@ -137,7 +138,7 @@ export async function updateVideo({ request, params, env }) {
     body.subject ?? video.subject,
     body.description ?? video.description,
     body.placements ? normalizePlacements(body.placements) : video.placements,
-    body.published === false ? 0 : 1,
+    body.published != null ? (body.published ? 1 : 0) : video.published,
     params.id
   ).run();
   return json({ ok: true });
@@ -146,10 +147,11 @@ export async function updateVideo({ request, params, env }) {
 export async function deleteVideo({ request, params, env }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized();
-  if (user.role !== 'admin') return forbidden();
+  if (!isStaff(user)) return forbidden();
 
   const video = await env.DB.prepare('SELECT * FROM videos WHERE id = ?').bind(params.id).first();
   if (!video) return notFound();
+  if (!canEditOwned(user, video.created_by)) return forbidden('You can only delete videos you uploaded.');
 
   if (video.source_type === 'file' && video.file_key) {
     await env.MATERIALS.delete(video.file_key);

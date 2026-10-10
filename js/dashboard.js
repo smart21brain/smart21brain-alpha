@@ -199,6 +199,21 @@
       items.push({ icon: 'fa-circle-play', href: courseHref(c),
         text: fill(t('dash_notif_continue', 'Continue {course} — {pct}% complete'), { course: c.title, pct: c.progress_percent }) });
     });
+    // Announcements teachers post for the courses this learner is enrolled in.
+    fetch('/api/announcements', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : { announcements: [] }))
+      .catch(() => ({ announcements: [] }))
+      .then((d) => {
+        const ann = (d.announcements || []).slice(0, 3).map((a) => ({
+          icon: 'fa-bullhorn',
+          href: a.course_slug ? `course.html?slug=${encodeURIComponent(a.course_slug)}` : '#',
+          text: `${a.teacher_name || 'Your teacher'}${a.course_title ? ' (' + a.course_title + ')' : ''}: ${a.body}`,
+        }));
+        paintNotifications(list, ann.concat(items));
+      });
+  }
+
+  function paintNotifications(list, items) {
     if (!items.length) return; // keep the "no notifications yet" line
     list.innerHTML = items.map((n) => `
       <li class="d-flex gap-2"><i class="fa-solid ${n.icon} mt-1" style="color:var(--s21-accent)"></i>

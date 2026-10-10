@@ -7,6 +7,8 @@ import * as materials from './handlers/materials.js';
 import * as courses from './handlers/courses.js';
 import * as courseLessons from './handlers/course-lessons.js';
 import * as courseModules from './handlers/course-modules.js';
+import * as teacher from './handlers/teacher.js';
+import * as courseFeedback from './handlers/course-feedback.js';
 import * as certificates from './handlers/certificates.js';
 import * as catalogProgress from './handlers/catalog-progress.js';
 import * as videos from './handlers/videos.js';
@@ -135,6 +137,29 @@ router.get('/api/courses/:id', courses.getCourse);
 router.put('/api/courses/:id', courses.updateCourse);
 router.delete('/api/courses/:id', courses.deleteCourse);
 router.post('/api/courses/:id/enroll', courses.enrollCourse);
+// Student side of the teacher dashboard: reviews, announcements, assignments
+router.get('/api/courses/:id/reviews', courseFeedback.listReviews);
+router.post('/api/courses/:id/reviews', courseFeedback.submitReview);
+router.get('/api/courses/:id/updates', courseFeedback.courseUpdates);
+router.get('/api/announcements', courseFeedback.myAnnouncements);
+router.get('/api/course-thumbs/:name', teacher.getThumbnail);
+
+// ---- Teacher dashboard (teachers.html) — teachers see their own data, admins see all ----
+router.get('/api/teacher/overview', teacher.overview);
+router.get('/api/teacher/courses', teacher.listMyCourses);
+router.get('/api/teacher/students', teacher.listStudents);
+router.get('/api/teacher/reviews', teacher.listReviews);
+router.post('/api/teacher/reviews/:id/reply', teacher.replyToReview);
+router.get('/api/teacher/announcements', teacher.listAnnouncements);
+router.post('/api/teacher/announcements', teacher.createAnnouncement);
+router.delete('/api/teacher/announcements/:id', teacher.deleteAnnouncement);
+router.get('/api/teacher/assignments', teacher.listAssignments);
+router.post('/api/teacher/assignments', teacher.createAssignment);
+router.delete('/api/teacher/assignments/:id', teacher.deleteAssignment);
+router.get('/api/teacher/settings', teacher.getSettings);
+router.put('/api/teacher/settings', teacher.updateSettings);
+router.get('/api/teacher/content', teacher.myContent);
+router.post('/api/teacher/thumbnail', teacher.uploadThumbnail);
 router.get('/api/courses/:id/lessons', courseLessons.listLessons);
 router.post('/api/courses/:id/lessons', courseLessons.createLesson);
 router.put('/api/courses/:id/lessons/:lessonId', courseLessons.updateLesson);
