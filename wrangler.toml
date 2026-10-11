@@ -32,6 +32,7 @@ binding = "DB"
 database_name = "smart21brain-db"
 database_id = "8d1eb316-d826-419b-93c6-e1a90f014571"
 
+
 # R2 bucket binding — accessible in the Worker as `env.MATERIALS`.
 # Create it first with:
 #   wrangler r2 bucket create smart21brain-materials
