@@ -261,3 +261,17 @@ just show as empty.
 Teachers can now upload videos, resources (PDF/image) and quizzes, and
 create/publish courses. They can only edit or delete what they created;
 admins can edit everything.
+
+## Anatomy and Physiology (Medical Level) course
+
+Adds a 10-module medical-level course (36 lessons, 9 checkpoint quizzes and a
+20-question final exam) with 15 built-in anatomy diagrams (`{{anat heart}}`,
+`{{anat nephron}}`, ... see the cheat-sheet at the top of `js/lesson-rich.js`).
+Run once after deploying:
+
+```
+npx wrangler d1 execute smart21brain-db --remote --file=./course-anatomy-physiology-seed.sql
+```
+
+Safe to run again; it never deletes anything. Deploy the updated
+`js/lesson-rich.js` and `images/anatomy-physiology-course.svg` with it.
