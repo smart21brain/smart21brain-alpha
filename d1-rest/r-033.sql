@@ -1,0 +1,1 @@
+UPDATE courses SET final_exam_quiz_id = (SELECT id FROM quizzes WHERE title = 'Artificial Intelligence and Machine Learning in Depth final exam'), final_exam_passing_score = 70 WHERE slug = 'artificial-intelligence-machine-learning';
