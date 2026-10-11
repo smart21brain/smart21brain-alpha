@@ -275,3 +275,17 @@ npx wrangler d1 execute smart21brain-db --remote --file=./course-anatomy-physiol
 
 Safe to run again; it never deletes anything. Deploy the updated
 `js/lesson-rich.js` and `images/anatomy-physiology-course.svg` with it.
+
+## Artificial Intelligence and Machine Learning in Depth course
+
+A deeper follow-on to the short "Introduction to AI" course: 7 modules, 25
+lessons, 6 checkpoint quizzes and a 20-question final exam, with 10 new AI
+diagrams (`{{ai neuralnet}}`, `{{ai llm}}`, ... see `js/lesson-rich.js`).
+Run once after deploying:
+
+```
+npx wrangler d1 execute smart21brain-db --remote --file=./course-ai-ml-seed.sql
+```
+
+Safe to run again. Deploy the updated `js/lesson-rich.js` and
+`images/ai-ml-course.svg` with it.

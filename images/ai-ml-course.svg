@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 506" role="img" aria-label="Artificial Intelligence and Machine Learning course">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#0ea5e9"/></linearGradient></defs>
+<rect width="900" height="506" fill="url(#g)"/>
+<g stroke="#7dd3fc" stroke-width="1.5" opacity=".55"><path d="M560 120 L680 70 M560 120 L680 170 M560 120 L680 270 M560 220 L680 70 M560 220 L680 170 M560 220 L680 270 M560 320 L680 170 M560 320 L680 270 M560 320 L680 370 M680 70 L800 150 M680 170 L800 150 M680 270 L800 150 M680 170 L800 290 M680 270 L800 290 M680 370 L800 290"/></g>
+<g fill="#38bdf8" stroke="#fff" stroke-width="2"><circle cx="560" cy="120" r="16"/><circle cx="560" cy="220" r="16"/><circle cx="560" cy="320" r="16"/></g>
+<g fill="#a78bfa" stroke="#fff" stroke-width="2"><circle cx="680" cy="70" r="16"/><circle cx="680" cy="170" r="16"/><circle cx="680" cy="270" r="16"/><circle cx="680" cy="370" r="16"/></g>
+<g fill="#34d399" stroke="#fff" stroke-width="2"><circle cx="800" cy="150" r="16"/><circle cx="800" cy="290" r="16"/></g>
+<text x="48" y="120" fill="#bae6fd" font-family="system-ui,sans-serif" font-size="26" font-weight="700" letter-spacing="3">COMPUTER STUDIES</text>
+<text x="48" y="190" fill="#fff" font-family="system-ui,sans-serif" font-size="58" font-weight="800">Artificial</text>
+<text x="48" y="256" fill="#fff" font-family="system-ui,sans-serif" font-size="58" font-weight="800">Intelligence</text>
+<text x="48" y="322" fill="#7dd3fc" font-family="system-ui,sans-serif" font-size="40" font-weight="700">&amp; Machine Learning</text>
+<text x="48" y="450" fill="#e0f2fe" font-family="system-ui,sans-serif" font-size="26">7 modules · 10 diagrams · Python project</text>
+</svg>

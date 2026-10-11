@@ -18,6 +18,8 @@
      {{mind Centre | a | b | c}} {{stack Top | Middle | Bottom}} {{timeline A | B | C}}
      {{anat heart}}  (planes cavities membrane neuron actionpotential synapse sarcomere
                       heart ecg circulation alveolus oxyhb nephron gi reflex)
+     {{ai neuralnet}}  (perceptron neuralnet gradient classify cluster overfit
+                        confusion llm rl split)
      **bold**  `code`
 */
 (function () {
@@ -434,6 +436,118 @@
 
   D.anat = function (args) {
     var f = A[String(args[0] || '').toLowerCase()];
+    return f ? f() : '';
+  };
+
+  /* ---------- AI & machine-learning diagrams: {{ai perceptron}} etc. ---------- */
+  var AI = {};
+
+  AI.perceptron = function () {
+    var ys = [50, 115, 180], o = '';
+    ys.forEach(function (y, i) {
+      o += Ln(78, y, 232, 115, '#94a3b8', 2) + T(150, y + (y < 115 ? -2 : y > 115 ? 14 : -6) + (y < 115 ? 0 : 0) - (y === 115 ? 0 : 0), 'w' + ['₁', '₂', '₃'][i], { f: C.purple, c: 'd-big' }).replace('d-big', 'd-small');
+      o += Ci(60, y, 20, C.blueL, C.blue) + T(60, y + 4, 'x' + ['₁', '₂', '₃'][i], {});
+    });
+    o += Ci(260, 115, 32, C.goldL, '#b45309') + T(260, 112, 'Σ', { c: 'd-big' }) + T(260, 128, '+ b', {});
+    o += Ar(260, 28, 260, 80, 'p') + T(260, 20, 'bias b', { f: C.purple });
+    o += Ar(294, 115, 340, 115, 'g') + Rc(342, 92, 74, 46, C.greenL, C.green, 10) + T(379, 112, 'f(z)', { c: 'd-big' }) + T(379, 128, 'activation', {});
+    o += Ar(418, 115, 460, 115, 'k') + Ci(474, 115, 14, C.green) + T(474, 150, 'output', {});
+    o += T(60, 214, 'inputs', {}) + T(260, 214, 'z = w₁x₁ + w₂x₂ + w₃x₃ + b', {}) + T(400, 214, 'ŷ = f(z)', {});
+    return svg(500, 228, MK() + o, 'A single artificial neuron: weighted inputs, bias, sum and activation function');
+  };
+
+  AI.neuralnet = function () {
+    var layers = [3, 5, 5, 2], xs = [70, 190, 310, 430], col = [C.blue, C.purple, C.purple, C.green], fill = [C.blueL, C.purpleL, C.purpleL, C.greenL], o = '', pts = [];
+    layers.forEach(function (n, li) { var p = []; for (var i = 0; i < n; i++) p.push([xs[li], 150 - (n - 1) * 24 + i * 48]); pts.push(p); });
+    for (var l = 0; l < 3; l++) pts[l].forEach(function (a) { pts[l + 1].forEach(function (b) { o += Ln(a[0], a[1], b[0], b[1], '#cbd5e1', 1); }); });
+    pts.forEach(function (p, li) { p.forEach(function (c) { o += Ci(c[0], c[1], 14, fill[li], col[li]); }); });
+    o += T(70, 262, 'Input layer', { f: C.blue }) + T(70, 276, '(features)', {}) + T(250, 262, 'Hidden layers', { f: C.purple }) + T(250, 276, '(learn patterns)', {}) + T(430, 262, 'Output layer', { f: C.green }) + T(430, 276, '(prediction)', {});
+    o += Ar(100, 28, 400, 28, 'g') + T(250, 20, 'Forward pass: data flows this way', {});
+    return svg(500, 288, MK() + o, 'Feed-forward neural network with input, two hidden layers and output');
+  };
+
+  AI.gradient = function () {
+    var X = function (w) { return 60 + w * 60; }, Y = function (w) { return 230 - Math.pow(w - 3, 2) * 18; }, d = '';
+    for (var w = 0; w <= 6.01; w += 0.25) d += (w ? 'L' : 'M') + X(w).toFixed(1) + ' ' + Y(w).toFixed(1);
+    var o = Ln(60, 30, 60, 250, '#64748b', 2) + Ln(60, 250, 440, 250, '#64748b', 2) + Pa(d, 'none', C.blue, 3.5);
+    var steps = [0.6, 1.6, 2.3, 2.7];
+    steps.forEach(function (s, i) {
+      o += Ci(X(s), Y(s), 7, i === 0 ? C.red : C.gold, '#fff');
+      if (i < steps.length - 1) o += Ar(X(s) + 6, Y(s) + 4, X(steps[i + 1]) - 4, Y(steps[i + 1]) - 4, 'r', 2);
+    });
+    o += Ci(X(3), Y(3), 8, C.green, '#fff') + T(X(3) + 14, Y(3) - 12, 'minimum loss', { a: 'start', f: C.green });
+    o += T(X(0.6) - 4, Y(0.6) + 24, 'start (random weights)', { a: 'start', f: C.red });
+    o += T(14, 140, 'Loss', {}).replace('<text', '<text transform="rotate(-90 14 140)"') + T(250, 272, 'Weight w', {});
+    o += T(250, 44, 'Each step:  w ← w − (learning rate × slope)', { f: C.purple }) + T(250, 62, 'Too big a step overshoots; too small is very slow.', {});
+    return svg(480, 284, MK() + o, 'Gradient descent walking down a loss curve to the minimum');
+  };
+
+  AI.classify = function () {
+    var A = [[80, 70], [110, 110], [140, 60], [95, 140], [170, 95], [130, 130], [180, 140], [70, 105]], B = [[260, 170], [300, 140], [340, 200], [380, 160], [290, 215], [350, 135], [400, 205], [320, 175]];
+    var o = Pa('M185 230 L305 45', 'none', C.purple, 3, null, '8 5') + T(318, 52, 'decision boundary', { a: 'start', f: C.purple });
+    A.forEach(function (p) { o += Ci(p[0], p[1], 7, C.blue, '#fff'); });
+    B.forEach(function (p) { o += Ci(p[0], p[1], 7, C.red, '#fff'); });
+    o += Ci(222, 118, 9, '#fff', '#111827') + T(222, 122, '?', { c: 'd-small' }) + Ar(222, 150, 222, 128, 'g') + T(150, 168, 'new point → class A', { f: C.blue });
+    o += Ci(40, 262, 6, C.blue) + T(52, 266, 'Class A (e.g. spam = no)', { a: 'start' }) + Ci(230, 262, 6, C.red) + T(242, 266, 'Class B (e.g. spam = yes)', { a: 'start' });
+    o += T(240, 14, 'A classifier learns a boundary from labelled examples', {});
+    return svg(460, 276, MK() + o, 'Scatter plot of two classes with a decision boundary and a new point to classify');
+  };
+
+  AI.cluster = function () {
+    var cs = [[110, 90, C.blue, C.blueL], [310, 80, C.red, C.redL], [230, 200, C.green, C.greenL]], off = [[-30, -20], [20, -30], [35, 10], [-10, 30], [-40, 15], [10, 5], [30, 35]], o = '';
+    cs.forEach(function (c) { o += Ci(c[0], c[1], 62, c[3], c[2]).replace('stroke-width="2"', 'stroke-width="1.5" stroke-dasharray="5 4"'); off.forEach(function (d) { o += Ci(c[0] + d[0], c[1] + d[1], 6, c[2], '#fff'); }); o += Pa('M' + (c[0] - 8) + ' ' + (c[1] - 8) + 'L' + (c[0] + 8) + ' ' + (c[1] + 8) + 'M' + (c[0] + 8) + ' ' + (c[1] - 8) + 'L' + (c[0] - 8) + ' ' + (c[1] + 8), 'none', '#111827', 3); });
+    o += T(400, 160, 'X = cluster centre', { a: 'start' }) + T(400, 176, '(centroid)', { a: 'start' }) + T(400, 200, 'No labels given:', { a: 'start', f: C.purple }) + T(400, 214, 'the algorithm finds', { a: 'start' }) + T(400, 228, 'the groups itself.', { a: 'start' });
+    o += T(230, 14, 'K-means clustering with K = 3', {});
+    return svg(540, 270, o, 'K-means clustering showing three groups of points with their centres');
+  };
+
+  AI.overfit = function () {
+    var P = [[10, 100], [35, 72], [60, 88], [85, 46], [110, 52], [135, 22], [155, 30]], panel = function (x0, title, sub, path, col) {
+      var o = Rc(x0, 30, 165, 140, '#f8fafc', '#cbd5e1', 8);
+      P.forEach(function (p) { o += Ci(x0 + 5 + p[0], 35 + p[1], 4.5, C.grey, '#fff'); });
+      return o + Pa(path(x0 + 5, 35), 'none', col, 3) + T(x0 + 82, 20, title, { f: col }) + T(x0 + 82, 190, sub, {});
+    };
+    var o = panel(10, 'Underfit', 'too simple: misses the trend', function (x, y) { return 'M' + (x + 5) + ' ' + (y + 95) + ' L' + (x + 155) + ' ' + (y + 40); }, C.red);
+    o += panel(185, 'Good fit', 'captures the trend', function (x, y) { return 'M' + (x + 5) + ' ' + (y + 98) + ' C' + (x + 50) + ' ' + (y + 80) + ' ' + (x + 90) + ' ' + (y + 45) + ' ' + (x + 155) + ' ' + (y + 25); }, C.green);
+    o += panel(360, 'Overfit', 'memorises the noise', function (x, y) { return 'M' + P.map(function (p) { return (x + p[0]) + ' ' + (y + p[1]); }).join(' L'); }, C.purple);
+    return svg(540, 204, o, 'Three models fitted to the same points: underfit, good fit and overfit');
+  };
+
+  AI.confusion = function () {
+    var cell = function (x, y, fill, a, b) { return Rc(x, y, 100, 70, fill, '#fff', 6) + T(x + 50, y + 32, a, { c: 'd-big' }) + T(x + 50, y + 50, b, {}); };
+    var o = cell(130, 70, C.greenL, 'TP', 'true positive') + cell(234, 70, C.redL, 'FN', 'false negative') + cell(130, 144, C.redL, 'FP', 'false positive') + cell(234, 144, C.greenL, 'TN', 'true negative');
+    o += T(180, 56, 'Predicted: yes', {}) + T(284, 56, 'Predicted: no', {}) + T(18, 108, 'Actual:', { a: 'start' }) + T(18, 122, 'yes', { a: 'start' }) + T(18, 182, 'Actual:', { a: 'start' }) + T(18, 196, 'no', { a: 'start' });
+    o += T(360, 80, 'Accuracy', { a: 'start', f: C.blue }) + T(360, 94, '(TP + TN) / all', { a: 'start' }) + T(360, 124, 'Precision', { a: 'start', f: C.purple }) + T(360, 138, 'TP / (TP + FP)', { a: 'start' }) + T(360, 168, 'Recall (sensitivity)', { a: 'start', f: C.green }) + T(360, 182, 'TP / (TP + FN)', { a: 'start' });
+    o += T(260, 24, 'Confusion matrix: a classifier\'s report card', {});
+    return svg(540, 246, o, 'Confusion matrix with true and false positives and negatives and metric formulas');
+  };
+
+  AI.llm = function () {
+    var box = function (y, h, fill, stroke, a, b) { return Rc(20, y, 250, h, fill, stroke, 10) + T(145, y + 17, a, { f: stroke }) + (b ? T(145, y + 33, b, {}) : ''); };
+    var o = box(10, 40, C.greyL, '#64748b', 'Text in', '"The cat sat on the"') + Ar(145, 50, 145, 66, 'g') + box(66, 40, C.blueL, C.blue, '1  Tokenise', '[The] [ cat] [ sat] [ on] [ the]') + Ar(145, 106, 145, 122, 'g') + box(122, 40, C.purpleL, C.purple, '2  Embed', 'each token → a vector of numbers') + Ar(145, 162, 145, 178, 'g') + box(178, 52, C.goldL, '#b45309', '3  Transformer layers × N', 'self-attention + feed-forward') + Ar(145, 230, 145, 246, 'g') + box(246, 50, C.greenL, C.green, '4  Probabilities for next token', 'mat 41% · floor 18% · sofa 9% …');
+    o += T(290, 36, 'Everything is turned into numbers', { a: 'start' }) + T(290, 92, 'Text split into pieces', { a: 'start' }) + T(290, 108, '(words or word parts)', { a: 'start' }) + T(290, 148, 'Meaning as coordinates:', { a: 'start' }) + T(290, 162, 'similar words sit close together', { a: 'start' }) + T(290, 200, 'Attention lets each token', { a: 'start' }) + T(290, 214, 'look at the others for context', { a: 'start' }) + T(290, 264, 'One token is chosen, appended,', { a: 'start' }) + T(290, 278, 'and the loop repeats.', { a: 'start' });
+    return svg(560, 308, MK() + o, 'How a large language model turns text into tokens, embeddings, attention layers and next-token probabilities');
+  };
+
+  AI.rl = function () {
+    var o = Rc(30, 80, 130, 80, C.blueL, C.blue, 12) + T(95, 116, 'AGENT', { c: 'd-big', f: C.blue }) + T(95, 134, 'learns a policy', {});
+    o += Rc(340, 80, 130, 80, C.goldL, '#b45309', 12) + T(405, 116, 'ENVIRONMENT', { c: 'd-small', f: '#b45309' }) + T(405, 134, 'game, robot, market', {});
+    o += Pa('M95 80 Q95 30 250 30 Q405 30 405 80', 'none', C.blue, 2.5, 'b') + T(250, 22, 'Action', { f: C.blue, c: 'd-big' }).replace('d-big', 'd-small');
+    o += Pa('M405 160 Q405 214 250 214 Q95 214 95 160', 'none', C.green, 2.5, 'k') + T(250, 206, 'New state + reward (+1 / −1)', { f: C.green });
+    o += T(250, 120, 'Goal: maximise', {}) + T(250, 134, 'total reward over time', {});
+    o += T(250, 244, 'Trial and error: good actions are reinforced', { f: '#64748b' });
+    return svg(500, 256, MK() + o, 'Reinforcement learning loop between agent and environment');
+  };
+
+  AI.split = function () {
+    var o = Rc(20, 40, 240, 50, C.blueL, C.blue, 6) + Rc(260, 40, 100, 50, C.goldL, '#b45309', 0) + Rc(360, 40, 100, 50, C.greenL, C.green, 6);
+    o += T(140, 62, 'TRAIN 70%', { f: C.blue }) + T(140, 78, 'the model learns from this', {}) + T(310, 62, 'VALIDATE 15%', { f: '#b45309' }) + T(310, 78, 'tune settings', {}) + T(410, 62, 'TEST 15%', { f: C.green }) + T(410, 78, 'final exam', {});
+    o += T(240, 120, 'Never let the model see the test set while building it.', {}) + T(240, 136, 'Otherwise your score is a memorised answer, not real performance.', { f: '#64748b' });
+    return svg(480, 150, o, 'Data split into training, validation and test sets');
+  };
+
+  D.ai = function (args) {
+    var f = AI[String(args[0] || '').toLowerCase()];
     return f ? f() : '';
   };
 
