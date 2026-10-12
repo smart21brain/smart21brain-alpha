@@ -85,8 +85,7 @@
 .e21-title { font-family: var(--font-display); font-size: clamp(2.7rem, 6vw, 4.4rem); line-height: 1.05; font-weight: 700; margin: 1.1rem 0 1rem; display: flex; align-items: baseline; flex-wrap: nowrap; gap: .02em; white-space: nowrap; color: #fff; }
 .e21-title .e21-grad { color: #fff; }
 .e21-title .n { color: var(--s21-secondary); }
-.e21-title .bolt { color: var(--s21-secondary); font-size: .55em; margin-right: .1em; animation: e21flick 5s infinite; }
-@keyframes e21flick { 0%, 92%, 100% { opacity: 1; } 93% { opacity: .35; } 95% { opacity: 1; } 97% { opacity: .5; } }
+.e21-title .bolt { width: .8em; height: .8em; align-self: center; margin-right: .22em; border-radius: 22%; box-shadow: 0 6px 18px rgba(0, 0, 0, .3); }
 .e21-hero p, .e21-hero .e21-sub { color: rgba(255, 255, 255, .9); }
 .e21-sub { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.05rem, 2vw, 1.3rem); max-width: 40ch; color: #fff !important; }
 .e21-type { font-family: var(--e-mono); color: var(--s21-secondary); min-height: 1.6em; margin: .4rem 0 1.6rem; font-size: 1rem; }
