@@ -289,3 +289,13 @@ npx wrangler d1 execute smart21brain-db --remote --file=./course-ai-ml-seed.sql
 
 Safe to run again. Deploy the updated `js/lesson-rich.js` and
 `images/ai-ml-course.svg` with it.
+
+## Electron21 page
+
+`electron21.html` (with `css/electron21.css` and `js/e21-*.js`) is the new hub for
+electronics, computer engineering, data science and engineering. It replaces
+"Levels" in the top navigation on every page (levels.html still exists and is
+reachable from the footer and home page). Static files only: nothing to run in
+the database. Seven labs run fully in the browser (logic, circuit, signal scope,
+8-bit CPU emulator, number systems, data/CSV, resistor colour code).
+`css/style.css` was bumped to `?v=20` on all pages for the nav fit changes.

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electron21 — Electronics, Computer Engineering, Data Science & Engineering Labs</title>
+<meta name="description" content="Electron21 is the Smart21Brain lab for electronics, computer engineering, data science and engineering: free in-browser logic, circuit, CPU, signal and data labs, build projects and cheat sheets.">
+<link rel="canonical" href="https://smart21brain.com/electron21.html">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link rel="apple-touch-icon" href="images/logo/coool.png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=20">
+<link rel="stylesheet" href="css/responsive.css?v=5">
+<link rel="stylesheet" href="css/animations.css?v=4">
+<meta property="og:title" content="Electron21 — Electronics, Computer Engineering, Data Science & Engineering Labs">
+<meta property="og:description" content="Electron21 is the Smart21Brain lab for electronics, computer engineering, data science and engineering: free in-browser logic, circuit, CPU, signal and data labs, build projects and cheat sheets.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/electron21.css?v=1">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="s21-navbar">
+  <nav class="navbar navbar-expand-lg container-fluid px-3 px-lg-4">
+    <a class="s21-logo" href="index.html">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 9c1 .8 4 .8 5 0M9 13h6" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      Smart<span class="brand-21">21</span>Brain
+    </a>
+    <div class="d-flex d-lg-none align-items-center gap-2 s21-mobile-actions">
+      <button class="icon-btn icon-btn-sm" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.68rem">SW</button>
+      <button class="icon-btn icon-btn-sm" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+    </div>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu"><i class="fa-solid fa-bars fa-lg"></i></button>
+    <div class="collapse navbar-collapse d-none d-lg-flex justify-content-center">
+      <ul class="navbar-nav gap-1">
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link active" href="electron21.html" aria-current="page"><i class="fa-solid fa-bolt me-1" aria-hidden="true"></i>Electron21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+        <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="d-none d-lg-flex align-items-center gap-2">
+      <button class="icon-btn" data-lang-toggle aria-label="Switch language" style="font-weight:800;font-size:.72rem">SW</button>
+      <button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+      <span data-guest-nav="desktop" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary" data-i18n="nav_start">Get Started</a></span>
+    </div>
+  </nav>
+</header>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-label="Menu">
+  <div class="offcanvas-header">
+    <div class="s21-mobile-user flex-grow-1 d-flex align-items-center gap-2 me-3"><span data-guest-nav="mobile" style="display:contents"><a href="login.html" class="btn-s21 btn-s21-outline w-100" data-i18n="nav_login">Log In</a>
+      <a href="register.html" class="btn-s21 btn-s21-primary w-100" data-i18n="nav_start">Get Started</a></span></div>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <ul class="navbar-nav gap-1 mb-4">
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="index.html" data-i18n="nav_home">Home</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="subjects.html" data-i18n="nav_learn">Learn</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="videos.html" data-i18n="nav_videos">Videos</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="library.html" data-i18n="nav_books">Books</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="games.html" data-i18n="nav_games">Games</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="courses.html" data-i18n="nav_courses">Courses</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link active" href="electron21.html" aria-current="page"><i class="fa-solid fa-bolt me-1" aria-hidden="true"></i>Electron21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="kids.html" data-i18n="nav_kids">Kids</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="stationery.html" data-i18n="nav_stationery">Stationery</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="earth21.html">Earth21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="system21.html"><i class="fa-solid fa-microchip me-1" aria-hidden="true"></i>System 21</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="about.html" data-i18n="nav_about">About</a></li>
+      <li class="nav-item"><a class="nav-link s21-nav-link" href="contact.html" data-i18n="nav_contact">Contact</a></li>
+    </ul>
+    </div>
+</div>
+
+<main id="main" class="e21">
+
+  <!-- ============ HERO ============ -->
+  <section class="e21-hero" id="top" aria-labelledby="e21-title">
+    <canvas id="e21-bg" aria-hidden="true"></canvas>
+    <div class="e21-wrap e21-hero-grid">
+      <div>
+        <span class="e21-badge"><span class="dot"></span> 7 live labs · runs 100% in your browser</span>
+        <h1 class="e21-title" id="e21-title"><i class="fa-solid fa-bolt bolt" aria-hidden="true"></i><span class="e21-grad">Electron</span><span class="n">21</span></h1>
+        <p class="e21-sub lead-sub">Build circuits, emulate processors, analyse data and engineer ideas. The lab for electronics, computer engineering, data science and engineering.</p>
+        <div class="e21-type" id="e21-type" aria-live="off"></div>
+        <div class="e21-cta">
+          <a href="#labs" class="e21-btn solid"><i class="fa-solid fa-flask"></i> Open the labs</a>
+          <a href="#projects" class="e21-btn"><i class="fa-solid fa-screwdriver-wrench"></i> Browse projects</a>
+          <a href="#reference" class="e21-btn ghost"><i class="fa-solid fa-book-open"></i> Cheat sheets</a>
+        </div>
+        <div class="e21-stats">
+          <div class="e21-stat"><b data-count="7">0</b><span>Interactive labs</span></div>
+          <div class="e21-stat"><b data-count="16">0</b><span>Build projects</span></div>
+          <div class="e21-stat"><b data-count="4">0</b><span>Engineering fields</span></div>
+          <div class="e21-stat"><b>0</b><span>Installs needed</span></div>
+        </div>
+      </div>
+
+      <div class="e21-device" aria-hidden="true">
+        <span class="e21-float a">V<sub>out</sub> = 3.30 V</span>
+        <span class="e21-float b">f = 1.00 kHz</span>
+        <span class="e21-float c">Z = 0x2A</span>
+        <div class="e21-screen"><canvas id="e21-hero-scope" width="640" height="400"></canvas></div>
+        <div class="e21-device-bar"><span>CH1 ▮ CH2 ▮  2 ms/div</span><div class="e21-knobs"><span class="e21-knob"></span><span class="e21-knob" style="transform:rotate(60deg)"></span><span class="e21-knob" style="transform:rotate(-40deg)"></span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="e21-ticker" aria-hidden="true"><div class="e21-ticker-track" id="e21-ticker"></div></div>
+
+  <!-- ============ DOMAINS ============ -->
+  <section class="e21-section" id="domains" aria-labelledby="dom-h">
+    <div class="e21-wrap">
+      <span class="e21-eyebrow">// four fields, one lab</span>
+      <h2 class="e21-h2" id="dom-h">Pick a field. <span class="e21-grad">Start building.</span></h2>
+      <p class="e21-lead">Every field has its own labs, projects and cheat sheets. Click a card to jump straight to the right tools.</p>
+      <div class="e21-domains">
+        <button type="button" class="e21-domain" style="--c:#22d3ee" data-domain="electronics" data-lab="logic">
+          <div class="ic"><i class="fa-solid fa-microchip"></i></div>
+          <h3>Electronics</h3>
+          <p>Components, circuits and signals, from Ohm's law to logic gates.</p>
+          <ul><li>Logic &amp; circuit labs</li><li>Resistor colour code</li><li>Oscilloscope</li></ul>
+        </button>
+        <button type="button" class="e21-domain" style="--c:#8b5cf6" data-domain="computer" data-lab="cpu">
+          <div class="ic"><i class="fa-solid fa-memory"></i></div>
+          <h3>Computer Engineering</h3>
+          <p>How processors, memory and binary really work, step by step.</p>
+          <ul><li>8-bit CPU emulator</li><li>Number systems lab</li><li>Digital logic</li></ul>
+        </button>
+        <button type="button" class="e21-domain" style="--c:#a3e635" data-domain="data" data-lab="data">
+          <div class="ic"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>Data Science</h3>
+          <p>Load data, find patterns, fit a model and predict, in minutes.</p>
+          <ul><li>CSV data lab</li><li>Statistics &amp; charts</li><li>Linear regression</li></ul>
+        </button>
+        <button type="button" class="e21-domain" style="--c:#fbbf24" data-domain="engineering" data-lab="scope">
+          <div class="ic"><i class="fa-solid fa-gears"></i></div>
+          <h3>Engineering</h3>
+          <p>Systems thinking, signals, design and building things that work.</p>
+          <ul><li>Signal lab &amp; filters</li><li>Design process</li><li>Build projects</li></ul>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LABS ============ -->
+  <section class="e21-section" id="labs" aria-labelledby="labs-h" style="padding-top:1rem">
+    <div class="e21-wrap">
+      <span class="e21-eyebrow">// the workbench</span>
+      <h2 class="e21-h2" id="labs-h">Seven labs. <span class="e21-grad">Zero installs.</span></h2>
+      <p class="e21-lead">Real simulators and emulators that run in your browser. Flip switches, write assembly, load a CSV. Nothing is uploaded; everything stays on your device.</p>
+
+      <div class="e21-bench">
+        <div class="e21-bench-head">
+          <div class="e21-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="e21-bench-title">electron21 ~ <b id="e21-bench-name">logic-lab</b></div>
+          <button type="button" class="e21-btn sm ghost" id="e21-fs" aria-label="Toggle full screen"><i class="fa-solid fa-expand"></i></button>
+        </div>
+        <div class="e21-tabs" role="tablist" aria-label="Labs">
+          <button class="e21-tab" role="tab" id="tab-logic" aria-controls="lab-logic" aria-selected="true" data-lab="logic" style="--c:#22d3ee"><i class="fa-solid fa-diagram-project"></i> Logic Lab</button>
+          <button class="e21-tab" role="tab" id="tab-circuit" aria-controls="lab-circuit" aria-selected="false" data-lab="circuit" style="--c:#fbbf24" tabindex="-1"><i class="fa-solid fa-bolt"></i> Circuit Lab</button>
+          <button class="e21-tab" role="tab" id="tab-scope" aria-controls="lab-scope" aria-selected="false" data-lab="scope" style="--c:#f472b6" tabindex="-1"><i class="fa-solid fa-wave-square"></i> Signal Scope</button>
+          <button class="e21-tab" role="tab" id="tab-cpu" aria-controls="lab-cpu" aria-selected="false" data-lab="cpu" style="--c:#8b5cf6" tabindex="-1"><i class="fa-solid fa-microchip"></i> CPU Emulator</button>
+          <button class="e21-tab" role="tab" id="tab-numbers" aria-controls="lab-numbers" aria-selected="false" data-lab="numbers" style="--c:#22d3ee" tabindex="-1"><i class="fa-solid fa-hashtag"></i> Number Lab</button>
+          <button class="e21-tab" role="tab" id="tab-data" aria-controls="lab-data" aria-selected="false" data-lab="data" style="--c:#a3e635" tabindex="-1"><i class="fa-solid fa-chart-line"></i> Data Lab</button>
+          <button class="e21-tab" role="tab" id="tab-color" aria-controls="lab-color" aria-selected="false" data-lab="color" style="--c:#fb7185" tabindex="-1"><i class="fa-solid fa-palette"></i> Colour Code</button>
+        </div>
+        <section class="e21-panel" role="tabpanel" id="lab-logic" aria-labelledby="tab-logic" data-panel="logic"></section>
+        <section class="e21-panel" role="tabpanel" id="lab-circuit" aria-labelledby="tab-circuit" data-panel="circuit" hidden></section>
+        <section class="e21-panel" role="tabpanel" id="lab-scope" aria-labelledby="tab-scope" data-panel="scope" hidden></section>
+        <section class="e21-panel" role="tabpanel" id="lab-cpu" aria-labelledby="tab-cpu" data-panel="cpu" hidden></section>
+        <section class="e21-panel" role="tabpanel" id="lab-numbers" aria-labelledby="tab-numbers" data-panel="numbers" hidden></section>
+        <section class="e21-panel" role="tabpanel" id="lab-data" aria-labelledby="tab-data" data-panel="data" hidden></section>
+        <section class="e21-panel" role="tabpanel" id="lab-color" aria-labelledby="tab-color" data-panel="color" hidden></section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section class="e21-section" id="projects" aria-labelledby="proj-h">
+    <div class="e21-wrap">
+      <span class="e21-eyebrow">// build something real</span>
+      <h2 class="e21-h2" id="proj-h">Projects you can <span class="e21-grad">actually build</span></h2>
+      <p class="e21-lead">Sixteen step-by-step projects across all four fields, from a first blinking LED to a crop-yield prediction model. Each lists the parts, the steps and what you will learn.</p>
+      <div class="e21-filters" role="group" aria-label="Filter projects" id="e21-filters">
+        <button class="e21-chipbtn" type="button" data-f="all" aria-pressed="true">All</button>
+        <button class="e21-chipbtn" type="button" data-f="electronics" aria-pressed="false" style="--c:#22d3ee"><i class="fa-solid fa-microchip"></i> Electronics</button>
+        <button class="e21-chipbtn" type="button" data-f="computer" aria-pressed="false" style="--c:#8b5cf6"><i class="fa-solid fa-memory"></i> Computer Eng.</button>
+        <button class="e21-chipbtn" type="button" data-f="data" aria-pressed="false" style="--c:#a3e635"><i class="fa-solid fa-chart-line"></i> Data Science</button>
+        <button class="e21-chipbtn" type="button" data-f="engineering" aria-pressed="false" style="--c:#fbbf24"><i class="fa-solid fa-gears"></i> Engineering</button>
+      </div>
+      <div class="e21-proj-grid" id="e21-projects"></div>
+    </div>
+  </section>
+
+  <!-- ============ REFERENCE ============ -->
+  <section class="e21-section" id="reference" aria-labelledby="ref-h">
+    <div class="e21-wrap">
+      <span class="e21-eyebrow">// systems &amp; cheat sheets</span>
+      <h2 class="e21-h2" id="ref-h">The cheat sheets <span class="e21-grad">engineers keep open</span></h2>
+      <p class="e21-lead">Compact references for formulas, components, protocols and workflows.</p>
+      <div class="e21-ref">
+        <details open>
+          <summary><span><i class="fa-solid fa-bolt"></i>Ohm's law &amp; power</span></summary>
+          <div class="in">
+            <table class="e21-table"><tr><th>Find</th><th>Formula</th></tr>
+              <tr><td>Voltage V</td><td><code>V = I × R</code></td></tr>
+              <tr><td>Current I</td><td><code>I = V ÷ R</code></td></tr>
+              <tr><td>Resistance R</td><td><code>R = V ÷ I</code></td></tr>
+              <tr><td>Power P</td><td><code>P = V × I = I²R = V²/R</code></td></tr>
+              <tr><td>Series</td><td><code>R = R1 + R2 + …</code></td></tr>
+              <tr><td>Parallel</td><td><code>1/R = 1/R1 + 1/R2 + …</code></td></tr>
+              <tr><td>Divider</td><td><code>Vout = Vin × R2 ÷ (R1 + R2)</code></td></tr>
+              <tr><td>RC time constant</td><td><code>τ = R × C</code></td></tr>
+            </table>
+          </div>
+        </details>
+        <details>
+          <summary><span><i class="fa-solid fa-diagram-project"></i>Boolean algebra &amp; gates</span></summary>
+          <div class="in">
+            <table class="e21-table"><tr><th>Law</th><th>Expression</th></tr>
+              <tr><td>Identity</td><td><code>A·1 = A &nbsp; A+0 = A</code></td></tr>
+              <tr><td>Null</td><td><code>A·0 = 0 &nbsp; A+1 = 1</code></td></tr>
+              <tr><td>Complement</td><td><code>A·A' = 0 &nbsp; A+A' = 1</code></td></tr>
+              <tr><td>De Morgan</td><td><code>(A·B)' = A'+B' &nbsp; (A+B)' = A'·B'</code></td></tr>
+              <tr><td>Absorption</td><td><code>A + A·B = A</code></td></tr>
+              <tr><td>XOR</td><td><code>A⊕B = A·B' + A'·B</code></td></tr>
+            </table>
+            <p class="mt-2 mb-0">NAND and NOR are <b>universal gates</b>: any digital circuit can be built from either one alone.</p>
+          </div>
+        </details>
+        <details>
+          <summary><span><i class="fa-solid fa-plug"></i>Common components</span></summary>
+          <div class="in">
+            <table class="e21-table left"><tr><th>Part</th><th>Job</th></tr>
+              <tr><td>Resistor</td><td>limits current, sets voltages</td></tr>
+              <tr><td>Capacitor</td><td>stores charge, smooths and filters</td></tr>
+              <tr><td>Diode / LED</td><td>current flows one way (LED also lights)</td></tr>
+              <tr><td>Transistor</td><td>a switch or amplifier controlled by a small signal</td></tr>
+              <tr><td>555 timer</td><td>makes pulses and delays</td></tr>
+              <tr><td>Op-amp</td><td>amplifies the difference between two inputs</td></tr>
+              <tr><td>Microcontroller</td><td>tiny computer: reads sensors, drives outputs</td></tr>
+            </table>
+          </div>
+        </details>
+        <details>
+          <summary><span><i class="fa-solid fa-network-wired"></i>UART, I²C and SPI</span></summary>
+          <div class="in">
+            <table class="e21-table left"><tr><th></th><th>UART</th><th>I²C</th><th>SPI</th></tr>
+              <tr><td>Wires</td><td>2 (TX, RX)</td><td>2 (SDA, SCL)</td><td>4+ (MOSI, MISO, SCK, CS)</td></tr>
+              <tr><td>Devices</td><td>point to point</td><td>many, by address</td><td>many, one CS each</td></tr>
+              <tr><td>Speed</td><td>slow to medium</td><td>100 k–400 kHz+</td><td>fastest (MHz)</td></tr>
+              <tr><td>Clock</td><td>none (async)</td><td>shared</td><td>shared</td></tr>
+              <tr><td>Typical use</td><td>GPS, serial console</td><td>sensors, OLED</td><td>SD card, displays</td></tr>
+            </table>
+          </div>
+        </details>
+        <details>
+          <summary><span><i class="fa-solid fa-hashtag"></i>Number systems</span></summary>
+          <div class="in">
+            <table class="e21-table"><tr><th>Dec</th><th>Bin</th><th>Hex</th><th>Dec</th><th>Bin</th><th>Hex</th></tr>
+              <tr><td>0</td><td>0000</td><td>0</td><td>8</td><td>1000</td><td>8</td></tr>
+              <tr><td>1</td><td>0001</td><td>1</td><td>9</td><td>1001</td><td>9</td></tr>
+              <tr><td>2</td><td>0010</td><td>2</td><td>10</td><td>1010</td><td>A</td></tr>
+              <tr><td>3</td><td>0011</td><td>3</td><td>11</td><td>1011</td><td>B</td></tr>
+              <tr><td>4</td><td>0100</td><td>4</td><td>12</td><td>1100</td><td>C</td></tr>
+              <tr><td>5</td><td>0101</td><td>5</td><td>13</td><td>1101</td><td>D</td></tr>
+              <tr><td>6</td><td>0110</td><td>6</td><td>14</td><td>1110</td><td>E</td></tr>
+              <tr><td>7</td><td>0111</td><td>7</td><td>15</td><td>1111</td><td>F</td></tr>
+            </table>
+            <p class="mt-2 mb-0">Two's complement: to negate, <b>invert all bits and add 1</b>. In 8 bits, <code>11111111</code> = −1.</p>
+          </div>
+        </details>
+        <details>
+          <summary><span><i class="fa-solid fa-chart-pie"></i>Data science workflow</span></summary>
+          <div class="in">
+            <ol class="mb-0">
+              <li><b>Ask</b> a clear question.</li>
+              <li><b>Collect</b> data, with permission.</li>
+              <li><b>Clean</b>: fix missing values, duplicates, units.</li>
+              <li><b>Explore</b>: summary stats and charts.</li>
+              <li><b>Model</b>: start simple (average, then regression).</li>
+              <li><b>Validate</b> on data the model has not seen.</li>
+              <li><b>Communicate</b> findings and their limits.</li>
+            </ol>
+          </div>
+        </details>
+        <details>
+          <summary><span><i class="fa-solid fa-compass-drafting"></i>Engineering design process</span></summary>
+          <div class="in">
+            <ol class="mb-0">
+              <li><b>Define</b> the problem and constraints (cost, time, safety).</li>
+              <li><b>Research</b> existing solutions.</li>
+              <li><b>Brainstorm</b> several ideas, then choose one.</li>
+              <li><b>Prototype</b> a small version.</li>
+              <li><b>Test</b> against clear measurements.</li>
+              <li><b>Improve</b> and repeat. Iteration is the method.</li>
+            </ol>
+          </div>
+        </details>
+        <details>
+          <summary><span><i class="fa-solid fa-shield-halved"></i>Lab safety rules</span></summary>
+          <div class="in">
+            <ul class="mb-0">
+              <li>Use <b>batteries or low-voltage USB (5 V)</b>. Never experiment with mains electricity.</li>
+              <li>Work with an adult when using a soldering iron, hot glue or tools.</li>
+              <li>Never short-circuit a battery, especially lithium cells.</li>
+              <li>Always add a resistor in series with an LED.</li>
+              <li>Disconnect power before changing wiring.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PATHS ============ -->
+  <section class="e21-section" id="paths" aria-labelledby="paths-h" style="padding-top:1rem">
+    <div class="e21-wrap">
+      <span class="e21-eyebrow">// keep learning</span>
+      <h2 class="e21-h2" id="paths-h">Go deeper with <span class="e21-grad">full courses</span></h2>
+      <div class="e21-paths">
+        <a class="e21-path" style="--c:#22d3ee" href="courses.html?q=electronics"><i class="fa-solid fa-bolt big"></i><h3>Electronics courses</h3><p>Structured lessons on circuits, components and building projects.</p><span class="go">Browse courses →</span></a>
+        <a class="e21-path" style="--c:#8b5cf6" href="course.html?slug=artificial-intelligence-machine-learning"><i class="fa-solid fa-brain big"></i><h3>AI &amp; Machine Learning</h3><p>Seven modules from data and models to neural networks and ethics.</p><span class="go">Start the course →</span></a>
+        <a class="e21-path" style="--c:#a3e635" href="smart21code.html"><i class="fa-solid fa-code big"></i><h3>Smart21Code</h3><p>Write and run code in your browser with guided tutorials.</p><span class="go">Open Smart21Code →</span></a>
+        <a class="e21-path" style="--c:#fbbf24" href="game-electric-circuit.html"><i class="fa-solid fa-gamepad big"></i><h3>Circuit game</h3><p>Learn how current flows by solving electric-circuit puzzles.</p><span class="go">Play now →</span></a>
+        <a class="e21-path" style="--c:#f472b6" href="system21.html"><i class="fa-solid fa-toolbox big"></i><h3>System21 tools</h3><p>Free everyday tools: QR codes, converters, PDF and image utilities.</p><span class="go">Open the tools →</span></a>
+      </div>
+
+      <div class="e21-cta-band">
+        <h2><span class="e21-grad">Build. Simulate. Understand.</span></h2>
+        <p>Pick a lab and make something happen in the next five minutes.</p>
+        <div class="e21-cta" style="justify-content:center">
+          <a href="#labs" class="e21-btn solid"><i class="fa-solid fa-flask"></i> Launch a lab</a>
+          <a href="register.html" class="e21-btn"><i class="fa-solid fa-user-plus"></i> Create a free account</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <dialog class="e21-dialog" id="e21-dialog" aria-labelledby="e21-dlg-title"><div class="e21-dlg-in" id="e21-dlg"></div></dialog>
+</main>
+
+
+<footer class="s21-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-3">
+        <div class="s21-logo mb-3" style="color:#fff">
+          <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2C8 2 6 4.5 6 7c0 1.2.4 2 1 2.7C6.4 10.6 6 11.7 6 13c0 3 2 5 2 5v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2s2-2 2-5c0-1.3-.4-2.4-1-3.3.6-.7 1-1.5 1-2.7 0-2.5-2-5-6-5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+          Smart<span class="brand-21">21</span>Brain
+        </div>
+        <p style="font-size:.88rem">Earth21 — one home for every Smart21 system.</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="#" class="social-circle" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="social-circle" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="social-circle" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="social-circle" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6>Earth21 systems</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="school.html">School System</a></li>
+          <li><a href="shop.html">Smart21Shop</a></li>
+          <li><a href="stationery.html">Stationery OS</a></li>
+          <li><a href="institution.html">Smart21Institution</a></li>
+          <li><a href="earth21.html">Daily Tasks (soon)</a></li>
+          <li><a href="earth21.html">Marketing (soon)</a></li>
+          <li><a href="earth21.html">Social (soon)</a></li>
+          <li><a href="earth21.html">Universities (soon)</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_quicklinks">Quick Links</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="index.html" data-i18n="nav_home">Home</a></li>
+          <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+          <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+          <li><a href="library.html" data-i18n="nav_books">Books</a></li>
+          <li><a href="games.html" data-i18n="nav_games">Games</a></li>
+          <li><a href="blog.html" data-i18n="nav_blog">Blog</a></li>
+          <li><a href="about.html" data-i18n="nav_about">About</a></li>
+          <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-3">
+        <h6 data-i18n="footer_resources">Resources</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="library.html" data-i18n="footer_library">Library</a></li>
+          <li><a href="quiz.html" data-i18n="footer_quizzes">Quizzes</a></li>
+          <li><a href="teachers.html" data-i18n="footer_teacher_resources">Teacher Resources</a></li>
+          <li><a href="parents.html" data-i18n="footer_parent_resources">Parent Resources</a></li>
+          <li><a href="pricing.html" data-i18n="footer_pricing">Pricing</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-wrap justify-content-between gap-2 mt-5">
+      <span data-i18n="footer_copyright">© 2026 Smart21Brain. All rights reserved.</span>
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#" data-i18n="footer_privacy">Privacy Policy</a>
+        <a href="#" data-i18n="footer_terms">Terms</a>
+        <a href="#" data-i18n="footer_cookies">Cookie Policy</a>
+        <a href="#" data-i18n="footer_childsafety">Child Safety</a>
+        <a href="#" data-i18n="footer_community">Community Guidelines</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="floating-stack">
+  <button class="fab top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+  <button class="fab-avatar" data-ai-trigger aria-label="Open AI learning assistant — Study Buddy">
+    <img src="images/logo/coool.png" alt="Study Buddy AI assistant — Smart21Brain logo" loading="lazy">
+  </button>
+  <a class="fab whatsapp" href="https://wa.me/255000000000" aria-label="Chat on WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+  <a class="fab facebook" href="#" aria-label="Follow us on Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+  <a class="fab instagram" href="#" aria-label="Follow us on Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+  <a class="fab tiktok" href="#" aria-label="Follow us on TikTok" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i></a>
+</div>
+
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="Smart21Brain logo" class="ai-head-logo"> Study Buddy</span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai">Hi! Ask me to explain a topic or suggest a video or book to try next.</div></div>
+  <p class="ai-disclaimer">AI-generated answers are separate from verified lessons — always check with your teacher.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" aria-label="Ask the study buddy">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="js/darkmode.js"></script>
+<script src="js/polish-animations.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/ai-assistant.js?v=4"></script>
+<script src="js/main.js?v=20261008"></script>
+<script src="js/nav-account.js"></script>
+<script>AOS.init({duration:650,once:true,offset:60});</script>
+<script src="js/e21-core.js?v=1"></script>
+<script src="js/e21-labs-a.js?v=1"></script>
+<script src="js/e21-labs-b.js?v=1"></script>
+<script src="js/e21-labs-c.js?v=1"></script>
+<script src="js/e21-projects.js?v=1"></script>
+<script src="js/cookie-consent.js"></script>
+</body>
+</html>
