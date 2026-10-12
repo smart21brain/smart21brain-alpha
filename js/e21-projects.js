@@ -5,10 +5,10 @@
   var $ = E.$, $$ = E.$$, esc = E.esc;
 
   var DOM = {
-    electronics: { name: 'Electronics', color: '#22d3ee' },
-    computer: { name: 'Computer Eng.', color: '#8b5cf6' },
-    data: { name: 'Data Science', color: '#a3e635' },
-    engineering: { name: 'Engineering', color: '#fbbf24' }
+    electronics: { name: 'Electronics', color: 'var(--e-cyan)' },
+    computer: { name: 'Computer Eng.', color: 'var(--e-violet)' },
+    data: { name: 'Data Science', color: 'var(--e-lime)' },
+    engineering: { name: 'Engineering', color: 'var(--e-amber)' }
   };
   var SAFE = 'Use only batteries or a 5 V USB supply. Never work on mains electricity. Ask an adult for help with soldering irons, hot glue and tools, and disconnect power before changing the wiring.';
 

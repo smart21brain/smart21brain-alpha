@@ -19,8 +19,8 @@
 <meta property="og:description" content="Electron21 is the Smart21Brain lab for electronics, computer engineering, data science and engineering: free in-browser logic, circuit, CPU, signal and data labs, build projects and cheat sheets.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/electron21.css?v=1">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/electron21.css?v=2">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to main content</a>
@@ -128,29 +128,29 @@
   <!-- ============ DOMAINS ============ -->
   <section class="e21-section" id="domains" aria-labelledby="dom-h">
     <div class="e21-wrap">
-      <span class="e21-eyebrow">// four fields, one lab</span>
+      <span class="e21-eyebrow">four fields, one lab</span>
       <h2 class="e21-h2" id="dom-h">Pick a field. <span class="e21-grad">Start building.</span></h2>
       <p class="e21-lead">Every field has its own labs, projects and cheat sheets. Click a card to jump straight to the right tools.</p>
       <div class="e21-domains">
-        <button type="button" class="e21-domain" style="--c:#22d3ee" data-domain="electronics" data-lab="logic">
+        <button type="button" class="e21-domain" style="--c:var(--e-cyan)" data-domain="electronics" data-lab="logic">
           <div class="ic"><i class="fa-solid fa-microchip"></i></div>
           <h3>Electronics</h3>
           <p>Components, circuits and signals, from Ohm's law to logic gates.</p>
           <ul><li>Logic &amp; circuit labs</li><li>Resistor colour code</li><li>Oscilloscope</li></ul>
         </button>
-        <button type="button" class="e21-domain" style="--c:#8b5cf6" data-domain="computer" data-lab="cpu">
+        <button type="button" class="e21-domain" style="--c:var(--e-violet)" data-domain="computer" data-lab="cpu">
           <div class="ic"><i class="fa-solid fa-memory"></i></div>
           <h3>Computer Engineering</h3>
           <p>How processors, memory and binary really work, step by step.</p>
           <ul><li>8-bit CPU emulator</li><li>Number systems lab</li><li>Digital logic</li></ul>
         </button>
-        <button type="button" class="e21-domain" style="--c:#a3e635" data-domain="data" data-lab="data">
+        <button type="button" class="e21-domain" style="--c:var(--e-lime)" data-domain="data" data-lab="data">
           <div class="ic"><i class="fa-solid fa-chart-line"></i></div>
           <h3>Data Science</h3>
           <p>Load data, find patterns, fit a model and predict, in minutes.</p>
           <ul><li>CSV data lab</li><li>Statistics &amp; charts</li><li>Linear regression</li></ul>
         </button>
-        <button type="button" class="e21-domain" style="--c:#fbbf24" data-domain="engineering" data-lab="scope">
+        <button type="button" class="e21-domain" style="--c:var(--e-amber)" data-domain="engineering" data-lab="scope">
           <div class="ic"><i class="fa-solid fa-gears"></i></div>
           <h3>Engineering</h3>
           <p>Systems thinking, signals, design and building things that work.</p>
@@ -163,7 +163,7 @@
   <!-- ============ LABS ============ -->
   <section class="e21-section" id="labs" aria-labelledby="labs-h" style="padding-top:1rem">
     <div class="e21-wrap">
-      <span class="e21-eyebrow">// the workbench</span>
+      <span class="e21-eyebrow">the workbench</span>
       <h2 class="e21-h2" id="labs-h">Seven labs. <span class="e21-grad">Zero installs.</span></h2>
       <p class="e21-lead">Real simulators and emulators that run in your browser. Flip switches, write assembly, load a CSV. Nothing is uploaded; everything stays on your device.</p>
 
@@ -174,13 +174,13 @@
           <button type="button" class="e21-btn sm ghost" id="e21-fs" aria-label="Toggle full screen"><i class="fa-solid fa-expand"></i></button>
         </div>
         <div class="e21-tabs" role="tablist" aria-label="Labs">
-          <button class="e21-tab" role="tab" id="tab-logic" aria-controls="lab-logic" aria-selected="true" data-lab="logic" style="--c:#22d3ee"><i class="fa-solid fa-diagram-project"></i> Logic Lab</button>
-          <button class="e21-tab" role="tab" id="tab-circuit" aria-controls="lab-circuit" aria-selected="false" data-lab="circuit" style="--c:#fbbf24" tabindex="-1"><i class="fa-solid fa-bolt"></i> Circuit Lab</button>
-          <button class="e21-tab" role="tab" id="tab-scope" aria-controls="lab-scope" aria-selected="false" data-lab="scope" style="--c:#f472b6" tabindex="-1"><i class="fa-solid fa-wave-square"></i> Signal Scope</button>
-          <button class="e21-tab" role="tab" id="tab-cpu" aria-controls="lab-cpu" aria-selected="false" data-lab="cpu" style="--c:#8b5cf6" tabindex="-1"><i class="fa-solid fa-microchip"></i> CPU Emulator</button>
-          <button class="e21-tab" role="tab" id="tab-numbers" aria-controls="lab-numbers" aria-selected="false" data-lab="numbers" style="--c:#22d3ee" tabindex="-1"><i class="fa-solid fa-hashtag"></i> Number Lab</button>
-          <button class="e21-tab" role="tab" id="tab-data" aria-controls="lab-data" aria-selected="false" data-lab="data" style="--c:#a3e635" tabindex="-1"><i class="fa-solid fa-chart-line"></i> Data Lab</button>
-          <button class="e21-tab" role="tab" id="tab-color" aria-controls="lab-color" aria-selected="false" data-lab="color" style="--c:#fb7185" tabindex="-1"><i class="fa-solid fa-palette"></i> Colour Code</button>
+          <button class="e21-tab" role="tab" id="tab-logic" aria-controls="lab-logic" aria-selected="true" data-lab="logic" style="--c:var(--e-cyan)"><i class="fa-solid fa-diagram-project"></i> Logic Lab</button>
+          <button class="e21-tab" role="tab" id="tab-circuit" aria-controls="lab-circuit" aria-selected="false" data-lab="circuit" style="--c:var(--e-amber)" tabindex="-1"><i class="fa-solid fa-bolt"></i> Circuit Lab</button>
+          <button class="e21-tab" role="tab" id="tab-scope" aria-controls="lab-scope" aria-selected="false" data-lab="scope" style="--c:var(--e-pink)" tabindex="-1"><i class="fa-solid fa-wave-square"></i> Signal Scope</button>
+          <button class="e21-tab" role="tab" id="tab-cpu" aria-controls="lab-cpu" aria-selected="false" data-lab="cpu" style="--c:var(--e-violet)" tabindex="-1"><i class="fa-solid fa-microchip"></i> CPU Emulator</button>
+          <button class="e21-tab" role="tab" id="tab-numbers" aria-controls="lab-numbers" aria-selected="false" data-lab="numbers" style="--c:var(--e-cyan)" tabindex="-1"><i class="fa-solid fa-hashtag"></i> Number Lab</button>
+          <button class="e21-tab" role="tab" id="tab-data" aria-controls="lab-data" aria-selected="false" data-lab="data" style="--c:var(--e-lime)" tabindex="-1"><i class="fa-solid fa-chart-line"></i> Data Lab</button>
+          <button class="e21-tab" role="tab" id="tab-color" aria-controls="lab-color" aria-selected="false" data-lab="color" style="--c:var(--e-red)" tabindex="-1"><i class="fa-solid fa-palette"></i> Colour Code</button>
         </div>
         <section class="e21-panel" role="tabpanel" id="lab-logic" aria-labelledby="tab-logic" data-panel="logic"></section>
         <section class="e21-panel" role="tabpanel" id="lab-circuit" aria-labelledby="tab-circuit" data-panel="circuit" hidden></section>
@@ -196,15 +196,15 @@
   <!-- ============ PROJECTS ============ -->
   <section class="e21-section" id="projects" aria-labelledby="proj-h">
     <div class="e21-wrap">
-      <span class="e21-eyebrow">// build something real</span>
+      <span class="e21-eyebrow">build something real</span>
       <h2 class="e21-h2" id="proj-h">Projects you can <span class="e21-grad">actually build</span></h2>
       <p class="e21-lead">Sixteen step-by-step projects across all four fields, from a first blinking LED to a crop-yield prediction model. Each lists the parts, the steps and what you will learn.</p>
       <div class="e21-filters" role="group" aria-label="Filter projects" id="e21-filters">
         <button class="e21-chipbtn" type="button" data-f="all" aria-pressed="true">All</button>
-        <button class="e21-chipbtn" type="button" data-f="electronics" aria-pressed="false" style="--c:#22d3ee"><i class="fa-solid fa-microchip"></i> Electronics</button>
-        <button class="e21-chipbtn" type="button" data-f="computer" aria-pressed="false" style="--c:#8b5cf6"><i class="fa-solid fa-memory"></i> Computer Eng.</button>
-        <button class="e21-chipbtn" type="button" data-f="data" aria-pressed="false" style="--c:#a3e635"><i class="fa-solid fa-chart-line"></i> Data Science</button>
-        <button class="e21-chipbtn" type="button" data-f="engineering" aria-pressed="false" style="--c:#fbbf24"><i class="fa-solid fa-gears"></i> Engineering</button>
+        <button class="e21-chipbtn" type="button" data-f="electronics" aria-pressed="false" style="--c:var(--e-cyan)"><i class="fa-solid fa-microchip"></i> Electronics</button>
+        <button class="e21-chipbtn" type="button" data-f="computer" aria-pressed="false" style="--c:var(--e-violet)"><i class="fa-solid fa-memory"></i> Computer Eng.</button>
+        <button class="e21-chipbtn" type="button" data-f="data" aria-pressed="false" style="--c:var(--e-lime)"><i class="fa-solid fa-chart-line"></i> Data Science</button>
+        <button class="e21-chipbtn" type="button" data-f="engineering" aria-pressed="false" style="--c:var(--e-amber)"><i class="fa-solid fa-gears"></i> Engineering</button>
       </div>
       <div class="e21-proj-grid" id="e21-projects"></div>
     </div>
@@ -213,7 +213,7 @@
   <!-- ============ REFERENCE ============ -->
   <section class="e21-section" id="reference" aria-labelledby="ref-h">
     <div class="e21-wrap">
-      <span class="e21-eyebrow">// systems &amp; cheat sheets</span>
+      <span class="e21-eyebrow">systems &amp; cheat sheets</span>
       <h2 class="e21-h2" id="ref-h">The cheat sheets <span class="e21-grad">engineers keep open</span></h2>
       <p class="e21-lead">Compact references for formulas, components, protocols and workflows.</p>
       <div class="e21-ref">
@@ -334,14 +334,14 @@
   <!-- ============ PATHS ============ -->
   <section class="e21-section" id="paths" aria-labelledby="paths-h" style="padding-top:1rem">
     <div class="e21-wrap">
-      <span class="e21-eyebrow">// keep learning</span>
+      <span class="e21-eyebrow">keep learning</span>
       <h2 class="e21-h2" id="paths-h">Go deeper with <span class="e21-grad">full courses</span></h2>
       <div class="e21-paths">
-        <a class="e21-path" style="--c:#22d3ee" href="courses.html?q=electronics"><i class="fa-solid fa-bolt big"></i><h3>Electronics courses</h3><p>Structured lessons on circuits, components and building projects.</p><span class="go">Browse courses →</span></a>
-        <a class="e21-path" style="--c:#8b5cf6" href="course.html?slug=artificial-intelligence-machine-learning"><i class="fa-solid fa-brain big"></i><h3>AI &amp; Machine Learning</h3><p>Seven modules from data and models to neural networks and ethics.</p><span class="go">Start the course →</span></a>
-        <a class="e21-path" style="--c:#a3e635" href="smart21code.html"><i class="fa-solid fa-code big"></i><h3>Smart21Code</h3><p>Write and run code in your browser with guided tutorials.</p><span class="go">Open Smart21Code →</span></a>
-        <a class="e21-path" style="--c:#fbbf24" href="game-electric-circuit.html"><i class="fa-solid fa-gamepad big"></i><h3>Circuit game</h3><p>Learn how current flows by solving electric-circuit puzzles.</p><span class="go">Play now →</span></a>
-        <a class="e21-path" style="--c:#f472b6" href="system21.html"><i class="fa-solid fa-toolbox big"></i><h3>System21 tools</h3><p>Free everyday tools: QR codes, converters, PDF and image utilities.</p><span class="go">Open the tools →</span></a>
+        <a class="e21-path" style="--c:var(--e-cyan)" href="courses.html?q=electronics"><i class="fa-solid fa-bolt big"></i><h3>Electronics courses</h3><p>Structured lessons on circuits, components and building projects.</p><span class="go">Browse courses →</span></a>
+        <a class="e21-path" style="--c:var(--e-violet)" href="course.html?slug=artificial-intelligence-machine-learning"><i class="fa-solid fa-brain big"></i><h3>AI &amp; Machine Learning</h3><p>Seven modules from data and models to neural networks and ethics.</p><span class="go">Start the course →</span></a>
+        <a class="e21-path" style="--c:var(--e-lime)" href="smart21code.html"><i class="fa-solid fa-code big"></i><h3>Smart21Code</h3><p>Write and run code in your browser with guided tutorials.</p><span class="go">Open Smart21Code →</span></a>
+        <a class="e21-path" style="--c:var(--e-amber)" href="game-electric-circuit.html"><i class="fa-solid fa-gamepad big"></i><h3>Circuit game</h3><p>Learn how current flows by solving electric-circuit puzzles.</p><span class="go">Play now →</span></a>
+        <a class="e21-path" style="--c:var(--e-pink)" href="system21.html"><i class="fa-solid fa-toolbox big"></i><h3>System21 tools</h3><p>Free everyday tools: QR codes, converters, PDF and image utilities.</p><span class="go">Open the tools →</span></a>
       </div>
 
       <div class="e21-cta-band">
