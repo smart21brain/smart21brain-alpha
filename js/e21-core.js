@@ -41,6 +41,17 @@
 
   /* ---------- tabs ---------- */
   var tabs = E.$$('.e21-tab'), benchName = E.$('#e21-bench-name');
+  /* each lab links to the matching lesson of the Electronics for Beginners course */
+  var COURSE_URL = 'course.html?slug=electronics-for-beginners';
+  var LESSONS = { logic: [20, 'Logic gates'], circuit: [5, "Ohm's law"], scope: [19, 'Analog vs digital and binary'], cpu: [22, 'Microcontrollers and Arduino'], numbers: [19, 'Analog vs digital and binary'], color: [6, 'Resistors and the colour code'] };
+  var hint = E.$('#e21-lesson-hint');
+  function updateHint(name) {
+    if (!hint) return;
+    var l = LESSONS[name];
+    if (!l) { hint.hidden = true; return; }
+    hint.hidden = false;
+    hint.innerHTML = '<i class="fa-solid fa-graduation-cap" aria-hidden="true"></i><span>Learning this? Read the lesson <a href="lesson.html?id=electronics-for-beginners::' + l[0] + '">' + l[1] + '</a> in the <a href="' + COURSE_URL + '">Electronics for Beginners</a> course.</span>';
+  }
   function activate(name, focus) {
     tabs.forEach(function (t) {
       var on = t.dataset.lab === name;
@@ -54,6 +65,8 @@
     if (panel && !E.built[name] && E.labs[name]) {
       try { E.labs[name](panel); E.built[name] = true; } catch (err) { panel.innerHTML = '<p class="e21-note">This lab failed to load: ' + E.esc(err.message) + '</p>'; console.error(err); }
     }
+    updateHint(name);
+    var wbl = E.$('#e21-wb-link'); if (wbl) wbl.href = 'electron21-workbench.html#lab=' + name;
     document.dispatchEvent(new CustomEvent('e21:lab', { detail: name }));
   }
   E.openLab = function (name, scroll) {
@@ -67,6 +80,11 @@
       if (k === 'ArrowRight') j = (i + 1) % n; else if (k === 'ArrowLeft') j = (i - 1 + n) % n; else if (k === 'Home') j = 0; else if (k === 'End') j = n - 1;
       if (j >= 0) { e.preventDefault(); activate(tabs[j].dataset.lab, true); }
     });
+  });
+  // same-page links such as <a href="#lab=circuit"> switch the lab and scroll to the bench
+  window.addEventListener('hashchange', function () {
+    var mm = location.hash.match(/lab=(\w+)/);
+    if (mm && E.$('[data-panel="' + mm[1] + '"]')) E.openLab(mm[1], true);
   });
   E.$$('.e21-domain').forEach(function (b) {
     b.addEventListener('click', function () {
@@ -206,5 +224,9 @@
   })();
 
   // Labs are registered by later scripts; build the first tab once they have loaded.
-  window.addEventListener('load', function () { activate(first, false); });
+  window.addEventListener('load', function () {
+    activate(first, false);
+    // arriving from a course lesson (electron21.html#lab=circuit): jump straight to the bench
+    if (m && first === m[1]) setTimeout(function () { var b = E.$('#labs'); if (b) b.scrollIntoView({ block: 'start' }); }, 250);
+  });
 })();

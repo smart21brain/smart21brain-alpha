@@ -20,7 +20,7 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/electron21.css?v=2">
+<link rel="stylesheet" href="css/electron21.css?v=6">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to main content</a>
@@ -107,7 +107,7 @@
         </div>
         <div class="e21-stats">
           <div class="e21-stat"><b data-count="7">0</b><span>Interactive labs</span></div>
-          <div class="e21-stat"><b data-count="16">0</b><span>Build projects</span></div>
+          <div class="e21-stat"><b data-count="30">0</b><span>Build projects</span></div>
           <div class="e21-stat"><b data-count="4">0</b><span>Engineering fields</span></div>
           <div class="e21-stat"><b>0</b><span>Installs needed</span></div>
         </div>
@@ -160,17 +160,86 @@
     </div>
   </section>
 
+  <!-- ============ THE ELECTRON ============ -->
+  <section class="e21-section" id="electron" aria-labelledby="el-h">
+    <div class="e21-wrap">
+      <span class="e21-eyebrow">the electron</span>
+      <h2 class="e21-h2" id="el-h">Meet the <span class="e21-grad">electron</span></h2>
+      <p class="e21-lead">Every circuit, chip and screen in this lab runs on one tiny particle. Here is what it is, how it behaves in a wire, and how it grew into the computer in your pocket.</p>
+
+      <div class="e21-facts">
+        <div class="e21-fact" style="--c:var(--e-cyan)"><i class="fa-solid fa-plus-minus" aria-hidden="true"></i><small>Charge</small><b>−1.602 × 10<sup>−19</sup> C</b><span>The smallest free charge in everyday electronics. Symbol <code>e⁻</code>.</span></div>
+        <div class="e21-fact" style="--c:var(--e-violet)"><i class="fa-solid fa-weight-hanging" aria-hidden="true"></i><small>Mass</small><b>9.109 × 10<sup>−31</sup> kg</b><span>About 1⁄1836 of a proton, so it is easy to push around.</span></div>
+        <div class="e21-fact" style="--c:var(--e-amber)"><i class="fa-solid fa-flask" aria-hidden="true"></i><small>Discovered</small><b>1897</b><span>By J. J. Thomson, while studying cathode rays at Cambridge.</span></div>
+        <div class="e21-fact" style="--c:var(--e-lime)"><i class="fa-solid fa-bolt" aria-hidden="true"></i><small>In one ampere</small><b>6.24 × 10<sup>18</sup> per second</b><span>That many electrons pass any point of the wire every second.</span></div>
+        <div class="e21-fact" style="--c:var(--e-pink)"><i class="fa-solid fa-atom" aria-hidden="true"></i><small>Fundamental particle</small><b>Spin ½, no known parts</b><span>It is a lepton: not made of anything smaller that we have found.</span></div>
+        <div class="e21-fact" style="--c:var(--e-cyan)"><i class="fa-solid fa-circle-nodes" aria-hidden="true"></i><small>Free electrons in copper</small><b>8.5 × 10<sup>28</sup> per m³</b><span>About one free electron per copper atom, which is why copper conducts so well.</span></div>
+      </div>
+
+      <div class="e21-el-grid">
+        <div class="e21-card e21-drift">
+          <h4>Electrons in a copper wire</h4>
+          <canvas id="el-canvas" role="img" aria-label="Animation of free electrons drifting through a lattice of copper ions in a wire"></canvas>
+          <div class="e21-row mt-3">
+            <div class="e21-field"><label for="el-i">Current: <span id="el-i-v">1.0 A</span></label><input class="e21-range" type="range" id="el-i" min="0" max="10" step="0.1" value="1"></div>
+            <div class="e21-field"><label for="el-a">Wire cross-section</label>
+              <select class="e21-sel" id="el-a"><option value="0.5">0.5 mm² thin</option><option value="1" selected>1 mm² lamp</option><option value="2.5">2.5 mm² socket</option><option value="6">6 mm² cooker</option></select></div>
+          </div>
+          <div class="e21-kv mt-3">
+            <div><small>Electrons per second</small><b id="el-eps">—</b></div>
+            <div><small>Drift speed</small><b id="el-v">—</b></div>
+            <div><small>Time to drift 1 metre</small><b id="el-t">—</b></div>
+          </div>
+          <p class="e21-note">Each electron drifts very slowly, yet a lamp lights at once. The electric field travels along the wire at a large fraction of the speed of light and pushes every electron together, like water already filling a pipe.</p>
+        </div>
+
+        <div class="e21-card">
+          <h4>Electron, proton, neutron</h4>
+          <div class="e21-dtable-wrap" style="max-height:none">
+            <table class="e21-table left">
+              <tr><th>Particle</th><th>Charge</th><th>Mass</th><th>Where</th></tr>
+              <tr><td><b>Electron</b></td><td>−1</td><td>9.11 × 10<sup>−31</sup> kg</td><td>Around the nucleus</td></tr>
+              <tr><td><b>Proton</b></td><td>+1</td><td>1.673 × 10<sup>−27</sup> kg</td><td>In the nucleus</td></tr>
+              <tr><td><b>Neutron</b></td><td>0</td><td>1.675 × 10<sup>−27</sup> kg</td><td>In the nucleus</td></tr>
+            </table>
+          </div>
+          <h4 style="margin-top:1.2rem">Why it matters in electronics</h4>
+          <ul class="e21-el-list">
+            <li><b>Conductors</b> (copper, silver, gold) have loosely held outer electrons that move freely.</li>
+            <li><b>Insulators</b> (rubber, glass, plastic) hold their electrons tightly, so current cannot flow.</li>
+            <li><b>Semiconductors</b> (silicon has 4 outer electrons) can be switched between the two. That is how a transistor works.</li>
+            <li><b>Conventional current</b> is drawn from + to −, the opposite way to the electrons. Benjamin Franklin chose it more than a century before the electron was found, and every circuit diagram still uses it.</li>
+            <li><b>Electron volt (eV)</b> is the energy of one electron moved through 1 volt: 1.602 × 10<sup>−19</sup> J. Silicon needs about 1.12 eV to free an electron.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="e21-h3">From one electron to your phone</h3>
+      <ol class="e21-timeline">
+        <li><time>1897</time><b>The electron is discovered</b><span>J. J. Thomson shows that cathode rays are streams of tiny negative particles.</span></li>
+        <li><time>1904</time><b>The vacuum tube</b><span>John Ambrose Fleming invents the diode, the first device that controls the flow of electrons.</span></li>
+        <li><time>1947</time><b>The transistor</b><span>Bardeen, Brattain and Shockley build it at Bell Labs: a tiny switch with no glass tube and no hot filament.</span></li>
+        <li><time>1958</time><b>The integrated circuit</b><span>Jack Kilby puts several parts on one piece of semiconductor at Texas Instruments.</span></li>
+        <li><time>1971</time><b>The microprocessor</b><span>Intel's 4004 packs about 2,300 transistors onto one chip. It was a 4-bit CPU, a small cousin of the 8-bit one in the CPU Emulator.</span></li>
+        <li><time>Today</time><b>Tens of billions</b><span>A modern processor holds tens of billions of transistors, each one switching electrons billions of times a second.</span></li>
+      </ol>
+      <p class="e21-el-cta"><a class="e21-btn solid" href="electron21-workbench.html#lab=circuit"><i class="fa-solid fa-bolt"></i> Try Ohm's law in the Circuit Lab</a> <a class="e21-btn" href="course.html?slug=electronics-for-beginners"><i class="fa-solid fa-graduation-cap"></i> Read the course lesson</a></p>
+    </div>
+  </section>
+
   <!-- ============ LABS ============ -->
   <section class="e21-section" id="labs" aria-labelledby="labs-h" style="padding-top:1rem">
     <div class="e21-wrap">
       <span class="e21-eyebrow">the workbench</span>
       <h2 class="e21-h2" id="labs-h">Seven labs. <span class="e21-grad">Zero installs.</span></h2>
       <p class="e21-lead">Real simulators and emulators that run in your browser. Flip switches, write assembly, load a CSV. Nothing is uploaded; everything stays on your device.</p>
+      <p class="e21-wb-cta"><a href="electron21-workbench.html" class="e21-btn sm"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i> Open the workbench on its own page</a></p>
 
       <div class="e21-bench">
         <div class="e21-bench-head">
           <div class="e21-dots" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="e21-bench-title">electron21 ~ <b id="e21-bench-name">logic-lab</b></div>
+          <a class="e21-btn sm ghost" id="e21-wb-link" href="electron21-workbench.html" title="Open the workbench on its own page"><i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i><span class="e21-wb-label"> Own page</span></a>
           <button type="button" class="e21-btn sm ghost" id="e21-fs" aria-label="Toggle full screen"><i class="fa-solid fa-expand"></i></button>
         </div>
         <div class="e21-tabs" role="tablist" aria-label="Labs">
@@ -182,6 +251,7 @@
           <button class="e21-tab" role="tab" id="tab-data" aria-controls="lab-data" aria-selected="false" data-lab="data" style="--c:var(--e-lime)" tabindex="-1"><i class="fa-solid fa-chart-line"></i> Data Lab</button>
           <button class="e21-tab" role="tab" id="tab-color" aria-controls="lab-color" aria-selected="false" data-lab="color" style="--c:var(--e-red)" tabindex="-1"><i class="fa-solid fa-palette"></i> Colour Code</button>
         </div>
+        <div class="e21-lesson-hint" id="e21-lesson-hint" hidden></div>
         <section class="e21-panel" role="tabpanel" id="lab-logic" aria-labelledby="tab-logic" data-panel="logic"></section>
         <section class="e21-panel" role="tabpanel" id="lab-circuit" aria-labelledby="tab-circuit" data-panel="circuit" hidden></section>
         <section class="e21-panel" role="tabpanel" id="lab-scope" aria-labelledby="tab-scope" data-panel="scope" hidden></section>
@@ -193,12 +263,35 @@
     </div>
   </section>
 
+  <!-- ============ COURSE LINK ============ -->
+  <section class="e21-section" id="course" aria-labelledby="course-h">
+    <div class="e21-wrap">
+      <div class="e21-course">
+        <div class="e21-course-main">
+          <span class="e21-eyebrow">theory + practice</span>
+          <h2 class="e21-h2" id="course-h">Learn it in the course. <span class="e21-grad">Try it in the lab.</span></h2>
+          <p class="e21-lead">Our free <b>Electronics for Beginners</b> course has 5 modules and 24 lessons. Electron21 is its hands-on partner: the key lessons link straight to the lab that lets you try the idea yourself.</p>
+          <div class="e21-cta">
+            <a class="e21-btn solid" href="course.html?slug=electronics-for-beginners"><i class="fa-solid fa-graduation-cap"></i> Start the course</a>
+            <a class="e21-btn" href="courses.html?q=electronics"><i class="fa-solid fa-list"></i> All electronics courses</a>
+          </div>
+        </div>
+        <ol class="e21-course-map" aria-label="Course modules and the labs that match them">
+          <li><div class="m"><small>Module 2</small><a href="course.html?slug=electronics-for-beginners">The laws of the circuit</a></div><div class="l"><a href="#lab=circuit"><i class="fa-solid fa-bolt"></i> Circuit Lab</a><a href="#lab=color"><i class="fa-solid fa-palette"></i> Colour Code</a></div></li>
+          <li><div class="m"><small>Module 3</small><a href="course.html?slug=electronics-for-beginners">Meet the components</a></div><div class="l"><a href="#lab=circuit"><i class="fa-solid fa-bolt"></i> LED &amp; RC calculators</a></div></li>
+          <li><div class="m"><small>Module 4</small><a href="course.html?slug=electronics-for-beginners">Reading and building circuits</a></div><div class="l"><a href="#projects"><i class="fa-solid fa-screwdriver-wrench"></i> Build projects</a></div></li>
+          <li><div class="m"><small>Module 5</small><a href="course.html?slug=electronics-for-beginners">Digital electronics and projects</a></div><div class="l"><a href="#lab=logic"><i class="fa-solid fa-diagram-project"></i> Logic Lab</a><a href="#lab=numbers"><i class="fa-solid fa-hashtag"></i> Number Lab</a><a href="#lab=cpu"><i class="fa-solid fa-microchip"></i> CPU</a></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ PROJECTS ============ -->
   <section class="e21-section" id="projects" aria-labelledby="proj-h">
     <div class="e21-wrap">
       <span class="e21-eyebrow">build something real</span>
       <h2 class="e21-h2" id="proj-h">Projects you can <span class="e21-grad">actually build</span></h2>
-      <p class="e21-lead">Sixteen step-by-step projects across all four fields, from a first blinking LED to a crop-yield prediction model. Each lists the parts, the steps and what you will learn.</p>
+      <p class="e21-lead">Thirty step-by-step projects across all four fields, from a first blinking LED to a temperature-controlled fan and a crop-yield prediction model. Each lists the parts, the steps and what you will learn.</p>
       <div class="e21-filters" role="group" aria-label="Filter projects" id="e21-filters">
         <button class="e21-chipbtn" type="button" data-f="all" aria-pressed="true">All</button>
         <button class="e21-chipbtn" type="button" data-f="electronics" aria-pressed="false" style="--c:var(--e-cyan)"><i class="fa-solid fa-microchip"></i> Electronics</button>
@@ -337,7 +430,7 @@
       <span class="e21-eyebrow">keep learning</span>
       <h2 class="e21-h2" id="paths-h">Go deeper with <span class="e21-grad">full courses</span></h2>
       <div class="e21-paths">
-        <a class="e21-path" style="--c:var(--e-cyan)" href="courses.html?q=electronics"><i class="fa-solid fa-bolt big"></i><h3>Electronics courses</h3><p>Structured lessons on circuits, components and building projects.</p><span class="go">Browse courses →</span></a>
+        <a class="e21-path" style="--c:var(--e-cyan)" href="course.html?slug=electronics-for-beginners"><i class="fa-solid fa-bolt big"></i><h3>Electronics for Beginners</h3><p>The free companion course: 5 modules and 24 lessons from Ohm's law to logic gates and the 555 timer.</p><span class="go">Start the course →</span></a>
         <a class="e21-path" style="--c:var(--e-violet)" href="course.html?slug=artificial-intelligence-machine-learning"><i class="fa-solid fa-brain big"></i><h3>AI &amp; Machine Learning</h3><p>Seven modules from data and models to neural networks and ethics.</p><span class="go">Start the course →</span></a>
         <a class="e21-path" style="--c:var(--e-lime)" href="smart21code.html"><i class="fa-solid fa-code big"></i><h3>Smart21Code</h3><p>Write and run code in your browser with guided tutorials.</p><span class="go">Open Smart21Code →</span></a>
         <a class="e21-path" style="--c:var(--e-amber)" href="game-electric-circuit.html"><i class="fa-solid fa-gamepad big"></i><h3>Circuit game</h3><p>Learn how current flows by solving electric-circuit puzzles.</p><span class="go">Play now →</span></a>
@@ -444,11 +537,12 @@
 <script src="js/main.js?v=20261008"></script>
 <script src="js/nav-account.js"></script>
 <script>AOS.init({duration:650,once:true,offset:60});</script>
-<script src="js/e21-core.js?v=1"></script>
-<script src="js/e21-labs-a.js?v=1"></script>
-<script src="js/e21-labs-b.js?v=1"></script>
-<script src="js/e21-labs-c.js?v=1"></script>
-<script src="js/e21-projects.js?v=1"></script>
+<script src="js/e21-core.js?v=2"></script>
+<script src="js/e21-labs-a.js?v=2"></script>
+<script src="js/e21-labs-b.js?v=2"></script>
+<script src="js/e21-labs-c.js?v=2"></script>
+<script src="js/e21-projects.js?v=3"></script>
+<script src="js/e21-electron.js?v=1"></script>
 <script src="js/cookie-consent.js"></script>
 </body>
 </html>
