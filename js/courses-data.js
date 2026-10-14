@@ -551,7 +551,7 @@
       language: 'English',
       instructor_name: 'Smart21Brain',
       certificate_enabled: true,
-      thumbnail_url: IMG('photo-1518770660439-4636190af475'),
+      thumbnail_url: 'images/courses/electronics-for-beginners.jpg',
       objectives: ["Explain voltage, current and resistance with simple pictures", "Use Ohm's law and power formulas to solve circuit problems", "Recognise resistors, capacitors, diodes, LEDs and transistors and know what they do", "Read circuit diagrams and build circuits on a breadboard", "Solder safely and test circuits with a multimeter", "Understand binary, logic gates, the 555 timer and Arduino basics", "Complete simple electronics projects and troubleshoot faults"],
       requirements: ["Basic arithmetic (add, subtract, multiply, divide)", "Curiosity. No tools are needed to start", "A basic parts kit helps for the hands-on lessons"],
       lessons: lessons('electronics-for-beginners', [

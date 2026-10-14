@@ -297,5 +297,6 @@
   function closeDlg() { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); if (lastBtn) lastBtn.focus(); }
   dlg.addEventListener('click', function (e) { if (e.target === dlg) closeDlg(); });
   grid.addEventListener('click', function (e) { var b = e.target.closest('.e21-proj'); if (b) openProject(+b.dataset.i, b); });
+  E.projects = P; E.openProject = function (i) { if (P[i]) openProject(i, null); };   // used by the hero search
   render();
 })();

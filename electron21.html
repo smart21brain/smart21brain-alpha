@@ -20,7 +20,7 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/electron21.css?v=6">
+<link rel="stylesheet" href="css/electron21.css?v=11">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to main content</a>
@@ -100,8 +100,17 @@
         <h1 class="e21-title" id="e21-title"><img class="bolt" src="images/logo/electron21-icon.svg" alt="" width="64" height="64"><span class="e21-grad">Electron</span><span class="n">21</span></h1>
         <p class="e21-sub lead-sub">Build circuits, emulate processors, analyse data and engineer ideas. The lab for electronics, computer engineering, data science and engineering.</p>
         <div class="e21-type" id="e21-type" aria-live="off"></div>
+        <div class="e21-search" id="e21-search" role="search">
+          <label for="e21-q" class="visually-hidden">Search labs, projects and cheat sheets</label>
+          <i class="fa-solid fa-magnifying-glass e21-search-ic" aria-hidden="true"></i>
+          <input id="e21-q" type="search" placeholder="Search labs, projects, cheat sheets…" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="false" aria-controls="e21-results" aria-autocomplete="list">
+          <button type="button" class="e21-q-clear" id="e21-q-clear" aria-label="Clear search"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+          <kbd aria-hidden="true">/</kbd>
+          <ul class="e21-results" id="e21-results" role="listbox" aria-label="Search results" hidden></ul>
+        </div>
+        <div class="e21-search-hints" aria-label="Search suggestions"><span>Try:</span><button type="button" data-q="ohm's law">Ohm's law</button><button type="button" data-q="binary">binary</button><button type="button" data-q="logic gates">logic gates</button><button type="button" data-q="cpu">CPU</button><button type="button" data-q="sensor">sensor</button></div>
         <div class="e21-cta">
-          <a href="#labs" class="e21-btn solid"><i class="fa-solid fa-flask"></i> Open the labs</a>
+          <a href="electron21-workbench.html" class="e21-btn solid"><i class="fa-solid fa-flask"></i> Open the labs</a>
           <a href="#projects" class="e21-btn"><i class="fa-solid fa-screwdriver-wrench"></i> Browse projects</a>
           <a href="#reference" class="e21-btn ghost"><i class="fa-solid fa-book-open"></i> Cheat sheets</a>
         </div>
@@ -114,9 +123,6 @@
       </div>
 
       <div class="e21-device" aria-hidden="true">
-        <span class="e21-float a">V<sub>out</sub> = 3.30 V</span>
-        <span class="e21-float b">f = 1.00 kHz</span>
-        <span class="e21-float c">Z = 0x2A</span>
         <div class="e21-screen"><canvas id="e21-hero-scope" width="640" height="400"></canvas></div>
         <div class="e21-device-bar"><span>CH1 ▮ CH2 ▮  2 ms/div</span><div class="e21-knobs"><span class="e21-knob"></span><span class="e21-knob" style="transform:rotate(60deg)"></span><span class="e21-knob" style="transform:rotate(-40deg)"></span></div></div>
       </div>
@@ -267,6 +273,10 @@
   <section class="e21-section" id="course" aria-labelledby="course-h">
     <div class="e21-wrap">
       <div class="e21-course">
+        <a class="e21-course-cover" href="course.html?slug=electronics-for-beginners" aria-label="Open the Electronics for Beginners course">
+          <img src="images/courses/electronics-for-beginners-full.jpg" alt="A computer motherboard showing the processor socket, memory slots and expansion slots" width="1200" height="800" loading="lazy" decoding="async">
+          <span class="e21-course-tag"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i> Free course · 24 lessons</span>
+        </a>
         <div class="e21-course-main">
           <span class="e21-eyebrow">theory + practice</span>
           <h2 class="e21-h2" id="course-h">Learn it in the course. <span class="e21-grad">Try it in the lab.</span></h2>
@@ -441,7 +451,7 @@
         <h2><span class="e21-grad">Build. Simulate. Understand.</span></h2>
         <p>Pick a lab and make something happen in the next five minutes.</p>
         <div class="e21-cta" style="justify-content:center">
-          <a href="#labs" class="e21-btn solid"><i class="fa-solid fa-flask"></i> Launch a lab</a>
+          <a href="electron21-workbench.html" class="e21-btn solid"><i class="fa-solid fa-flask"></i> Launch a lab</a>
           <a href="register.html" class="e21-btn"><i class="fa-solid fa-user-plus"></i> Create a free account</a>
         </div>
       </div>
@@ -541,8 +551,9 @@
 <script src="js/e21-labs-a.js?v=2"></script>
 <script src="js/e21-labs-b.js?v=2"></script>
 <script src="js/e21-labs-c.js?v=2"></script>
-<script src="js/e21-projects.js?v=3"></script>
+<script src="js/e21-projects.js?v=4"></script>
 <script src="js/e21-electron.js?v=1"></script>
+<script src="js/e21-search.js?v=2"></script>
 <script src="js/cookie-consent.js"></script>
 </body>
 </html>
