@@ -2229,3 +2229,13 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
   .s21-navbar .btn-s21 { padding: .4rem .8rem; font-size: .78rem; }
   .s21-navbar .s21-logo { font-size: 1.05rem; }
 }
+
+/* Course curriculum: module header bar (readable in light and dark themes) */
+.cd-module-head {
+  font-size: .95rem;
+  font-weight: 800;
+  letter-spacing: .01em;
+  color: var(--s21-text);
+  background: var(--s21-primary-light);
+  border-left: 4px solid var(--s21-primary);
+}

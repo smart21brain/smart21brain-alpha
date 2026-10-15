@@ -121,7 +121,7 @@
       const quizRow = mod.quiz_id ? moduleQuizRow(mod, enrolled, true) : '';
       blocks.push(`
         <div class="${mi < modules.length - 1 || ungroupedLessons.length ? 'border-bottom' : ''}">
-          <div class="p-3 fw-bold" style="font-size:.85rem;background:#FAFBFC">Module ${mi + 1}: ${esc(mod.title.replace(/^module\s*\d+\s*:\s*/i, ''))}</div>
+          <div class="p-3 fw-bold cd-module-head">Module ${mi + 1}: ${esc(mod.title.replace(/^module\s*\d+\s*:\s*/i, ''))}</div>
           ${rows}${quizRow}
         </div>`);
     });

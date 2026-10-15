@@ -45,6 +45,9 @@
 .sx-search input::-webkit-search-cancel-button { display: none; }
 .sx-search kbd { font: 700 .72rem var(--sx-code); color: #5B6470; background: #F1F3F5; border: 1px solid #E1E4E8; border-radius: 6px; padding: .15rem .5rem; }
 .sx-search .sx-clear { appearance: none; border: 0; background: #F1F3F5; color: #111; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: none; }
+.sx-search .sx-go { flex: none; appearance: none; border: 0; cursor: pointer; background: var(--s21-accent); color: #fff; width: 44px; height: 44px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 1rem; transition: transform .15s, filter .15s; }
+.sx-search .sx-go:hover { transform: scale(1.06); filter: brightness(1.08); }
+.sx-search .sx-go:focus-visible { outline: 3px solid rgba(239, 71, 111, .45); outline-offset: 2px; }
 .sx-search .sx-clear:hover { background: var(--s21-primary); color: #fff; }
 .sx-search.has-text .sx-clear { display: inline-grid; place-items: center; }
 .sx-search.has-text kbd { display: none; }

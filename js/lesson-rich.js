@@ -18,6 +18,9 @@
      {{mind Centre | a | b | c}} {{stack Top | Middle | Bottom}} {{timeline A | B | C}}
      {{anat heart}}  (planes cavities membrane neuron actionpotential synapse sarcomere
                       heart ecg circulation alveolus oxyhb nephron gi reflex)
+     {{photo heart}}  (labelled picture: eye ear capillaries brain female male endocrine
+                       urinary digestive respiratory lymphatic nervous nerves muscles torso
+                       skeleton ribcage skin lungs heart)
      {{ai neuralnet}}  (perceptron neuralnet gradient classify cluster overfit
                         confusion llm rl split)
      **bold**  `code`
@@ -434,8 +437,25 @@
     return svg(540, 318, MK() + o, 'Reflex arc: receptor, sensory neuron, spinal cord interneuron, motor neuron and effector');
   };
 
+  /* Labelled anatomy pictures (see js/anatomy-photos.js): {{photo heart}}.
+     Tapping one opens it full screen with the body parts labelled
+     (js/anatomy-viewer.js). */
+  D.photo = function (args) {
+    var key = String(args[0] || '').toLowerCase(), P = window.S21_ANAT, d = P && P[key];
+    if (!d) return '';
+    return '<figure class="rc-photo"><button type="button" class="rc-photo-btn" data-photo="' + esc(key) + '" aria-haspopup="dialog" aria-label="' + esc('Open the labelled picture: ' + d.title) + '">' +
+      '<img src="images/anatomy/' + esc(key) + '.jpg" alt="' + esc(d.title) + '" loading="lazy">' +
+      '<span class="rc-photo-tap" aria-hidden="true">Tap to see the labels</span></button>' +
+      '<figcaption>' + esc(d.caption) + '</figcaption></figure>';
+  };
+
+  /* Older lessons say {{anat heart}}. Where we now have a real picture of the
+     same organ, show the picture; the drawn diagram is the fallback. */
+  var ANAT_PHOTO = { heart: 'heart', circulation: 'capillaries', alveolus: 'lungs', nephron: 'urinary', gi: 'digestive' };
   D.anat = function (args) {
-    var f = A[String(args[0] || '').toLowerCase()];
+    var k = String(args[0] || '').toLowerCase();
+    if (ANAT_PHOTO[k] && window.S21_ANAT && window.S21_ANAT[ANAT_PHOTO[k]]) return D.photo([ANAT_PHOTO[k]]);
+    var f = A[k];
     return f ? f() : '';
   };
 

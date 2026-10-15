@@ -116,6 +116,8 @@
   list.addEventListener('click', function (e) { var li = e.target.closest('li[data-i]'); if (li) choose(+li.dataset.i); });
   list.addEventListener('mousemove', function (e) { var li = e.target.closest('li[data-i]'); if (li && +li.dataset.i !== active) setActive(+li.dataset.i); });
   document.addEventListener('click', function (e) { if (!box.contains(e.target)) setOpen(false); });
+  var go = document.getElementById('e21-go');
+  if (go) go.addEventListener('click', function () { if (!input.value.trim()) { input.focus(); return; } if (list.hidden) render(); if (shown.length) choose(active < 0 ? 0 : active); });
   var clear = document.getElementById('e21-q-clear');
   if (clear) clear.addEventListener('click', function () { input.value = ''; render(); input.focus(); });
   Array.prototype.forEach.call(document.querySelectorAll('.e21-search-hints button'), function (b) { b.addEventListener('click', function () { input.value = b.dataset.q || b.textContent; input.focus(); render(); }); });

@@ -109,6 +109,7 @@
         <input id="sxSearch" type="search" placeholder="Search tools… resize, pdf, json" aria-label="Search tools" autocomplete="off" spellcheck="false">
         <kbd aria-hidden="true">/</kbd>
         <button type="button" class="sx-clear" id="sxClear" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="sx-go" id="sxGo" aria-label="Search"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
       </form>
       <p class="sx-result-note" id="sxNote" aria-live="polite"></p>
       <div class="sx-meta">
@@ -602,6 +603,8 @@
     else if(e.key==='Escape'){input.value='';run()}
   });
   clear.addEventListener('click',function(){input.value='';run();input.focus()});
+  var go=document.getElementById('sxGo');
+  if(go)go.addEventListener('click',function(){var f=run();if(f&&f.tile)f.tile.click();else input.focus()});
   document.addEventListener('keydown',function(e){
     var tag=(document.activeElement&&document.activeElement.tagName)||'';
     if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(tag)&&!document.querySelector('dialog[open]')){e.preventDefault();input.focus()}
