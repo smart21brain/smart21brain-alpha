@@ -44,6 +44,7 @@
   .ed-fab { width: 54px; height: 54px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 26px rgba(0,0,0,.28); transition: transform .25s; }
   .ed-fab:hover { transform: scale(1.08); }
   .ed-fab[hidden] { display: none; }
+  .is-embed #edClose, .is-embed #edFabBack { display: none !important; }
   .ed-fab.back { border: 0; background: #16a37a; color: #fff; font-size: 1.3rem; }
   .ed-fab.add { border: 0; background: var(--s21-primary); color: #fff; font-size: 1.35rem; }
   .ed-fab.ai { border: 3px solid var(--s21-secondary); background: var(--s21-white); overflow: hidden; }
@@ -173,9 +174,10 @@
   var add = document.getElementById('edFabAdd'), ai = document.getElementById('edFabAI'), panel = document.getElementById('s21-ai-panel');
   if (add) add.addEventListener('click', function () { var n = document.getElementById('edNew'); if (n) n.click(); });
   /* Opened from Smart21 Studio? Show a round "back" button that carries the edited code back to the page. */
-  var back = document.getElementById('edFabBack'), ctx = null;
+  var back = document.getElementById('edFabBack'), ctx = null, embed = /[?&]embed=1/.test(location.search);
+  if (embed) document.documentElement.classList.add('is-embed');
   try { ctx = JSON.parse(localStorage.getItem('s21-studio-return') || 'null'); } catch (e) {}
-  if (back && ctx && ctx.t && Date.now() - ctx.t < 432e5) {
+  if (back && !embed && ctx && ctx.t && Date.now() - ctx.t < 432e5) {
     back.hidden = false;
     var tip = document.createElement('div'); tip.className = 'ed-toast';
     tip.textContent = 'Editing your Smart21 Studio ' + (ctx.scope === 'block' ? 'block' : 'page') + ' — tap ← when you are done to send it back';

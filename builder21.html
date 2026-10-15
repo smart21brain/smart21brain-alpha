@@ -6,7 +6,7 @@
 <meta name="description" content="Build and edit multi-page websites visually with blocks, inline editing, themes and AI. Export clean HTML.">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/builder-ai.css?v=1">
+<link rel="stylesheet" href="css/builder-ai.css?v=1"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap">
 <style>
 :root{--bg:#0f1720;--pn:#16212c;--ln:#2a3947;--tx:#e8eef4;--sf:#9fb0c0;--ac:#16a37a}
 *{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--tx);font:14px system-ui,sans-serif}
@@ -37,6 +37,7 @@ input[type=color]{padding:0;height:34px}
 .rv{display:flex;gap:.3rem;align-items:center;margin-top:.3rem;font-size:.75rem;color:var(--sf)}.rv span{flex:1}.tabs button{font-size:.68rem!important}
 .lk{display:block;text-decoration:none;color:var(--tx);background:#1e2c3a;border:1px solid var(--ln);border-radius:10px;padding:.7rem;margin-bottom:.45rem;cursor:pointer;width:100%;text-align:left}.lk:hover{border-color:var(--ac)}.lk b{display:block;margin-bottom:.15rem}.lk small{color:var(--sf);line-height:1.35;display:block}.lk i{color:var(--ac);margin-right:.35rem}
 @media(max-width:900px){body{height:auto}.app{display:block}.side{max-height:none}.stage{padding:.4rem}}
+#lyList .ly,#compList .ly{display:flex;align-items:center;gap:.3rem;padding:.3rem .4rem;border:1px solid var(--ln);border-radius:8px;margin-bottom:.3rem;background:#1e2c3a;cursor:pointer}#lyList .ly.on{border-color:var(--ac)}#lyList .ly.h{opacity:.45}#lyList .ly span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#lyList .ly button,#compList .ly button{background:none;border:0;color:var(--sf);cursor:pointer}input[type=range]{padding:0}#live{position:fixed;top:0;right:0;bottom:0;width:min(560px,48vw);z-index:2200;background:var(--pn);border-left:1px solid var(--ln);display:flex;flex-direction:column}#live[hidden]{display:none}#live .lh{display:flex;gap:.4rem;align-items:center;padding:.5rem .7rem;border-bottom:1px solid var(--ln)}#live .lh b{margin-right:auto}#liveSt{color:var(--sf);font-size:.78rem}#liveFr{flex:1;border:0;width:100%;background:#fff}body.livec .app{margin-right:min(560px,48vw)}body.livec .s21-fabs{right:calc(min(560px,48vw) + .9rem)}body.livec #s21-ai-panel{right:calc(min(560px,48vw) + .9rem)}@media(max-width:900px){#live{width:100%}body.livec .app{margin-right:0}body.livec .s21-fabs{display:none}}
 </style>
 </head>
 <body>
@@ -47,23 +48,25 @@ input[type=color]{padding:0;height:34px}
  <span class="sp"></span>
  <button class="b" id="undo" title="Undo"><i class="fa-solid fa-rotate-left"></i></button><button class="b" id="redo" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
  <button class="b on" data-w="100%" title="Desktop"><i class="fa-solid fa-desktop"></i></button><button class="b" data-w="768px" title="Tablet"><i class="fa-solid fa-tablet-screen-button"></i></button><button class="b" data-w="390px" title="Phone"><i class="fa-solid fa-mobile-screen"></i></button>
+ <button class="b" id="zm" title="Zoom out">−</button><button class="b" id="zv" title="Reset zoom (Ctrl + scroll to zoom)">100%</button><button class="b" id="zp" title="Zoom in">+</button>
+ <button class="b" id="liveBtn" title="Live code: edit with Smart21Editor side by side, changes sync instantly"><i class="fa-solid fa-link"></i> Live</button>
  <button class="b" id="toEd" title="Edit this page's code in Smart21Editor"><i class="fa-solid fa-code"></i> Code</button>
  <button class="b" id="prev"><i class="fa-solid fa-eye"></i> Preview</button>
  <button class="b p" id="exp"><i class="fa-solid fa-download"></i> Export</button>
 </div>
 <div class="app">
  <aside class="side l">
-  <div class="tabs" id="tabs"><button class="on" data-t="blocks"><i class="fa-solid fa-cubes"></i>Blocks</button><button data-t="pages"><i class="fa-solid fa-file-lines"></i>Pages</button><button data-t="media"><i class="fa-solid fa-photo-film"></i>Media</button><button data-t="theme"><i class="fa-solid fa-palette"></i>Site</button><button data-t="ai"><i class="fa-solid fa-wand-magic-sparkles"></i>AI</button><button data-t="learn"><i class="fa-solid fa-graduation-cap"></i>Learn</button></div>
+  <div class="tabs" id="tabs"><button class="on" data-t="blocks"><i class="fa-solid fa-cubes"></i>Blocks</button><button data-t="pages"><i class="fa-solid fa-file-lines"></i>Pages</button><button data-t="media"><i class="fa-solid fa-photo-film"></i>Media</button><button data-t="theme"><i class="fa-solid fa-palette"></i>Site</button><button data-t="layers"><i class="fa-solid fa-layer-group"></i>Layers</button><button data-t="backend"><i class="fa-solid fa-database"></i>Backend</button><button data-t="ai"><i class="fa-solid fa-wand-magic-sparkles"></i>AI</button><button data-t="learn"><i class="fa-solid fa-graduation-cap"></i>Learn</button></div>
   <div id="pBlocks"><input id="bsearch" placeholder="Search blocks…" aria-label="Search blocks"><p class="note">Click a block to add it, or drag it onto the page.</p><div class="grid" id="palette"></div></div>
   <div id="pPages" hidden><div id="pageList"></div><div style="display:flex;gap:.3rem;margin-top:.4rem"><button class="b" id="addPage" style="flex:1"><i class="fa-solid fa-plus"></i> Page</button><button class="b" id="addPost" style="flex:1"><i class="fa-solid fa-pen-nib"></i> Post</button><button class="b" id="dupPage" style="flex:1" title="Duplicate this page"><i class="fa-solid fa-clone"></i></button></div><label>Page settings</label><div id="pgSet"></div></div>
   <div id="pMedia" hidden><button class="b p" id="mUp" style="width:100%"><i class="fa-solid fa-upload"></i> Upload images</button><p class="note" style="margin-top:.5rem">Click an image to put it in the selected block. Max 1.5 MB each.</p><div class="mg" id="mGrid"></div></div>
   <div id="pTheme" hidden>
    <label>Starter looks</label><div class="grid" id="presets"></div>
-   <label>Brand colour</label><input type="color" id="thC"><label>Font</label><select id="thF"><option value="system-ui,sans-serif">Modern (system)</option><option value="Georgia,serif">Classic (serif)</option><option value="'Trebuchet MS',sans-serif">Friendly</option><option value="'Courier New',monospace">Tech (mono)</option></select>
+   <label>Brand colour</label><input type="color" id="thC"><label>Font</label><select id="thF"><option value="system-ui,sans-serif">Modern (system)</option><option value="'Poppins',sans-serif">Poppins</option><option value="'Inter',sans-serif">Inter</option><option value="'Montserrat',sans-serif">Montserrat</option><option value="'Playfair Display',serif">Playfair Display</option><option value="Georgia,serif">Classic (serif)</option><option value="'Trebuchet MS',sans-serif">Friendly</option><option value="'Courier New',monospace">Tech (mono)</option></select>
    <label>Corner roundness</label><select id="thR"><option value="0px">Sharp</option><option value="10px">Soft</option><option value="22px">Round</option></select>
    <label>Site title (browser tab)</label><input id="thT">
    <label>Description (SEO)</label><textarea id="thD" style="min-height:60px"></textarea>
-   <label>Revisions</label><button class="b" id="revSave" style="width:100%"><i class="fa-solid fa-clock-rotate-left"></i> Save a revision now</button><div id="revList"></div>
+   <label>Custom CSS (scoped to your page)</label><textarea id="thCss" style="min-height:90px;font-family:monospace;font-size:.78rem" placeholder=".hero h1 { letter-spacing: .1em }"></textarea><label>Revisions</label><button class="b" id="revSave" style="width:100%"><i class="fa-solid fa-clock-rotate-left"></i> Save a revision now</button><div id="revList"></div>
   </div>
   <div id="pLearn" hidden>
    <p class="note">Learn to build, write code, and bring it back into your site.</p>
@@ -75,6 +78,8 @@ input[type=color]{padding:0;height:34px}
    <button class="b" id="lrnImport" style="width:100%"><i class="fa-solid fa-file-import"></i> Add code from Smart21Editor as a block</button>
    <p class="note" style="margin-top:.5rem">Send your page to the editor, change the HTML/CSS/JS, then come back and add it as a Custom HTML block.</p>
   </div>
+  <div id="pLayers" hidden><p class="note">Click a layer to select it, drag to reorder, use the eye to hide it.</p><div id="lyList"></div><label>My components</label><div id="compList"></div></div>
+  <div id="pBackend" hidden><p class="note">Design your database. Export adds a ready Cloudflare Worker + D1 API in a backend/ folder. Then add a “Form → database” or “Data list” block.</p><button class="b p" id="bkAdd" style="width:100%"><i class="fa-solid fa-plus"></i> New data model</button><div id="bkList" style="margin-top:.6rem"></div><label>Generated SQL (schema.sql)</label><textarea id="bkSql" readonly style="min-height:130px;font-family:monospace;font-size:.72rem"></textarea><button class="b" id="bkCopy" style="width:100%;margin-top:.3rem"><i class="fa-solid fa-copy"></i> Copy worker.js</button></div>
   <div id="pAi" hidden>
    <label>Build a whole website with AI</label><textarea id="aiP" placeholder="e.g. Website for a computer repair shop in Dodoma with services, pricing and contact"></textarea>
    <button class="b p" id="aiBuild" style="width:100%;margin-top:.4rem"><i class="fa-solid fa-wand-magic-sparkles"></i> Build with AI</button>
@@ -106,6 +111,7 @@ input[type=color]{padding:0;height:34px}
     <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
   </form>
 </div>
+<aside id="live" hidden><div class="lh"><b><i class="fa-solid fa-link"></i> Live code · Smart21Editor</b><span id="liveSt"></span><button class="b" id="liveFull" title="Open full screen"><i class="fa-solid fa-expand"></i></button><button class="b" id="liveX" title="Close"><i class="fa-solid fa-xmark"></i></button></div><iframe id="liveFr" title="Smart21Editor live code" src="about:blank"></iframe></aside>
 <div class="toast" id="toast"></div>
 <input type="file" id="file" accept="image/*" hidden><input type="file" id="mFile" accept="image/*" multiple hidden>
 <script>
@@ -124,7 +130,9 @@ const SITE_CSS=`.cv{--p:#16a37a;--f:system-ui,sans-serif;--r:10px;font-family:va
 .cv .alt{background:#f4f7fa}.cv .cta{background:var(--p);color:#fff;text-align:center}.cv .q{text-align:center;font-size:1.3rem;font-style:italic}.cv footer{background:#111;color:#fff;text-align:center}
 .cv form{display:grid;gap:.6rem;max-width:480px}.cv input,.cv textarea{padding:.6rem;border:1px solid #cfd8e0;border-radius:var(--r);font:inherit;width:100%;background:#fff;color:#1b2430}.cv *{box-sizing:border-box}
 .cv details{border:1px solid #e4e9ee;border-radius:var(--r);padding:.8rem 1rem;margin:.5rem 0;background:#fff}.cv summary{font-weight:700;cursor:pointer}.cv .meta{color:#6b7785;font-size:.85rem}
-.cv .vid{position:relative;padding-top:56.25%}.cv .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:var(--r)}.cv .av{width:64px;height:64px;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;font-size:1.4rem;font-weight:800;margin-bottom:.5rem}.cv .cd a{color:var(--p);font-weight:700;text-decoration:none}`;
+.cv .vid{position:relative;padding-top:56.25%}.cv .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:var(--r)}.cv .av{width:64px;height:64px;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;font-size:1.4rem;font-weight:800;margin-bottom:.5rem}.cv .cd a{color:var(--p);font-weight:700;text-decoration:none}.cv nav.nv{position:sticky;top:0;z-index:4;background:rgba(255,255,255,.86);backdrop-filter:blur(10px)}.cv .hero{position:relative;overflow:hidden;background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.24),transparent 45%),linear-gradient(135deg,var(--p),#0b2c25)}.cv .hero h1{letter-spacing:-.02em}.cv .btn{box-shadow:0 8px 20px rgba(0,0,0,.18);transition:transform .2s,box-shadow .2s}.cv .btn:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(0,0,0,.25)}.cv .cd{box-shadow:0 2px 10px rgba(20,40,60,.06);transition:transform .25s,box-shadow .25s}.cv .cd:hover{transform:translateY(-5px);box-shadow:0 16px 34px rgba(20,40,60,.14)}.cv .st{text-align:center}.cv .st b{display:block;font-size:2.6rem;color:var(--p);line-height:1.1}.cv .stp{counter-reset:s}.cv .stp .cd{position:relative;padding-top:2.2rem}.cv .stp .cd::before{counter-increment:s;content:counter(s);position:absolute;top:-1rem;left:1.2rem;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;font-weight:800}`;
+const FONTS='https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Inter:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap';
+const REVEAL='@media(prefers-reduced-motion:no-preference){@supports(animation-timeline:view()){.cv section{animation:s21up linear both;animation-timeline:view();animation-range:entry 0% entry 40%}}}@keyframes s21up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}@media(max-width:700px){.cv [style*="--hm:1"]{display:none!important}}@media(min-width:701px){.cv [style*="--hd:1"]{display:none!important}}@keyframes s21fade{from{opacity:0}to{opacity:1}}@keyframes s21zoom{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}@keyframes s21slide{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}.cv [style*="--an:fade"]{animation:s21fade .9s both}.cv [style*="--an:zoom"]{animation:s21zoom .8s both}.cv [style*="--an:slide"]{animation:s21slide .8s both}';
 {const st=document.createElement('style');st.textContent=SITE_CSS;document.head.appendChild(st)}
 const D={
 hero:{h:'Welcome to your business',t:'One clear sentence that explains what you do and who you help.',b:'Get started',link:'#contact'},
@@ -136,6 +144,11 @@ testimonial:{t:'“They fixed everything quickly and explained it clearly. Highl
 cta:{h:'Ready to get started?',b:'Contact us',link:'#contact'},
 contact:{h:'Contact us',t:'Phone · Email · WhatsApp — we reply the same day.',email:'info@example.com'},
 text:{h:'Heading',t:'Write your text here. Click it to edit.'},
+stats:{h:'Our impact in numbers',items:[{h:'500+',t:'Happy customers'},{h:'10',t:'Years of experience'},{h:'24/7',t:'Support'}]},
+steps:{h:'How it works',items:[{h:'Tell us what you need',t:'Short description of step one.'},{h:'We get to work',t:'Short description of step two.'},{h:'You enjoy the result',t:'Short description of step three.'}]},
+split:{h:'A headline that sells',t:'Explain your offer next to a strong image.',b:'Learn more',link:'#contact',img:''},
+dataform:{h:'Send us a message',model:'',b:'Submit'},
+datalist:{h:'Latest entries',model:''},
 footer:{t:'© 2026 My Business. All rights reserved.'},
 image:{img:'',cap:'Image caption'},
 button:{b:'Click here',link:'#contact'},
@@ -145,10 +158,14 @@ video:{h:'Watch',url:''},
 posts:{h:'Latest posts'},
 spacer:{pad:'3rem'},
 html:{code:'<div style="padding:2rem;text-align:center"><h2>Custom code</h2><p>Replace this with your own HTML, CSS and JavaScript.</p></div>'}};
-const ICON={hero:'fa-image',features:'fa-table-cells-large',about:'fa-circle-info',pricing:'fa-tags',gallery:'fa-images',testimonial:'fa-quote-left',cta:'fa-bullhorn',contact:'fa-envelope',text:'fa-align-left',footer:'fa-shoe-prints',html:'fa-code',image:'fa-image',button:'fa-hand-pointer',faq:'fa-circle-question',team:'fa-people-group',video:'fa-circle-play',posts:'fa-newspaper',spacer:'fa-arrows-up-down'};
-const NAME={cta:'Call to action',faq:'FAQ',html:'Custom HTML',posts:'Blog posts',video:'Video (YouTube)',team:'Team'};
+const ICON={hero:'fa-image',features:'fa-table-cells-large',about:'fa-circle-info',pricing:'fa-tags',gallery:'fa-images',testimonial:'fa-quote-left',cta:'fa-bullhorn',contact:'fa-envelope',text:'fa-align-left',footer:'fa-shoe-prints',html:'fa-code',image:'fa-image',button:'fa-hand-pointer',faq:'fa-circle-question',team:'fa-people-group',video:'fa-circle-play',posts:'fa-newspaper',spacer:'fa-arrows-up-down',stats:'fa-chart-simple',dataform:'fa-database',datalist:'fa-table-list',steps:'fa-list-ol',split:'fa-table-columns'};
+const NAME={cta:'Call to action',faq:'FAQ',html:'Custom HTML',posts:'Blog posts',video:'Video (YouTube)',team:'Team',stats:'Stats',dataform:'Form → database',datalist:'Data list',steps:'Steps',split:'Image + text'};
 let ED=true;const E=f=>ED?` data-f="${f}" contenteditable spellcheck="false"`:'';
-const bg=p=>{const i=url(p.bi),c=/^#[0-9a-f]{3,8}$/i.test(p.bg||'')?p.bg:'';return (c?`background:${c};`:'')+(i?`background-image:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url('${i}');background-size:cover;background-position:center;color:#fff;`:'')+(p.pad?`padding-block:${p.pad};`:'')};
+const stl=p=>{const s=p.st||{},hx=v=>/^#[0-9a-f]{6}$/i.test(v||''),n=(v,a,b)=>v===undefined||v===''||isNaN(+v)?null:Math.min(b,Math.max(a,+v));let o='',t;
+ if((t=n(s.pt,0,16))!==null)o+=`padding-top:${t}rem;`;if((t=n(s.pb,0,16))!==null)o+=`padding-bottom:${t}rem;`;if(['left','center','right'].includes(s.al))o+=`text-align:${s.al};`;if(hx(s.tc))o+=`color:${s.tc};`;
+ if(hx(s.g1)&&hx(s.g2))o+=`background:linear-gradient(${n(s.ga,0,360)===null?135:n(s.ga,0,360)}deg,${s.g1},${s.g2});`;if((t=n(s.rad,0,48))!==null&&t>0)o+=`border-radius:${t}px;overflow:hidden;`;
+ if((t=n(s.sh,0,3))!==null&&t>0)o+=`box-shadow:0 ${t*6}px ${t*16}px rgba(0,0,0,${.08+t*.06});`;if((t=n(s.op,.2,1))!==null&&t<1)o+=`opacity:${t};`;if(s.hm)o+='--hm:1;';if(s.hd)o+='--hd:1;';if(['fade','zoom','slide'].includes(s.an))o+='--an:'+s.an+';';return o};
+const bg=p=>{const i=url(p.bi),c=/^#[0-9a-f]{3,8}$/i.test(p.bg||'')?p.bg:'';return (c?`background:${c};`:'')+(i?`background-image:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url('${i}');background-size:cover;background-position:center;color:#fff;`:'')+(p.pad?`padding-block:${p.pad};`:'')+stl(p)};
 const T={
 hero:p=>`<section class="hero" style="${bg(p)}"><div class="w"><h1${E('h')}>${esc(p.h)}</h1><p${E('t')}>${esc(p.t)}</p><a class="btn" href="${esc(p.link)}"${E('b')}>${esc(p.b)}</a></div></section>`,
 features:p=>`<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${p.items.map((x,i)=>`<div class="cd"><h3${E('items.'+i+'.h')}>${esc(x.h)}</h3><p${E('items.'+i+'.t')}>${esc(x.t)}</p></div>`).join('')}</div></div></section>`,
@@ -167,6 +184,11 @@ video:p=>{const m=String(p.url||'').match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})
 posts:p=>{const L=S.pages.map((x,i)=>[x,i]).filter(([x])=>x.kind==='post'&&(ED||x.status!=='draft')).sort((a,b)=>String(b[0].date||'').localeCompare(String(a[0].date||'')));return `<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${L.length?L.map(([x,i])=>`<div class="cd"><p class="meta">${esc(x.date||'')}${x.status==='draft'?' · draft':''}</p><h3>${esc(x.name)}</h3><p>${esc(x.excerpt||'')}</p><a href="${ED?'#':fname(i)}">Read more →</a></div>`).join(''):'<p class="meta">No posts yet. Use “Post” in the Pages tab to write one.</p>'}</div></div></section>`},
 spacer:p=>`<div style="height:${/^[0-9.]+rem$/.test(p.pad||'')?p.pad:'3rem'}${ED?';background:#16a37a14':''}"></div>`,
 html:p=>ED?`<section style="padding:0"><iframe sandbox="allow-same-origin" title="Custom HTML preview (scripts are off while editing)" style="width:100%;border:0;min-height:180px;display:block" onload="try{this.style.height=Math.max(180,this.contentDocument.documentElement.scrollHeight)+'px'}catch(e){}" srcdoc="${esc('<style>'+BASE_CSS+SITE_CSS+'</style><body class=\'cv\' style=\''+themeVars()+'\'>'+p.code)}"></iframe></section>`:p.code,
+stats:p=>`<section class="alt" style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${p.items.map((x,i)=>`<div class="st"><b${E('items.'+i+'.h')}>${esc(x.h)}</b><p${E('items.'+i+'.t')}>${esc(x.t)}</p></div>`).join('')}</div></div></section>`,
+steps:p=>`<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g stp">${p.items.map((x,i)=>`<div class="cd"><h3${E('items.'+i+'.h')}>${esc(x.h)}</h3><p${E('items.'+i+'.t')}>${esc(x.t)}</p></div>`).join('')}</div></div></section>`,
+split:p=>`<section style="${bg(p)}"><div class="w ab"><div><h2${E('h')}>${esc(p.h)}</h2><p${E('t')}>${esc(p.t)}</p><a class="btn" href="${esc(p.link)}"${E('b')}>${esc(p.b)}</a></div><div class="im" style="${url(p.img)?`background-image:url('${url(p.img)}')`:''}"></div></div></section>`,
+dataform:p=>{const f=MF(p.model);return `<section class="alt" style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2>${f?`<form data-s21-form="${esc(ident(p.model))}"${ED?' onsubmit="return false"':''}>${f.map(x=>x.t==='longtext'?`<textarea name="${x.n}" placeholder="${esc(x.n)}" rows="4"></textarea>`:x.t==='bool'?`<label><input type="checkbox" name="${x.n}" style="width:auto"> ${esc(x.n)}</label>`:`<input name="${x.n}" type="${x.t==='email'?'email':x.t==='number'?'number':x.t==='date'?'date':'text'}" placeholder="${esc(x.n)}">`).join('')}<button class="btn" type="submit"${E('b')}>${esc(p.b)}</button><p class="meta" role="status"></p></form>${ED?'':`<script>${FORMJS}<\/script>`}`:`<p class="meta">⚙ Pick a data model in the block settings (Backend tab → New data model).</p>`}</div></section>`},
+datalist:p=>{const f=MF(p.model);return `<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2>${f?`<div class="g" data-s21-list="${esc(ident(p.model))}">${ED?[1,2,3].map(i=>`<div class="cd">${f.slice(0,3).map(x=>`<p><b>${esc(x.n)}:</b> sample ${i}</p>`).join('')}</div>`).join(''):''}</div>${ED?'':`<script>${LISTJS}<\/script>`}`:`<p class="meta">⚙ Pick a data model in the block settings.</p>`}</div></section>`},
 footer:p=>`<footer style="${bg(p)}"><p${E('t')}>${esc(p.t)}</p></footer>`};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const fresh=()=>({name:'My Website',theme:{c:'#16a37a',f:'system-ui,sans-serif',r:'10px',title:'',desc:''},pages:[{name:'Home',blocks:['hero','features','about','cta','contact','footer'].map(t=>({type:t,p:clone(D[t])}))}]});
@@ -180,21 +202,29 @@ const fname=i=>i===0?'index.html':slug(S.pages[i].slug||S.pages[i].name)+'.html'
 function nav(ed){return `<nav class="nv"><b>${esc(S.name)}</b>${S.pages.map((x,i)=>(i===0||(x.kind!=='post'&&x.menu!==false&&(ed||x.status!=='draft')))?`<a href="${ed?'#':fname(i)}"${ed?` data-pg="${i}"`:''}>${esc(x.name)}</a>`:'').join('')}</nav>`}
 function themeVars(){const t=S.theme;return `--p:${/^#[0-9a-f]{3,8}$/i.test(t.c)?t.c:'#16a37a'};--f:${t.f};--r:${t.r}`}
 function render(ki){ED=true;const cv=$('#cv');cv.setAttribute('style',themeVars());
- cv.innerHTML=nav(true)+pg().blocks.map((b,i)=>T[b.type]?`<div data-b="${i}" class="${i===sel?'sel':''}"><div class="tb"><span class="gr" draggable="true" title="Drag to move" role="img" aria-label="Drag to move">⠿</span><button data-a="up" title="Move up"><i class="fa-solid fa-arrow-up"></i></button><button data-a="down" title="Move down"><i class="fa-solid fa-arrow-down"></i></button><button data-a="dup" title="Duplicate"><i class="fa-solid fa-clone"></i></button><button data-a="del" title="Delete"><i class="fa-solid fa-trash"></i></button></div>${T[b.type](b.p)}</div>`:'').join('');
- $('#pname').value=S.name;$('#undo').disabled=!hist.length;$('#redo').disabled=!fut.length;lists();if(!ki)insp();save()}
+ cv.innerHTML=nav(true)+pg().blocks.map((b,i)=>T[b.type]?`<div data-b="${i}" class="${i===sel?'sel':''}"${b.hide?' style="display:none"':''}><div class="tb"><span class="gr" draggable="true" title="Drag to move" role="img" aria-label="Drag to move">⠿</span><button data-a="up" title="Move up"><i class="fa-solid fa-arrow-up"></i></button><button data-a="down" title="Move down"><i class="fa-solid fa-arrow-down"></i></button><button data-a="dup" title="Duplicate"><i class="fa-solid fa-clone"></i></button><button data-a="del" title="Delete"><i class="fa-solid fa-trash"></i></button></div>${T[b.type](b.p)}</div>`:'').join('');
+ $('#pname').value=S.name;$('#undo').disabled=!hist.length;$('#redo').disabled=!fut.length;lists();layers();bkRender();if(!ki)insp();save()}
 function lists(){$('#pageList').innerHTML=S.pages.map((x,i)=>`<div class="pg"><button class="b n ${i===cur?'on':''}" data-go="${i}">${esc(x.name)}${x.kind==='post'?' · post':''}${x.status==='draft'?' · draft':''}</button>${i>1?`<button class="b" data-pmv="-1:${i}" title="Move up">↑</button>`:''}${i>0&&i<S.pages.length-1?`<button class="b" data-pmv="1:${i}" title="Move down">↓</button>`:''}${i>0?`<button class="b" data-rm="${i}" title="Delete"><i class="fa-solid fa-trash"></i></button>`:''}</div>`).join('');pgSet();mediaGrid();revList();
- $('#thC').value=S.theme.c;$('#thF').value=S.theme.f;$('#thR').value=S.theme.r;$('#thT').value=S.theme.title||'';$('#thD').value=S.theme.desc||''}
+ $('#thC').value=S.theme.c;$('#thF').value=S.theme.f;$('#thR').value=S.theme.r;$('#thT').value=S.theme.title||'';$('#thD').value=S.theme.desc||'';$('#thCss').value=S.theme.css||'';applyCss()}
+const design=b=>{const s=b.p.st||{},v=(k,d)=>s[k]!==undefined&&s[k]!==''?s[k]:d,hx=(k,d)=>/^#[0-9a-f]{6}$/i.test(s[k]||'')?s[k]:d,r=(k,l,mn,mx,st,d)=>`<label>${l}</label><input type="range" data-st="${k}" min="${mn}" max="${mx}" step="${st}" value="${v(k,d)}">`;
+ return `<label style="margin-top:1rem;color:var(--ac)"><b><i class="fa-solid fa-sliders"></i> Design</b></label>`+r('pt','Space above',0,12,.5,3.2)+r('pb','Space below',0,12,.5,3.2)+r('rad','Corner radius',0,48,2,0)+r('sh','Shadow',0,3,1,0)+r('op','Opacity',.2,1,.05,1)
+ +`<label>Text align</label><select data-st="al">${['','left','center','right'].map(o=>`<option value="${o}"${s.al===o||(!s.al&&!o)?' selected':''}>${o||'Default'}</option>`).join('')}</select>`
+ +`<label>Text colour</label><div style="display:flex;gap:.3rem"><input type="color" data-st="tc" value="${hx('tc','#1b2430')}"><button class="b" data-a2="notc">Reset</button></div>`
+ +`<label>Gradient background</label>${s.g1?`<div style="display:flex;gap:.3rem"><input type="color" data-st="g1" value="${hx('g1','#16a37a')}"><input type="color" data-st="g2" value="${hx('g2','#0b2c25')}"><button class="b" data-a2="nograd">×</button></div>`+r('ga','Angle',0,360,5,135):'<button class="b" data-a2="grad" style="width:100%">+ Add gradient</button>'}`
+ +`<label>Responsive &amp; motion <small style="color:var(--sf)">(applies to the exported site)</small></label><label style="display:flex;gap:.4rem;align-items:center;font-size:.8rem"><input type="checkbox" style="width:auto" data-st="hm"${s.hm?' checked':''}> Hide on phones</label><label style="display:flex;gap:.4rem;align-items:center;font-size:.8rem"><input type="checkbox" style="width:auto" data-st="hd"${s.hd?' checked':''}> Hide on desktop</label><select data-st="an">${[['','No animation'],['fade','Fade in'],['zoom','Zoom in'],['slide','Slide in']].map(o=>`<option value="${o[0]}"${(s.an||'')===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select>`
+ +`<div style="display:flex;gap:.3rem;margin-top:.7rem"><button class="b" data-a2="rst" style="flex:1">Reset design</button><button class="b" data-a2="comp" style="flex:1"><i class="fa-solid fa-cube"></i> Save component</button></div>`};
 function insp(){const b=pg().blocks[sel],el=$('#insp');if(!b){el.innerHTML='<p class="note">Click any block on the page to edit its settings. Click any text to type directly on the page.</p>';return}
  const f=(k,l,ph)=>`<label>${l}</label><input data-k="${k}" value="${esc(b.p[k]||'')}" placeholder="${ph||''}">`,up=(k,l)=>`<button class="b" data-up="${k}" style="margin-top:.3rem;width:100%"><i class="fa-solid fa-upload"></i> ${l}</button>`;
  let h=`<p class="note"><b>${b.type}</b> block</p>`;
  if(b.p.link!==undefined)h+=f('link','Button link','#contact or https://…');
- if(b.p.email!==undefined)h+=f('email','Send messages to (email)');
- if(b.type==='about')h+=f('img','Image URL')+up('img','Upload image');
+ if(b.p.email!==undefined)h+=f('email','Send messages to (email)');if(b.p.model!==undefined)h+=`<label>Data model</label><select data-k="model"><option value="">— choose —</option>${bk().models.map(m=>`<option value="${esc(m.n)}"${b.p.model===m.n?' selected':''}>${esc(m.n)}</option>`).join('')}</select>`;
+ if(b.type==='about'||b.type==='split')h+=f('img','Image URL')+up('img','Upload image');
  if(b.type==='gallery')h+=b.p.imgs.map((u,i)=>`<label>Image ${i+1} URL</label><input data-im="${i}" value="${esc(u)}">${up('im'+i,'Upload image '+(i+1))}`).join('')+`<button class="b" data-a2="addimg" style="margin-top:.4rem;width:100%">+ Add image slot</button>`;
  if(b.p.items)h+=`<div style="display:flex;gap:.3rem;margin-top:.7rem"><button class="b" data-a2="additem" style="flex:1">+ Add item</button><button class="b" data-a2="delitem" style="flex:1">− Remove last</button></div>`;
  if(b.type==='html')h+=`<label>Custom HTML / CSS / JS</label><textarea data-k="code" spellcheck="false" style="min-height:170px;font-family:monospace;font-size:12px">${esc(b.p.code)}</textarea>`;
  h+=`<button class="b" data-a2="blockEd" style="width:100%;margin-top:.7rem"><i class="fa-solid fa-code"></i> Edit this block in Smart21Editor</button>`;
  h+=`<label>Background colour</label><input type="color" data-k="bg" value="${/^#[0-9a-f]{6}$/i.test(b.p.bg||'')?b.p.bg:'#ffffff'}"><button class="b" data-a2="nobg" style="margin-top:.3rem;width:100%">Clear colour</button>`+f('bi','Background image URL','https://…')+up('bi','Upload background image')+`<label>Spacing</label><select data-k="pad"><option value="">Default</option><option value="1.2rem">Tight</option><option value="4rem">Roomy</option><option value="6rem">Very roomy</option></select>`;
+ if(b.type!=='html'&&b.type!=='spacer')h+=design(b);
  el.innerHTML=h;const sp=el.querySelector('[data-k=pad]');if(sp)sp.value=b.p.pad||''}
 /* ----- events ----- */
 $('#palette').innerHTML=Object.keys(D).map(t=>`<div class="blk" draggable="true" data-add="${t}"><i class="fa-solid ${ICON[t]}"></i>${NAME[t]||t[0].toUpperCase()+t.slice(1)}</div>`).join('');
@@ -210,17 +240,17 @@ document.addEventListener('click',e=>{const t=e.target;let x;
  if(x=t.closest('[data-go]')){cur=+x.dataset.go;sel=-1;render();return}
  if(x=t.closest('[data-ren]')){const n=prompt('Page name',S.pages[+x.dataset.ren].name);if(n){snap();S.pages[+x.dataset.ren].name=n.slice(0,40);render()}return}
  if(x=t.closest('[data-rm]')){if(confirm('Delete this page?')){snap();S.pages.splice(+x.dataset.rm,1);cur=0;sel=-1;render()}return}
- if(x=t.closest('[data-a2]')){const b=pg().blocks[sel];if(!b)return;const a=x.dataset.a2;if(a==='blockEd'){sendBlock(b);return}snap();
-  if(a==='nobg')b.p.bg='';if(a==='additem'&&b.p.items)b.p.items.push(clone(b.p.items[b.p.items.length-1]));if(a==='delitem'&&b.p.items&&b.p.items.length>1)b.p.items.pop();if(a==='addimg')b.p.imgs.push('');render();return}
+ if(x=t.closest('[data-a2]')){const b=pg().blocks[sel];if(!b)return;const a=x.dataset.a2;if(a==='blockEd'){sendBlock(b);return}if(a==='comp'){saveComp(b);return}snap();
+  if(a==='nobg')b.p.bg='';if(a==='grad'){const q=b.p.st=b.p.st||{};q.g1=S.theme.c;q.g2='#0b2c25';q.ga=135}if(a==='nograd'&&b.p.st){delete b.p.st.g1;delete b.p.st.g2}if(a==='notc'&&b.p.st)delete b.p.st.tc;if(a==='rst')delete b.p.st;if(a==='additem'&&b.p.items)b.p.items.push(clone(b.p.items[b.p.items.length-1]));if(a==='delitem'&&b.p.items&&b.p.items.length>1)b.p.items.pop();if(a==='addimg')b.p.imgs.push('');render();return}
  if(x=t.closest('[data-up]')){window._up=x.dataset.up;$('#file').click();return}
- if(x=t.closest('#tabs button')){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b===x));['Blocks','Pages','Media','Theme','Ai','Learn'].forEach(n=>$('#p'+n).hidden=n.toLowerCase()!==x.dataset.t);return}
+ if(x=t.closest('#tabs button')){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b===x));['Blocks','Pages','Media','Theme','Layers','Backend','Ai','Learn'].forEach(n=>$('#p'+n).hidden=n.toLowerCase()!==x.dataset.t);return}
  if(x=t.closest('[data-w]')){document.querySelectorAll('[data-w]').forEach(b=>b.classList.toggle('on',b===x));$('#dev').style.maxWidth=x.dataset.w;return}
  if(x=t.closest('[data-ai]')){aiAct(x.dataset.ai);return}
 });
 $('#cv').addEventListener('focusin',e=>{if(e.target.dataset&&e.target.dataset.f)snap()});
 $('#cv').addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)return;const bi=+el.closest('[data-b]').dataset.b;setPath(pg().blocks[bi].p,f,el.innerText.replace(/\n+/g,' ').trim());save()});
 function setPath(o,p,v){const k=p.split('.');while(k.length>1)o=o[k.shift()];o[k[0]]=v}
-$('#insp').addEventListener('input',e=>{const b=pg().blocks[sel],el=e.target;if(!b)return;if(el.dataset.k!==undefined)b.p[el.dataset.k]=el.value;else if(el.dataset.im!==undefined)b.p.imgs[+el.dataset.im]=el.value;else return;clearTimeout(insp.t);insp.t=setTimeout(()=>{snap();render(true)},500)});
+$('#insp').addEventListener('input',e=>{const b=pg().blocks[sel],el=e.target;if(!b)return;if(el.dataset.st!==undefined){if(!insp.s){snap();insp.s=1}clearTimeout(insp.u);insp.u=setTimeout(()=>insp.s=0,900);(b.p.st=b.p.st||{})[el.dataset.st]=el.type==='checkbox'?(el.checked?'1':''):el.value;render(true);return}if(el.dataset.k!==undefined)b.p[el.dataset.k]=el.value;else if(el.dataset.im!==undefined)b.p.imgs[+el.dataset.im]=el.value;else return;clearTimeout(insp.t);insp.t=setTimeout(()=>{snap();render(true)},500)});
 $('#insp').addEventListener('change',e=>{if(e.target.dataset.k==='pad'){snap();pg().blocks[sel].p.pad=e.target.value;render()}});
 $('#file').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(!f||!pg().blocks[sel])return;if(f.size>1.5e6){toast('Image too large (max 1.5 MB)');return}
  addMedia(f).then(m=>{if(!m||!pg().blocks[sel])return;snap();const k=window._up,p=pg().blocks[sel].p,v='media:'+m.id;if(/^im\d+$/.test(k))p.imgs[+k.slice(2)]=v;else p[k]=v;render();toast('Image saved to your Media library')})});
@@ -231,10 +261,10 @@ $('#undo').onclick=()=>{if(!hist.length)return;fut.push(strip(S));keepMedia(JSON
 $('#redo').onclick=()=>{if(!fut.length)return;hist.push(strip(S));keepMedia(JSON.parse(fut.pop()));cur=Math.min(cur,S.pages.length-1);sel=-1;render()};
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='z'&&!e.target.isContentEditable&&e.target.tagName!=='INPUT'){e.preventDefault();$('#undo').click()}});
 /* ----- export ----- */
-function pageHTML(i){ED=false;const t=S.theme,cv=`<div class="cv" style="${themeVars()}">${nav(false)}${S.pages[i].blocks.filter(b=>T[b.type]).map(b=>T[b.type](b.p)).join('')}</div>`;ED=true;
- return `<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(S.pages[i].seoT||t.title||S.name+' — '+S.pages[i].name)}</title><meta name="description" content="${esc(S.pages[i].seoD||t.desc||'')}"><style>${BASE_CSS}${SITE_CSS}</style></head><body>${cv}</body></html>`}
+function pageHTML(i){ED=false;const t=S.theme,cv=`<div class="cv" style="${themeVars()}">${nav(false)}${S.pages[i].blocks.filter(b=>T[b.type]&&!b.hide).map(b=>T[b.type](b.p)).join('')}</div>`;ED=true;
+ return `<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(S.pages[i].seoT||t.title||S.name+' — '+S.pages[i].name)}</title><meta name="description" content="${esc(S.pages[i].seoD||t.desc||'')}">${/Poppins|Inter|Montserrat|Playfair/.test(t.f)?'<link rel="stylesheet" href="'+FONTS+'">':''}<style>${BASE_CSS}${SITE_CSS}${REVEAL}${userCss()?'.cv{'+userCss()+'}':''}</style></head><body>${cv}</body></html>`}
 function dl(name,txt){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/html'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
-$('#exp').onclick=()=>{addRev('Export');const L=S.pages.map((x,i)=>(i===0||x.status!=='draft')?{n:fname(i),t:pageHTML(i)}:null).filter(Boolean);L.push({n:'README.txt',t:'Made with Smart21 Studio (Smart21Brain). Open index.html in a browser, or upload all files to any web host.\n'});dlBlob(slug(S.name)+'.zip',zip(L));toast('Exported '+(L.length-1)+' page(s) as a .zip')};
+$('#exp').onclick=()=>{addRev('Export');const L=S.pages.map((x,i)=>(i===0||x.status!=='draft')?{n:fname(i),t:pageHTML(i)}:null).filter(Boolean);if(mods().length)L.push(...backendFiles());L.push({n:'README.txt',t:'Made with Smart21 Studio (Smart21Brain). Open index.html in a browser, or upload all files to any web host.\n'});dlBlob(slug(S.name)+'.zip',zip(L));toast('Exported '+(L.length-1)+' page(s) as a .zip')};
 $('#prev').onclick=()=>{const w=window.open('','_blank');if(w){w.document.write(pageHTML(cur));w.document.close()}};
 /* ----- WordPress-style extras: media library, page settings, looks, revisions, drag & drop, zip ----- */
 const today=()=>new Date().toISOString().slice(0,10);
@@ -251,7 +281,7 @@ $('#pgSet').addEventListener('change',e=>{const el=e.target,k=el.dataset.pf;if(!
 const mkPage=(n,kind)=>({name:n.slice(0,40),kind,date:kind==='post'?today():undefined,excerpt:'',blocks:(kind==='post'?[{type:'text',p:{h:n,t:'Write your post here. Click this text to edit it.'}},{type:'footer',p:clone(D.footer)}]:['text','contact','footer'].map(t=>({type:t,p:clone(D[t])})))});
 $('#addPost').onclick=()=>{const n=prompt('Post title','My first post');if(!n)return;snap();S.pages.push(mkPage(n,'post'));cur=S.pages.length-1;sel=-1;render()};
 $('#dupPage').onclick=()=>{snap();const c=clone(pg());c.name=(c.name+' copy').slice(0,40);c.slug=slug(c.name)+'-'+Math.random().toString(36).slice(2,5);S.pages.push(c);cur=S.pages.length-1;sel=-1;render()};
-const PRE=[['Ocean','#2563eb','system-ui,sans-serif','10px'],['Forest','#16a37a','system-ui,sans-serif','10px'],['Sunset','#ea580c',"'Trebuchet MS',sans-serif",'22px'],['Royal','#7c3aed','Georgia,serif','10px'],['Rose','#e11d48',"'Trebuchet MS',sans-serif",'22px'],['Mono','#111827',"'Courier New',monospace",'0px']];
+const PRE=[['Ocean','#2563eb','system-ui,sans-serif','10px'],['Forest','#16a37a','system-ui,sans-serif','10px'],['Sunset','#ea580c',"'Trebuchet MS',sans-serif",'22px'],['Royal','#7c3aed','Georgia,serif','10px'],['Rose','#e11d48',"'Trebuchet MS',sans-serif",'22px'],['Neon','#06b6d4','system-ui,sans-serif','22px'],['Berry','#c026d3',"'Trebuchet MS',sans-serif",'22px'],['Mono','#111827',"'Courier New',monospace",'0px']];
 $('#presets').innerHTML=PRE.map((r,i)=>`<button class="b" data-pre="${i}" style="border-left:6px solid ${r[1]}">${r[0]}</button>`).join('');
 const RK='s21studio-revs',getRevs=()=>{try{return JSON.parse(localStorage.getItem(RK))||[]}catch(e){return[]}};
 function addRev(label){try{const r=getRevs();r.unshift({t:new Date().toISOString(),l:label,d:strip(S)});localStorage.setItem(RK,JSON.stringify(r.slice(0,12)))}catch(e){}}
@@ -285,13 +315,13 @@ function toEditor(body,css,ctx){try{const old=[0,1,2].map(n=>localStorage.getIte
  localStorage.setItem(EK[0],body);localStorage.setItem(EK[1],css);localStorage.setItem(EK[2],'');localStorage.setItem('s21e-lang','web');localStorage.setItem(RET,JSON.stringify(Object.assign({t:Date.now(),name:S.name},ctx||{})));save()}catch(e){toast('Could not pass the code on (browser storage is blocked)');return}location.href='smart21editor.html#web'}
 const wrapCv=h=>`<div class="cv" style="${themeVars()}">${h}</div>`;
 function sendBlock(b){ED=false;const h=T[b.type]?T[b.type](b.p):'';ED=true;toEditor(b.type==='html'?b.p.code:wrapCv(h),b.type==='html'?'':BASE_CSS+SITE_CSS,{scope:'block',page:cur,block:sel})}
-$('#toEd').onclick=$('#lrnPage').onclick=$('#fabEd').onclick=()=>{ED=false;const h=wrapCv(nav(false)+pg().blocks.filter(b=>T[b.type]).map(b=>T[b.type](b.p)).join(''));ED=true;toEditor(h,BASE_CSS+SITE_CSS,{scope:'page',page:cur})};
+$('#toEd').onclick=$('#lrnPage').onclick=$('#fabEd').onclick=()=>{ED=false;const h=wrapCv(nav(false)+pg().blocks.filter(b=>T[b.type]&&!b.hide).map(b=>T[b.type](b.p)).join(''));ED=true;toEditor(h,BASE_CSS+SITE_CSS,{scope:'page',page:cur})};
 $('#lrnImport').onclick=()=>{let h,c,j;try{[h,c,j]=EK.map(k=>localStorage.getItem(k)||'')}catch(e){}if(!h&&!c&&!j){toast('Nothing found yet — write some code in Smart21Editor first');return}
  const code=(c?`<style>${c}</style>`:'')+h+(j?`<script>${j.replace(/<\/script/gi,'<\\/script')}<\/script>`:'');if(code.length>200000){toast('That code is too large to add (max 200 KB)');return}
  snap();const bl=pg().blocks,fi=bl.findIndex(z=>z.type==='footer'),b={type:'html',p:{code}};fi>=0?bl.splice(fi,0,b):bl.push(b);sel=bl.indexOf(b);render();toast('Added as a Custom HTML block')};
 /* ----- AI ----- */
 const ALLOWED=Object.keys(D).filter(k=>k!=='html');
-const SCHEMA='Block types and their props: faq{h,items:[{h,t}]}; team{h,items:[{h,t}]}; hero{h,t,b,link}; features{h,items:[{h,t}]}; about{h,t}; pricing{h,items:[{h,price,t}]}; gallery{h}; testimonial{t,n}; cta{h,b,link}; contact{h,t,email}; text{h,t}; footer{t}.';
+const SCHEMA='Block types and their props: faq{h,items:[{h,t}]}; team{h,items:[{h,t}]}; hero{h,t,b,link}; features{h,items:[{h,t}]}; about{h,t}; pricing{h,items:[{h,price,t}]}; gallery{h}; testimonial{t,n}; cta{h,b,link}; contact{h,t,email}; text{h,t}; footer{t}; stats{h,items:[{h,t}]}; steps{h,items:[{h,t}]}; split{h,t,b,link}.';
 async function askAI(prompt){const r=await fetch('/api/ai-assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,context:{page:'builder',mode:'json'}})});if(!r.ok)throw new Error('ai');const d=await r.json();const a=d.answer||'';const m=a.match(/\{[\s\S]*\}|\[[\s\S]*\]/);if(!m)throw new Error('no json');return JSON.parse(m[0])}
 function mergeBlock(x){if(!x||!ALLOWED.includes(x.type))return null;const p=clone(D[x.type]),s=x.p||x.props||{};Object.keys(p).forEach(k=>{if(s[k]==null)return;if(Array.isArray(p[k])){if(Array.isArray(s[k])&&s[k].length)p[k]=k==='imgs'?p[k]:s[k].slice(0,6).map(it=>Object.assign({},p[k][0],it))}else if(typeof s[k]==='string')p[k]=s[k].slice(0,600)});return {type:x.type,p}}
 function busy(on){document.querySelectorAll('[data-ai],#aiBuild').forEach(b=>b.disabled=on);$('#aiNote').textContent=on?'AI is working…':'AI runs through the Smart21Brain assistant. If it is offline, a starter template is used instead.'}
@@ -308,9 +338,10 @@ async function aiAct(a){const bl=pg().blocks;busy(true);
  catch(e){toast(e&&e.message&&e.message!=='ai'?e.message:'AI could not do that right now. Try again in a moment.')}
  busy(false);render()}
 /* ----- Coming back from Smart21Editor: the edited code replaces the page / block it came from ----- */
+function codeFrom(h,c,j){const tmp=document.createElement('div');tmp.innerHTML=h;const root=tmp.children.length===1&&tmp.firstElementChild.classList.contains('cv')?tmp.firstElementChild:tmp;const nv=root.querySelector(':scope > nav.nv');if(nv)nv.remove();
+ const std=BASE_CSS+SITE_CSS,css=c&&c.trim()!==std.trim()?c:'';return (css?`<style>${css}</style>`:'')+root.innerHTML.trim()+(j?`<script>${j.replace(/<\/script/gi,'<\\/script')}<\/script>`:'')}
 function takeBack(){let r;try{r=JSON.parse(localStorage.getItem(BACK)||'null')}catch(e){}if(!r)return;let h,c,j;try{localStorage.removeItem(BACK);localStorage.removeItem(RET);[h,c,j]=EK.map(k=>localStorage.getItem(k)||'')}catch(e){return}
- if(!h&&!c&&!j)return;const tmp=document.createElement('div');tmp.innerHTML=h;const root=tmp.children.length===1&&tmp.firstElementChild.classList.contains('cv')?tmp.firstElementChild:tmp;const nv=root.querySelector(':scope > nav.nv');if(nv)nv.remove();
- const std=BASE_CSS+SITE_CSS,css=c&&c.trim()!==std.trim()?c:'';const code=(css?`<style>${css}</style>`:'')+root.innerHTML.trim()+(j?`<script>${j.replace(/<\/script/gi,'<\\/script')}<\/script>`:'');
+ if(!h&&!c&&!j)return;const code=codeFrom(h,c,j);
  if(code.length>200000){toast('The edited code is too large to bring back (max 200 KB)');return}
  addRev('Before Smart21Editor changes');snap();const blk={type:'html',p:{code}},pgs=S.pages[r.page];
  if(r.scope==='block'&&pgs&&pgs.blocks[r.block]){pgs.blocks[r.block]=blk;cur=r.page;sel=r.block}
@@ -318,9 +349,132 @@ function takeBack(){let r;try{r=JSON.parse(localStorage.getItem(BACK)||'null')}c
  else{const bl=pg().blocks,fi=bl.findIndex(z=>z.type==='footer');fi>=0?bl.splice(fi,0,blk):bl.push(blk);sel=bl.indexOf(blk)}
  toast('Welcome back — your Smart21Editor changes are in the page (Undo reverts them)')}
 /* ----- Smart21Brain AI <-> Studio: the AI sees your page and can add its code as a block ----- */
-window.S21AI={getContext(){const c={page:'smart21studio builder',language:'HTML (website page "'+pg().name+'")'};try{ED=false;const b=pg().blocks[sel];c.code=(b&&T[b.type]?T[b.type](b.p):pg().blocks.filter(z=>T[z.type]).map(z=>T[z.type](z.p)).join('\n')).slice(0,12000)}catch(e){}ED=true;return c},
+window.S21AI={getContext(){const c={page:'smart21studio builder',language:'HTML (website page "'+pg().name+'")'};try{ED=false;const b=pg().blocks[sel];c.code=(b&&T[b.type]?T[b.type](b.p):pg().blocks.filter(z=>T[z.type]&&!z.hide).map(z=>T[z.type](z.p)).join('\n')).slice(0,12000)}catch(e){}ED=true;return c},
  insertCode(code,lang){lang=(lang||'').toLowerCase();const c=lang==='css'?`<style>${code}</style>`:(lang==='js'||lang==='javascript')?`<script>${code.replace(/<\/script/gi,'<\\/script')}<\/script>`:code;if(c.length>200000){toast('That code is too large to add (max 200 KB)');return}
   snap();const bl=pg().blocks,fi=bl.findIndex(z=>z.type==='footer'),b={type:'html',p:{code:c}};fi>=0?bl.splice(fi,0,b):bl.push(b);sel=bl.indexOf(b);render();toast('Added to your page as a Custom HTML block')}};
+/* ----- Figma-style tools: layers, components, zoom, shortcuts ----- */
+const CK='s21comps',getC=()=>{try{return JSON.parse(localStorage.getItem(CK))||[]}catch(e){return[]}};
+function saveComp(b){const n=prompt('Component name',(NAME[b.type]||b.type));if(!n)return;try{const c=getC();c.unshift({n:n.slice(0,30),b:clone(b)});localStorage.setItem(CK,JSON.stringify(c.slice(0,30)));toast('Saved “'+n+'” — find it in the Layers tab');layers()}catch(e){toast('Browser storage is full')}}
+function layers(){const bl=pg().blocks;$('#lyList').innerHTML=bl.map((b,i)=>`<div class="ly${i===sel?' on':''}${b.hide?' h':''}" draggable="true" data-ly="${i}"><i class="fa-solid ${ICON[b.type]||'fa-square'}"></i><span>${NAME[b.type]||b.type}${b.p&&b.p.h?' · '+esc(String(b.p.h).slice(0,22)):''}</span><button data-lyx="eye:${i}" title="Show / hide"><i class="fa-solid ${b.hide?'fa-eye-slash':'fa-eye'}"></i></button><button data-lyx="dup:${i}" title="Duplicate"><i class="fa-solid fa-clone"></i></button><button data-lyx="del:${i}" title="Delete"><i class="fa-solid fa-trash"></i></button></div>`).join('');
+ const c=getC();$('#compList').innerHTML=c.length?c.map((x,i)=>`<div class="ly" data-ci="${i}"><i class="fa-solid fa-cube"></i><span style="flex:1">${esc(x.n)}</span><button data-cx="${i}" title="Remove">×</button></div>`).join(''):'<p class="note">Select a block, then “Save component” in its Design settings.</p>'}
+$('#pLayers').addEventListener('click',e=>{const t=e.target;let x;const bl=pg().blocks;
+ if(x=t.closest('[data-lyx]')){e.stopPropagation();const[a,i]=x.dataset.lyx.split(':'),k=+i;snap();if(a==='eye')bl[k].hide=!bl[k].hide;else if(a==='dup'){bl.splice(k+1,0,clone(bl[k]))}else if(a==='del'){bl.splice(k,1);sel=-1}render();return}
+ if(x=t.closest('[data-cx]')){e.stopPropagation();const c=getC();c.splice(+x.dataset.cx,1);try{localStorage.setItem(CK,JSON.stringify(c))}catch(er){}layers();return}
+ if(x=t.closest('[data-ci]')){const c=getC()[+x.dataset.ci];if(!c)return;snap();const fi=bl.findIndex(z=>z.type==='footer'),b=clone(c.b);delete b.hide;fi>=0?bl.splice(fi,0,b):bl.push(b);sel=bl.indexOf(b);render();return}
+ if(x=t.closest('[data-ly]')){sel=+x.dataset.ly;render(true);insp();const n=document.querySelector('#cv [data-b="'+sel+'"]');if(n)n.scrollIntoView({block:'center',behavior:'smooth'})}});
+let lyDrag=-1;$('#pLayers').addEventListener('dragstart',e=>{const x=e.target.closest('[data-ly]');lyDrag=x?+x.dataset.ly:-1});
+$('#pLayers').addEventListener('dragover',e=>{if(lyDrag>=0&&e.target.closest('[data-ly]'))e.preventDefault()});
+$('#pLayers').addEventListener('drop',e=>{const x=e.target.closest('[data-ly]');if(!x||lyDrag<0)return;e.preventDefault();const to=+x.dataset.ly,bl=pg().blocks;if(to!==lyDrag){snap();const m=bl.splice(lyDrag,1)[0];bl.splice(to,0,m);sel=to;render()}lyDrag=-1});
+let Z=1;const setZ=z=>{Z=Math.min(1.5,Math.max(.4,Math.round(z*100)/100));$('#dev').style.zoom=Z;$('#zv').textContent=Math.round(Z*100)+'%'};
+$('#zm').onclick=()=>setZ(Z-.1);$('#zp').onclick=()=>setZ(Z+.1);$('#zv').onclick=()=>setZ(1);
+document.querySelector('.stage').addEventListener('wheel',e=>{if(!e.ctrlKey)return;e.preventDefault();setZ(Z+(e.deltaY<0?.1:-.1))},{passive:false});
+document.addEventListener('keydown',e=>{const t=e.target;if(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||sel<0)return;const bl=pg().blocks;if(!bl[sel])return;
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='d'){e.preventDefault();snap();bl.splice(sel+1,0,clone(bl[sel]));sel++;render()}
+ else if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();snap();bl.splice(sel,1);sel=-1;render()}
+ else if(e.altKey&&(e.key==='ArrowUp'||e.key==='ArrowDown')){const j=sel+(e.key==='ArrowUp'?-1:1);if(j<0||j>=bl.length)return;e.preventDefault();snap();[bl[sel],bl[j]]=[bl[j],bl[sel]];sel=j;render()}});
+/* ----- Backend designer: data models -> SQL schema + Cloudflare Worker (D1) API, wired to form / data-list blocks ----- */
+const ident=n=>(String(n||'').toLowerCase().replace(/[^a-z0-9_]+/g,'_').replace(/^_+|_+$/g,'')||'x').replace(/^(\d)/,'f$1').slice(0,30),bk=()=>S.backend||(S.backend={models:[]});
+const SQLT={text:'TEXT',longtext:'TEXT',email:'TEXT',number:'REAL',bool:'INTEGER',date:'TEXT'},FT=Object.keys(SQLT);
+const mods=()=>{const seen={};return bk().models.map(m=>({n:ident(m.n),pub:!!m.pub,f:m.f.map(x=>({n:ident(x.n),t:SQLT[x.t]?x.t:'text'})).filter((x,i,a)=>x.n!=='id'&&x.n!=='created_at'&&a.findIndex(y=>y.n===x.n)===i)})).filter(m=>m.f.length&&!seen[m.n]&&(seen[m.n]=1))};
+const MF=m=>{const x=mods().find(z=>z.n===ident(m));return x?x.f:null};
+const genSql=()=>mods().map(m=>`CREATE TABLE IF NOT EXISTS ${m.n} (\n  id INTEGER PRIMARY KEY AUTOINCREMENT,\n${m.f.map(x=>`  ${x.n} ${SQLT[x.t]}`).join(',\n')},\n  created_at TEXT DEFAULT CURRENT_TIMESTAMP\n);`).join('\n\n');
+const genWorker=()=>{const o={};mods().forEach(m=>o[m.n]={pub:m.pub,f:m.f});return `// Generated by Smart21 Studio — Cloudflare Worker + D1 API
+const MODELS = ${JSON.stringify(o,null,1)};
+const H = {'content-type':'application/json','access-control-allow-origin':'*','access-control-allow-headers':'content-type,authorization','access-control-allow-methods':'GET,POST,DELETE,OPTIONS'};
+const J = (d, s) => new Response(JSON.stringify(d), {status: s || 200, headers: H});
+function clean(f, v) {
+  if (v === undefined || v === null || v === '') return null;
+  if (f.t === 'number') { v = Number(v); return isFinite(v) ? v : null; }
+  if (f.t === 'bool') return (v === true || v === 'true' || v === 1 || v === 'on') ? 1 : 0;
+  v = String(v).slice(0, f.t === 'longtext' ? 5000 : 300);
+  if (f.t === 'email' && !(v.indexOf('@') > 0 && v.indexOf('.', v.indexOf('@')) > v.indexOf('@') + 1 && v.indexOf(' ') < 0)) return null;
+  return v;
+}
+export default {
+  async fetch(req, env) {
+    const u = new URL(req.url);
+    if (!u.pathname.startsWith('/api/')) return env.ASSETS.fetch(req);
+    if (req.method === 'OPTIONS') return J({});
+    const parts = u.pathname.split('/'), name = parts[2], id = parts[3], M = MODELS[name];
+    if (!M) return J({error: 'unknown model'}, 404);
+    const admin = !!env.ADMIN_TOKEN && req.headers.get('authorization') === 'Bearer ' + env.ADMIN_TOKEN;
+    if (req.method === 'GET') {
+      if (!M.pub && !admin) return J({error: 'forbidden'}, 403);
+      const lim = Math.min(Number(u.searchParams.get('limit')) || 50, 200);
+      const r = await env.DB.prepare('SELECT * FROM ' + name + ' ORDER BY id DESC LIMIT ?').bind(lim).all();
+      return J(r.results);
+    }
+    if (req.method === 'POST') {
+      const b = await req.json().catch(() => null);
+      if (!b || typeof b !== 'object') return J({error: 'bad json'}, 400);
+      const vals = M.f.map(f => clean(f, b[f.n]));
+      if (vals.every(v => v === null)) return J({error: 'empty'}, 400);
+      await env.DB.prepare('INSERT INTO ' + name + ' (' + M.f.map(f => f.n).join(',') + ') VALUES (' + M.f.map(() => '?').join(',') + ')').bind(...vals).run();
+      return J({ok: true}, 201);
+    }
+    if (req.method === 'DELETE' && id) {
+      if (!admin) return J({error: 'forbidden'}, 403);
+      await env.DB.prepare('DELETE FROM ' + name + ' WHERE id = ?').bind(Number(id)).run();
+      return J({ok: true});
+    }
+    return J({error: 'method not allowed'}, 405);
+  }
+};
+`};
+const WRANGLER=`name = "my-site"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = ".."
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "site-db"
+database_id = "PASTE_THE_ID_FROM_STEP_2"
+`;
+const BKREADME=`Backend generated by Smart21 Studio (Cloudflare Worker + D1 database)
+
+1. cd backend
+2. npx wrangler d1 create site-db        (copy the database_id into wrangler.toml)
+3. npx wrangler d1 execute site-db --remote --file=schema.sql
+4. npx wrangler secret put ADMIN_TOKEN   (a long random password; needed to read private lists and delete rows)
+5. npx wrangler deploy
+
+Your pages and the API then run on the same address. Forms POST to /api/<model>.
+Private models (not "Anyone can read the list") are only readable with the header  Authorization: Bearer <ADMIN_TOKEN>.
+Tip: put Cloudflare Turnstile or a rate-limit rule in front of public forms to stop spam.
+`;
+const backendFiles=()=>[{n:'backend/schema.sql',t:genSql()+'\n'},{n:'backend/worker.js',t:genWorker()},{n:'backend/wrangler.toml',t:WRANGLER},{n:'backend/README.txt',t:BKREADME},{n:'.assetsignore',t:'backend\n'}];
+const FORMJS="(function(){var f=document.currentScript.previousElementSibling,s=f.querySelector('.meta');f.addEventListener('submit',function(e){e.preventDefault();var d={};Array.prototype.forEach.call(f.elements,function(el){if(!el.name)return;d[el.name]=el.type==='checkbox'?el.checked:el.type==='number'?(el.value===''?null:Number(el.value)):el.value});fetch('/api/'+f.dataset.s21Form,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw 0;f.reset();s.textContent='Thank you — received!'}).catch(function(){s.textContent='Could not send. Please try again.'})})})()";
+const LISTJS="(function(){var el=document.currentScript.previousElementSibling;function q(s){return String(s==null?'':s).replace(/[&<>\"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]})}fetch('/api/'+el.dataset.s21List+'?limit=24').then(function(r){return r.json()}).then(function(a){if(!Array.isArray(a))return;el.innerHTML=a.length?a.map(function(x){return '<div class=\"cd\">'+Object.keys(x).filter(function(k){return k!=='id'&&k!=='created_at'&&x[k]!==null}).map(function(k){return '<p><b>'+q(k)+':</b> '+q(x[k])+'</p>'}).join('')+'</div>'}).join(''):'<p class=\"meta\">Nothing here yet.</p>'}).catch(function(){})})()";
+function bkRender(){const M=bk().models;$('#bkList').innerHTML=M.map((m,i)=>`<div style="border:1px solid var(--ln);border-radius:10px;padding:.5rem;margin-bottom:.5rem"><div style="display:flex;gap:.3rem;align-items:center"><b style="flex:1">${esc(m.n)}</b><button class="b" data-bk="delm:${i}" title="Delete model"><i class="fa-solid fa-trash"></i></button></div><label style="display:flex;gap:.4rem;align-items:center;font-size:.78rem"><input type="checkbox" style="width:auto" data-bkp="${i}"${m.pub?' checked':''}> Anyone can read the list</label>${m.f.map((x,j)=>`<div style="display:flex;gap:.3rem;margin-top:.3rem"><input data-bkn="${i}:${j}" value="${esc(x.n)}"><select data-bkt="${i}:${j}" style="width:auto">${FT.map(t=>`<option${t===x.t?' selected':''}>${t}</option>`).join('')}</select><button class="b" data-bk="delf:${i}:${j}">×</button></div>`).join('')}<button class="b" data-bk="addf:${i}" style="width:100%;margin-top:.4rem">+ Field</button></div>`).join('')||'<p class="note">No data models yet.</p>';$('#bkSql').value=genSql()||'-- add a model with a field to generate the SQL'}
+$('#bkAdd').onclick=()=>{const n=prompt('Data model name (e.g. contacts, products, events)','contacts');if(!n)return;const k=ident(n);if(bk().models.some(m=>ident(m.n)===k)){toast('That model already exists');return}snap();const c=/contact|message|lead|enquir|order|booking/.test(k);bk().models.push({n:k,pub:!c,f:c?[{n:'name',t:'text'},{n:'email',t:'email'},{n:'message',t:'longtext'}]:[{n:'title',t:'text'},{n:'details',t:'longtext'}]});render()};
+$('#pBackend').addEventListener('click',e=>{const x=e.target.closest('[data-bk]');if(!x)return;const[a,i,j]=x.dataset.bk.split(':'),M=bk().models;snap();if(a==='delm')M.splice(+i,1);else if(a==='addf')M[+i].f.push({n:'field'+(M[+i].f.length+1),t:'text'});else if(a==='delf'&&M[+i].f.length>1)M[+i].f.splice(+j,1);render()});
+$('#pBackend').addEventListener('change',e=>{const el=e.target,M=bk().models;let v;if(el.dataset.bkp!==undefined){snap();M[+el.dataset.bkp].pub=el.checked}else if(el.dataset.bkn!==undefined){v=el.dataset.bkn.split(':');snap();M[+v[0]].f[+v[1]].n=ident(el.value)}else if(el.dataset.bkt!==undefined){v=el.dataset.bkt.split(':');snap();M[+v[0]].f[+v[1]].t=el.value}else return;render()});
+$('#bkCopy').onclick=()=>{try{navigator.clipboard.writeText(genWorker()).then(()=>toast('worker.js copied'),()=>toast('Copy failed'))}catch(e){toast('Copy failed')}};
+const userCss=()=>String(S.theme.css||'').replace(/<\/style/gi,'');
+function applyCss(){let st=document.getElementById('userCss');if(!st){st=document.createElement('style');st.id='userCss';document.head.appendChild(st)}st.textContent=userCss()?'#cv{'+userCss()+'}':''}
+$('#thCss').addEventListener('input',e=>{S.theme.css=e.target.value.slice(0,20000);applyCss();save()});
+/* ----- Live code: Smart21Editor beside the page, edits sync into the page as you type ----- */
+let live=null,liveT;const LW=()=>document.body.classList.contains('livec');
+function closeLive(){live=null;$('#live').hidden=true;document.body.classList.remove('livec');$('#liveFr').src='about:blank'}
+$('#liveBtn').onclick=()=>{if(live){closeLive();return}const b=pg().blocks[sel];ED=false;let body,css,ctx;
+ if(b&&T[b.type]){body=b.type==='html'?b.p.code:wrapCv(T[b.type](b.p));css=b.type==='html'?'':BASE_CSS+SITE_CSS;ctx={scope:'block',page:cur,block:sel}}
+ else{body=wrapCv(nav(false)+pg().blocks.filter(x=>T[x.type]&&!x.hide).map(x=>T[x.type](x.p)).join(''));css=BASE_CSS+SITE_CSS;ctx={scope:'page',page:cur}}ED=true;
+ try{const old=EK.map(k=>localStorage.getItem(k)||'');if(old[0].length>200&&old[0]!==body)localStorage.setItem('s21e-web-backup',JSON.stringify({t:Date.now(),h:old[0],c:old[1],j:old[2]}));
+  localStorage.setItem(EK[0],body);localStorage.setItem(EK[1],css);localStorage.setItem(EK[2],'');localStorage.setItem('s21e-lang','web');localStorage.removeItem(RET)}catch(e){toast('Browser storage is blocked');return}
+ live=Object.assign({fresh:true},ctx);$('#liveSt').textContent='ready';$('#live').hidden=false;document.body.classList.add('livec');$('#liveFr').src='smart21editor.html?embed=1&t='+Date.now()+'#web'};
+$('#liveX').onclick=closeLive;
+$('#liveFull').onclick=()=>{if(!live)return;const c=Object.assign({},live);delete c.fresh;try{localStorage.setItem(RET,JSON.stringify(Object.assign({t:Date.now(),name:S.name},c)))}catch(e){}location.href='smart21editor.html#web'};
+function applyLive(){if(!live)return;const code=codeFrom(...EK.map(k=>localStorage.getItem(k)||''));if(code.length>200000){$('#liveSt').textContent='too large (max 200 KB)';return}
+ const pgs=S.pages[live.page];if(!pgs){return}if(live.fresh){addRev('Before live code');snap();live.fresh=false}
+ if(live.scope==='block'&&pgs.blocks[live.block])pgs.blocks[live.block]={type:'html',p:{code}};else if(live.scope==='page'){pgs.blocks=[{type:'html',p:{code}}];live.scope='block';live.block=0}else return;
+ if(cur===live.page)sel=live.block;render(true);$('#liveSt').textContent='✓ synced'}
+window.addEventListener('storage',e=>{if(!live||!EK.includes(e.key))return;clearTimeout(liveT);$('#liveSt').textContent='syncing…';liveT=setTimeout(applyLive,350)});
+document.addEventListener('keydown',e=>{const t=e.target;if(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||!(e.ctrlKey||e.metaKey))return;const k=e.key.toLowerCase();
+ if(k==='z'){e.preventDefault();$(e.shiftKey?'#redo':'#undo').click()}else if(k==='y'){e.preventDefault();$('#redo').click()}else if(k==='s'){e.preventDefault();save();toast('Saved')}});
 takeBack();
 render();
 })();
