@@ -34,3 +34,16 @@
   background:linear-gradient(180deg,color-mix(in srgb,var(--s21-bg,#fff) 86%,transparent),color-mix(in srgb,var(--s21-bg,#fff) 74%,transparent))}
 .c21-bgimg.alt::before{background:linear-gradient(180deg,color-mix(in srgb,var(--s21-bg,#fff) 80%,transparent),color-mix(in srgb,var(--s21-bg,#fff) 68%,transparent))}
 .hero .hero-search{margin-bottom:0}
+
+/* Service bar: bright yellow, bigger icons and labels, dark text for contrast */
+.c21-icons-wrap{background:#FFD21F;border-bottom:3px solid #E0A800;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.c21-icons{gap:.6rem;padding:1.05rem 0 .95rem}
+.c21-icons a{min-width:124px;font-size:.92rem;font-weight:800;color:#1a1400;padding:.55rem .6rem;border-radius:16px}
+.c21-icons a span{width:68px;height:68px;margin:0 auto .4rem;border-radius:18px;border:2px solid #1a1400;background:rgba(255,255,255,.55);color:#1a1400;font-size:1.9rem}
+.c21-icons a span b{font-size:1.5rem}
+.c21-icons a:hover,.c21-icons a.on{background:rgba(0,0,0,.12);color:#000}
+.c21-icons a:hover span{background:#fff}
+.c21-icons a.on span{background:#1a1400;color:#FFD21F;border-color:#1a1400}
+.c21-icons a.bld span{background:#1a1400;color:#FFD21F}
+.c21-yl{background:#FFD21F!important;color:#1a1400!important;border:0!important;font-weight:800}.c21-yl:hover{background:#ffe066!important}
+@media(max-width:991px){.c21-icons{justify-content:flex-start;padding-inline:.5rem}.c21-icons a{min-width:104px}.c21-icons a span{width:58px;height:58px;font-size:1.6rem}}

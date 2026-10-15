@@ -56,7 +56,8 @@ $('#c21Sections').innerHTML=SEC.map((s,i)=>{
  <div class="mt-4"><h4 class="c21-h4">What we do</h4>${chips(s.svc,5)}</div></div></section>`}).join('');
 $('#devCenter').appendChild($('#builderBox'));
 $('#c21Other').innerHTML=OTH.map(o=>{const note=/^Electrical work/.test(o[2].split('|').pop())?o[2].split('|').pop():'',l=note?o[2].split('|').slice(0,-1):o[2].split('|');return `<div class="col-md-6 col-xl-4"><div class="c21-card"><div class="c21-ico"><i class="fa-solid ${o[0]}"></i></div><h3 class="h6 fw-bold">${o[1]}</h3><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${note?`<p class="c21-note">${note}</p>`:''}<a class="btn-s21 btn-s21-outline btn-sm" href="contact.html?service=${encodeURIComponent(o[1])}">Request service</a></div></div>`}).join('');
-$('#c21Icons').innerHTML=SEC.map(s=>`<a href="#${s.id}" data-t="${s.id}"><span>${s.tx?`<b>${s.tx}</b>`:`<i class="fa-solid ${s.ti}"></i>`}</span>${s.tab}</a>`).join('');
+$('#c21Icons').innerHTML=SEC.map(s=>`<a href="#${s.id}" data-t="${s.id}"><span>${s.tx?`<b>${s.tx}</b>`:`<i class="fa-solid ${s.ti}"></i>`}</span>${s.tab}</a>`).join('')
+$('#c21Icons').insertAdjacentHTML('beforeend','<a href="builder21.html" class="bld"><span><i class="fa-solid fa-wand-magic-sparkles"></i></span>Builder</a>');
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)document.querySelectorAll('#c21Icons a').forEach(a=>a.classList.toggle('on',a.dataset.t===e.target.id))}),{rootMargin:'-40% 0px -55% 0px'});
 document.querySelectorAll('.c21-sec').forEach(s=>io.observe(s));
 $('#fixList').innerHTML=SEC[1].svc.map(x=>`<li>${esc(x)}</li>`).join('');
