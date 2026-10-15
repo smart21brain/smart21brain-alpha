@@ -13,7 +13,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=20">
-<link rel="stylesheet" href="css/computer21.css?v=1">
+<link rel="stylesheet" href="css/computer21.css?v=2">
 <link rel="stylesheet" href="css/responsive.css?v=5">
 <link rel="stylesheet" href="css/animations.css?v=4">
 
@@ -93,15 +93,23 @@
 <h1 class="mt-3 mb-2" data-i18n="nav_computer21">Computer21</h1>
 <p class="lead mb-1">Networks, computers, software, cloud, security, AI and data — learn it, build it and get it fixed, all in one place.</p>
 <p class="lead-sub mb-0" style="max-width:760px">Free builders and emulators you can use in your browser, short courses to learn the skills, and professional IT services when you need an expert.</p>
+<form class="hero-search s21-search-wrap mt-4" role="search" aria-label="Site search">
+<input type="search" placeholder="Search videos, books, games, subjects…" data-i18n-placeholder="hero_search_placeholder" aria-label="Search Smart21Brain" autocomplete="off">
+<button type="button" class="icon-btn" style="background:transparent;border:none;color:#5B6470" data-voice-search aria-label="Search by voice"><i class="fa-solid fa-microphone"></i></button>
+<button type="submit" aria-label="Search"><i class="fa-solid fa-arrow-right"></i></button>
+<div class="s21-search-panel" role="listbox"></div>
+</form>
 <div class="d-flex flex-wrap gap-2 mt-3"><a href="#network" class="btn-s21 btn-s21-primary"><i class="fa-solid fa-rocket"></i> Explore</a><a href="contact.html?service=Computer21" class="btn-s21 btn-s21-outline">Request a service</a></div>
 </div></section>
 <div class="c21-icons-wrap"><div class="container"><nav class="c21-icons" id="c21Icons" aria-label="Computer21 sections"></nav></div></div>
 <div id="c21Sections"></div>
-<section class="c21-sec" id="other"><div class="container"><div class="c21-secno">08 · More services</div><h2 class="h3 mb-1">Everything else we do</h2><p class="text-soft mb-4">The same professional team also covers cameras, power, branding, media, equipment and IT support.</p><div class="row g-3" id="c21Other"></div></div></section>
-<section class="section-tight"><div class="container text-center"><h2 class="h4">Need something built or fixed?</h2><p class="text-soft">Tell us what you need and we will reply with a plan and a quote.</p><a href="contact.html?service=Computer21" class="btn-s21 btn-s21-primary">Contact Computer21</a></div></section>
+<section class="c21-sec c21-bgimg" id="other" style="--c21-img:url('https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1600&q=70&auto=format&fit=crop')"><div class="container"><div class="c21-secno">08 · More services</div><h2 class="h3 mb-1">Everything else we do</h2><p class="text-soft mb-4">The same professional team also covers cameras, power, branding, media, equipment and IT support.</p><div class="row g-3" id="c21Other"></div></div></section>
+<section class="section-tight c21-bgimg" style="--c21-img:url('https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1600&q=70&auto=format&fit=crop')"><div class="container text-center"><h2 class="h4">Need something built or fixed?</h2><p class="text-soft">Tell us what you need and we will reply with a plan and a quote.</p><a href="contact.html?service=Computer21" class="btn-s21 btn-s21-primary">Contact Computer21</a></div></section>
 </main>
 
 <div class="d-none"><div id="builderBox" class="c21-bbox"><div class="c21-bhead">Smart21builder <small>build in your browser, download the files</small></div>
+<a href="builder21.html" class="btn-s21 btn-s21-primary w-100 mb-3" style="justify-content:center"><i class="fa-solid fa-wand-magic-sparkles"></i> Open Smart21 Studio — full visual editor + Build with AI</a>
+<div class="d-flex flex-wrap gap-2 mb-3" style="font-size:.85rem"><a href="course.html?slug=web-design-basics"><i class="fa-solid fa-graduation-cap"></i> Course: Web Design Basics</a><a href="smart21code.html"><i class="fa-solid fa-book-open"></i> Smart21Code</a><a href="smart21editor.html#web"><i class="fa-solid fa-code"></i> Smart21Editor</a></div>
 <ul class="nav nav-pills c21-tabs gap-1 mb-3"><li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#t-web"><i class="fa-solid fa-globe me-1"></i>Website</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#t-app"><i class="fa-solid fa-mobile-screen me-1"></i>App</button></li></ul>
 <div class="tab-content c21-panel border-0 p-0">
 <div class="tab-pane fade show active" id="t-web"><div class="row g-3"><div class="col-md-5">
@@ -146,7 +154,7 @@
         <h6>Computer21</h6>
         <ul class="list-unstyled d-flex flex-column gap-2">
           <li><a href="#services">Services</a></li>
-          <li><a href="#tools">Website &amp; App Builder</a></li>
+          <li><a href="builder21.html">Smart21 Studio (Website Builder + AI)</a></li>
           <li><a href="#tools">PC Builder</a></li>
           <li><a href="#tools">Terminal Emulator</a></li>
           <li><a href="contact.html">Request a service</a></li>
@@ -214,6 +222,6 @@
 
 <script>AOS.init({duration:650,once:true,offset:60});</script>
 <script src="js/cookie-consent.js"></script>
-<script src="js/computer21.js?v=1"></script>
+<script src="js/computer21.js?v=2"></script>
 </body>
 </html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart21 Studio — Website Builder with AI | Smart21Brain</title>
+<meta name="description" content="Build and edit multi-page websites visually with blocks, inline editing, themes and AI. Export clean HTML.">
+<link rel="icon" href="images/logo/coool.png" type="image/png">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<style>
+:root{--bg:#0f1720;--pn:#16212c;--ln:#2a3947;--tx:#e8eef4;--sf:#9fb0c0;--ac:#16a37a}
+*{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--tx);font:14px system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.bar{display:flex;gap:.4rem;align-items:center;padding:.5rem .8rem;background:var(--pn);border-bottom:1px solid var(--ln);flex-wrap:wrap}
+.bar a.home{color:var(--tx);text-decoration:none;font-weight:800}
+.b{background:#1e2c3a;border:1px solid var(--ln);border-radius:8px;padding:.35rem .65rem;cursor:pointer}.b:hover{border-color:var(--ac)}.b.p{background:var(--ac);border-color:var(--ac);color:#fff}.b:disabled{opacity:.4;cursor:default}.b.on{background:var(--ac)}
+.sp{flex:1}
+.app{flex:1;display:grid;grid-template-columns:290px 1fr 270px;min-height:0}
+.side{background:var(--pn);overflow:auto;padding:.7rem}.side.l{border-right:1px solid var(--ln)}.side.r{border-left:1px solid var(--ln)}
+.tabs{display:flex;gap:.25rem;margin-bottom:.7rem}.tabs button{flex:1;padding:.4rem .2rem;border:0;border-radius:8px;background:transparent;color:var(--sf);cursor:pointer;font-size:.78rem}.tabs button.on{background:#1e2c3a;color:var(--tx)}
+.tabs i{display:block;font-size:1rem;margin-bottom:.15rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}.blk{background:#1e2c3a;border:1px solid var(--ln);border-radius:10px;padding:.6rem .3rem;text-align:center;cursor:pointer;font-size:.78rem}.blk:hover{border-color:var(--ac)}.blk i{display:block;font-size:1.2rem;margin-bottom:.25rem;color:var(--ac)}
+label{display:block;font-size:.72rem;color:var(--sf);margin:.6rem 0 .2rem;text-transform:uppercase;letter-spacing:.04em}
+input,select,textarea{width:100%;background:#0f1720;border:1px solid var(--ln);border-radius:8px;padding:.4rem .5rem}textarea{min-height:90px;resize:vertical}
+input[type=color]{padding:0;height:34px}
+.pg{display:flex;gap:.3rem;margin-bottom:.3rem}.pg button.n{flex:1;text-align:left}
+.note{color:var(--sf);font-size:.78rem;line-height:1.45}
+.stage{overflow:auto;background:#0a1017;padding:1rem;display:flex;justify-content:center}
+.dev{width:100%;max-width:100%;background:#fff;color:#1b2430;border-radius:10px;overflow:hidden;transition:max-width .25s;align-self:flex-start;min-height:100%}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#000c;padding:.5rem 1rem;border-radius:99px;display:none;z-index:9}
+.cv [data-b]{position:relative;outline:2px solid transparent;outline-offset:-2px}.cv [data-b]:hover{outline-color:#16a37a66}.cv [data-b].sel{outline-color:var(--ac)}
+.cv [contenteditable]:focus{outline:2px dashed #16a37a;outline-offset:3px}
+.tb{position:absolute;top:6px;right:6px;display:none;gap:3px;z-index:5;background:#0f1720;padding:3px;border-radius:8px}.sel>.tb{display:flex}
+.tb button{background:#1e2c3a;border:0;border-radius:6px;color:#fff;width:28px;height:26px;cursor:pointer}
+.cv [data-b].dz::before,.cv [data-b].dzb::after{content:'';position:absolute;left:0;right:0;height:6px;background:var(--ac);z-index:7}.cv [data-b].dz::before{top:0}.cv [data-b].dzb::after{bottom:0}.tb .gr{cursor:grab;background:#1e2c3a;border-radius:6px;color:#fff;width:28px;height:26px;display:inline-flex;align-items:center;justify-content:center;user-select:none}.blk[draggable=true]{cursor:grab}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-top:.5rem}.mg>div{aspect-ratio:1;background:#0f1720 center/cover;border:1px solid var(--ln);border-radius:8px;cursor:pointer;position:relative}.mg>div:hover{border-color:var(--ac)}.mg>div button{position:absolute;top:2px;right:2px;padding:0 .3rem;font-size:12px}
+.rv{display:flex;gap:.3rem;align-items:center;margin-top:.3rem;font-size:.75rem;color:var(--sf)}.rv span{flex:1}.tabs button{font-size:.68rem!important}
+.lk{display:block;text-decoration:none;color:var(--tx);background:#1e2c3a;border:1px solid var(--ln);border-radius:10px;padding:.7rem;margin-bottom:.45rem;cursor:pointer;width:100%;text-align:left}.lk:hover{border-color:var(--ac)}.lk b{display:block;margin-bottom:.15rem}.lk small{color:var(--sf);line-height:1.35;display:block}.lk i{color:var(--ac);margin-right:.35rem}
+@media(max-width:900px){body{height:auto}.app{display:block}.side{max-height:none}.stage{padding:.4rem}}
+</style>
+</head>
+<body>
+<div class="bar">
+ <a class="home" href="computer21.html"><i class="fa-solid fa-arrow-left"></i> Computer21</a>
+ <b style="margin-left:.4rem">Smart21 Studio</b>
+ <input id="pname" style="width:170px" aria-label="Project name">
+ <span class="sp"></span>
+ <button class="b" id="undo" title="Undo"><i class="fa-solid fa-rotate-left"></i></button><button class="b" id="redo" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+ <button class="b on" data-w="100%" title="Desktop"><i class="fa-solid fa-desktop"></i></button><button class="b" data-w="768px" title="Tablet"><i class="fa-solid fa-tablet-screen-button"></i></button><button class="b" data-w="390px" title="Phone"><i class="fa-solid fa-mobile-screen"></i></button>
+ <button class="b" id="toEd" title="Edit this page's code in Smart21Editor"><i class="fa-solid fa-code"></i> Code</button>
+ <button class="b" id="prev"><i class="fa-solid fa-eye"></i> Preview</button>
+ <button class="b p" id="exp"><i class="fa-solid fa-download"></i> Export</button>
+</div>
+<div class="app">
+ <aside class="side l">
+  <div class="tabs" id="tabs"><button class="on" data-t="blocks"><i class="fa-solid fa-cubes"></i>Blocks</button><button data-t="pages"><i class="fa-solid fa-file-lines"></i>Pages</button><button data-t="media"><i class="fa-solid fa-photo-film"></i>Media</button><button data-t="theme"><i class="fa-solid fa-palette"></i>Site</button><button data-t="ai"><i class="fa-solid fa-wand-magic-sparkles"></i>AI</button><button data-t="learn"><i class="fa-solid fa-graduation-cap"></i>Learn</button></div>
+  <div id="pBlocks"><input id="bsearch" placeholder="Search blocks…" aria-label="Search blocks"><p class="note">Click a block to add it, or drag it onto the page.</p><div class="grid" id="palette"></div></div>
+  <div id="pPages" hidden><div id="pageList"></div><div style="display:flex;gap:.3rem;margin-top:.4rem"><button class="b" id="addPage" style="flex:1"><i class="fa-solid fa-plus"></i> Page</button><button class="b" id="addPost" style="flex:1"><i class="fa-solid fa-pen-nib"></i> Post</button><button class="b" id="dupPage" style="flex:1" title="Duplicate this page"><i class="fa-solid fa-clone"></i></button></div><label>Page settings</label><div id="pgSet"></div></div>
+  <div id="pMedia" hidden><button class="b p" id="mUp" style="width:100%"><i class="fa-solid fa-upload"></i> Upload images</button><p class="note" style="margin-top:.5rem">Click an image to put it in the selected block. Max 1.5 MB each.</p><div class="mg" id="mGrid"></div></div>
+  <div id="pTheme" hidden>
+   <label>Starter looks</label><div class="grid" id="presets"></div>
+   <label>Brand colour</label><input type="color" id="thC"><label>Font</label><select id="thF"><option value="system-ui,sans-serif">Modern (system)</option><option value="Georgia,serif">Classic (serif)</option><option value="'Trebuchet MS',sans-serif">Friendly</option><option value="'Courier New',monospace">Tech (mono)</option></select>
+   <label>Corner roundness</label><select id="thR"><option value="0px">Sharp</option><option value="10px">Soft</option><option value="22px">Round</option></select>
+   <label>Site title (browser tab)</label><input id="thT">
+   <label>Description (SEO)</label><textarea id="thD" style="min-height:60px"></textarea>
+   <label>Revisions</label><button class="b" id="revSave" style="width:100%"><i class="fa-solid fa-clock-rotate-left"></i> Save a revision now</button><div id="revList"></div>
+  </div>
+  <div id="pLearn" hidden>
+   <p class="note">Learn to build, write code, and bring it back into your site.</p>
+   <a class="lk" href="course.html?slug=web-design-basics" target="_blank" rel="noopener"><b><i class="fa-solid fa-graduation-cap"></i>Course: Web Design Basics — HTML &amp; CSS</b><small>Learn the code behind every block you place here.</small></a>
+   <a class="lk" href="smart21code.html" target="_blank" rel="noopener"><b><i class="fa-solid fa-book-open"></i>Smart21Code</b><small>Short lessons with live examples: HTML, CSS, JavaScript and more.</small></a>
+   <a class="lk" href="smart21editor.html#web" target="_blank" rel="noopener"><b><i class="fa-solid fa-code"></i>Smart21Editor</b><small>Full code editor with live preview.</small></a>
+   <label>Studio ⇄ Smart21Editor</label>
+   <button class="b p" id="lrnPage" style="width:100%;margin-bottom:.3rem"><i class="fa-solid fa-code"></i> Edit this page's code in Smart21Editor</button>
+   <button class="b" id="lrnImport" style="width:100%"><i class="fa-solid fa-file-import"></i> Add code from Smart21Editor as a block</button>
+   <p class="note" style="margin-top:.5rem">Send your page to the editor, change the HTML/CSS/JS, then come back and add it as a Custom HTML block.</p>
+  </div>
+  <div id="pAi" hidden>
+   <label>Build a whole website with AI</label><textarea id="aiP" placeholder="e.g. Website for a computer repair shop in Dodoma with services, pricing and contact"></textarea>
+   <button class="b p" id="aiBuild" style="width:100%;margin-top:.4rem"><i class="fa-solid fa-wand-magic-sparkles"></i> Build with AI</button>
+   <label>Improve what you have</label>
+   <button class="b" data-ai="rewrite" style="width:100%;margin-bottom:.3rem">Rewrite selected block (better copy)</button>
+   <button class="b" data-ai="sw" style="width:100%;margin-bottom:.3rem">Translate this page to Kiswahili</button>
+   <button class="b" data-ai="en" style="width:100%;margin-bottom:.3rem">Translate this page to English</button>
+   <button class="b" data-ai="seo" style="width:100%;margin-bottom:.3rem">Write SEO title &amp; description</button>
+   <p class="note" id="aiNote">AI runs through the Smart21Brain assistant. If it is offline, a starter template is used instead.</p>
+  </div>
+ </aside>
+ <main class="stage"><div class="dev" id="dev"><div class="cv" id="cv"></div></div></main>
+ <aside class="side r"><b>Block settings</b><div id="insp"><p class="note">Click any block on the page to edit its settings. Click any text to type directly on the page.</p></div></aside>
+</div>
+<div class="toast" id="toast"></div>
+<input type="file" id="file" accept="image/*" hidden><input type="file" id="mFile" accept="image/*" multiple hidden>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s),KEY='s21studio';
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const url=s=>{if(/^media:[a-z0-9]+$/.test(s||'')){const m=((window.S21S||{}).media||[]).find(x=>'media:'+x.id===s);s=m?m.src:''}return /^(https?:\/\/|data:image\/)/i.test(s||'')?String(s).replace(/['"()\\\s]/g,c=>c===' '?'%20':''):''};
+const BASE_CSS='*{box-sizing:border-box}body{margin:0}';
+const SITE_CSS=`.cv{--p:#16a37a;--f:system-ui,sans-serif;--r:10px;font-family:var(--f);color:#1b2430;background:#fff}
+.cv nav.nv{display:flex;gap:1.1rem;align-items:center;flex-wrap:wrap;padding:.9rem 1.4rem;background:#fff;border-bottom:1px solid #e4e9ee}.cv nav.nv b{margin-right:auto;font-size:1.15rem;color:var(--p)}.cv nav.nv a{color:#1b2430;text-decoration:none;font-weight:600}
+.cv section,.cv footer{padding:3.2rem 1.4rem}.cv .w{max-width:1000px;margin:auto}.cv h1{font-size:clamp(2rem,5vw,3.2rem);margin:0 0 .6rem}.cv h2{font-size:1.9rem;margin:0 0 1rem}.cv p{line-height:1.6;margin:.3rem 0}
+.cv .hero{background:linear-gradient(135deg,var(--p),#0b2c25);color:#fff;text-align:center;padding:5rem 1.4rem}.cv .btn{display:inline-block;background:var(--p);color:#fff;padding:.7rem 1.3rem;border-radius:var(--r);text-decoration:none;font-weight:700;margin-top:1rem}.cv .hero .btn,.cv .cta .btn{background:#fff;color:var(--p)}
+.cv .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem}.cv .cd{border:1px solid #e4e9ee;border-radius:var(--r);padding:1.2rem;background:#fff;color:#1b2430}.cv .cd h3{margin:.2rem 0}.cv .pr{font-size:1.5rem;font-weight:800;color:var(--p)}
+.cv .ab{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;align-items:center}.cv .im{min-height:220px;border-radius:var(--r);background:#dfe7ee center/cover}
+.cv .alt{background:#f4f7fa}.cv .cta{background:var(--p);color:#fff;text-align:center}.cv .q{text-align:center;font-size:1.3rem;font-style:italic}.cv footer{background:#111;color:#fff;text-align:center}
+.cv form{display:grid;gap:.6rem;max-width:480px}.cv input,.cv textarea{padding:.6rem;border:1px solid #cfd8e0;border-radius:var(--r);font:inherit;width:100%;background:#fff;color:#1b2430}.cv *{box-sizing:border-box}
+.cv details{border:1px solid #e4e9ee;border-radius:var(--r);padding:.8rem 1rem;margin:.5rem 0;background:#fff}.cv summary{font-weight:700;cursor:pointer}.cv .meta{color:#6b7785;font-size:.85rem}
+.cv .vid{position:relative;padding-top:56.25%}.cv .vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:var(--r)}.cv .av{width:64px;height:64px;border-radius:50%;background:var(--p);color:#fff;display:grid;place-items:center;font-size:1.4rem;font-weight:800;margin-bottom:.5rem}.cv .cd a{color:var(--p);font-weight:700;text-decoration:none}`;
+{const st=document.createElement('style');st.textContent=SITE_CSS;document.head.appendChild(st)}
+const D={
+hero:{h:'Welcome to your business',t:'One clear sentence that explains what you do and who you help.',b:'Get started',link:'#contact'},
+features:{h:'Our services',items:[{h:'Fast service',t:'Describe the first thing you offer.'},{h:'Quality work',t:'Describe the second thing you offer.'},{h:'Fair prices',t:'Describe the third thing you offer.'}]},
+about:{h:'About us',t:'Tell your story: who you are, how long you have been working, and why customers trust you.',img:''},
+pricing:{h:'Pricing',items:[{h:'Basic',price:'10,000 TZS',t:'For small jobs'},{h:'Standard',price:'30,000 TZS',t:'Most popular'},{h:'Premium',price:'60,000 TZS',t:'Full service'}]},
+gallery:{h:'Gallery',imgs:['','','']},
+testimonial:{t:'“They fixed everything quickly and explained it clearly. Highly recommended.”',n:'— Happy customer'},
+cta:{h:'Ready to get started?',b:'Contact us',link:'#contact'},
+contact:{h:'Contact us',t:'Phone · Email · WhatsApp — we reply the same day.',email:'info@example.com'},
+text:{h:'Heading',t:'Write your text here. Click it to edit.'},
+footer:{t:'© 2026 My Business. All rights reserved.'},
+image:{img:'',cap:'Image caption'},
+button:{b:'Click here',link:'#contact'},
+faq:{h:'Frequently asked questions',items:[{h:'How long does it take?',t:'Give a clear, short answer here.'},{h:'How much does it cost?',t:'Give a clear, short answer here.'}]},
+team:{h:'Our team',items:[{h:'Full name',t:'Role'},{h:'Full name',t:'Role'},{h:'Full name',t:'Role'}]},
+video:{h:'Watch',url:''},
+posts:{h:'Latest posts'},
+spacer:{pad:'3rem'},
+html:{code:'<div style="padding:2rem;text-align:center"><h2>Custom code</h2><p>Replace this with your own HTML, CSS and JavaScript.</p></div>'}};
+const ICON={hero:'fa-image',features:'fa-table-cells-large',about:'fa-circle-info',pricing:'fa-tags',gallery:'fa-images',testimonial:'fa-quote-left',cta:'fa-bullhorn',contact:'fa-envelope',text:'fa-align-left',footer:'fa-shoe-prints',html:'fa-code',image:'fa-image',button:'fa-hand-pointer',faq:'fa-circle-question',team:'fa-people-group',video:'fa-circle-play',posts:'fa-newspaper',spacer:'fa-arrows-up-down'};
+const NAME={cta:'Call to action',faq:'FAQ',html:'Custom HTML',posts:'Blog posts',video:'Video (YouTube)',team:'Team'};
+let ED=true;const E=f=>ED?` data-f="${f}" contenteditable spellcheck="false"`:'';
+const bg=p=>{const i=url(p.bi),c=/^#[0-9a-f]{3,8}$/i.test(p.bg||'')?p.bg:'';return (c?`background:${c};`:'')+(i?`background-image:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),url('${i}');background-size:cover;background-position:center;color:#fff;`:'')+(p.pad?`padding-block:${p.pad};`:'')};
+const T={
+hero:p=>`<section class="hero" style="${bg(p)}"><div class="w"><h1${E('h')}>${esc(p.h)}</h1><p${E('t')}>${esc(p.t)}</p><a class="btn" href="${esc(p.link)}"${E('b')}>${esc(p.b)}</a></div></section>`,
+features:p=>`<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${p.items.map((x,i)=>`<div class="cd"><h3${E('items.'+i+'.h')}>${esc(x.h)}</h3><p${E('items.'+i+'.t')}>${esc(x.t)}</p></div>`).join('')}</div></div></section>`,
+about:p=>`<section class="alt" style="${bg(p)}"><div class="w ab"><div><h2${E('h')}>${esc(p.h)}</h2><p${E('t')}>${esc(p.t)}</p></div><div class="im" style="${url(p.img)?`background-image:url('${url(p.img)}')`:''}"></div></div></section>`,
+pricing:p=>`<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${p.items.map((x,i)=>`<div class="cd"><h3${E('items.'+i+'.h')}>${esc(x.h)}</h3><div class="pr"${E('items.'+i+'.price')}>${esc(x.price)}</div><p${E('items.'+i+'.t')}>${esc(x.t)}</p></div>`).join('')}</div></div></section>`,
+gallery:p=>`<section class="alt" style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${p.imgs.map(u=>`<div class="im" style="${url(u)?`background-image:url('${url(u)}')`:''}"></div>`).join('')}</div></div></section>`,
+testimonial:p=>`<section style="${bg(p)}"><div class="w q"><p${E('t')}>${esc(p.t)}</p><p${E('n')}>${esc(p.n)}</p></div></section>`,
+cta:p=>`<section class="cta" style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><a class="btn" href="${esc(p.link)}"${E('b')}>${esc(p.b)}</a></div></section>`,
+contact:p=>`<section id="contact" class="alt" style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><p${E('t')}>${esc(p.t)}</p><form onsubmit="var f=this;location.href='mailto:${esc(p.email)}?subject='+encodeURIComponent('Message from '+f.n.value)+'&body='+encodeURIComponent(f.m.value);return false"><input name="n" placeholder="Your name"><textarea name="m" rows="4" placeholder="Your message"></textarea><button class="btn" style="border:0;cursor:pointer">Send message</button></form></div></section>`,
+text:p=>`<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><p${E('t')}>${esc(p.t)}</p></div></section>`,
+image:p=>`<section style="${bg(p)}"><div class="w"><div class="im" style="min-height:320px;${url(p.img)?`background-image:url('${url(p.img)}')`:''}"></div><p class="meta"${E('cap')}>${esc(p.cap)}</p></div></section>`,
+button:p=>`<section style="text-align:center;padding-block:1.4rem"><a class="btn" href="${esc(p.link)}"${E('b')}>${esc(p.b)}</a></section>`,
+faq:p=>`<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2>${p.items.map((x,i)=>`<details${ED?' open':''}><summary${E('items.'+i+'.h')}>${esc(x.h)}</summary><p${E('items.'+i+'.t')}>${esc(x.t)}</p></details>`).join('')}</div></section>`,
+team:p=>`<section class="alt" style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${p.items.map((x,i)=>`<div class="cd"><div class="av">${esc(String(x.h||'?')[0].toUpperCase())}</div><h3${E('items.'+i+'.h')}>${esc(x.h)}</h3><p${E('items.'+i+'.t')}>${esc(x.t)}</p></div>`).join('')}</div></div></section>`,
+video:p=>{const m=String(p.url||'').match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);return `<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2>${m?`<div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/${m[1]}" title="Video" allowfullscreen loading="lazy"></iframe></div>`:'<div class="im"></div><p class="meta">Paste a YouTube link in the block settings.</p>'}</div></section>`},
+posts:p=>{const L=S.pages.map((x,i)=>[x,i]).filter(([x])=>x.kind==='post'&&(ED||x.status!=='draft')).sort((a,b)=>String(b[0].date||'').localeCompare(String(a[0].date||'')));return `<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${L.length?L.map(([x,i])=>`<div class="cd"><p class="meta">${esc(x.date||'')}${x.status==='draft'?' · draft':''}</p><h3>${esc(x.name)}</h3><p>${esc(x.excerpt||'')}</p><a href="${ED?'#':fname(i)}">Read more →</a></div>`).join(''):'<p class="meta">No posts yet. Use “Post” in the Pages tab to write one.</p>'}</div></div></section>`},
+spacer:p=>`<div style="height:${/^[0-9.]+rem$/.test(p.pad||'')?p.pad:'3rem'}${ED?';background:#16a37a14':''}"></div>`,
+html:p=>ED?`<section style="padding:0"><iframe sandbox title="Custom HTML preview (scripts are off while editing)" style="width:100%;border:0;min-height:180px;display:block" srcdoc="${esc('<body style=\'font-family:system-ui;margin:0\'>'+p.code)}"></iframe></section>`:p.code,
+footer:p=>`<footer style="${bg(p)}"><p${E('t')}>${esc(p.t)}</p></footer>`};
+const clone=o=>JSON.parse(JSON.stringify(o));
+const fresh=()=>({name:'My Website',theme:{c:'#16a37a',f:'system-ui,sans-serif',r:'10px',title:'',desc:''},pages:[{name:'Home',blocks:['hero','features','about','cta','contact','footer'].map(t=>({type:t,p:clone(D[t])}))}]});
+let S,cur=0,sel=-1,hist=[],fut=[];const strip=o=>JSON.stringify(o,(k,v)=>k==='media'?undefined:v),keepMedia=(n)=>{const M=S.media||[];S=n;S.media=M;window.S21S=S};
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S||!S.pages||!S.pages.length)S=fresh();S.media=S.media||[];window.S21S=S;
+const pg=()=>S.pages[cur],toast=m=>{const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3200)};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Browser storage is full — delete some images in the Media tab')}};
+const snap=()=>{hist.push(strip(S));if(hist.length>60)hist.shift();fut=[]};
+const slug=n=>(n||'page').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'page';
+const fname=i=>i===0?'index.html':slug(S.pages[i].slug||S.pages[i].name)+'.html';
+function nav(ed){return `<nav class="nv"><b>${esc(S.name)}</b>${S.pages.map((x,i)=>(i===0||(x.kind!=='post'&&x.menu!==false&&(ed||x.status!=='draft')))?`<a href="${ed?'#':fname(i)}"${ed?` data-pg="${i}"`:''}>${esc(x.name)}</a>`:'').join('')}</nav>`}
+function themeVars(){const t=S.theme;return `--p:${/^#[0-9a-f]{3,8}$/i.test(t.c)?t.c:'#16a37a'};--f:${t.f};--r:${t.r}`}
+function render(ki){ED=true;const cv=$('#cv');cv.setAttribute('style',themeVars());
+ cv.innerHTML=nav(true)+pg().blocks.map((b,i)=>T[b.type]?`<div data-b="${i}" class="${i===sel?'sel':''}"><div class="tb"><span class="gr" draggable="true" title="Drag to move" role="img" aria-label="Drag to move">⠿</span><button data-a="up" title="Move up"><i class="fa-solid fa-arrow-up"></i></button><button data-a="down" title="Move down"><i class="fa-solid fa-arrow-down"></i></button><button data-a="dup" title="Duplicate"><i class="fa-solid fa-clone"></i></button><button data-a="del" title="Delete"><i class="fa-solid fa-trash"></i></button></div>${T[b.type](b.p)}</div>`:'').join('');
+ $('#pname').value=S.name;$('#undo').disabled=!hist.length;$('#redo').disabled=!fut.length;lists();if(!ki)insp();save()}
+function lists(){$('#pageList').innerHTML=S.pages.map((x,i)=>`<div class="pg"><button class="b n ${i===cur?'on':''}" data-go="${i}">${esc(x.name)}${x.kind==='post'?' · post':''}${x.status==='draft'?' · draft':''}</button>${i>1?`<button class="b" data-pmv="-1:${i}" title="Move up">↑</button>`:''}${i>0&&i<S.pages.length-1?`<button class="b" data-pmv="1:${i}" title="Move down">↓</button>`:''}${i>0?`<button class="b" data-rm="${i}" title="Delete"><i class="fa-solid fa-trash"></i></button>`:''}</div>`).join('');pgSet();mediaGrid();revList();
+ $('#thC').value=S.theme.c;$('#thF').value=S.theme.f;$('#thR').value=S.theme.r;$('#thT').value=S.theme.title||'';$('#thD').value=S.theme.desc||''}
+function insp(){const b=pg().blocks[sel],el=$('#insp');if(!b){el.innerHTML='<p class="note">Click any block on the page to edit its settings. Click any text to type directly on the page.</p>';return}
+ const f=(k,l,ph)=>`<label>${l}</label><input data-k="${k}" value="${esc(b.p[k]||'')}" placeholder="${ph||''}">`,up=(k,l)=>`<button class="b" data-up="${k}" style="margin-top:.3rem;width:100%"><i class="fa-solid fa-upload"></i> ${l}</button>`;
+ let h=`<p class="note"><b>${b.type}</b> block</p>`;
+ if(b.p.link!==undefined)h+=f('link','Button link','#contact or https://…');
+ if(b.p.email!==undefined)h+=f('email','Send messages to (email)');
+ if(b.type==='about')h+=f('img','Image URL')+up('img','Upload image');
+ if(b.type==='gallery')h+=b.p.imgs.map((u,i)=>`<label>Image ${i+1} URL</label><input data-im="${i}" value="${esc(u)}">${up('im'+i,'Upload image '+(i+1))}`).join('')+`<button class="b" data-a2="addimg" style="margin-top:.4rem;width:100%">+ Add image slot</button>`;
+ if(b.p.items)h+=`<div style="display:flex;gap:.3rem;margin-top:.7rem"><button class="b" data-a2="additem" style="flex:1">+ Add item</button><button class="b" data-a2="delitem" style="flex:1">− Remove last</button></div>`;
+ if(b.type==='html')h+=`<label>Custom HTML / CSS / JS</label><textarea data-k="code" spellcheck="false" style="min-height:170px;font-family:monospace;font-size:12px">${esc(b.p.code)}</textarea>`;
+ h+=`<button class="b" data-a2="blockEd" style="width:100%;margin-top:.7rem"><i class="fa-solid fa-code"></i> Edit this block in Smart21Editor</button>`;
+ h+=`<label>Background colour</label><input type="color" data-k="bg" value="${/^#[0-9a-f]{6}$/i.test(b.p.bg||'')?b.p.bg:'#ffffff'}"><button class="b" data-a2="nobg" style="margin-top:.3rem;width:100%">Clear colour</button>`+f('bi','Background image URL','https://…')+up('bi','Upload background image')+`<label>Spacing</label><select data-k="pad"><option value="">Default</option><option value="1.2rem">Tight</option><option value="4rem">Roomy</option><option value="6rem">Very roomy</option></select>`;
+ el.innerHTML=h;const sp=el.querySelector('[data-k=pad]');if(sp)sp.value=b.p.pad||''}
+/* ----- events ----- */
+$('#palette').innerHTML=Object.keys(D).map(t=>`<div class="blk" draggable="true" data-add="${t}"><i class="fa-solid ${ICON[t]}"></i>${NAME[t]||t[0].toUpperCase()+t.slice(1)}</div>`).join('');
+$('#bsearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#palette .blk').forEach(b=>b.style.display=b.textContent.toLowerCase().includes(q)||b.dataset.add.includes(q)?'':'none')});
+document.addEventListener('click',e=>{const t=e.target;let x;
+ if(x=t.closest('[data-add]')){snap();const ty=x.dataset.add,b={type:ty,p:clone(D[ty])},bl=pg().blocks;const fi=bl.findIndex(z=>z.type==='footer');(ty!=='footer'&&fi>=0?bl.splice(fi,0,b):bl.push(b));sel=bl.indexOf(b);render();return}
+ if(x=t.closest('.tb button')){const i=+t.closest('[data-b]').dataset.b,bl=pg().blocks,a=x.dataset.a;if(!a)return;snap();
+  if(a==='del'){bl.splice(i,1);sel=-1}else if(a==='dup'){bl.splice(i+1,0,clone(bl[i]));sel=i+1}else if(a==='up'&&i>0){[bl[i-1],bl[i]]=[bl[i],bl[i-1]];sel=i-1}else if(a==='down'&&i<bl.length-1){[bl[i+1],bl[i]]=[bl[i],bl[i+1]];sel=i+1}render();return}
+ if(x=t.closest('#cv [data-pg]')){e.preventDefault();cur=+x.dataset.pg;sel=-1;render();return}
+ if(t.closest('#cv a')&&!t.closest('[contenteditable]'))e.preventDefault();
+ if(t.closest('#cv a')&&t.closest('[contenteditable]'))e.preventDefault();
+ if(x=t.closest('#cv [data-b]')){const i=+x.dataset.b;if(i!==sel){sel=i;document.querySelectorAll('#cv [data-b]').forEach(n=>n.classList.toggle('sel',+n.dataset.b===i));insp()}return}
+ if(x=t.closest('[data-go]')){cur=+x.dataset.go;sel=-1;render();return}
+ if(x=t.closest('[data-ren]')){const n=prompt('Page name',S.pages[+x.dataset.ren].name);if(n){snap();S.pages[+x.dataset.ren].name=n.slice(0,40);render()}return}
+ if(x=t.closest('[data-rm]')){if(confirm('Delete this page?')){snap();S.pages.splice(+x.dataset.rm,1);cur=0;sel=-1;render()}return}
+ if(x=t.closest('[data-a2]')){const b=pg().blocks[sel];if(!b)return;const a=x.dataset.a2;if(a==='blockEd'){sendBlock(b);return}snap();
+  if(a==='nobg')b.p.bg='';if(a==='additem'&&b.p.items)b.p.items.push(clone(b.p.items[b.p.items.length-1]));if(a==='delitem'&&b.p.items&&b.p.items.length>1)b.p.items.pop();if(a==='addimg')b.p.imgs.push('');render();return}
+ if(x=t.closest('[data-up]')){window._up=x.dataset.up;$('#file').click();return}
+ if(x=t.closest('#tabs button')){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b===x));['Blocks','Pages','Media','Theme','Ai','Learn'].forEach(n=>$('#p'+n).hidden=n.toLowerCase()!==x.dataset.t);return}
+ if(x=t.closest('[data-w]')){document.querySelectorAll('[data-w]').forEach(b=>b.classList.toggle('on',b===x));$('#dev').style.maxWidth=x.dataset.w;return}
+ if(x=t.closest('[data-ai]')){aiAct(x.dataset.ai);return}
+});
+$('#cv').addEventListener('focusin',e=>{if(e.target.dataset&&e.target.dataset.f)snap()});
+$('#cv').addEventListener('input',e=>{const el=e.target,f=el.dataset.f;if(!f)return;const bi=+el.closest('[data-b]').dataset.b;setPath(pg().blocks[bi].p,f,el.innerText.replace(/\n+/g,' ').trim());save()});
+function setPath(o,p,v){const k=p.split('.');while(k.length>1)o=o[k.shift()];o[k[0]]=v}
+$('#insp').addEventListener('input',e=>{const b=pg().blocks[sel],el=e.target;if(!b)return;if(el.dataset.k!==undefined)b.p[el.dataset.k]=el.value;else if(el.dataset.im!==undefined)b.p.imgs[+el.dataset.im]=el.value;else return;clearTimeout(insp.t);insp.t=setTimeout(()=>{snap();render(true)},500)});
+$('#insp').addEventListener('change',e=>{if(e.target.dataset.k==='pad'){snap();pg().blocks[sel].p.pad=e.target.value;render()}});
+$('#file').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(!f||!pg().blocks[sel])return;if(f.size>1.5e6){toast('Image too large (max 1.5 MB)');return}
+ addMedia(f).then(m=>{if(!m||!pg().blocks[sel])return;snap();const k=window._up,p=pg().blocks[sel].p,v='media:'+m.id;if(/^im\d+$/.test(k))p.imgs[+k.slice(2)]=v;else p[k]=v;render();toast('Image saved to your Media library')})});
+$('#pname').addEventListener('input',e=>{S.name=e.target.value.slice(0,60);document.querySelector('#cv nav.nv b').textContent=S.name;save()});
+$('#addPage').onclick=()=>{const n=prompt('New page name','About');if(!n)return;snap();S.pages.push({name:n.slice(0,40),blocks:['text','contact','footer'].map(t=>({type:t,p:clone(D[t])}))});cur=S.pages.length-1;sel=-1;render()};
+[['thC','c'],['thF','f'],['thR','r'],['thT','title'],['thD','desc']].forEach(([id,k])=>$('#'+id).addEventListener('change',e=>{snap();S.theme[k]=e.target.value;render()}));
+$('#undo').onclick=()=>{if(!hist.length)return;fut.push(strip(S));keepMedia(JSON.parse(hist.pop()));cur=Math.min(cur,S.pages.length-1);sel=-1;render()};
+$('#redo').onclick=()=>{if(!fut.length)return;hist.push(strip(S));keepMedia(JSON.parse(fut.pop()));cur=Math.min(cur,S.pages.length-1);sel=-1;render()};
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='z'&&!e.target.isContentEditable&&e.target.tagName!=='INPUT'){e.preventDefault();$('#undo').click()}});
+/* ----- export ----- */
+function pageHTML(i){ED=false;const t=S.theme,cv=`<div class="cv" style="${themeVars()}">${nav(false)}${S.pages[i].blocks.filter(b=>T[b.type]).map(b=>T[b.type](b.p)).join('')}</div>`;ED=true;
+ return `<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(S.pages[i].seoT||t.title||S.name+' — '+S.pages[i].name)}</title><meta name="description" content="${esc(S.pages[i].seoD||t.desc||'')}"><style>${BASE_CSS}${SITE_CSS}</style></head><body>${cv}</body></html>`}
+function dl(name,txt){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/html'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+$('#exp').onclick=()=>{addRev('Export');const L=S.pages.map((x,i)=>(i===0||x.status!=='draft')?{n:fname(i),t:pageHTML(i)}:null).filter(Boolean);L.push({n:'README.txt',t:'Made with Smart21 Studio (Smart21Brain). Open index.html in a browser, or upload all files to any web host.\n'});dlBlob(slug(S.name)+'.zip',zip(L));toast('Exported '+(L.length-1)+' page(s) as a .zip')};
+$('#prev').onclick=()=>{const w=window.open('','_blank');if(w){w.document.write(pageHTML(cur));w.document.close()}};
+/* ----- WordPress-style extras: media library, page settings, looks, revisions, drag & drop, zip ----- */
+const today=()=>new Date().toISOString().slice(0,10);
+function addMedia(file){return new Promise(res=>{if(file.size>1.5e6){toast(file.name+' is over 1.5 MB');return res(null)}const r=new FileReader();r.onload=()=>{if(!/^data:image\//.test(r.result))return res(null);const m={id:Math.random().toString(36).slice(2,9),name:file.name.slice(0,40),src:r.result};S.media.push(m);res(m)};r.onerror=()=>res(null);r.readAsDataURL(file)})}
+function mediaGrid(){$('#mGrid').innerHTML=S.media.length?S.media.map(m=>`<div data-m="${m.id}" style="background-image:url('${url(m.src)}')" title="${esc(m.name)}"><button class="b" data-mdel="${m.id}" title="Delete">×</button></div>`).join(''):'<p class="note" style="grid-column:1/-1">No images yet.</p>'}
+$('#mUp').onclick=()=>$('#mFile').click();
+$('#mFile').addEventListener('change',async e=>{const fs=[...e.target.files];e.target.value='';let n=0;for(const f of fs){if(await addMedia(f))n++}if(n){render(true);toast(n+' image(s) added')}});
+function pgSet(){const x=pg(),h=cur===0,f=(k,l,v,ph)=>`<label>${l}</label><input data-pf="${k}" value="${esc(v||'')}" placeholder="${ph||''}">`;
+ let o=f('name','Page name (menu label)',x.name);
+ if(!h){o+=f('slug','URL slug',x.slug||slug(x.name),'about-us')+`<label>Status</label><select data-pf="status"><option value="publish"${x.status!=='draft'?' selected':''}>Published</option><option value="draft"${x.status==='draft'?' selected':''}>Draft (left out of the export)</option></select><label>Type</label><select data-pf="kind"><option value="page"${x.kind!=='post'?' selected':''}>Page</option><option value="post"${x.kind==='post'?' selected':''}>Blog post</option></select>`;
+  o+=x.kind==='post'?f('excerpt','Excerpt (shown in Blog posts block)',x.excerpt)+f('date','Date',x.date||today()):`<label style="text-transform:none"><input type="checkbox" data-pf="menu"${x.menu!==false?' checked':''} style="width:auto"> Show in menu</label>`}
+ o+=f('seoT','SEO title',x.seoT,'Shown in search results')+`<label>SEO description</label><textarea data-pf="seoD" style="min-height:60px">${esc(x.seoD||'')}</textarea>`;$('#pgSet').innerHTML=o}
+$('#pgSet').addEventListener('change',e=>{const el=e.target,k=el.dataset.pf;if(!k)return;snap();const x=pg();let v=el.type==='checkbox'?el.checked:el.value;if(k==='slug')v=slug(v);if(k==='name')v=v.slice(0,40)||x.name;x[k]=v;if(k==='kind'&&v==='post'&&!x.date)x.date=today();render()});
+const mkPage=(n,kind)=>({name:n.slice(0,40),kind,date:kind==='post'?today():undefined,excerpt:'',blocks:(kind==='post'?[{type:'text',p:{h:n,t:'Write your post here. Click this text to edit it.'}},{type:'footer',p:clone(D.footer)}]:['text','contact','footer'].map(t=>({type:t,p:clone(D[t])})))});
+$('#addPost').onclick=()=>{const n=prompt('Post title','My first post');if(!n)return;snap();S.pages.push(mkPage(n,'post'));cur=S.pages.length-1;sel=-1;render()};
+$('#dupPage').onclick=()=>{snap();const c=clone(pg());c.name=(c.name+' copy').slice(0,40);c.slug=slug(c.name)+'-'+Math.random().toString(36).slice(2,5);S.pages.push(c);cur=S.pages.length-1;sel=-1;render()};
+const PRE=[['Ocean','#2563eb','system-ui,sans-serif','10px'],['Forest','#16a37a','system-ui,sans-serif','10px'],['Sunset','#ea580c',"'Trebuchet MS',sans-serif",'22px'],['Royal','#7c3aed','Georgia,serif','10px'],['Rose','#e11d48',"'Trebuchet MS',sans-serif",'22px'],['Mono','#111827',"'Courier New',monospace",'0px']];
+$('#presets').innerHTML=PRE.map((r,i)=>`<button class="b" data-pre="${i}" style="border-left:6px solid ${r[1]}">${r[0]}</button>`).join('');
+const RK='s21studio-revs',getRevs=()=>{try{return JSON.parse(localStorage.getItem(RK))||[]}catch(e){return[]}};
+function addRev(label){try{const r=getRevs();r.unshift({t:new Date().toISOString(),l:label,d:strip(S)});localStorage.setItem(RK,JSON.stringify(r.slice(0,12)))}catch(e){}}
+function revList(){$('#revList').innerHTML=getRevs().map((r,i)=>`<div class="rv"><span>${esc(r.l)} · ${esc(r.t.slice(5,16).replace('T',' '))}</span><button class="b" data-rev="${i}">Restore</button></div>`).join('')||'<p class="note">No revisions yet. One is saved automatically before every AI build and export.</p>'}
+$('#revSave').onclick=()=>{addRev('Manual');revList();toast('Revision saved')};
+document.addEventListener('click',e=>{const t=e.target;let x;
+ if(x=t.closest('[data-mdel]')){e.stopPropagation();if(confirm('Delete this image? Blocks using it will show no image.')){S.media=S.media.filter(m=>m.id!==x.dataset.mdel);render(true)}return}
+ if(x=t.closest('[data-m]')){const b=pg().blocks[sel];if(!b){toast('Click a block on the page first');return}const v='media:'+x.dataset.m;snap();if(b.type==='gallery'){const k=b.p.imgs.indexOf('');k>=0?b.p.imgs[k]=v:b.p.imgs.push(v)}else if('img' in b.p)b.p.img=v;else b.p.bi=v;render();toast('Image applied');return}
+ if(x=t.closest('[data-pmv]')){const[a,i]=x.dataset.pmv.split(':').map(Number),P=S.pages;snap();[P[i],P[i+a]]=[P[i+a],P[i]];cur=i+a;render();return}
+ if(x=t.closest('[data-pre]')){const r=PRE[+x.dataset.pre];snap();Object.assign(S.theme,{c:r[1],f:r[2],r:r[3]});render();return}
+ if(x=t.closest('[data-rev]')){const r=getRevs()[+x.dataset.rev];if(r&&confirm('Restore this revision? Your current version is saved as a revision first.')){addRev('Before restore');snap();keepMedia(JSON.parse(r.d));cur=0;sel=-1;render()}return}
+});
+let drag=null;const clr=()=>document.querySelectorAll('.dz,.dzb').forEach(n=>n.classList.remove('dz','dzb'));
+document.addEventListener('dragstart',e=>{const g=e.target.closest&&e.target.closest('.gr'),a=e.target.closest&&e.target.closest('[data-add]');if(g)drag={mv:+g.closest('[data-b]').dataset.b};else if(a)drag={add:a.dataset.add};else return;e.dataTransfer.setData('text/plain','s21');e.dataTransfer.effectAllowed='move'});
+$('#cv').addEventListener('dragover',e=>{if(!drag)return;const b=e.target.closest('[data-b]');if(!b)return;e.preventDefault();clr();const r=b.getBoundingClientRect();b.classList.add(e.clientY<r.top+r.height/2?'dz':'dzb')});
+$('#cv').addEventListener('drop',e=>{if(!drag)return;const b=e.target.closest('[data-b]');if(!b)return;e.preventDefault();const bl=pg().blocks;let i=+b.dataset.b;if(b.classList.contains('dzb'))i++;clr();snap();
+ if(drag.mv!==undefined){const m=bl.splice(drag.mv,1)[0];if(drag.mv<i)i--;bl.splice(i,0,m);sel=i}else{bl.splice(i,0,{type:drag.add,p:clone(D[drag.add])});sel=i}drag=null;render()});
+document.addEventListener('dragend',()=>{clr();drag=null});
+const CRC=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc=d=>{let c=0xFFFFFFFF;for(let i=0;i<d.length;i++)c=CRC[(c^d[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function zip(files){const te=new TextEncoder(),parts=[],cd=[];let off=0;
+ files.forEach(f=>{const n=te.encode(f.n),d=te.encode(f.t),c=crc(d),lh=new Uint8Array(30+n.length),v=new DataView(lh.buffer);
+  v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x0800,true);v.setUint32(14,c,true);v.setUint32(18,d.length,true);v.setUint32(22,d.length,true);v.setUint16(26,n.length,true);lh.set(n,30);parts.push(lh,d);
+  const ch=new Uint8Array(46+n.length),w=new DataView(ch.buffer);w.setUint32(0,0x02014b50,true);w.setUint16(4,20,true);w.setUint16(6,20,true);w.setUint16(8,0x0800,true);w.setUint32(16,c,true);w.setUint32(20,d.length,true);w.setUint32(24,d.length,true);w.setUint16(28,n.length,true);w.setUint32(42,off,true);ch.set(n,46);cd.push(ch);off+=lh.length+d.length});
+ const cs=cd.reduce((a,b)=>a+b.length,0),e=new Uint8Array(22),x=new DataView(e.buffer);x.setUint32(0,0x06054b50,true);x.setUint16(8,files.length,true);x.setUint16(10,files.length,true);x.setUint32(12,cs,true);x.setUint32(16,off,true);return new Blob([...parts,...cd,e],{type:'application/zip'})}
+function dlBlob(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+/* ----- Smart21Editor bridge (shares the browser's local storage) ----- */
+const EK=['s21e-web-html','s21e-web-css','s21e-web-js'];
+function toEditor(body,css){try{if(localStorage.getItem(EK[0])&&localStorage.getItem(EK[0]).length>200&&!confirm('This replaces the HTML/CSS/JS project currently in Smart21Editor. Continue?'))return;localStorage.setItem(EK[0],body);localStorage.setItem(EK[1],css);localStorage.setItem(EK[2],'');localStorage.setItem('s21e-lang','web')}catch(e){toast('Could not pass the code on (browser storage is blocked)');return}window.open('smart21editor.html#web','_blank')}
+const wrapCv=h=>`<div class="cv" style="${themeVars()}">${h}</div>`;
+function sendBlock(b){ED=false;const h=T[b.type]?T[b.type](b.p):'';ED=true;toEditor(b.type==='html'?b.p.code:wrapCv(h),b.type==='html'?'':BASE_CSS+SITE_CSS)}
+$('#toEd').onclick=$('#lrnPage').onclick=()=>{ED=false;const h=wrapCv(nav(false)+pg().blocks.filter(b=>T[b.type]).map(b=>T[b.type](b.p)).join(''));ED=true;toEditor(h,BASE_CSS+SITE_CSS)};
+$('#lrnImport').onclick=()=>{let h,c,j;try{[h,c,j]=EK.map(k=>localStorage.getItem(k)||'')}catch(e){}if(!h&&!c&&!j){toast('Nothing found yet — write some code in Smart21Editor first');return}
+ const code=(c?`<style>${c}</style>`:'')+h+(j?`<script>${j.replace(/<\/script/gi,'<\\/script')}<\/script>`:'');if(code.length>200000){toast('That code is too large to add (max 200 KB)');return}
+ snap();const bl=pg().blocks,fi=bl.findIndex(z=>z.type==='footer'),b={type:'html',p:{code}};fi>=0?bl.splice(fi,0,b):bl.push(b);sel=bl.indexOf(b);render();toast('Added as a Custom HTML block')};
+/* ----- AI ----- */
+const ALLOWED=Object.keys(D).filter(k=>k!=='html');
+const SCHEMA='Block types and their props: faq{h,items:[{h,t}]}; team{h,items:[{h,t}]}; hero{h,t,b,link}; features{h,items:[{h,t}]}; about{h,t}; pricing{h,items:[{h,price,t}]}; gallery{h}; testimonial{t,n}; cta{h,b,link}; contact{h,t,email}; text{h,t}; footer{t}.';
+async function askAI(prompt){const r=await fetch('/api/ai-assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,context:{page:'builder',mode:'json'}})});if(!r.ok)throw new Error('ai');const d=await r.json();const a=d.answer||'';const m=a.match(/\{[\s\S]*\}|\[[\s\S]*\]/);if(!m)throw new Error('no json');return JSON.parse(m[0])}
+function mergeBlock(x){if(!x||!ALLOWED.includes(x.type))return null;const p=clone(D[x.type]),s=x.p||x.props||{};Object.keys(p).forEach(k=>{if(s[k]==null)return;if(Array.isArray(p[k])){if(Array.isArray(s[k])&&s[k].length)p[k]=k==='imgs'?p[k]:s[k].slice(0,6).map(it=>Object.assign({},p[k][0],it))}else if(typeof s[k]==='string')p[k]=s[k].slice(0,600)});return {type:x.type,p}}
+function busy(on){document.querySelectorAll('[data-ai],#aiBuild').forEach(b=>b.disabled=on);$('#aiNote').textContent=on?'AI is working…':'AI runs through the Smart21Brain assistant. If it is offline, a starter template is used instead.'}
+$('#aiBuild').onclick=async()=>{const q=$('#aiP').value.trim();if(!q){toast('Describe the website first');return}busy(true);addRev('Before AI build');snap();
+ try{const j=await askAI(`You are a website builder. Reply with ONLY JSON, no text. Create a website for: "${q}". Shape: {"name":"business name","color":"#hex brand colour","pages":[{"name":"Home","blocks":[{"type":"hero","p":{...}}]}]}. Use 1-4 pages (first is Home), 5-8 blocks each, start with hero, end with footer, include contact on one page. ${SCHEMA} Write real, specific copy, no lorem ipsum.`);
+  const pages=(j.pages||[]).slice(0,5).map(p=>({name:String(p.name||'Page').slice(0,30),blocks:(p.blocks||[]).map(mergeBlock).filter(Boolean)})).filter(p=>p.blocks.length);if(!pages.length)throw 0;
+  S.pages=pages;S.name=String(j.name||S.name).slice(0,60);if(/^#[0-9a-f]{6}$/i.test(j.color||''))S.theme.c=j.color;cur=0;sel=-1;toast('Website built — click any text to edit it')}
+ catch(e){const n=q.replace(/^(a |an |the )?(website|site) (for|about) /i,'').slice(0,40)||'My Business';S=Object.assign(fresh(),{theme:S.theme});S.name=n[0].toUpperCase()+n.slice(1);S.pages[0].blocks[0].p.h=S.name;cur=0;sel=-1;toast('AI is unavailable right now — a starter template was added. Edit the text on the page.')}
+ busy(false);render()};
+async function aiAct(a){const bl=pg().blocks;busy(true);
+ try{if(a==='rewrite'){if(sel<0)throw new Error('Select a block first');if(bl[sel].type==='html')throw new Error('Custom HTML is edited in Smart21Editor');const j=await askAI(`Rewrite this website block with clearer, more persuasive copy. Keep the same JSON keys and number of items. Reply ONLY with JSON {"p":{...}}. Block: ${JSON.stringify(bl[sel])}`);const m=mergeBlock({type:bl[sel].type,p:j.p||j});if(!m)throw 0;m.p.link=bl[sel].p.link!==undefined?bl[sel].p.link:m.p.link;['bg','bi','pad','img','imgs','email'].forEach(k=>{if(bl[sel].p[k]!==undefined)m.p[k]=bl[sel].p[k]});snap();bl[sel]=m;toast('Block rewritten')}
+  else if(a==='sw'||a==='en'){const j=await askAI(`Translate all visible text in these website blocks to ${a==='sw'?'Kiswahili':'English'}. Keep JSON structure, keys, links and emails unchanged. Reply ONLY with a JSON array. ${JSON.stringify(bl.map(b=>({type:b.type,p:b.p})))}`);const nb=(Array.isArray(j)?j:j.blocks||[]).map(mergeBlock).filter(Boolean);if(nb.length!==bl.length)throw 0;nb.forEach((n,i)=>{['link','email','bg','bi','pad','img','imgs'].forEach(k=>{if(bl[i].p[k]!==undefined)n.p[k]=bl[i].p[k]})});snap();pg().blocks=nb;toast('Page translated')}
+  else if(a==='seo'){const j=await askAI(`Write an SEO title (max 60 chars) and meta description (max 150 chars) for this page. Reply ONLY with JSON {"title":"","desc":""}. Content: ${JSON.stringify(bl.map(b=>b.p.h||b.p.t||'')).slice(0,1500)}`);snap();S.theme.title=String(j.title||'').slice(0,70);S.theme.desc=String(j.desc||'').slice(0,160);toast('SEO text added in Theme tab')}}
+ catch(e){toast(e&&e.message&&e.message!=='ai'?e.message:'AI could not do that right now. Try again in a moment.')}
+ busy(false);render()}
+render();
+})();
+</script>
+</body>
+</html>
