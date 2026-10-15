@@ -6,6 +6,7 @@
 <meta name="description" content="Build and edit multi-page websites visually with blocks, inline editing, themes and AI. Export clean HTML.">
 <link rel="icon" href="images/logo/coool.png" type="image/png">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/builder-ai.css?v=1">
 <style>
 :root{--bg:#0f1720;--pn:#16212c;--ln:#2a3947;--tx:#e8eef4;--sf:#9fb0c0;--ac:#16a37a}
 *{box-sizing:border-box}body{margin:0;height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--tx);font:14px system-ui,sans-serif}
@@ -88,6 +89,23 @@ input[type=color]{padding:0;height:34px}
  <main class="stage"><div class="dev" id="dev"><div class="cv" id="cv"></div></div></main>
  <aside class="side r"><b>Block settings</b><div id="insp"><p class="note">Click any block on the page to edit its settings. Click any text to type directly on the page.</p></div></aside>
 </div>
+<div class="s21-fabs" id="s21Fabs">
+ <a class="s21-fab code" href="smart21code.html" target="_blank" rel="noopener" title="Smart21Code — learn to code" aria-label="Open Smart21Code"><i class="fa-solid fa-book-open"></i></a>
+ <button type="button" class="s21-fab edt" id="fabEd" title="Edit this page's code in Smart21Editor" aria-label="Edit this page in Smart21Editor"><i class="fa-solid fa-code"></i></button>
+ <button type="button" class="s21-fab ai" data-ai-trigger id="fabAI" title="Smart21Brain AI" aria-label="Open Smart21Brain AI assistant"><img src="images/logo/coool.png" alt=""></button>
+</div>
+<div id="s21-ai-panel" aria-hidden="true">
+  <div class="ai-head">
+    <span class="fw-bold"><img src="images/logo/coool.png" alt="" class="ai-head-logo"> Smart21Brain AI</span>
+    <button type="button" data-ai-close aria-label="Close assistant" style="background:none;border:none;color:#fff"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="ai-log"><div class="ai-bubble ai-bubble-ai">Hi! I can help with your website: write section copy, suggest a layout, or write HTML/CSS/JS. Press <b>Use in editor</b> on any code I give you to add it to your page as a Custom HTML block.</div></div>
+  <p class="ai-disclaimer">AI-generated answers — always check before publishing.</p>
+  <form>
+    <input type="text" placeholder="Ask a question…" aria-label="Ask the AI">
+    <button type="submit" aria-label="Send"><i class="fa-solid fa-paper-plane"></i></button>
+  </form>
+</div>
 <div class="toast" id="toast"></div>
 <input type="file" id="file" accept="image/*" hidden><input type="file" id="mFile" accept="image/*" multiple hidden>
 <script>
@@ -148,7 +166,7 @@ team:p=>`<section class="alt" style="${bg(p)}"><div class="w"><h2${E('h')}>${esc
 video:p=>{const m=String(p.url||'').match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);return `<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2>${m?`<div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/${m[1]}" title="Video" allowfullscreen loading="lazy"></iframe></div>`:'<div class="im"></div><p class="meta">Paste a YouTube link in the block settings.</p>'}</div></section>`},
 posts:p=>{const L=S.pages.map((x,i)=>[x,i]).filter(([x])=>x.kind==='post'&&(ED||x.status!=='draft')).sort((a,b)=>String(b[0].date||'').localeCompare(String(a[0].date||'')));return `<section style="${bg(p)}"><div class="w"><h2${E('h')}>${esc(p.h)}</h2><div class="g">${L.length?L.map(([x,i])=>`<div class="cd"><p class="meta">${esc(x.date||'')}${x.status==='draft'?' · draft':''}</p><h3>${esc(x.name)}</h3><p>${esc(x.excerpt||'')}</p><a href="${ED?'#':fname(i)}">Read more →</a></div>`).join(''):'<p class="meta">No posts yet. Use “Post” in the Pages tab to write one.</p>'}</div></div></section>`},
 spacer:p=>`<div style="height:${/^[0-9.]+rem$/.test(p.pad||'')?p.pad:'3rem'}${ED?';background:#16a37a14':''}"></div>`,
-html:p=>ED?`<section style="padding:0"><iframe sandbox title="Custom HTML preview (scripts are off while editing)" style="width:100%;border:0;min-height:180px;display:block" srcdoc="${esc('<body style=\'font-family:system-ui;margin:0\'>'+p.code)}"></iframe></section>`:p.code,
+html:p=>ED?`<section style="padding:0"><iframe sandbox="allow-same-origin" title="Custom HTML preview (scripts are off while editing)" style="width:100%;border:0;min-height:180px;display:block" onload="try{this.style.height=Math.max(180,this.contentDocument.documentElement.scrollHeight)+'px'}catch(e){}" srcdoc="${esc('<style>'+BASE_CSS+SITE_CSS+'</style><body class=\'cv\' style=\''+themeVars()+'\'>'+p.code)}"></iframe></section>`:p.code,
 footer:p=>`<footer style="${bg(p)}"><p${E('t')}>${esc(p.t)}</p></footer>`};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const fresh=()=>({name:'My Website',theme:{c:'#16a37a',f:'system-ui,sans-serif',r:'10px',title:'',desc:''},pages:[{name:'Home',blocks:['hero','features','about','cta','contact','footer'].map(t=>({type:t,p:clone(D[t])}))}]});
@@ -262,10 +280,12 @@ function zip(files){const te=new TextEncoder(),parts=[],cd=[];let off=0;
 function dlBlob(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
 /* ----- Smart21Editor bridge (shares the browser's local storage) ----- */
 const EK=['s21e-web-html','s21e-web-css','s21e-web-js'];
-function toEditor(body,css){try{if(localStorage.getItem(EK[0])&&localStorage.getItem(EK[0]).length>200&&!confirm('This replaces the HTML/CSS/JS project currently in Smart21Editor. Continue?'))return;localStorage.setItem(EK[0],body);localStorage.setItem(EK[1],css);localStorage.setItem(EK[2],'');localStorage.setItem('s21e-lang','web')}catch(e){toast('Could not pass the code on (browser storage is blocked)');return}window.open('smart21editor.html#web','_blank')}
+const RET='s21-studio-return',BACK='s21-studio-back';
+function toEditor(body,css,ctx){try{const old=[0,1,2].map(n=>localStorage.getItem(EK[n])||'');if(old[0].length>200&&old[0]!==body)localStorage.setItem('s21e-web-backup',JSON.stringify({t:Date.now(),h:old[0],c:old[1],j:old[2]}));
+ localStorage.setItem(EK[0],body);localStorage.setItem(EK[1],css);localStorage.setItem(EK[2],'');localStorage.setItem('s21e-lang','web');localStorage.setItem(RET,JSON.stringify(Object.assign({t:Date.now(),name:S.name},ctx||{})));save()}catch(e){toast('Could not pass the code on (browser storage is blocked)');return}location.href='smart21editor.html#web'}
 const wrapCv=h=>`<div class="cv" style="${themeVars()}">${h}</div>`;
-function sendBlock(b){ED=false;const h=T[b.type]?T[b.type](b.p):'';ED=true;toEditor(b.type==='html'?b.p.code:wrapCv(h),b.type==='html'?'':BASE_CSS+SITE_CSS)}
-$('#toEd').onclick=$('#lrnPage').onclick=()=>{ED=false;const h=wrapCv(nav(false)+pg().blocks.filter(b=>T[b.type]).map(b=>T[b.type](b.p)).join(''));ED=true;toEditor(h,BASE_CSS+SITE_CSS)};
+function sendBlock(b){ED=false;const h=T[b.type]?T[b.type](b.p):'';ED=true;toEditor(b.type==='html'?b.p.code:wrapCv(h),b.type==='html'?'':BASE_CSS+SITE_CSS,{scope:'block',page:cur,block:sel})}
+$('#toEd').onclick=$('#lrnPage').onclick=$('#fabEd').onclick=()=>{ED=false;const h=wrapCv(nav(false)+pg().blocks.filter(b=>T[b.type]).map(b=>T[b.type](b.p)).join(''));ED=true;toEditor(h,BASE_CSS+SITE_CSS,{scope:'page',page:cur})};
 $('#lrnImport').onclick=()=>{let h,c,j;try{[h,c,j]=EK.map(k=>localStorage.getItem(k)||'')}catch(e){}if(!h&&!c&&!j){toast('Nothing found yet — write some code in Smart21Editor first');return}
  const code=(c?`<style>${c}</style>`:'')+h+(j?`<script>${j.replace(/<\/script/gi,'<\\/script')}<\/script>`:'');if(code.length>200000){toast('That code is too large to add (max 200 KB)');return}
  snap();const bl=pg().blocks,fi=bl.findIndex(z=>z.type==='footer'),b={type:'html',p:{code}};fi>=0?bl.splice(fi,0,b):bl.push(b);sel=bl.indexOf(b);render();toast('Added as a Custom HTML block')};
@@ -287,8 +307,24 @@ async function aiAct(a){const bl=pg().blocks;busy(true);
   else if(a==='seo'){const j=await askAI(`Write an SEO title (max 60 chars) and meta description (max 150 chars) for this page. Reply ONLY with JSON {"title":"","desc":""}. Content: ${JSON.stringify(bl.map(b=>b.p.h||b.p.t||'')).slice(0,1500)}`);snap();S.theme.title=String(j.title||'').slice(0,70);S.theme.desc=String(j.desc||'').slice(0,160);toast('SEO text added in Theme tab')}}
  catch(e){toast(e&&e.message&&e.message!=='ai'?e.message:'AI could not do that right now. Try again in a moment.')}
  busy(false);render()}
+/* ----- Coming back from Smart21Editor: the edited code replaces the page / block it came from ----- */
+function takeBack(){let r;try{r=JSON.parse(localStorage.getItem(BACK)||'null')}catch(e){}if(!r)return;let h,c,j;try{localStorage.removeItem(BACK);localStorage.removeItem(RET);[h,c,j]=EK.map(k=>localStorage.getItem(k)||'')}catch(e){return}
+ if(!h&&!c&&!j)return;const tmp=document.createElement('div');tmp.innerHTML=h;const root=tmp.children.length===1&&tmp.firstElementChild.classList.contains('cv')?tmp.firstElementChild:tmp;const nv=root.querySelector(':scope > nav.nv');if(nv)nv.remove();
+ const std=BASE_CSS+SITE_CSS,css=c&&c.trim()!==std.trim()?c:'';const code=(css?`<style>${css}</style>`:'')+root.innerHTML.trim()+(j?`<script>${j.replace(/<\/script/gi,'<\\/script')}<\/script>`:'');
+ if(code.length>200000){toast('The edited code is too large to bring back (max 200 KB)');return}
+ addRev('Before Smart21Editor changes');snap();const blk={type:'html',p:{code}},pgs=S.pages[r.page];
+ if(r.scope==='block'&&pgs&&pgs.blocks[r.block]){pgs.blocks[r.block]=blk;cur=r.page;sel=r.block}
+ else if(r.scope==='page'&&pgs){pgs.blocks=[blk];cur=r.page;sel=0}
+ else{const bl=pg().blocks,fi=bl.findIndex(z=>z.type==='footer');fi>=0?bl.splice(fi,0,blk):bl.push(blk);sel=bl.indexOf(blk)}
+ toast('Welcome back — your Smart21Editor changes are in the page (Undo reverts them)')}
+/* ----- Smart21Brain AI <-> Studio: the AI sees your page and can add its code as a block ----- */
+window.S21AI={getContext(){const c={page:'smart21studio builder',language:'HTML (website page "'+pg().name+'")'};try{ED=false;const b=pg().blocks[sel];c.code=(b&&T[b.type]?T[b.type](b.p):pg().blocks.filter(z=>T[z.type]).map(z=>T[z.type](z.p)).join('\n')).slice(0,12000)}catch(e){}ED=true;return c},
+ insertCode(code,lang){lang=(lang||'').toLowerCase();const c=lang==='css'?`<style>${code}</style>`:(lang==='js'||lang==='javascript')?`<script>${code.replace(/<\/script/gi,'<\\/script')}<\/script>`:code;if(c.length>200000){toast('That code is too large to add (max 200 KB)');return}
+  snap();const bl=pg().blocks,fi=bl.findIndex(z=>z.type==='footer'),b={type:'html',p:{code:c}};fi>=0?bl.splice(fi,0,b):bl.push(b);sel=bl.indexOf(b);render();toast('Added to your page as a Custom HTML block')}};
+takeBack();
 render();
 })();
 </script>
+<script src="js/ai-assistant.js?v=4"></script>
 </body>
 </html>

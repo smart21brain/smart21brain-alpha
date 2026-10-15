@@ -43,6 +43,8 @@
   .ed-fabs { position: fixed; z-index: 2400; right: calc(.9rem + env(safe-area-inset-right, 0px)); bottom: calc(2.6rem + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: .7rem; }
   .ed-fab { width: 54px; height: 54px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 26px rgba(0,0,0,.28); transition: transform .25s; }
   .ed-fab:hover { transform: scale(1.08); }
+  .ed-fab[hidden] { display: none; }
+  .ed-fab.back { border: 0; background: #16a37a; color: #fff; font-size: 1.3rem; }
   .ed-fab.add { border: 0; background: var(--s21-primary); color: #fff; font-size: 1.35rem; }
   .ed-fab.ai { border: 3px solid var(--s21-secondary); background: var(--s21-white); overflow: hidden; }
   .ed-fab.ai img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -90,6 +92,7 @@
   </div>
   <div class="ed-scrim" id="edScrim"></div>
   <div class="ed-fabs" id="edFabs">
+    <button type="button" class="ed-fab back" id="edFabBack" hidden aria-label="Back to Smart21 Studio — send my changes back" title="Back to Smart21 Studio"><i class="fa-solid fa-arrow-left"></i></button>
     <button type="button" class="ed-fab add" id="edFabAdd" aria-label="New tab — choose a language" title="New tab — choose a language"><i class="fa-solid fa-plus"></i></button>
     <button type="button" class="ed-fab ai" id="edFabAI" aria-label="Open Smart21brain AI assistant" title="Smart21brain AI"><img src="images/logo/coool.png" alt=""></button>
   </div>
@@ -169,6 +172,23 @@
 (function () {
   var add = document.getElementById('edFabAdd'), ai = document.getElementById('edFabAI'), panel = document.getElementById('s21-ai-panel');
   if (add) add.addEventListener('click', function () { var n = document.getElementById('edNew'); if (n) n.click(); });
+  /* Opened from Smart21 Studio? Show a round "back" button that carries the edited code back to the page. */
+  var back = document.getElementById('edFabBack'), ctx = null;
+  try { ctx = JSON.parse(localStorage.getItem('s21-studio-return') || 'null'); } catch (e) {}
+  if (back && ctx && ctx.t && Date.now() - ctx.t < 432e5) {
+    back.hidden = false;
+    var tip = document.createElement('div'); tip.className = 'ed-toast';
+    tip.textContent = 'Editing your Smart21 Studio ' + (ctx.scope === 'block' ? 'block' : 'page') + ' — tap ← when you are done to send it back';
+    document.body.appendChild(tip); setTimeout(function () { tip.remove(); }, 6000);
+    back.addEventListener('click', function () {
+      try {
+        var E = window.S21E, c = E && E.cur && E.cur();
+        if (c && c.files) E.store('s21e-web-' + E.file(), E.raw());      // make sure the tab being typed in is saved
+        localStorage.setItem('s21-studio-back', JSON.stringify(ctx));
+      } catch (e) {}
+      location.href = 'builder21.html';
+    });
+  }
   if (ai && panel) ai.addEventListener('click', function () { var o = panel.classList.toggle('open'); panel.setAttribute('aria-hidden', o ? 'false' : 'true'); });
 })();
 </script>
