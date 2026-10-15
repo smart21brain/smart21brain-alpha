@@ -1,0 +1,17 @@
+.c21-hero{padding:3rem 0 2.2rem;background:linear-gradient(135deg,#0b1d3a,#12346b 60%,#0e7490);color:#fff}
+.c21-hero h1{font-family:var(--font-display,inherit);font-weight:800}.c21-hero h1 span{color:#38bdf8}
+.c21-pill{display:inline-flex;gap:.4rem;align-items:center;background:rgba(255,255,255,.12);border-radius:99px;padding:.3rem .8rem;font-size:.8rem;margin:.2rem .2rem 0 0}
+.c21-card{background:var(--glass-bg,#fff);border:1px solid var(--s21-border,#e2e8f0);border-radius:var(--radius-lg,16px);padding:1.1rem;height:100%;box-shadow:var(--card-shadow)}
+.c21-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--s21-primary,#2563eb);color:#fff;font-size:1.2rem;margin-bottom:.6rem}
+.c21-card ul{padding-left:1.1rem;font-size:.86rem;margin:.5rem 0}.c21-card details summary{cursor:pointer;font-size:.82rem;color:var(--s21-primary)}
+.c21-note{font-size:.78rem;color:var(--s21-text-soft);font-style:italic}
+.c21-tabs .nav-link{font-weight:600;color:var(--s21-text)}.c21-tabs .nav-link.active{background:var(--s21-primary);color:#fff}
+.c21-panel{background:var(--glass-bg,#fff);border:1px solid var(--s21-border,#e2e8f0);border-radius:var(--radius-lg,16px);padding:1.2rem}
+.c21-panel label{font-size:.8rem;font-weight:600;margin:.5rem 0 .15rem;display:block}
+.c21-frame{width:100%;height:420px;border:1px solid var(--s21-border);border-radius:12px;background:#fff}
+.c21-phone{width:260px;height:480px;margin:auto;border:8px solid #111827;border-radius:32px;background:#fff;color:#111;display:flex;flex-direction:column;overflow:hidden}
+.c21-phone .bar{padding:.7rem;color:#fff;font-weight:700;text-align:center}.c21-phone .scr{flex:1;padding:.7rem;overflow:auto;font-size:.85rem}
+.c21-phone .tabs{display:flex;border-top:1px solid #ddd}.c21-phone .tabs button{flex:1;border:0;background:none;padding:.55rem 0;font-size:.7rem}
+.c21-term{background:#0a0f1a;color:#7dd3a8;font:13px/1.5 'JetBrains Mono',monospace;border-radius:12px;padding:.8rem;height:340px;overflow:auto;white-space:pre-wrap}
+.c21-term input{background:none;border:0;outline:0;color:#fff;font:inherit;width:70%}
+.c21-total{font-size:1.4rem;font-weight:800;color:var(--s21-primary)}.c21-ok{color:#16a34a}.c21-bad{color:#dc2626}

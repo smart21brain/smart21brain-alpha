@@ -15,7 +15,7 @@
       // ---- Navbar ----
       nav_home: 'Home', nav_learn: 'Learn', nav_videos: 'Videos',
       nav_books: 'Books', nav_games: 'Games', nav_courses: 'Courses', nav_levels: 'Levels',
-      nav_kids: 'Kids', nav_stationery: 'Stationery', nav_blog: 'Blog', nav_about: 'About',
+      nav_kids: 'Kids', nav_stationery: 'Stationery', nav_computer21: 'Computer21', nav_blog: 'Blog', nav_about: 'About',
       nav_contact: 'Contact', nav_login: 'Log In', nav_start: 'Get Started',
 
       // ---- Footer ----
@@ -1032,7 +1032,7 @@
       // ---- Navbar ----
       nav_home: 'Nyumbani', nav_learn: 'Jifunze', nav_videos: 'Video',
       nav_books: 'Vitabu', nav_games: 'Michezo', nav_courses: 'Kozi', nav_levels: 'Ngazi',
-      nav_kids: 'Watoto', nav_stationery: 'Stationery', nav_blog: 'Blogu', nav_about: 'Kuhusu',
+      nav_kids: 'Watoto', nav_stationery: 'Stationery', nav_computer21: 'Computer21', nav_blog: 'Blogu', nav_about: 'Kuhusu',
       nav_contact: 'Wasiliana', nav_login: 'Ingia', nav_start: 'Anza Sasa',
 
       // ---- Footer ----
