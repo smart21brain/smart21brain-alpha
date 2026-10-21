@@ -203,6 +203,88 @@
       <a href="course-complete.html?slug=${encodeURIComponent(course.slug)}" class="btn-s21 btn-s21-primary" style="padding:.55rem 1.1rem;font-size:.85rem"><i class="fa-solid fa-award"></i> Get your certificate</a>`;
   }
 
+
+  /* ---- Extra course information, worked out from the course's own data ---- */
+  function fmtStudy(mins) {
+    if (!mins) return '';
+    if (mins < 60) return `${mins} min`;
+    const h = Math.floor(mins / 60), m = mins % 60;
+    return m ? `${h} h ${m} min` : `${h} h`;
+  }
+  function courseStats(course, modules, lessons) {
+    const quizzes = lessons.filter((l) => l.content_type === 'quiz').length;
+    const learn = lessons.length - quizzes;
+    let mins = 0;
+    lessons.forEach((l) => { mins += l.duration_seconds ? Math.round(l.duration_seconds / 60) : (l.content_type === 'quiz' ? 5 : 0); });
+    return { quizzes, learn, mins, modules: modules.length };
+  }
+  function glanceTile(icon, value, label) {
+    return `<div class="col-6 col-md-4"><div class="s21-card p-3 h-100 text-center">
+      <div style="font-size:1.15rem;color:var(--s21-primary)"><i class="fa-solid ${icon}"></i></div>
+      <div class="fw-bold" style="font-size:1.05rem">${esc(value)}</div>
+      <div class="text-soft" style="font-size:.78rem">${esc(label)}</div></div></div>`;
+  }
+  function renderGlance(course, modules, lessons) {
+    const st = courseStats(course, modules, lessons);
+    const tiles = [];
+    if (st.modules) tiles.push(glanceTile('fa-layer-group', st.modules, st.modules === 1 ? 'Module' : 'Modules'));
+    tiles.push(glanceTile('fa-book-open', st.learn || lessons.length, (st.learn || lessons.length) === 1 ? 'Lesson' : 'Lessons'));
+    if (st.quizzes) tiles.push(glanceTile('fa-circle-question', st.quizzes, st.quizzes === 1 ? 'Quiz' : 'Quizzes'));
+    if (st.mins) tiles.push(glanceTile('fa-hourglass-half', fmtStudy(st.mins), 'Study time'));
+    tiles.push(glanceTile('fa-signal', LEVEL_LABELS[course.level] || course.level || 'All levels', 'Level'));
+    if (course.age_range) tiles.push(glanceTile('fa-child', course.age_range, 'Ages'));
+    if (course.language) tiles.push(glanceTile('fa-language', course.language, 'Language'));
+    if (course.final_exam_quiz_id || course.has_final_exam) tiles.push(glanceTile('fa-clipboard-check', `${course.final_exam_passing_score || 70}% to pass`, 'Final exam'));
+    tiles.push(glanceTile('fa-award', course.certificate_enabled ? 'Included' : 'Not offered', 'Certificate'));
+    tiles.push(glanceTile('fa-tag', course.is_free ? 'Free' : `TZS ${Number(course.price).toLocaleString()}`, 'Price'));
+    document.getElementById('course-glance').innerHTML = tiles.join('');
+    document.getElementById('course-glance-wrap').style.display = '';
+    return st;
+  }
+  function renderAudience(course) {
+    const wrap = document.getElementById('course-audience-wrap');
+    let items = Array.isArray(course.audience) ? course.audience.slice() : [];
+    if (!items.length) {
+      const lvl = course.level;
+      if (lvl === 'beginner') items.push('Learners who are new to this subject. No previous knowledge is needed.');
+      else if (lvl === 'intermediate') items.push('Learners who know the basics and want to go further.');
+      else if (lvl === 'advanced') items.push('Confident learners ready for in-depth study of the subject.');
+      else items.push('Learners at any stage who want a clear, step-by-step course.');
+      if (course.age_range) items.push(`Best suited to ages ${course.age_range}.`);
+    }
+    document.getElementById('course-audience').innerHTML = items.map((x) => `<li>${esc(x)}</li>`).join('');
+    wrap.style.display = '';
+  }
+  function renderOutline(modules) {
+    const wrap = document.getElementById('course-outline-wrap');
+    if (!modules.length) { wrap.style.display = 'none'; return; }
+    document.getElementById('course-outline').innerHTML = modules.map((m, i) => {
+      const ls = m.lessons || [];
+      const q = ls.filter((l) => l.content_type === 'quiz').length;
+      const mins = ls.reduce((n, l) => n + (l.duration_seconds ? Math.round(l.duration_seconds / 60) : (l.content_type === 'quiz' ? 5 : 0)), 0);
+      const bits = [`${ls.length - q} lesson${ls.length - q === 1 ? '' : 's'}`];
+      if (q) bits.push(`${q} quiz${q === 1 ? '' : 'zes'}`);
+      if (mins) bits.push(fmtStudy(mins));
+      return `<div class="d-flex justify-content-between align-items-center gap-3 py-2 ${i < modules.length - 1 ? 'border-bottom' : ''}">
+        <div class="fw-semibold" style="font-size:.9rem">${esc(m.title)}</div>
+        <div class="text-soft text-nowrap" style="font-size:.78rem">${esc(bits.join(' · '))}</div></div>`;
+    }).join('');
+    wrap.style.display = '';
+  }
+  function renderFaq(course) {
+    const wrap = document.getElementById('course-faq-wrap');
+    let faq = Array.isArray(course.faq) ? course.faq.slice() : [];
+    if (!faq.length) {
+      faq = [
+        { q: 'Is this course free?', a: course.is_free ? 'Yes. You can enrol for free and learn at your own pace.' : `It costs TZS ${Number(course.price).toLocaleString()}. After you enrol you keep access to the lessons.` },
+        { q: 'Do I get a certificate?', a: course.certificate_enabled ? 'Yes. Finish the lessons and any final exam and your certificate is ready to view and download.' : 'This course does not issue a certificate, but you can still track your progress.' },
+        { q: 'How should I study?', a: 'Take the lessons in order, try each "Try it" question before you open the answer, and do the quizzes. Short daily sessions work better than one long one.' },
+      ];
+    }
+    document.getElementById('course-faq').innerHTML = faq.map((f) => `<details class="s21-card p-3 mb-2"><summary class="fw-semibold" style="cursor:pointer;font-size:.92rem">${esc(f.q)}</summary><p class="text-soft mb-0 mt-2" style="font-size:.9rem">${esc(f.a)}</p></details>`).join('');
+    wrap.style.display = '';
+  }
+
   async function main() {
     if (!key) { els.notFound.style.display = ''; return; }
 
@@ -274,6 +356,12 @@
     const isActive = isEnrolled && enrollment.payment_status !== 'pending';
     renderCurriculum(modules, ungroupedLessons, isActive);
 
+    // More course information: at-a-glance tiles, audience, outline and FAQ
+    const glanceStats = renderGlance(course, modules, lessons);
+    renderAudience(course);
+    renderOutline(modules);
+    renderFaq(course);
+
     // Sidebar: progress (if actively enrolled) or price (if not)
     if (isActive) {
       let pct, doneCount, totalCount;
@@ -313,9 +401,15 @@
 
     // Includes list — built from what's actually true about this course.
     const includes = [];
-    includes.push(`<li><i class="fa-solid fa-clapperboard text-soft me-2"></i> ${lessons.length} lesson${lessons.length === 1 ? '' : 's'}</li>`);
-    if (course.certificate_enabled) includes.push('<li><i class="fa-solid fa-award text-soft me-2"></i> Certificate on completion</li>');
-    includes.push('<li><i class="fa-solid fa-infinity text-soft me-2"></i> Lifetime access</li>');
+    if (Array.isArray(course.includes) && course.includes.length) {
+      course.includes.forEach((x) => includes.push(`<li><i class="fa-solid fa-circle-check text-soft me-2"></i> ${esc(x)}</li>`));
+    } else {
+      includes.push(`<li><i class="fa-solid fa-clapperboard text-soft me-2"></i> ${lessons.length} lesson${lessons.length === 1 ? '' : 's'}</li>`);
+      if (glanceStats.quizzes) includes.push(`<li><i class="fa-solid fa-circle-question text-soft me-2"></i> ${glanceStats.quizzes} quiz${glanceStats.quizzes === 1 ? '' : 'zes'}</li>`);
+      if (glanceStats.mins) includes.push(`<li><i class="fa-regular fa-clock text-soft me-2"></i> About ${fmtStudy(glanceStats.mins)} of study</li>`);
+    }
+    if (!(Array.isArray(course.includes) && course.includes.length) && course.certificate_enabled) includes.push('<li><i class="fa-solid fa-award text-soft me-2"></i> Certificate on completion</li>');
+    if (!(Array.isArray(course.includes) && course.includes.length)) includes.push('<li><i class="fa-solid fa-infinity text-soft me-2"></i> Lifetime access</li>');
     els.includes.innerHTML = includes.join('');
 
     if (course.instructor_name) {

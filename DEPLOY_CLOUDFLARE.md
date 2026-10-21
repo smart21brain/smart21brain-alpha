@@ -290,6 +290,29 @@ npx wrangler d1 execute smart21brain-db --remote --file=./course-ai-ml-seed.sql
 Safe to run again. Deploy the updated `js/lesson-rich.js` and
 `images/ai-ml-course.svg` with it.
 
+## More Anatomy and Physiology (modules 11 to 14)
+
+Extends the Anatomy and Physiology course with four new modules: **The special senses** (eye, ear, taste, smell, touch), **The musculoskeletal system in detail** (axial and appendicular skeleton, joints, muscles, fractures), **Cells, genes and development** (histology, genetics, embryology) and **Metabolism, clinical skills and pharmacology** (energy metabolism, vital signs and lab values, medical terminology, drug basics). That is 14 lessons, 4 checkpoint quizzes and a 15-question extension exam, and it also refreshes the course description and "what you will learn" list. Run once, after `course-anatomy-physiology-seed.sql`:
+
+```
+npx wrangler d1 execute smart21brain-db --remote --file=./course-anatomy-physiology-extra-seed.sql
+```
+
+Safe to run again; it never deletes anything. If the single file is too large for your plan, run the four small files `d1-more/m-052-anatomy-extra-1.sql` to `m-055-anatomy-extra-4.sql` in order instead (`run-more.bat` already does this). Deploy the updated `js/lesson-rich.js` with it: it now supports `*italic*` text.
+
+## Computer Networks and Korean for Beginners courses
+
+Two new built-in courses in `js/courses-data.js` (no database step needed):
+
+- **Computer Networks: From Cables to the Cloud** (`computer-networks`): 7 modules, 27 lessons, 6 module quizzes and a 15-question final test.
+- **Korean for Beginners** (`korean-for-beginners`): 4 modules, 17 lessons, 3 quizzes and a 12-question final test, starting with Hangul.
+
+Covers are `images/courses/computer-networks.svg` and `images/courses/korean-for-beginners.svg`. After adding or editing built-in courses run `node scripts/gen-catalog-index.mjs` and `node scripts/gen-search-index.mjs`.
+
+## Course information
+
+`course.html` now shows a **Course at a glance** panel (modules, lessons, quizzes, study time, level, ages, language, final exam, certificate, price), **Who this course is for**, a **Course outline** and a **FAQ**. Everything is worked out from the course's own data, so it also works for database courses. A built-in course can add its own `audience`, `includes` and `faq` lists in `js/courses-data.js`. The course cards on `courses.html` now also show a short description and a "Certificate included" tag.
+
 ## Electron21 page
 
 `electron21.html` (with `css/electron21.css` and `js/e21-*.js`) is the new hub for

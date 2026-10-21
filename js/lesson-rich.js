@@ -23,7 +23,7 @@
                        skeleton ribcage skin lungs heart)
      {{ai neuralnet}}  (perceptron neuralnet gradient classify cluster overfit
                         confusion llm rl split)
-     **bold**  `code`
+     **bold**  *italic*  `code`
 */
 (function () {
   'use strict';
@@ -36,7 +36,9 @@
   var inline = function (s) {
     return esc(s)
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/`(.+?)`/g, '<code>$1</code>');
+      .replace(/`(.+?)`/g, '<code>$1</code>')
+      /* *italic*: only when the stars hug the words, so "3 * 4 * 5" stays as typed */
+      .replace(/(^|[\s(>])\*([^\s*](?:[^*\n]*?[^\s*])?)\*(?=$|[\s).,;:!?<])/g, '$1<em>$2</em>');
   };
   var frac = function (t) {
     var m = /^(-?\d+)\s*\/\s*(\d+)$/.exec(String(t).trim());

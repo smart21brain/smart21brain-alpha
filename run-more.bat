@@ -1,6 +1,6 @@
 @echo off
 cd /d %~dp0
-echo Running 50 small files (auto-retry)...
+echo Running 54 small files (auto-retry)...
 call :run m-001.sql
 call :run m-002.sql
 call :run m-003.sql
@@ -51,6 +51,10 @@ call :run m-047.sql
 call :run m-048.sql
 call :run m-049.sql
 call :run m-050.sql
+call :run m-052-anatomy-extra-1.sql
+call :run m-053-anatomy-extra-2.sql
+call :run m-054-anatomy-extra-3.sql
+call :run m-055-anatomy-extra-4.sql
 echo ALL DONE & pause & exit /b 0
 
 :run
