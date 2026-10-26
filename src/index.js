@@ -2,6 +2,7 @@ import { Router } from './router.js';
 import * as auth from './handlers/auth.js';
 import * as games from './handlers/games.js';
 import * as quizzes from './handlers/quizzes.js';
+import { flushTeacherEmails, queueWeeklySummaries } from './lib/teacher-email.js';
 import * as blog from './handlers/blog.js';
 import * as materials from './handlers/materials.js';
 import * as courses from './handlers/courses.js';
@@ -158,7 +159,9 @@ router.post('/api/teacher/assignments', teacher.createAssignment);
 router.delete('/api/teacher/assignments/:id', teacher.deleteAssignment);
 router.get('/api/teacher/settings', teacher.getSettings);
 router.put('/api/teacher/settings', teacher.updateSettings);
+router.post('/api/teacher/settings/test-email', teacher.sendTestEmail);
 router.get('/api/teacher/content', teacher.myContent);
+router.get('/api/teacher/quizzes/:id', teacher.getMyQuiz);
 router.post('/api/teacher/thumbnail', teacher.uploadThumbnail);
 router.get('/api/courses/:id/lessons', courseLessons.listLessons);
 router.post('/api/courses/:id/lessons', courseLessons.createLesson);
@@ -786,7 +789,13 @@ export default {
   // Daily cron (see [triggers] in wrangler.toml): Smart21Institution weekly automatic backups.
   // Two triggers: "0 2 * * *" (weekly-backup check) and "* * * * *" (every minute: send queued e-mail / SMS / push).
   async scheduled(event, env, ctx) {
-    if (event.cron === '* * * * *') ctx.waitUntil(flushOutbox(env, { limit: 60 }).catch(() => {}));
-    else ctx.waitUntil(insTools.runScheduledBackups(env));
+    if (event.cron === '* * * * *') {
+      ctx.waitUntil(flushOutbox(env, { limit: 60 }).catch(() => {}));
+      ctx.waitUntil(flushTeacherEmails(env, { limit: 40 }).catch(() => {}));   // teacher comment / weekly e-mails
+    } else {
+      ctx.waitUntil(insTools.runScheduledBackups(env));
+      // Mondays at 02:00 UTC (05:00 in Tanzania): queue the weekly summaries; the minute cron sends them.
+      if (new Date(event.scheduledTime || Date.now()).getUTCDay() === 1) ctx.waitUntil(queueWeeklySummaries(env).catch(() => {}));
+    }
   },
 };

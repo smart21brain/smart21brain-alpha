@@ -9,7 +9,8 @@
 
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
   var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
-  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+  // Safe for page text AND for attribute values (value="..."): quotes are escaped too.
+  function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
   function toast(msg, type) {
     if (window.S21_toast) window.S21_toast(esc(msg), { type: type || 'success' });
   }
@@ -18,6 +19,35 @@
     if (!s) return '';
     var d = new Date(String(s).replace(' ', 'T') + (String(s).indexOf('Z') > -1 ? '' : 'Z'));
     return isNaN(d) ? '' : d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  // "2026-11-30" -> "30 Nov 2026" (a plain date, so no timezone shifting)
+  function fmtDay(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || ''));
+    if (!m) return '';
+    var d = new Date(+m[1], +m[2] - 1, +m[3]);
+    return isNaN(d) ? '' : d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function isOverdue(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || ''));
+    if (!m) return false;
+    var end = new Date(+m[1], +m[2] - 1, +m[3], 23, 59, 59);
+    return end < new Date();
+  }
+  // 0 is a valid percentage, so only an empty box falls back to the default
+  function pctValue(sel, dflt) {
+    var raw = String($(sel).value).trim();
+    if (raw === '') return dflt;
+    var n = Math.round(Number(raw));
+    return isFinite(n) ? Math.min(100, Math.max(0, n)) : dflt;
+  }
+  // run fn once the given modal has finished closing (avoids two stacked modals fighting over the page scroll)
+  function afterHidden(id, fn) {
+    var el = document.getElementById(id);
+    if (!el || !el.classList.contains('show')) { fn(); return; }
+    var done = false;
+    function go() { if (done) return; done = true; fn(); }
+    el.addEventListener('hidden.bs.modal', go, { once: true });
+    setTimeout(go, 700); // safety net if the event never fires
   }
   function ago(days) {
     if (days == null) return '—';
@@ -40,7 +70,9 @@
     var init = { method: opts.method || 'GET', credentials: 'include', headers: {} };
     if (opts.json !== undefined) { init.headers['Content-Type'] = 'application/json'; init.body = JSON.stringify(opts.json); }
     if (opts.form) init.body = opts.form;
-    return fetch(path, init).then(function (res) {
+    return fetch(path, init).catch(function () {
+      throw new Error('Could not reach the server. Check your internet connection and try again.');
+    }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) {
         if (res.status === 401) { window.location.href = 'login.html'; throw new Error('Please sign in'); }
         if (!res.ok) throw new Error(data.error || ('Request failed (' + res.status + ')'));
@@ -62,13 +94,14 @@
         var data = {}; try { data = JSON.parse(xhr.responseText); } catch (e) { /* ignore */ }
         if (xhr.status >= 200 && xhr.status < 300) resolve(data); else reject(new Error(data.error || ('Upload failed (' + xhr.status + ')')));
       };
-      xhr.onerror = function () { reject(new Error('Network error during upload')); };
+      xhr.onerror = function () { reject(new Error('The upload was interrupted. Check your internet connection and try again.')); };
+      xhr.onabort = function () { reject(new Error('The upload was cancelled.')); };
       xhr.send(form);
     });
   }
 
   /* ---------- state ---------- */
-  var state = { user: null, courses: [], categories: [], content: { videos: [], materials: [], quizzes: [] }, allStudents: false, editingCourseId: null, lessonCourse: null, modules: [], lessons: [] };
+  var state = { user: null, courses: [], categories: [], content: { videos: [], materials: [], quizzes: [] }, allStudents: false, studentCourse: '', studentQ: '', studentSeq: 0, editingCourseId: null, editingLessonId: null, editingQuizId: null, lessonCourse: null, modules: [], lessons: [] };
 
   /* ---------- welcome + overview ---------- */
   function renderWelcome() {
@@ -81,18 +114,19 @@
 
   function loadOverview() {
     return api('/api/teacher/overview').then(function (o) {
-      $('#st-published').textContent = o.published_courses;
+      $('#st-published').textContent = o.published_courses || 0;
       $('#st-drafts').textContent = o.draft_courses ? o.draft_courses + ' draft' + (o.draft_courses === 1 ? '' : 's') : '';
-      $('#st-students').textContent = o.enrolled_students;
+      $('#st-students').textContent = o.enrolled_students || 0;
       $('#st-rating').textContent = o.average_rating != null ? o.average_rating : '—';
       $('#st-reviews').textContent = o.review_count ? o.review_count + ' review' + (o.review_count === 1 ? '' : 's') : 'No reviews yet';
       $('#st-revenue').textContent = fmtMoney(o.revenue_this_month);
       $('#st-pending').textContent = o.pending_payments ? o.pending_payments + ' payment' + (o.pending_payments === 1 ? '' : 's') + ' awaiting confirmation' : '';
-      $('#gl-enroll').textContent = '+' + o.new_enrollments;
-      $('#gl-lessons').textContent = Number(o.lessons_completed).toLocaleString();
+      $('#gl-enroll').textContent = '+' + (o.new_enrollments || 0);
+      $('#gl-lessons').textContent = Number(o.lessons_completed || 0).toLocaleString();
       $('#gl-quiz').textContent = o.avg_quiz_score != null ? o.avg_quiz_score + '%' : '—';
-      $('#gl-comments').textContent = o.comments_to_answer;
-      $('#td-student-count').textContent = o.enrolled_students + ' student' + (o.enrolled_students === 1 ? '' : 's');
+      $('#gl-comments').textContent = o.comments_to_answer || 0;
+      var sc = o.enrolled_students || 0;
+      $('#td-student-count').textContent = sc + ' student' + (sc === 1 ? '' : 's');
     });
   }
 
@@ -104,6 +138,7 @@
     var body = $('#td-courses-body');
     if (!state.courses.length) {
       body.innerHTML = '<tr><td colspan="5" class="text-soft">You have no courses yet. Click <strong>Create new course</strong> to start.</td></tr>';
+      fillCourseSelects(); // keep the dropdowns in step even when the list is empty
       return;
     }
     body.innerHTML = state.courses.map(function (c) {
@@ -130,8 +165,16 @@
   }
   function fillCourseSelects() {
     var opts = state.courses.map(function (c) { return '<option value="' + c.id + '">' + esc(c.title) + '</option>'; }).join('');
+    var keepAnn = $('#td-ann-course').value;
     $('#td-ann-course').innerHTML = '<option value="">All my students</option>' + opts;
+    $('#td-ann-course').value = keepAnn;
+    var keepAf = $('#af-course').value;
     $('#af-course').innerHTML = opts || '<option value="">Create a course first</option>';
+    if (keepAf) $('#af-course').value = keepAf;
+    var sel = $('#td-students-course'), keepSt = state.studentCourse;
+    sel.innerHTML = '<option value="">All my courses</option>' + opts;
+    sel.value = keepSt;
+    if (sel.value !== keepSt) { state.studentCourse = ''; sel.value = ''; } // that course no longer exists
   }
 
   function loadCategories() {
@@ -153,8 +196,8 @@
     $('#cf-price').value = course ? course.price : 0;
     $('#cf-objectives').value = course ? (course.objectives || []).join('\n') : '';
     $('#cf-requirements').value = course ? (course.requirements || []).join('\n') : '';
-    $('#cf-passing').value = course ? course.passing_score : 70;
-    $('#cf-exam-pass').value = 70;
+    $('#cf-passing').value = course && course.passing_score != null ? course.passing_score : 70;
+    $('#cf-exam-pass').value = course && course.final_exam_passing_score != null ? course.final_exam_passing_score : 70;
     $('#cf-cert').checked = course ? !!course.certificate_enabled : false;
     $('#cf-published').checked = course ? !!course.published : false;
     $('#cf-thumb-file').value = '';
@@ -173,8 +216,13 @@
   function saveCourse() {
     var title = $('#cf-title').value.trim();
     if (!title) return setErr('cf-error', 'Give the course a title.');
-    var btn = $('#cf-save'); btn.disabled = true;
+    var price = Number($('#cf-price').value) || 0;
+    if (price < 0) return setErr('cf-error', 'The price cannot be negative.');
     var file = $('#cf-thumb-file').files[0];
+    if (file && !/^image\/(png|jpe?g|webp|gif)$/.test(file.type)) return setErr('cf-error', 'The thumbnail must be a PNG, JPG, WEBP or GIF image.');
+    if (file && file.size > 5 * 1024 * 1024) return setErr('cf-error', 'That thumbnail is too large. Please use an image under 5MB.');
+    setErr('cf-error', '');
+    var btn = $('#cf-save'); btn.disabled = true;
     var getThumb = file
       ? (function () { var f = new FormData(); f.append('file', file); return api('/api/teacher/thumbnail', { method: 'POST', form: f }).then(function (r) { return r.url; }); })()
       : Promise.resolve($('#cf-thumb-preview').dataset.url || null);
@@ -184,11 +232,11 @@
         category_id: $('#cf-category').value ? Number($('#cf-category').value) : null,
         level: $('#cf-level').value, age_range: $('#cf-age').value.trim() || null,
         language: $('#cf-language').value.trim() || 'English',
-        price: Number($('#cf-price').value) || 0, thumbnail_url: thumb,
+        price: price, thumbnail_url: thumb,
         objectives: lines($('#cf-objectives').value), requirements: lines($('#cf-requirements').value),
-        certificate_enabled: $('#cf-cert').checked, passing_score: Number($('#cf-passing').value) || 70,
+        certificate_enabled: $('#cf-cert').checked, passing_score: pctValue('#cf-passing', 70),
         final_exam_quiz_id: $('#cf-final-exam').value ? Number($('#cf-final-exam').value) : null,
-        final_exam_passing_score: Number($('#cf-exam-pass').value) || 70,
+        final_exam_passing_score: pctValue('#cf-exam-pass', 70),
         published: $('#cf-published').checked,
       };
       var id = state.editingCourseId;
@@ -197,16 +245,21 @@
       modal('td-course-modal').hide();
       toast(r.created ? 'Course created' : 'Course saved');
       return Promise.all([loadCourses(), loadOverview()]).then(function () {
-        if (r.created) openLessons(r.id); // go straight to adding lessons
+        // go straight to adding lessons, but only once the course window has closed
+        if (r.created) afterHidden('td-course-modal', function () { openLessons(r.id); });
       });
     }).catch(function (e) { setErr('cf-error', e.message); }).then(function () { btn.disabled = false; });
   }
 
   function togglePublish(course) {
+    if (!course.published && !Number(course.lesson_count)) {
+      if (!confirm('"' + course.title + '" has no lessons yet. Students would see an empty course. Publish it anyway?')) return;
+    }
     api('/api/courses/' + course.id, { method: 'PUT', json: { published: !course.published } })
       .then(function () { toast(course.published ? 'Course unpublished' : 'Course published'); return Promise.all([loadCourses(), loadOverview()]); })
       .catch(function (e) { toast(e.message, 'error'); });
   }
+
   function deleteCourse(course) {
     if (!confirm('Delete "' + course.title + '"? This also removes its lessons and student progress. This cannot be undone.')) return;
     api('/api/courses/' + course.id, { method: 'DELETE' })
@@ -219,14 +272,47 @@
     var course = state.courses.filter(function (c) { return c.id === courseId; })[0];
     if (!course) return;
     state.lessonCourse = course;
+    state.lessons = []; state.modules = [];           // never show the previous course's lessons
     $('#lm-title').textContent = 'Lessons — ' + course.title;
+    $('#lm-list').innerHTML = '<p class="text-soft" style="font-size:.85rem">Loading lessons…</p>';
+    resetLessonForm();
+    fillLessonSelects();
+    modal('td-lessons-modal').show();
+    reloadLessons().catch(function (e) { $('#lm-list').innerHTML = '<p class="text-danger" style="font-size:.85rem">' + esc(e.message) + '</p>'; });
+  }
+  function resetLessonForm() {
+    state.editingLessonId = null;
     setErr('ls-error', '');
     ['ls-title', 'ls-body', 'ls-minutes'].forEach(function (id) { $('#' + id).value = ''; });
-    $('#ls-type').value = 'text'; $('#ls-preview').checked = false;
-    syncLessonFields(); fillLessonSelects();
-    modal('td-lessons-modal').show();
-    reloadLessons();
+    $('#ls-type').value = 'text'; $('#ls-preview').checked = false; $('#ls-module').value = '';
+    $('#ls-video').value = ''; $('#ls-material').value = ''; $('#ls-quiz').value = '';
+    $('#ls-form-title').textContent = 'Add a lesson';
+    $('#ls-add').innerHTML = '<i class="fa-solid fa-plus"></i> <span>Add lesson</span>';
+    show($('#ls-cancel'), false);
+    syncLessonFields();
   }
+  function startEditLesson(id) {
+    var l = state.lessons.filter(function (x) { return x.id === id; })[0];
+    if (!l) return;
+    state.editingLessonId = id;
+    setErr('ls-error', '');
+    $('#ls-title').value = l.title || '';
+    $('#ls-type').value = l.content_type || 'text';
+    $('#ls-module').value = l.module_id ? String(l.module_id) : '';
+    $('#ls-body').value = l.body || '';
+    $('#ls-minutes').value = l.duration_seconds ? Math.round(l.duration_seconds / 60) : '';
+    $('#ls-preview').checked = !!l.is_preview;
+    $('#ls-video').value = l.video_id ? String(l.video_id) : '';
+    $('#ls-material').value = l.material_id ? String(l.material_id) : '';
+    $('#ls-quiz').value = l.quiz_id ? String(l.quiz_id) : '';
+    $('#ls-form-title').textContent = 'Edit lesson';
+    $('#ls-add').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> <span>Save changes</span>';
+    show($('#ls-cancel'), true);
+    syncLessonFields();
+    $('#ls-title').focus();
+    if ($('#ls-form-title').scrollIntoView) $('#ls-form-title').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
   function syncLessonFields() {
     var t = $('#ls-type').value;
     $$('.ls-field').forEach(function (el) { show(el, el.dataset.for === t); });
@@ -251,10 +337,12 @@
   }
   var TYPE_ICON = { text: 'fa-book-open', video: 'fa-circle-play', pdf: 'fa-file-pdf', quiz: 'fa-circle-question' };
   function lessonRow(l, idx, total) {
+    // idx/total are the lesson's position inside its own module, so the arrows always do something visible
     return '<div class="d-flex align-items-center gap-2 py-2 border-bottom" data-lesson="' + l.id + '">' +
       '<i class="fa-solid ' + (TYPE_ICON[l.content_type] || 'fa-book-open') + '" style="color:var(--s21-primary);width:18px"></i>' +
       '<div class="flex-grow-1" style="min-width:0"><div class="fw-bold text-truncate" style="font-size:.85rem">' + esc(l.title) + '</div>' +
       '<div class="text-soft" style="font-size:.72rem">' + esc(l.content_type) + (l.duration_seconds ? ' · ' + Math.round(l.duration_seconds / 60) + ' min' : '') + (l.is_preview ? ' · free preview' : '') + '</div></div>' +
+      '<button class="btn btn-sm btn-outline-secondary" data-lact="edit" aria-label="Edit lesson"><i class="fa-solid fa-pen"></i></button>' +
       '<button class="btn btn-sm btn-outline-secondary" data-lact="up" ' + (idx === 0 ? 'disabled' : '') + ' aria-label="Move up"><i class="fa-solid fa-arrow-up"></i></button>' +
       '<button class="btn btn-sm btn-outline-secondary" data-lact="down" ' + (idx === total - 1 ? 'disabled' : '') + ' aria-label="Move down"><i class="fa-solid fa-arrow-down"></i></button>' +
       '<button class="btn btn-sm btn-outline-danger" data-lact="del" aria-label="Delete lesson"><i class="fa-solid fa-trash"></i></button></div>';
@@ -263,61 +351,89 @@
     var box = $('#lm-list');
     if (!state.lessons.length && !state.modules.length) { box.innerHTML = '<p class="text-soft" style="font-size:.85rem">No lessons yet. Add your first lesson on the right.</p>'; return; }
     var html = '';
-    var total = state.lessons.length;
-    var idxOf = {}; state.lessons.forEach(function (l, i) { idxOf[l.id] = i; });
+    function group(ls) { return ls.map(function (l, i) { return lessonRow(l, i, ls.length); }).join(''); }
     state.modules.forEach(function (m) {
       var ls = state.lessons.filter(function (l) { return l.module_id === m.id; });
-      html += '<div class="mt-3 mb-1 d-flex justify-content-between align-items-center"><div class="fw-bold" style="font-size:.85rem"><i class="fa-solid fa-layer-group me-1"></i>' + esc(m.title) + '</div>' +
-        '<button class="btn btn-sm btn-link text-danger p-0" data-mact="del" data-module="' + m.id + '">Remove module</button></div>' +
-        (ls.length ? ls.map(function (l) { return lessonRow(l, idxOf[l.id], total); }).join('') : '<div class="text-soft" style="font-size:.78rem">No lessons in this module yet.</div>');
+      html += '<div class="mt-3 mb-1 d-flex justify-content-between align-items-center gap-2" data-module-row="' + m.id + '"><div class="fw-bold" style="font-size:.85rem"><i class="fa-solid fa-layer-group me-1"></i>' + esc(m.title) + '</div>' +
+        '<div class="text-nowrap"><button class="btn btn-sm btn-link p-0 me-2" data-mact="rename" data-module="' + m.id + '">Rename</button>' +
+        '<button class="btn btn-sm btn-link text-danger p-0" data-mact="del" data-module="' + m.id + '">Remove module</button></div></div>' +
+        (ls.length ? group(ls) : '<div class="text-soft" style="font-size:.78rem">No lessons in this module yet.</div>');
     });
     var loose = state.lessons.filter(function (l) { return !l.module_id; });
-    if (loose.length) html += (state.modules.length ? '<div class="mt-3 mb-1 fw-bold" style="font-size:.85rem">Other lessons</div>' : '') + loose.map(function (l) { return lessonRow(l, idxOf[l.id], total); }).join('');
+    if (loose.length) html += (state.modules.length ? '<div class="mt-3 mb-1 fw-bold" style="font-size:.85rem">Other lessons</div>' : '') + group(loose);
     box.innerHTML = html;
   }
+
   function addLesson() {
-    var c = state.lessonCourse, type = $('#ls-type').value, title = $('#ls-title').value.trim();
+    var c = state.lessonCourse, editId = state.editingLessonId;
+    var type = $('#ls-type').value, title = $('#ls-title').value.trim();
     if (!title) return setErr('ls-error', 'Give the lesson a title.');
-    if (state.lessons.some(function (l) { return l.title.toLowerCase() === title.toLowerCase(); })) return setErr('ls-error', 'This course already has a lesson with that title.');
+    if (state.lessons.some(function (l) { return l.id !== editId && l.title.toLowerCase() === title.toLowerCase(); })) return setErr('ls-error', 'This course already has a lesson with that title.');
     var body = { title: title, content_type: type, module_id: $('#ls-module').value ? Number($('#ls-module').value) : null, is_preview: $('#ls-preview').checked };
-    var mins = Number($('#ls-minutes').value); if (mins > 0) body.duration_seconds = Math.round(mins * 60);
+    var mins = Number($('#ls-minutes').value);
+    if (mins < 0) return setErr('ls-error', 'Duration cannot be negative.');
+    if (mins > 0) body.duration_seconds = Math.round(mins * 60); else if (editId) body.duration_seconds = 0;
     if (type === 'video') { if (!$('#ls-video').value) return setErr('ls-error', 'Choose a video.'); body.video_id = Number($('#ls-video').value); }
     if (type === 'pdf') { if (!$('#ls-material').value) return setErr('ls-error', 'Choose a resource.'); body.material_id = Number($('#ls-material').value); }
     if (type === 'quiz') { if (!$('#ls-quiz').value) return setErr('ls-error', 'Choose a quiz.'); body.quiz_id = Number($('#ls-quiz').value); }
     if (type === 'text') { body.body = $('#ls-body').value.trim(); if (!body.body) return setErr('ls-error', 'Write the lesson text.'); }
     setErr('ls-error', '');
     var btn = $('#ls-add'); btn.disabled = true;
-    api('/api/courses/' + c.id + '/lessons', { method: 'POST', json: body }).then(function () {
-      ['ls-title', 'ls-body', 'ls-minutes'].forEach(function (id) { $('#' + id).value = ''; });
-      toast('Lesson added'); return Promise.all([reloadLessons(), loadCourses()]);
+    var req = editId
+      ? api('/api/courses/' + c.id + '/lessons/' + editId, { method: 'PUT', json: body })
+      : api('/api/courses/' + c.id + '/lessons', { method: 'POST', json: body });
+    req.then(function () {
+      toast(editId ? 'Lesson saved' : 'Lesson added');
+      resetLessonForm();
+      return Promise.all([reloadLessons(), loadCourses()]);
     }).catch(function (e) { setErr('ls-error', e.message); }).then(function () { btn.disabled = false; });
   }
+
   function moveLesson(id, dir) {
-    var i = state.lessons.findIndex(function (l) { return l.id === id; }), j = i + dir;
-    if (i < 0 || j < 0 || j >= state.lessons.length) return;
-    var arr = state.lessons.slice(); var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    var me = state.lessons.filter(function (l) { return l.id === id; })[0];
+    if (!me) return;
+    // neighbours are taken inside the same module, which is what the teacher sees on screen
+    var sameGroup = state.lessons.filter(function (l) { return (l.module_id || 0) === (me.module_id || 0); });
+    var gi = sameGroup.indexOf(me), other = sameGroup[gi + dir];
+    if (!other) return;
+    var arr = state.lessons.slice();
+    var i = arr.indexOf(me), j = arr.indexOf(other);
+    arr[i] = other; arr[j] = me;
     var jobs = [];
     arr.forEach(function (l, k) { if (l.sort_order !== k + 1) jobs.push(api('/api/courses/' + state.lessonCourse.id + '/lessons/' + l.id, { method: 'PUT', json: { sort_order: k + 1 } })); });
-    Promise.all(jobs).then(reloadLessons).catch(function (e) { toast(e.message, 'error'); });
+    Promise.all(jobs).then(reloadLessons).catch(function (e) { toast(e.message, 'error'); reloadLessons().catch(function () {}); });
   }
 
   /* ---------- students ---------- */
   function loadStudents() {
-    var url = '/api/teacher/students' + (state.allStudents ? '' : '?attention=1');
+    var params = [];
+    if (!state.allStudents) params.push('attention=1');
+    if (state.studentCourse) params.push('course_id=' + encodeURIComponent(state.studentCourse));
+    if (state.studentQ) params.push('q=' + encodeURIComponent(state.studentQ));
+    var url = '/api/teacher/students' + (params.length ? '?' + params.join('&') : '');
+    var filtered = !!(state.studentCourse || state.studentQ);
     $('#td-students-title').textContent = state.allStudents ? 'All students' : 'Students needing attention';
     $('#td-students-toggle').textContent = state.allStudents ? 'Show only students needing attention' : 'View all students';
+    var seq = ++state.studentSeq;                    // ignore answers that arrive after a newer search
     return api(url).then(function (d) {
+      if (seq !== state.studentSeq) return;
       var body = $('#td-students-body');
-      if (!d.students.length) { body.innerHTML = '<tr><td colspan="4" class="text-soft">' + (state.allStudents ? 'No students have enrolled in your courses yet.' : 'Nobody needs attention right now — everyone is active. 🎉') + '</td></tr>'; return; }
-      body.innerHTML = d.students.map(function (s) {
-        var av = s.avatar_url ? '<img src="' + esc(s.avatar_url) + '" width="32" height="32" class="rounded-circle" style="object-fit:cover" alt="">' : '<span class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width:32px;height:32px;background:var(--s21-primary-light);color:var(--s21-primary);font-weight:700;font-size:.8rem">' + esc(s.name.charAt(0)) + '</span>';
-        var warn = s.progress_percent < 50;
+      var list = d.students || [];
+      if (!list.length) {
+        var msg = filtered ? 'No students match your search.' : (state.allStudents ? 'No students have enrolled in your courses yet.' : 'Nobody needs attention right now — everyone is active. 🎉');
+        body.innerHTML = '<tr><td colspan="4" class="text-soft">' + msg + '</td></tr>';
+        return;
+      }
+      body.innerHTML = list.map(function (s) {
+        var av = s.avatar_url ? '<img src="' + esc(s.avatar_url) + '" width="32" height="32" class="rounded-circle" style="object-fit:cover" alt="">' : '<span class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width:32px;height:32px;background:var(--s21-primary-light);color:var(--s21-primary);font-weight:700;font-size:.8rem">' + esc((s.name || '?').charAt(0).toUpperCase()) + '</span>';
+        var pct = Math.max(0, Math.min(100, Number(s.progress_percent) || 0));
+        var warn = pct < 50;
         return '<tr><td><div class="d-flex align-items-center gap-2">' + av + '<span>' + esc(s.name) + '</span></div></td>' +
           '<td>' + esc(s.course_title) + (s.payment_status === 'pending' ? ' <span class="status-chip pending">Payment pending</span>' : '') + '</td>' +
-          '<td style="min-width:120px"><div class="progress-s21"><span style="width:' + s.progress_percent + '%;' + (warn ? 'background:var(--s21-accent)' : '') + '"></span></div><div class="text-soft" style="font-size:.72rem">' + s.completed_lessons + '/' + s.total_lessons + ' lessons</div></td>' +
+          '<td style="min-width:120px"><div class="progress-s21"><span style="width:' + pct + '%;' + (warn ? 'background:var(--s21-accent)' : '') + '"></span></div><div class="text-soft" style="font-size:.72rem">' + (s.completed_lessons || 0) + ' of ' + (s.total_lessons || 0) + ' lessons · ' + pct + '%</div></td>' +
           '<td>' + ago(s.days_inactive) + '</td></tr>';
       }).join('');
-    }).catch(function (e) { $('#td-students-body').innerHTML = '<tr><td colspan="4" class="text-danger">' + esc(e.message) + '</td></tr>'; });
+    }).catch(function (e) { if (seq === state.studentSeq) $('#td-students-body').innerHTML = '<tr><td colspan="4" class="text-danger">' + esc(e.message) + '</td></tr>'; });
   }
 
   /* ---------- reviews ---------- */
@@ -372,7 +488,7 @@
       if (!d.assignments.length) { box.innerHTML = '<p class="text-soft mb-0" style="font-size:.85rem">No assignments yet.</p>'; return; }
       box.innerHTML = d.assignments.map(function (a) {
         return '<div class="d-flex gap-2 py-2 border-bottom" data-asg="' + a.id + '"><div class="flex-grow-1"><div class="fw-bold" style="font-size:.88rem">' + esc(a.title) + '</div>' +
-          '<div class="text-soft" style="font-size:.76rem">' + esc(a.course_title) + (a.due_date ? ' · due ' + esc(a.due_date) : '') + '</div>' +
+          '<div class="text-soft" style="font-size:.76rem">' + esc(a.course_title) + (a.due_date ? ' · due ' + esc(fmtDay(a.due_date) || a.due_date) + (isOverdue(a.due_date) ? ' <span class="status-chip pending">Overdue</span>' : '') : '') + '</div>' +
           (a.instructions ? '<div class="text-soft" style="font-size:.82rem">' + esc(a.instructions.slice(0, 160)) + (a.instructions.length > 160 ? '…' : '') + '</div>' : '') + '</div>' +
           '<button class="btn btn-sm btn-outline-danger align-self-start" data-sact="del" aria-label="Delete assignment"><i class="fa-solid fa-trash"></i></button></div>';
       }).join('');
@@ -394,21 +510,39 @@
   }
   function renderUploads() {
     var rows = [];
-    state.content.videos.forEach(function (v) { rows.push({ t: 'video', icon: 'fa-clapperboard', label: 'Video', id: v.id, title: v.title, at: v.created_at }); });
-    state.content.materials.forEach(function (m) { rows.push({ t: 'material', icon: 'fa-file-pdf', label: 'Resource', id: m.id, title: m.title, at: m.created_at }); });
-    state.content.quizzes.forEach(function (q) { rows.push({ t: 'quiz', icon: 'fa-circle-question', label: 'Quiz · ' + q.question_count + ' Q', id: q.id, title: q.title, at: q.created_at }); });
+    state.content.videos.forEach(function (v) { rows.push({ t: 'video', icon: 'fa-clapperboard', label: 'Video', id: v.id, title: v.title, at: v.created_at, usage: { lessons: v.used_lessons || 0 } }); });
+    state.content.materials.forEach(function (m) { rows.push({ t: 'material', icon: 'fa-file-pdf', label: 'Resource', id: m.id, title: m.title, at: m.created_at, usage: { lessons: m.used_lessons || 0 } }); });
+    state.content.quizzes.forEach(function (q) { rows.push({ t: 'quiz', icon: 'fa-circle-question', label: 'Quiz · ' + q.question_count + ' Q', id: q.id, title: q.title, at: q.created_at, usage: { lessons: q.used_lessons || 0, modules: q.used_modules || 0, exams: q.used_exams || 0, attempts: q.attempts || 0 } }); });
     rows.sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
     var body = $('#td-uploads-body');
     if (!rows.length) { body.innerHTML = '<tr><td colspan="4" class="text-soft">Nothing uploaded yet. Use the quick actions to add videos, resources and quizzes.</td></tr>'; return; }
     body.innerHTML = rows.map(function (r) {
       return '<tr data-kind="' + r.t + '" data-id="' + r.id + '"><td><i class="fa-solid ' + r.icon + ' me-2" style="color:var(--s21-primary)"></i>' + esc(r.title) + '</td><td class="text-soft">' + esc(r.label) + '</td><td class="text-soft">' + fmtDate(r.at) + '</td>' +
-        '<td class="text-end"><button class="btn btn-sm btn-outline-danger" data-uact="del" aria-label="Delete"><i class="fa-solid fa-trash"></i></button></td></tr>';
+        '<td class="text-end text-nowrap">' + (r.t === 'quiz' ? '<button class="btn btn-sm btn-outline-secondary me-1" data-uact="edit" aria-label="Edit quiz"><i class="fa-solid fa-pen"></i></button>' : '') +
+        '<button class="btn btn-sm btn-outline-danger" data-uact="del" aria-label="Delete"><i class="fa-solid fa-trash"></i></button></td></tr>';
     }).join('');
+  }
+  // "used in 2 lessons and as the final exam of 1 course" (empty when it is not used anywhere)
+  function usageText(kind, u) {
+    if (!u) return '';
+    var bits = [];
+    if (u.lessons) bits.push(u.lessons + ' lesson' + (u.lessons === 1 ? '' : 's'));
+    if (u.modules) bits.push(u.modules + ' module quiz' + (u.modules === 1 ? '' : 'zes'));
+    if (u.exams) bits.push('the final exam of ' + u.exams + ' course' + (u.exams === 1 ? '' : 's'));
+    return bits.join(', ').replace(/, ([^,]*)$/, ' and $1');
   }
   function deleteUpload(kind, id) {
     var path = kind === 'video' ? '/api/videos/' : kind === 'material' ? '/api/materials/' : '/api/quizzes/';
-    if (!confirm('Delete this ' + (kind === 'material' ? 'resource' : kind) + '? Lessons that use it will lose their content.')) return;
-    api(path + id, { method: 'DELETE' }).then(function () { toast('Deleted'); return loadContent(); }).catch(function (e) { toast(e.message, 'error'); });
+    var list = kind === 'video' ? state.content.videos : kind === 'material' ? state.content.materials : state.content.quizzes;
+    var item = list.filter(function (x) { return String(x.id) === String(id); })[0] || {};
+    var used = usageText(kind, { lessons: item.used_lessons, modules: item.used_modules, exams: item.used_exams });
+    var label = kind === 'material' ? 'resource' : kind;
+    var msg = used
+      ? 'This ' + label + ' is used in ' + used + '. If you delete it, ' + (item.used_exams ? 'those courses will have NO final exam and ' : '') + 'those lessons will be left empty.\n\nDelete it anyway?'
+      : 'Delete this ' + label + '?';
+    if (kind === 'quiz' && item.attempts) msg += '\n\n' + item.attempts + ' attempt' + (item.attempts === 1 ? '' : 's') + ' by students will be removed too.';
+    if (!confirm(msg)) return;
+    api(path + id, { method: 'DELETE' }).then(function () { toast('Deleted'); return Promise.all([loadContent(), loadCourses()]); }).catch(function (e) { toast(e.message, 'error'); });
   }
 
   function saveVideo() {
@@ -425,6 +559,8 @@
     } else {
       var f = $('#vf-file').files[0];
       if (!f) { btn.disabled = false; return setErr('vf-error', 'Choose a video file.'); }
+      if (f.size > 100 * 1024 * 1024) { btn.disabled = false; return setErr('vf-error', 'That file is over 100MB. Please upload it to YouTube or Vimeo and paste the link instead.'); }
+      if (f.type && f.type.indexOf('video/') !== 0) { btn.disabled = false; return setErr('vf-error', 'Please choose a video file (MP4, WebM or OGG).'); }
       var form = new FormData();
       form.append('title', title); form.append('subject', $('#vf-subject').value.trim()); form.append('description', $('#vf-description').value.trim());
       places.forEach(function (pl) { form.append('placements', pl); }); form.append('published', 'true'); form.append('file', f);
@@ -438,6 +574,8 @@
     var title = $('#rf-title').value.trim(), f = $('#rf-file').files[0];
     if (!title) return setErr('rf-error', 'Give the resource a title.');
     if (!f) return setErr('rf-error', 'Choose a PDF or image.');
+    if (f.size > 25 * 1024 * 1024) return setErr('rf-error', 'That file is over 25MB. Please compress it or split it into smaller files.');
+    if (!/^(application\/pdf|image\/(png|jpe?g|webp|gif))$/.test(f.type)) return setErr('rf-error', 'Only PDF files and PNG, JPG, WEBP or GIF images can be uploaded.');
     var form = new FormData(); form.append('title', title); form.append('subject', $('#rf-subject').value.trim()); form.append('file', f);
     var btn = $('#rf-save'); btn.disabled = true; setErr('rf-error', '');
     upload('/api/materials', form, $('#rf-progress')).then(function () { modal('td-resource-modal').hide(); toast('Resource uploaded'); return loadContent(); })
@@ -446,21 +584,62 @@
 
   /* quiz builder */
   var qCount = 0;
-  function addQuestion() {
+  function addQuestion(prefill) {
+    prefill = prefill && prefill.prompt !== undefined ? prefill : null;     // the click event is not a prefill
     qCount++; var n = qCount;
+    var opts = prefill ? prefill.options.slice() : [];
+    while (opts.length < 4) opts.push('');
+    var correct = prefill ? Number(prefill.correct_index) || 0 : 0;
     var div = document.createElement('div'); div.className = 's21-card p-3'; div.dataset.q = n;
     div.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong style="font-size:.85rem">Question</strong><button type="button" class="btn btn-sm btn-link text-danger p-0" data-qact="remove">Remove</button></div>' +
-      '<input class="form-control s21-input mb-2" data-f="prompt" placeholder="Type the question">' +
-      [0, 1, 2, 3].map(function (i) { return '<div class="d-flex align-items-center gap-2 mb-1"><input type="radio" name="qc' + n + '" value="' + i + '" ' + (i === 0 ? 'checked' : '') + ' aria-label="Correct answer ' + (i + 1) + '"><input class="form-control s21-input" data-f="opt" placeholder="Answer ' + (i + 1) + (i < 2 ? '' : ' (optional)') + '"></div>'; }).join('') +
-      '<input class="form-control s21-input mt-2" data-f="explanation" placeholder="Explanation shown after answering (optional)">' +
+      '<input class="form-control s21-input mb-2" data-f="prompt" maxlength="500" aria-label="Question text" placeholder="Type the question" value="' + esc(prefill ? prefill.prompt : '') + '">' +
+      '<div data-f="opts">' + opts.slice(0, 8).map(function (o, i) { return optionRow(n, i, o, i === correct); }).join('') + '</div>' +
+      '<button type="button" class="btn btn-sm btn-link p-0 mb-1" data-qact="addopt"' + (opts.length >= 8 ? ' style="display:none"' : '') + '><i class="fa-solid fa-plus"></i> Add another answer</button>' +
+      '<input class="form-control s21-input mt-2" data-f="explanation" maxlength="500" aria-label="Explanation" placeholder="Explanation shown after answering (optional)" value="' + esc(prefill ? prefill.explanation || '' : '') + '">' +
       '<div class="text-soft mt-1" style="font-size:.72rem">Select the radio button next to the correct answer.</div>';
     $('#qf-questions').appendChild(div);
   }
-  function openQuizModal() {
+  function optionRow(n, i, value, checked) {
+    return '<div class="d-flex align-items-center gap-2 mb-1"><input type="radio" name="qc' + n + '" value="' + i + '" ' + (checked ? 'checked' : '') + ' aria-label="Correct answer ' + (i + 1) + '">' +
+      '<input class="form-control s21-input" data-f="opt" maxlength="300" aria-label="Answer ' + (i + 1) + '" placeholder="Answer ' + (i + 1) + '" value="' + esc(value) + '"></div>';
+  }
+  function addOption(card) {
+    var box = $('[data-f="opts"]', card), count = box.children.length;
+    if (count >= 8) return;
+    var n = card.dataset.q;
+    box.insertAdjacentHTML('beforeend', optionRow(n, count, '', false));
+    if (count + 1 >= 8) { var b = $('[data-qact="addopt"]', card); if (b) b.style.display = 'none'; }
+  }
+
+  function resetQuizForm() {
+    state.editingQuizId = null;
     ['qf-title', 'qf-subject', 'qf-description'].forEach(function (id) { $('#' + id).value = ''; });
-    $('#qf-questions').innerHTML = ''; qCount = 0; addQuestion(); addQuestion(); setErr('qf-error', '');
+    $('#qf-questions').innerHTML = ''; qCount = 0; setErr('qf-error', '');
+    show($('#qf-note'), false); $('#qf-note').textContent = '';
+    $('#qf-modal-title').textContent = 'Create a quiz'; $('#qf-save').textContent = 'Save quiz';
+  }
+  function openQuizModal() {
+    resetQuizForm();
+    addQuestion(); addQuestion();
     modal('td-quiz-modal').show();
   }
+  // Edit one of my quizzes: load it in full, fill the same form, save as an update.
+  function editQuiz(id) {
+    api('/api/teacher/quizzes/' + id).then(function (d) {
+      resetQuizForm();
+      state.editingQuizId = d.quiz.id;
+      $('#qf-modal-title').textContent = 'Edit quiz'; $('#qf-save').textContent = 'Save changes';
+      $('#qf-title').value = d.quiz.title || ''; $('#qf-subject').value = d.quiz.subject || ''; $('#qf-description').value = d.quiz.description || '';
+      (d.quiz.questions.length ? d.quiz.questions : [{}, {}]).forEach(function (q) { addQuestion(q.prompt !== undefined ? q : null); });
+      var notes = [];
+      var used = usageText('quiz', { lessons: d.used_in.lessons, modules: d.used_in.modules, exams: d.used_in.final_exams });
+      if (used) notes.push('This quiz is used in ' + used + '. Your changes appear there straight away.');
+      if (d.attempts) notes.push(d.attempts + ' attempt' + (d.attempts === 1 ? ' has' : 's have') + ' already been recorded. Past scores stay as they were; only new attempts use the updated questions.');
+      if (notes.length) { $('#qf-note').innerHTML = notes.map(esc).join('<br>'); show($('#qf-note'), true); }
+      modal('td-quiz-modal').show();
+    }).catch(function (e) { toast(e.message, 'error'); });
+  }
+
   function saveQuiz() {
     var title = $('#qf-title').value.trim();
     if (!title) return setErr('qf-error', 'Give the quiz a title.');
@@ -477,20 +656,44 @@
       if (!prompt) return setErr('qf-error', 'Question ' + (k + 1) + ' needs text.');
       if (options.length < 2) return setErr('qf-error', 'Question ' + (k + 1) + ' needs at least two answers.');
       if (!raw[chosen]) return setErr('qf-error', 'Question ' + (k + 1) + ': the correct answer you selected is empty.');
+      if (prompt.length > 500) return setErr('qf-error', 'Question ' + (k + 1) + ' is too long (500 characters at most).');
       questions.push({ prompt: prompt, options: options, correct_index: correct, explanation: $('[data-f="explanation"]', card).value.trim() });
     }
     if (!questions.length) return setErr('qf-error', 'Add at least one question.');
     var btn = $('#qf-save'); btn.disabled = true; setErr('qf-error', '');
-    api('/api/quizzes', { method: 'POST', json: { title: title, subject: $('#qf-subject').value.trim(), description: $('#qf-description').value.trim(), questions: questions, published: true } })
-      .then(function () { modal('td-quiz-modal').hide(); toast('Quiz saved'); return loadContent(); })
+    var editId = state.editingQuizId;
+    var payload = { title: title, subject: $('#qf-subject').value.trim(), description: $('#qf-description').value.trim(), questions: questions };
+    if (!editId) payload.published = true;
+    api(editId ? '/api/quizzes/' + editId : '/api/quizzes', { method: editId ? 'PUT' : 'POST', json: payload })
+      .then(function () { modal('td-quiz-modal').hide(); toast(editId ? 'Quiz updated' : 'Quiz saved'); return loadContent(); })
       .catch(function (e) { setErr('qf-error', e.message); }).then(function () { btn.disabled = false; });
   }
 
   /* ---------- settings ---------- */
+  function renderEmailStatus(d) {
+    var el = $('#td-email-status');
+    if (!d) { el.innerHTML = '<span class="text-danger">Your settings could not be loaded, so the switches are locked. Refresh the page to try again.</span>'; return; }
+    el.innerHTML = d.email_available
+      ? '<span style="color:var(--s21-primary)"><i class="fa-solid fa-circle-check"></i> E-mail is on.</span> <span class="text-soft">Messages go to <strong>' + esc(d.email_address || 'your account address') + '</strong>.</span>'
+      : '<span class="text-soft"><i class="fa-solid fa-circle-info"></i> E-mail is not set up on this site yet. Your choices are saved and will start working as soon as the site administrator turns e-mail on. Until then, new comments still appear in <strong>Reviews</strong>.</span>';
+  }
   function loadSettings() {
     return api('/api/teacher/settings').then(function (d) {
-      $$('[data-td-setting]').forEach(function (i) { i.checked = !!d.settings[i.dataset.tdSetting]; });
-    }).catch(function () { /* defaults stay */ });
+      $$('[data-td-setting]').forEach(function (i) { i.checked = !!d.settings[i.dataset.tdSetting]; i.disabled = false; });
+      renderEmailStatus(d);
+    }).catch(function (e) {
+      // never show switches in the wrong position: lock them and say so
+      $$('[data-td-setting]').forEach(function (i) { i.disabled = true; });
+      renderEmailStatus(null);
+      throw e;
+    });
+  }
+  function sendTestEmail() {
+    var btn = $('#td-email-test'); btn.disabled = true;
+    api('/api/teacher/settings/test-email', { method: 'POST', json: {} })
+      .then(function (r) { toast(r.message || 'Test e-mail sent', 'success'); })
+      .catch(function (e) { toast(e.message, 'error'); })
+      .then(function () { btn.disabled = false; });
   }
 
   /* ---------- wiring ---------- */
@@ -500,7 +703,13 @@
     $('#cf-save').addEventListener('click', saveCourse);
     $('#cf-thumb-file').addEventListener('change', function () {
       var f = this.files[0], prev = $('#cf-thumb-preview');
-      if (f) { prev.src = URL.createObjectURL(f); prev.style.display = ''; }
+      if (!f) return;
+      if (!/^image\/(png|jpe?g|webp|gif)$/.test(f.type) || f.size > 5 * 1024 * 1024) {
+        this.value = '';
+        return setErr('cf-error', 'Please choose a PNG, JPG, WEBP or GIF image under 5MB.');
+      }
+      setErr('cf-error', '');
+      prev.src = URL.createObjectURL(f); prev.style.display = '';
     });
 
     $('#td-courses-body').addEventListener('click', function (e) {
@@ -516,6 +725,8 @@
 
     $('#ls-type').addEventListener('change', syncLessonFields);
     $('#ls-add').addEventListener('click', addLesson);
+    $('#ls-cancel').addEventListener('click', resetLessonForm);
+    $('#td-lessons-modal').addEventListener('hidden.bs.modal', function () { resetLessonForm(); loadCourses().catch(function () {}); });
     $('#lm-add-module').addEventListener('click', function () {
       var t = prompt('Module name (e.g. "Week 1 — Halves and quarters")'); if (!t || !t.trim()) return;
       api('/api/courses/' + state.lessonCourse.id + '/modules', { method: 'POST', json: { title: t.trim() } }).then(reloadLessons).catch(function (e) { toast(e.message, 'error'); });
@@ -524,21 +735,44 @@
       var b = e.target.closest('[data-lact]');
       if (b) {
         var id = Number(b.closest('[data-lesson]').dataset.lesson);
+        if (b.dataset.lact === 'edit') startEditLesson(id);
         if (b.dataset.lact === 'up') moveLesson(id, -1);
         if (b.dataset.lact === 'down') moveLesson(id, 1);
         if (b.dataset.lact === 'del') {
           if (!confirm('Delete this lesson?')) return;
-          api('/api/courses/' + state.lessonCourse.id + '/lessons/' + id, { method: 'DELETE' }).then(function () { return Promise.all([reloadLessons(), loadCourses()]); }).catch(function (er) { toast(er.message, 'error'); });
+          api('/api/courses/' + state.lessonCourse.id + '/lessons/' + id, { method: 'DELETE' }).then(function () {
+            if (state.editingLessonId === id) resetLessonForm();
+            return Promise.all([reloadLessons(), loadCourses()]);
+          }).catch(function (er) { toast(er.message, 'error'); });
         }
         return;
       }
       var m = e.target.closest('[data-mact]');
-      if (m && confirm('Remove this module? Its lessons are kept but become ungrouped.')) {
+      if (!m) return;
+      if (m.dataset.mact === 'rename') {
+        var mod = state.modules.filter(function (x) { return String(x.id) === m.dataset.module; })[0];
+        var nt = prompt('New module name', mod ? mod.title : ''); if (!nt || !nt.trim() || (mod && nt.trim() === mod.title)) return;
+        api('/api/course-modules/' + m.dataset.module, { method: 'PUT', json: { title: nt.trim() } }).then(function () { toast('Module renamed'); return reloadLessons(); }).catch(function (er) { toast(er.message, 'error'); });
+        return;
+      }
+      if (m.dataset.mact === 'del' && confirm('Remove this module? Its lessons are kept but become ungrouped.')) {
         api('/api/course-modules/' + m.dataset.module, { method: 'DELETE' }).then(reloadLessons).catch(function (er) { toast(er.message, 'error'); });
       }
     });
 
     $('#td-students-toggle').addEventListener('click', function () { state.allStudents = !state.allStudents; loadStudents(); });
+    $('#td-students-course').addEventListener('change', function () { state.studentCourse = this.value; loadStudents(); });
+    var searchTimer = null;
+    $('#td-students-q').addEventListener('input', function () {
+      var box = this;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function () {
+        state.studentQ = box.value.trim();
+        // searching means "find this person", so look at everyone, not just the ones needing attention
+        if (state.studentQ && !state.allStudents) state.allStudents = true;
+        loadStudents();
+      }, 300);
+    });
 
     $('#td-reviews-list').addEventListener('click', function (e) {
       var b = e.target.closest('[data-ract]'); if (!b) return;
@@ -567,7 +801,8 @@
 
     $('#td-uploads-body').addEventListener('click', function (e) {
       var b = e.target.closest('[data-uact]'); if (!b) return;
-      var tr = b.closest('tr'); deleteUpload(tr.dataset.kind, tr.dataset.id);
+      var tr = b.closest('tr');
+      if (b.dataset.uact === 'edit') editQuiz(tr.dataset.id); else deleteUpload(tr.dataset.kind, tr.dataset.id);
     });
 
     $$('[data-td-open]').forEach(function (b) {
@@ -588,8 +823,14 @@
     });
     $('#vf-save').addEventListener('click', saveVideo);
     $('#rf-save').addEventListener('click', saveResource);
-    $('#qf-add-q').addEventListener('click', addQuestion);
-    $('#qf-questions').addEventListener('click', function (e) { var b = e.target.closest('[data-qact="remove"]'); if (b) b.closest('[data-q]').remove(); });
+    $('#qf-add-q').addEventListener('click', function () { addQuestion(); });
+    $('#qf-questions').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-qact]'); if (!b) return;
+      var card = b.closest('[data-q]');
+      if (b.dataset.qact === 'remove') card.remove();
+      if (b.dataset.qact === 'addopt') addOption(card);
+    });
+    $('#td-email-test').addEventListener('click', sendTestEmail);
     $('#qf-save').addEventListener('click', saveQuiz);
 
     $$('[data-td-setting]').forEach(function (i) {
@@ -605,20 +846,28 @@
   function showAlert(msg) { var a = $('#td-alert'); a.textContent = msg; show(a, true); }
 
   function init() {
-    if (!$('#td-root') || !window.bootstrap) return;
+    if (!$('#td-root')) return;
+    if (!window.bootstrap) { showAlert('The page could not finish loading (a required script was blocked). Check your internet connection and refresh the page.'); return; }
     wire();
     api('/api/auth/me').then(function (d) {
       state.user = d.user || d;
       if (!state.user || (state.user.role !== 'teacher' && state.user.role !== 'admin')) { showAlert('This dashboard is for teacher accounts. Sign in with a teacher account to continue.'); return; }
       renderWelcome();
       // content first, because the course form and lesson picker use it
-      return Promise.all([loadCategories(), loadContent().catch(function () {})]).then(function () {
-        return Promise.all([
-          loadOverview(), loadCourses(), loadStudents(), loadReviews(), loadAnnouncements(), loadAssignments(), loadSettings(),
-        ].map(function (p) { return p.catch(function (e) { console.warn('[teacher-dashboard]', e); }); }));
+      return Promise.all([loadCategories(), loadContent().catch(function (e) { console.warn('[teacher-dashboard] content', e); return 'my uploads'; })]).then(function (first) {
+        var failed = [];
+        if (first[1] === 'my uploads') failed.push('my uploads');
+        var jobs = [['overview', loadOverview], ['courses', loadCourses], ['students', loadStudents], ['reviews', loadReviews],
+          ['announcements', loadAnnouncements], ['assignments', loadAssignments], ['settings', loadSettings]];
+        return Promise.all(jobs.map(function (j) {
+          return j[1]().catch(function (e) { console.warn('[teacher-dashboard]', j[0], e); failed.push(j[0]); });
+        })).then(function () {
+          if (failed.length) showAlert('Some parts of your dashboard could not load (' + failed.join(', ') + '). Check your connection and refresh the page.');
+        });
       });
     }).catch(function (e) { showAlert('Could not load your dashboard: ' + e.message); });
   }
+
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

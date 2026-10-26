@@ -1,0 +1,13 @@
+{
+  "name": "smart21brain-teacher-dashboard-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --no-warnings teacher.test.mjs && node --no-warnings course.test.mjs && node --no-warnings email-quiz.test.mjs && node --no-warnings flow1.mjs && node --no-warnings flow2.mjs && node --no-warnings flow3.mjs && node --no-warnings flow4.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^26.0.0",
+    "bootstrap": "5.3.3",
+    "@popperjs/core": "^2.11.8"
+  }
+}

@@ -1,6 +1,24 @@
 import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound, isStaff, canEditOwned } from '../lib/auth.js';
 import { syncCoursesForQuiz } from '../lib/course-engine.js';
 
+// One place that decides what a valid quiz looks like (used when creating and when editing).
+// Returns a plain-English problem, or null when everything is fine.
+export function validateQuestions(questions) {
+  if (!Array.isArray(questions) || questions.length === 0) return 'Add at least one question.';
+  if (questions.length > 100) return 'A quiz can have at most 100 questions.';
+  for (let i = 0; i < questions.length; i++) {
+    const q = questions[i]; const n = i + 1;
+    if (!q || typeof q.prompt !== 'string' || !q.prompt.trim()) return `Question ${n} needs text.`;
+    if (q.prompt.length > 500) return `Question ${n} is too long (500 characters at most).`;
+    if (!Array.isArray(q.options) || q.options.length < 2) return `Question ${n} needs at least two answers.`;
+    if (q.options.length > 8) return `Question ${n} has too many answers (8 at most).`;
+    if (q.options.some((o) => typeof o !== 'string' || !o.trim())) return `Question ${n} has an empty answer.`;
+    if (q.options.some((o) => o.length > 300)) return `Question ${n} has an answer that is too long (300 characters at most).`;
+    if (!Number.isInteger(q.correct_index) || q.correct_index < 0 || q.correct_index >= q.options.length) return `Question ${n}: choose which answer is correct.`;
+  }
+  return null;
+}
+
 export async function listQuizzes({ env }) {
   const { results } = await env.DB.prepare(
     'SELECT id, title, subject, description, published, created_at FROM quizzes WHERE published = 1 ORDER BY created_at DESC'
@@ -14,20 +32,15 @@ export async function createQuiz({ request, env }) {
   if (!isStaff(user)) return forbidden('Admins or teachers only.');
 
   const body = await request.json().catch(() => null);
-  if (!body || !body.title || !Array.isArray(body.questions) || body.questions.length === 0) {
-    return badRequest('Title and at least one question are required.');
-  }
-  for (const q of body.questions) {
-    if (!q.prompt || !Array.isArray(q.options) || typeof q.correct_index !== 'number') {
-      return badRequest('Each question needs a prompt, options[], and correct_index.');
-    }
-  }
+  if (!body || !String(body.title || '').trim()) return badRequest('Give the quiz a title.');
+  const problem = validateQuestions(body.questions);
+  if (problem) return badRequest(problem);
 
   const result = await env.DB.prepare(
     `INSERT INTO quizzes (title, subject, description, questions, published, created_by)
      VALUES (?, ?, ?, ?, ?, ?)`
   ).bind(
-    body.title, body.subject || null, body.description || null,
+    String(body.title).trim(), body.subject || null, body.description || null,
     JSON.stringify(body.questions), body.published === false ? 0 : 1, user.id
   ).run();
 
@@ -51,11 +64,16 @@ export async function updateQuiz({ request, params, env }) {
   if (!canEditOwned(user, quiz.created_by)) return forbidden('You can only change quizzes you created.');
 
   const body = await request.json().catch(() => ({}));
+  if (body.title !== undefined && !String(body.title).trim()) return badRequest('The quiz title cannot be empty.');
+  if (body.questions !== undefined) {
+    const problem = validateQuestions(body.questions);
+    if (problem) return badRequest(problem);
+  }
   await env.DB.prepare(
     `UPDATE quizzes SET title = ?, subject = ?, description = ?, questions = ?, published = ? WHERE id = ?`
   ).bind(
-    body.title ?? quiz.title, body.subject ?? quiz.subject, body.description ?? quiz.description,
-    Array.isArray(body.questions) && body.questions.length ? JSON.stringify(body.questions) : quiz.questions,
+    body.title != null ? String(body.title).trim() : quiz.title, body.subject ?? quiz.subject, body.description ?? quiz.description,
+    body.questions !== undefined ? JSON.stringify(body.questions) : quiz.questions,
     body.published != null ? (body.published ? 1 : 0) : quiz.published, params.id
   ).run();
   return json({ ok: true });

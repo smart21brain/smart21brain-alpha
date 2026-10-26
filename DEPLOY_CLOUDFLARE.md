@@ -254,6 +254,12 @@ existing database before deploying:
 wrangler d1 execute smart21brain-db --remote --file=./migrations/phase10-teacher-dashboard.sql
 ```
 
+Then add the teacher e-mail queue (needed for the "Email me" switches in Teacher settings; safe to run again):
+
+```
+wrangler d1 execute smart21brain-db --remote --file=./migrations/phase11-teacher-email.sql
+```
+
 Fresh installs get the same tables from `schema.sql`. Until the migration is
 run the site keeps working; reviews, announcements, assignments and settings
 just show as empty.
@@ -312,6 +318,49 @@ Covers are `images/courses/computer-networks.svg` and `images/courses/korean-for
 ## Course information
 
 `course.html` now shows a **Course at a glance** panel (modules, lessons, quizzes, study time, level, ages, language, final exam, certificate, price), **Who this course is for**, a **Course outline** and a **FAQ**. Everything is worked out from the course's own data, so it also works for database courses. A built-in course can add its own `audience`, `includes` and `faq` lists in `js/courses-data.js`. The course cards on `courses.html` now also show a short description and a "Certificate included" tag.
+
+## Teacher dashboard fixes (teachers.html)
+
+Deploy the whole project (the script versions were bumped so browsers load the new files). The dashboard expects `migrations/phase10-teacher-dashboard.sql` (reviews, announcements, assignments, settings) and, for e-mail, `migrations/phase11-teacher-email.sql` to have been run once.
+
+Fixed:
+- Editing a course no longer resets its **final exam pass mark** to 70 (the course list did not return it). A "lessons needed" of 0 is also kept as 0.
+- A course's **category, age range and thumbnail can now be cleared**; the update used to ignore an empty value. Blank titles, negative prices and percentages outside 0 to 100 are refused by the server.
+- **Duplicate lesson or module titles** now give a clear message instead of a server error, and new lessons/modules can no longer get the same sort number after something is deleted.
+- **Reordering lessons** works inside each module (the arrows used to appear to do nothing at the edge of a module).
+- The lessons window no longer opens on top of the closing course window, and no longer flashes the previous course's lessons.
+- With **zero courses** the assignment, announcement and student dropdowns now stay correct.
+- The "average quiz score" only counts students enrolled in your courses.
+- Clear messages instead of silence when a script is blocked, the network drops, a section cannot load, or a non-teacher opens the page. Large or wrong-type uploads are refused before the upload starts.
+
+Added:
+- **Edit a lesson** (text, type, module, minutes, free preview) and **rename a module**.
+- **Search students by name and filter by course**.
+- A warning before publishing a course that has no lessons; readable assignment due dates with an "Overdue" tag.
+- Every form field now has a proper label for screen readers.
+
+
+Automated checks live in `tests/teacher-dashboard/` (`npm install` then `npm test`).
+
+
+## Teacher e-mails, quiz editing and the "profile" switch
+
+Teacher settings now do what they say:
+
+- **Email me new student comments**: when a student writes a review comment, the teacher gets one e-mail (student shown as "Amina J.", with a link to the Reviews tab). The same comment is never e-mailed twice.
+- **Weekly performance summary email**: every Monday at 02:00 UTC (05:00 in Tanzania) each opted-in teacher gets new students, lessons completed, average quiz score, new reviews, revenue, comments waiting and students who need a nudge. One summary per teacher per week.
+- **Send me a test e-mail**: a button that checks delivery and explains exactly what is wrong if it fails.
+- **Show my profile to parents**: when off, the teacher's name and photo are hidden on the public course list and course pages (the teacher and admins still see them).
+
+E-mail uses the same provider as the rest of the site. Add the secrets once (see `wrangler.toml`): `RESEND_API_KEY`, `EMAIL_FROM` and `SITE_URL`. Until then nothing is sent and the Settings card says so; the messages are still recorded and marked "skipped" so nothing is lost silently. Run `migrations/phase11-teacher-email.sql` first. The queue is `teacher_email_outbox`; to see what happened:
+
+```
+wrangler d1 execute smart21brain-db --remote --command "SELECT kind, status, detail, created_at FROM teacher_email_outbox ORDER BY id DESC LIMIT 20"
+```
+
+Quizzes can now be **edited** from the dashboard (pencil button in "My uploads"): change questions, answers (2 to 8 per question), the correct answer and explanations. The window warns when the quiz is used in lessons or as a final exam, or when students have already taken it (their past scores are kept). Deleting a quiz, video or resource that is in use now warns first. The server also checks every quiz it saves (no empty answers, the correct answer must exist, at most 100 questions).
+
+Known limitation, unchanged: student quiz pages read the questions, including the correct answers, from the public `GET /api/quizzes/:id`, because their results screens need them. A technical student could read the answers that way. Hiding them would need the student pages to ask the server to mark each answer; tell us if you want that.
 
 ## Electron21 page
 

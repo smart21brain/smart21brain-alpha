@@ -8,6 +8,7 @@
 // :id may be the numeric id or the slug (course.html deep-links by slug).
 
 import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound } from '../lib/auth.js';
+import { queueCommentEmail, flushTeacherEmails } from '../lib/teacher-email.js';
 
 async function findCourse(env, key) {
   const numeric = /^\d+$/.test(key);
@@ -67,7 +68,7 @@ export async function listReviews({ request, params, env }) {
   });
 }
 
-export async function submitReview({ request, params, env }) {
+export async function submitReview({ request, params, env, ctx }) {
   const user = await getSessionUser(request, env.DB);
   if (!user) return unauthorized('Sign in to review this course.');
 
@@ -94,6 +95,14 @@ export async function submitReview({ request, params, env }) {
     ).bind(course.id, user.id, rating, comment).run();
   } catch {
     return badRequest('Reviews are not set up yet. Run migrations/phase10-teacher-dashboard.sql.');
+  }
+
+  // Tell the teacher (if they asked for comment e-mails). This can never make the review fail.
+  if (comment) {
+    const work = queueCommentEmail(env, { course, student: user, rating, comment })
+      .then(() => flushTeacherEmails(env, { limit: 5 }))
+      .catch(() => {});
+    if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(work); else await work;
   }
   return json({ ok: true }, { status: 201 });
 }

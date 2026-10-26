@@ -1453,3 +1453,21 @@ CREATE TABLE IF NOT EXISTS teacher_settings (
   weekly_summary_email     INTEGER NOT NULL DEFAULT 0,
   updated_at               TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+-- ============ Teacher dashboard e-mails (same as migrations/phase11-teacher-email.sql) ============
+CREATE TABLE IF NOT EXISTS teacher_email_outbox (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  kind        TEXT NOT NULL CHECK (kind IN ('comment', 'weekly', 'test')),
+  subject     TEXT NOT NULL,
+  body_text   TEXT NOT NULL,
+  body_html   TEXT,
+  dedupe_key  TEXT,                                   -- stops the same message being queued twice
+  status      TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'failed', 'skipped')),
+  attempts    INTEGER NOT NULL DEFAULT 0,
+  detail      TEXT,                                   -- why it was skipped / the last error (never a secret)
+  created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+  sent_at     TEXT
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_teacher_email_dedupe  ON teacher_email_outbox(user_id, dedupe_key) WHERE dedupe_key IS NOT NULL;
+CREATE INDEX        IF NOT EXISTS idx_teacher_email_pending ON teacher_email_outbox(status, id);

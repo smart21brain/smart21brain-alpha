@@ -28,22 +28,28 @@ export async function createLesson({ request, params, env }) {
 
   const contentType = ['text', 'video', 'pdf', 'quiz'].includes(body.content_type) ? body.content_type : 'text';
 
-  const { count } = await env.DB.prepare(
-    'SELECT COUNT(*) AS count FROM course_lessons WHERE course_id = ?'
+  // MAX+1 (not COUNT+1) so a new lesson never collides with an old sort_order
+  // after something in the middle was deleted.
+  const { top } = await env.DB.prepare(
+    'SELECT COALESCE(MAX(sort_order), 0) AS top FROM course_lessons WHERE course_id = ?'
   ).bind(params.id).first();
 
-  const result = await env.DB.prepare(
-    `INSERT INTO course_lessons (course_id, module_id, title, content_type, video_id, material_id, quiz_id, body, duration_seconds, sort_order, is_preview)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).bind(
-    params.id, body.module_id || null, body.title, contentType,
-    body.video_id || null, body.material_id || null, body.quiz_id || null,
-    body.body || null, body.duration_seconds || null,
-    Number.isFinite(body.sort_order) ? body.sort_order : count + 1,
-    body.is_preview ? 1 : 0
-  ).run();
-
-  return json({ id: result.meta.last_row_id }, { status: 201 });
+  try {
+    const result = await env.DB.prepare(
+      `INSERT INTO course_lessons (course_id, module_id, title, content_type, video_id, material_id, quiz_id, body, duration_seconds, sort_order, is_preview)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      params.id, body.module_id || null, String(body.title).trim(), contentType,
+      body.video_id || null, body.material_id || null, body.quiz_id || null,
+      body.body || null, body.duration_seconds || null,
+      Number.isFinite(body.sort_order) ? body.sort_order : top + 1,
+      body.is_preview ? 1 : 0
+    ).run();
+    return json({ id: result.meta.last_row_id }, { status: 201 });
+  } catch (e) {
+    if (/UNIQUE/i.test(String(e && e.message))) return badRequest('This course already has a lesson with that title.');
+    throw e;
+  }
 }
 
 export async function updateLesson({ request, params, env }) {
@@ -55,20 +61,26 @@ export async function updateLesson({ request, params, env }) {
   if (!(await canManageCourse(env, user, lesson.course_id))) return forbidden();
 
   const body = await request.json().catch(() => ({}));
+  if (body.title !== undefined && !String(body.title).trim()) return badRequest('The lesson title cannot be empty.');
   const contentType = ['text', 'video', 'pdf', 'quiz'].includes(body.content_type) ? body.content_type : lesson.content_type;
 
+  try {
   await env.DB.prepare(
     `UPDATE course_lessons SET module_id = ?, title = ?, content_type = ?, video_id = ?, material_id = ?, quiz_id = ?,
       body = ?, duration_seconds = ?, sort_order = ?, is_preview = ? WHERE id = ?`
   ).bind(
-    body.module_id !== undefined ? body.module_id : lesson.module_id,
-    body.title ?? lesson.title, contentType,
+    body.module_id !== undefined ? (body.module_id || null) : lesson.module_id,
+    body.title != null ? String(body.title).trim() : lesson.title, contentType,
     body.video_id ?? lesson.video_id, body.material_id ?? lesson.material_id, body.quiz_id ?? lesson.quiz_id,
     body.body ?? lesson.body, body.duration_seconds ?? lesson.duration_seconds,
     body.sort_order ?? lesson.sort_order,
     body.is_preview != null ? (body.is_preview ? 1 : 0) : lesson.is_preview,
     params.lessonId
   ).run();
+  } catch (e) {
+    if (/UNIQUE/i.test(String(e && e.message))) return badRequest('This course already has a lesson with that title.');
+    throw e;
+  }
 
   return json({ ok: true });
 }

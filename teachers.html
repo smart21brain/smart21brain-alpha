@@ -199,6 +199,10 @@
               <h2 class="h5 mb-0"><i class="fa-solid fa-chart-line" style="color:var(--s21-accent)"></i> <span id="td-students-title">Students needing attention</span></h2>
               <button type="button" class="btn btn-link p-0 text-soft" style="font-size:.85rem" id="td-students-toggle">View all students</button>
             </div>
+            <div class="row g-2 mb-3">
+              <div class="col-sm-6"><select class="form-select s21-input" id="td-students-course" aria-label="Filter students by course"><option value="">All my courses</option></select></div>
+              <div class="col-sm-6"><input type="search" class="form-control s21-input" id="td-students-q" maxlength="60" placeholder="Search by student name" aria-label="Search students by name"></div>
+            </div>
             <div class="table-responsive">
               <table class="table dash-table mb-0">
                 <thead><tr><th>Student</th><th>Course</th><th>Progress</th><th>Last active</th></tr></thead>
@@ -259,25 +263,27 @@
             <h3 class="h6 mb-3"><i class="fa-solid fa-bell" style="color:var(--s21-accent)"></i> <span>Announcements</span></h3>
             <p class="text-soft mb-3" style="font-size:.85rem">Post an update your students will see on their dashboard and on the course page.</p>
             <select class="form-select s21-input mb-2" id="td-ann-course" aria-label="Who should see this?"><option value="">All my students</option></select>
-            <textarea class="form-control s21-input mb-2" rows="3" id="td-ann-text" maxlength="1500" placeholder="Write an announcement…"></textarea>
+            <textarea aria-label="Announcement text" class="form-control s21-input mb-2" rows="3" id="td-ann-text" maxlength="1500" placeholder="Write an announcement…"></textarea>
             <button type="button" class="btn-s21 btn-s21-primary w-100 justify-content-center" style="font-size:.85rem" id="td-ann-post">Post announcement</button>
             <div id="td-ann-list" class="mt-3" style="font-size:.82rem"></div>
           </div>
 
           <div class="s21-card p-4" id="settings">
-            <h3 class="h6 mb-3"><i class="fa-solid fa-gear" style="color:var(--s21-text-soft)"></i> Teacher settings</h3>
+            <h3 class="h6 mb-2"><i class="fa-solid fa-gear" style="color:var(--s21-text-soft)"></i> Teacher settings</h3>
+            <div class="mb-2" id="td-email-status" role="status" style="font-size:.78rem"><span class="text-soft">Checking e-mail…</span></div>
             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-              <span style="font-size:.85rem">Show my profile to parents</span>
+              <span style="font-size:.85rem">Show my profile to parents<span class="d-block text-soft" style="font-size:.72rem">Your name and photo on course pages</span></span>
               <label class="s21-switch"><input type="checkbox" data-td-setting="show_profile_to_parents"><span class="slider"></span></label>
             </div>
             <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-              <span style="font-size:.85rem">Email me new student comments</span>
+              <span style="font-size:.85rem">Email me new student comments<span class="d-block text-soft" style="font-size:.72rem">One e-mail for each new review comment</span></span>
               <label class="s21-switch"><input type="checkbox" data-td-setting="email_on_comments"><span class="slider"></span></label>
             </div>
             <div class="d-flex justify-content-between align-items-center py-2">
-              <span style="font-size:.85rem">Weekly performance summary email</span>
+              <span style="font-size:.85rem">Weekly performance summary email<span class="d-block text-soft" style="font-size:.72rem">Every Monday morning: students, lessons, quiz scores, reviews</span></span>
               <label class="s21-switch"><input type="checkbox" data-td-setting="weekly_summary_email"><span class="slider"></span></label>
             </div>
+            <button type="button" class="btn-s21 btn-s21-outline w-100 justify-content-center mt-3" id="td-email-test" style="font-size:.85rem"><i class="fa-solid fa-paper-plane"></i> Send me a test e-mail</button>
             <a href="profile.html" class="btn-s21 btn-s21-outline w-100 justify-content-center mt-3" style="font-size:.85rem"><i class="fa-solid fa-user-gear"></i> Manage account &amp; payout details</a>
           </div>
         </div>
@@ -293,27 +299,27 @@
       <div class="modal-header"><h5 class="modal-title" id="td-course-modal-title">New course</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       <div class="modal-body">
         <div class="row g-3">
-          <div class="col-12"><label class="form-label fw-bold" style="font-size:.85rem">Course title *</label><input class="form-control s21-input" id="cf-title" maxlength="120"></div>
-          <div class="col-12"><label class="form-label fw-bold" style="font-size:.85rem">Description</label><textarea class="form-control s21-input" id="cf-description" rows="3"></textarea></div>
-          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Category</label><select class="form-select s21-input" id="cf-category"><option value="">— none —</option></select></div>
-          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Level</label>
+          <div class="col-12"><label for="cf-title" class="form-label fw-bold" style="font-size:.85rem">Course title *</label><input class="form-control s21-input" id="cf-title" maxlength="120"></div>
+          <div class="col-12"><label for="cf-description" class="form-label fw-bold" style="font-size:.85rem">Description</label><textarea class="form-control s21-input" id="cf-description" rows="3"></textarea></div>
+          <div class="col-md-6"><label for="cf-category" class="form-label fw-bold" style="font-size:.85rem">Category</label><select class="form-select s21-input" id="cf-category"><option value="">— none —</option></select></div>
+          <div class="col-md-6"><label for="cf-level" class="form-label fw-bold" style="font-size:.85rem">Level</label>
             <select class="form-select s21-input" id="cf-level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="all-levels">All levels</option></select></div>
-          <div class="col-md-4"><label class="form-label fw-bold" style="font-size:.85rem">Age range</label><input class="form-control s21-input" id="cf-age" placeholder="e.g. 7-10"></div>
-          <div class="col-md-4"><label class="form-label fw-bold" style="font-size:.85rem">Language</label><input class="form-control s21-input" id="cf-language" value="English"></div>
-          <div class="col-md-4"><label class="form-label fw-bold" style="font-size:.85rem">Price (TZS, 0 = free)</label><input type="number" min="0" step="500" class="form-control s21-input" id="cf-price" value="0"></div>
+          <div class="col-md-4"><label for="cf-age" class="form-label fw-bold" style="font-size:.85rem">Age range</label><input class="form-control s21-input" id="cf-age" placeholder="e.g. 7-10"></div>
+          <div class="col-md-4"><label for="cf-language" class="form-label fw-bold" style="font-size:.85rem">Language</label><input class="form-control s21-input" id="cf-language" value="English"></div>
+          <div class="col-md-4"><label for="cf-price" class="form-label fw-bold" style="font-size:.85rem">Price (TZS, 0 = free)</label><input type="number" min="0" step="500" class="form-control s21-input" id="cf-price" value="0"></div>
           <div class="col-12">
-            <label class="form-label fw-bold" style="font-size:.85rem">Thumbnail</label>
+            <label for="cf-thumb-file" class="form-label fw-bold" style="font-size:.85rem">Thumbnail</label>
             <div class="d-flex align-items-center gap-3 flex-wrap">
               <img id="cf-thumb-preview" src="" alt="" width="96" height="64" style="object-fit:cover;border-radius:8px;display:none">
               <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" id="cf-thumb-file" class="form-control s21-input" style="max-width:280px">
               <span class="text-soft" style="font-size:.78rem">PNG/JPG/WEBP, up to 5MB</span>
             </div>
           </div>
-          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">What students will learn <span class="text-soft fw-normal">(one per line)</span></label><textarea class="form-control s21-input" id="cf-objectives" rows="4"></textarea></div>
-          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Requirements <span class="text-soft fw-normal">(one per line)</span></label><textarea class="form-control s21-input" id="cf-requirements" rows="4"></textarea></div>
-          <div class="col-md-6"><label class="form-label fw-bold" style="font-size:.85rem">Final exam quiz</label><select class="form-select s21-input" id="cf-final-exam"><option value="">— none —</option></select></div>
-          <div class="col-md-3"><label class="form-label fw-bold" style="font-size:.85rem">Lessons needed (%)</label><input type="number" min="0" max="100" class="form-control s21-input" id="cf-passing" value="70"></div>
-          <div class="col-md-3"><label class="form-label fw-bold" style="font-size:.85rem">Exam pass mark (%)</label><input type="number" min="0" max="100" class="form-control s21-input" id="cf-exam-pass" value="70"></div>
+          <div class="col-md-6"><label for="cf-objectives" class="form-label fw-bold" style="font-size:.85rem">What students will learn <span class="text-soft fw-normal">(one per line)</span></label><textarea class="form-control s21-input" id="cf-objectives" rows="4"></textarea></div>
+          <div class="col-md-6"><label for="cf-requirements" class="form-label fw-bold" style="font-size:.85rem">Requirements <span class="text-soft fw-normal">(one per line)</span></label><textarea class="form-control s21-input" id="cf-requirements" rows="4"></textarea></div>
+          <div class="col-md-6"><label for="cf-final-exam" class="form-label fw-bold" style="font-size:.85rem">Final exam quiz</label><select class="form-select s21-input" id="cf-final-exam"><option value="">— none —</option></select></div>
+          <div class="col-md-3"><label for="cf-passing" class="form-label fw-bold" style="font-size:.85rem">Lessons needed (%)</label><input type="number" min="0" max="100" class="form-control s21-input" id="cf-passing" value="70"></div>
+          <div class="col-md-3"><label for="cf-exam-pass" class="form-label fw-bold" style="font-size:.85rem">Exam pass mark (%)</label><input type="number" min="0" max="100" class="form-control s21-input" id="cf-exam-pass" value="70"></div>
           <div class="col-12 d-flex flex-wrap gap-4">
             <label class="d-flex align-items-center gap-2" style="font-size:.88rem"><input type="checkbox" id="cf-cert"> Give a certificate on completion</label>
             <label class="d-flex align-items-center gap-2" style="font-size:.88rem"><input type="checkbox" id="cf-published"> Published (visible on the website)</label>
@@ -337,18 +343,18 @@
             <div id="lm-list"></div>
           </div>
           <div class="col-lg-6">
-            <h6 class="mb-2">Add a lesson</h6>
+            <h6 class="mb-2" id="ls-form-title">Add a lesson</h6>
             <div class="row g-2">
-              <div class="col-12"><input class="form-control s21-input" id="ls-title" placeholder="Lesson title *" maxlength="120"></div>
-              <div class="col-md-6"><select class="form-select s21-input" id="ls-type"><option value="text">Text lesson</option><option value="video">Video</option><option value="pdf">PDF / resource</option><option value="quiz">Quiz</option></select></div>
-              <div class="col-md-6"><select class="form-select s21-input" id="ls-module"><option value="">No module</option></select></div>
-              <div class="col-12 ls-field" data-for="video"><select class="form-select s21-input" id="ls-video"></select></div>
-              <div class="col-12 ls-field" data-for="pdf"><select class="form-select s21-input" id="ls-material"></select></div>
-              <div class="col-12 ls-field" data-for="quiz"><select class="form-select s21-input" id="ls-quiz"></select></div>
-              <div class="col-12 ls-field" data-for="text"><textarea class="form-control s21-input" id="ls-body" rows="5" placeholder="Lesson text / instructions"></textarea></div>
-              <div class="col-md-6"><input type="number" min="0" class="form-control s21-input" id="ls-minutes" placeholder="Duration (minutes)"></div>
+              <div class="col-12"><input class="form-control s21-input" id="ls-title" aria-label="Lesson title" placeholder="Lesson title *" maxlength="120"></div>
+              <div class="col-md-6"><select class="form-select s21-input" id="ls-type" aria-label="Lesson type"><option value="text">Text lesson</option><option value="video">Video</option><option value="pdf">PDF / resource</option><option value="quiz">Quiz</option></select></div>
+              <div class="col-md-6"><select class="form-select s21-input" id="ls-module" aria-label="Module"><option value="">No module</option></select></div>
+              <div class="col-12 ls-field" data-for="video"><select class="form-select s21-input" id="ls-video" aria-label="Video"></select></div>
+              <div class="col-12 ls-field" data-for="pdf"><select class="form-select s21-input" id="ls-material" aria-label="Resource"></select></div>
+              <div class="col-12 ls-field" data-for="quiz"><select class="form-select s21-input" id="ls-quiz" aria-label="Quiz"></select></div>
+              <div class="col-12 ls-field" data-for="text"><textarea class="form-control s21-input" id="ls-body" rows="5" aria-label="Lesson text" placeholder="Lesson text / instructions"></textarea></div>
+              <div class="col-md-6"><input type="number" min="0" class="form-control s21-input" id="ls-minutes" aria-label="Duration in minutes" placeholder="Duration (minutes)"></div>
               <div class="col-md-6 d-flex align-items-center"><label class="d-flex align-items-center gap-2" style="font-size:.85rem"><input type="checkbox" id="ls-preview"> Free preview</label></div>
-              <div class="col-12"><button type="button" class="btn-s21 btn-s21-primary" id="ls-add"><i class="fa-solid fa-plus"></i> Add lesson</button></div>
+              <div class="col-12 d-flex gap-2 flex-wrap"><button type="button" class="btn-s21 btn-s21-primary" id="ls-add"><i class="fa-solid fa-plus"></i> <span>Add lesson</span></button><button type="button" class="btn-s21 btn-s21-outline d-none" id="ls-cancel">Cancel editing</button></div>
               <div class="col-12 text-soft" style="font-size:.78rem" id="ls-hint"></div>
               <div class="col-12 text-danger d-none" id="ls-error" style="font-size:.85rem"></div>
             </div>
@@ -364,16 +370,16 @@
       <div class="modal-header"><h5 class="modal-title">Upload a video</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       <div class="modal-body">
         <div class="d-flex flex-column gap-3">
-          <input class="form-control s21-input" id="vf-title" placeholder="Video title *" maxlength="120">
-          <input class="form-control s21-input" id="vf-subject" placeholder="Subject (e.g. Mathematics)">
-          <textarea class="form-control s21-input" id="vf-description" rows="2" placeholder="Short description"></textarea>
+          <input aria-label="Video title" class="form-control s21-input" id="vf-title" placeholder="Video title *" maxlength="120">
+          <input aria-label="Video subject" class="form-control s21-input" id="vf-subject" placeholder="Subject (e.g. Mathematics)">
+          <textarea aria-label="Video description" class="form-control s21-input" id="vf-description" rows="2" placeholder="Short description"></textarea>
           <div>
             <div class="d-flex gap-3 mb-2" style="font-size:.88rem">
               <label class="d-flex align-items-center gap-2"><input type="radio" name="vf-source" value="file" checked> Upload a file</label>
               <label class="d-flex align-items-center gap-2"><input type="radio" name="vf-source" value="url"> Link (YouTube, Vimeo…)</label>
             </div>
-            <input type="file" class="form-control s21-input" id="vf-file" accept="video/mp4,video/webm,video/ogg">
-            <input type="url" class="form-control s21-input d-none" id="vf-url" placeholder="https://…">
+            <input aria-label="Video file" type="file" class="form-control s21-input" id="vf-file" accept="video/mp4,video/webm,video/ogg">
+            <input aria-label="Video link" type="url" class="form-control s21-input d-none" id="vf-url" placeholder="https://…">
             <div class="text-soft mt-1" style="font-size:.76rem" id="vf-hint">MP4, WebM or OGG, up to 100MB. For bigger videos, use a link.</div>
           </div>
           <div style="font-size:.85rem">
@@ -396,9 +402,9 @@
       <div class="modal-header"><h5 class="modal-title">Upload a book / resource</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       <div class="modal-body">
         <div class="d-flex flex-column gap-3">
-          <input class="form-control s21-input" id="rf-title" placeholder="Title *" maxlength="120">
-          <input class="form-control s21-input" id="rf-subject" placeholder="Subject">
-          <input type="file" class="form-control s21-input" id="rf-file" accept="application/pdf,image/png,image/jpeg,image/webp,image/gif">
+          <input aria-label="Resource title" class="form-control s21-input" id="rf-title" placeholder="Title *" maxlength="120">
+          <input aria-label="Resource subject" class="form-control s21-input" id="rf-subject" placeholder="Subject">
+          <input aria-label="Resource file (PDF or image)" type="file" class="form-control s21-input" id="rf-file" accept="application/pdf,image/png,image/jpeg,image/webp,image/gif">
           <div class="text-soft" style="font-size:.76rem">PDF or image, up to 25MB. Attach it to a lesson of type “PDF / resource”.</div>
           <div class="progress-s21 d-none" id="rf-progress"><span style="width:0%"></span></div>
           <div class="text-danger d-none" id="rf-error" style="font-size:.85rem"></div>
@@ -411,13 +417,14 @@
   <!-- Quiz builder -->
   <div class="modal fade" id="td-quiz-modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Create a quiz</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-header"><h5 class="modal-title" id="qf-modal-title">Create a quiz</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
       <div class="modal-body">
         <div class="row g-2 mb-3">
-          <div class="col-md-8"><input class="form-control s21-input" id="qf-title" placeholder="Quiz title *" maxlength="120"></div>
-          <div class="col-md-4"><input class="form-control s21-input" id="qf-subject" placeholder="Subject"></div>
-          <div class="col-12"><input class="form-control s21-input" id="qf-description" placeholder="Short description (optional)"></div>
+          <div class="col-md-8"><input aria-label="Quiz title" class="form-control s21-input" id="qf-title" placeholder="Quiz title *" maxlength="120"></div>
+          <div class="col-md-4"><input aria-label="Quiz subject" class="form-control s21-input" id="qf-subject" placeholder="Subject"></div>
+          <div class="col-12"><input aria-label="Quiz description" class="form-control s21-input" id="qf-description" placeholder="Short description (optional)"></div>
         </div>
+        <div class="alert alert-warning py-2 d-none" id="qf-note" role="status" style="font-size:.82rem"></div>
         <div id="qf-questions" class="d-flex flex-column gap-3"></div>
         <button type="button" class="btn btn-sm btn-outline-secondary mt-3" id="qf-add-q"><i class="fa-solid fa-plus"></i> Add question</button>
         <div class="text-danger mt-3 d-none" id="qf-error" style="font-size:.85rem"></div>
@@ -433,9 +440,9 @@
       <div class="modal-body">
         <div class="d-flex flex-column gap-3">
           <select class="form-select s21-input" id="af-course" aria-label="Course"></select>
-          <input class="form-control s21-input" id="af-title" placeholder="Assignment title *" maxlength="160">
-          <textarea class="form-control s21-input" id="af-instructions" rows="4" placeholder="Instructions"></textarea>
-          <div><label class="form-label fw-bold" style="font-size:.85rem">Due date (optional)</label><input type="date" class="form-control s21-input" id="af-due"></div>
+          <input aria-label="Assignment title" class="form-control s21-input" id="af-title" placeholder="Assignment title *" maxlength="160">
+          <textarea aria-label="Assignment instructions" class="form-control s21-input" id="af-instructions" rows="4" placeholder="Instructions"></textarea>
+          <div><label for="af-due" class="form-label fw-bold" style="font-size:.85rem">Due date (optional)</label><input type="date" class="form-control s21-input" id="af-due"></div>
           <div class="text-danger d-none" id="af-error" style="font-size:.85rem"></div>
         </div>
       </div>
@@ -544,7 +551,7 @@
 <script src="js/ai-assistant.js?v=4"></script>
 <script src="js/main.js?v=20261008"></script>
 <script src="js/nav-account.js"></script>
-<script src="js/teacher-dashboard.js?v=1"></script>
+<script src="js/teacher-dashboard.js?v=3"></script>
 <script src="js/sidebar-nav.js"></script>
 <script src="js/sidebar-collapse.js"></script>
 

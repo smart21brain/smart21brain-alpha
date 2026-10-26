@@ -70,3 +70,4 @@ crons = ["0 2 * * *", "* * * * *"]   # 02:00 = weekly backups, every minute = se
 #   SMS (or Twilio):        TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM
 #   Push:                   node scripts/generate-vapid.mjs   then   wrangler secret put VAPID_PRIVATE_JWK   (optional: VAPID_SUBJECT = mailto:you@your-domain)
 #   Links in e-mails:       wrangler secret put SITE_URL   (e.g. https://smart21brain.com)
+#   The same three secrets also switch on the teacher dashboard e-mails (new comments, Monday summary, test button).

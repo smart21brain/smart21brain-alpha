@@ -12,6 +12,8 @@
 //   course_reviews, announcements, assignments, teacher_settings
 
 import { getSessionUser, json, badRequest, unauthorized, forbidden, notFound } from '../lib/auth.js';
+import { quizAverage } from '../lib/teacher-stats.js';
+import { emailConfigured, sendTeacherTest } from '../lib/teacher-email.js';
 
 // ---- helpers -------------------------------------------------------------
 
@@ -92,18 +94,8 @@ export async function overview({ request, env }) {
     ).bind(...sc.binds).first(),
   ]);
 
-  // Average quiz score this month, across every quiz used in my courses
-  // (lesson quizzes, module quizzes and final exams) by my enrolled students.
-  const quizAvg = await safely(() => db.prepare(
-    `SELECT AVG(qa.score * 100.0 / NULLIF(qa.total, 0)) AS avg
-     FROM quiz_attempts qa
-     WHERE qa.completed_at >= ${monthStart}
-       AND qa.quiz_id IN (
-         SELECT cl.quiz_id FROM course_lessons cl JOIN courses c ON c.id = cl.course_id WHERE cl.quiz_id IS NOT NULL AND ${sc.sql}
-         UNION SELECT cm.quiz_id FROM course_modules cm JOIN courses c ON c.id = cm.course_id WHERE cm.quiz_id IS NOT NULL AND ${sc.sql}
-         UNION SELECT c.final_exam_quiz_id FROM courses c WHERE c.final_exam_quiz_id IS NOT NULL AND ${sc.sql}
-       )`
-  ).bind(...sc.binds, ...sc.binds, ...sc.binds).first(), null);
+  // Average quiz score this month (shared with the weekly e-mail so the numbers always agree).
+  const quizAvg = await safely(() => quizAverage(db, sc.sql, sc.binds, monthStart), null);
 
   const ratings = await safely(() => db.prepare(
     `SELECT ROUND(AVG(r.rating), 1) AS avg, COUNT(*) AS n,
@@ -125,7 +117,7 @@ export async function overview({ request, env }) {
     currency: 'TZS',
     new_enrollments: newEnroll?.n || 0,
     lessons_completed: lessonsDone?.n || 0,
-    avg_quiz_score: quizAvg?.avg != null ? Math.round(quizAvg.avg) : null,
+    avg_quiz_score: quizAvg,
     comments_to_answer: ratings?.unanswered || 0,
   });
 }
@@ -140,7 +132,7 @@ export async function listMyCourses({ request, env }) {
   const build = (ratingCols) => env.DB.prepare(
     `SELECT c.id, c.title, c.slug, c.description, c.thumbnail_url, c.category_id, c.level, c.age_range,
             c.language, c.price, c.is_free, c.published, c.certificate_enabled, c.passing_score,
-            c.objectives, c.requirements, c.final_exam_quiz_id, c.created_at,
+            c.objectives, c.requirements, c.final_exam_quiz_id, c.final_exam_passing_score, c.created_at,
             cat.name AS category_name, u.name AS instructor_name,
             (SELECT COUNT(*) FROM course_lessons WHERE course_id = c.id) AS lesson_count,
             (SELECT COUNT(*) FROM course_enrollments WHERE course_id = c.id) AS student_count,
@@ -395,11 +387,25 @@ export async function getSettings({ request, env }) {
     'SELECT show_profile_to_parents, email_on_comments, weekly_summary_email FROM teacher_settings WHERE user_id = ?'
   ).bind(user.id).first(), null);
   const s = { ...SETTING_DEFAULTS, ...(row || {}) };
-  return json({ settings: {
-    show_profile_to_parents: !!s.show_profile_to_parents,
-    email_on_comments: !!s.email_on_comments,
-    weekly_summary_email: !!s.weekly_summary_email,
-  } });
+  return json({
+    settings: {
+      show_profile_to_parents: !!s.show_profile_to_parents,
+      email_on_comments: !!s.email_on_comments,
+      weekly_summary_email: !!s.weekly_summary_email,
+    },
+    // lets the page say honestly whether switching e-mail on will actually send anything
+    email_available: emailConfigured(env),
+    email_address: user.email || null,
+  });
+}
+
+// POST /api/teacher/settings/test-email  — sends one message to the signed-in teacher
+export async function sendTestEmail({ request, env }) {
+  const { user, error } = await requireTeacher(request, env);
+  if (error) return error;
+  const r = await sendTeacherTest(env, user);
+  // `error` is what the dashboard shows for a failed request; `message` is kept for callers that read it
+  return r.ok ? json({ ok: true, message: r.message }) : json({ ok: false, error: r.message, message: r.message }, { status: r.status });
 }
 
 export async function updateSettings({ request, env }) {
@@ -439,15 +445,21 @@ export async function myContent({ request, env }) {
 
   const [videos, materials, quizzes] = await Promise.all([
     env.DB.prepare(
-      `SELECT id, title, subject, source_type, placements, published, duration_seconds, created_at
+      `SELECT id, title, subject, source_type, placements, published, duration_seconds, created_at,
+              (SELECT COUNT(*) FROM course_lessons cl WHERE cl.video_id = videos.id) AS used_lessons
        FROM videos ${all ? '' : 'WHERE created_by = ?'} ORDER BY created_at DESC LIMIT 200`
     ).bind(...(all ? [] : [user.id])).all(),
     env.DB.prepare(
-      `SELECT id, title, subject, file_type, file_size, created_at
+      `SELECT id, title, subject, file_type, file_size, created_at,
+              (SELECT COUNT(*) FROM course_lessons cl WHERE cl.material_id = materials.id) AS used_lessons
        FROM materials ${all ? '' : 'WHERE uploaded_by = ?'} ORDER BY created_at DESC LIMIT 200`
     ).bind(...(all ? [] : [user.id])).all(),
     env.DB.prepare(
-      `SELECT id, title, subject, description, published, questions, created_at
+      `SELECT id, title, subject, description, published, questions, created_at,
+              (SELECT COUNT(*) FROM course_lessons cl WHERE cl.quiz_id = quizzes.id) AS used_lessons,
+              (SELECT COUNT(*) FROM course_modules cm WHERE cm.quiz_id = quizzes.id) AS used_modules,
+              (SELECT COUNT(*) FROM courses c WHERE c.final_exam_quiz_id = quizzes.id) AS used_exams,
+              (SELECT COUNT(*) FROM quiz_attempts qa WHERE qa.quiz_id = quizzes.id) AS attempts
        FROM quizzes ${all ? '' : 'WHERE created_by = ?'} ORDER BY created_at DESC LIMIT 200`
     ).bind(...(all ? [] : [user.id])).all(),
   ]);
@@ -460,6 +472,35 @@ export async function myContent({ request, env }) {
       const { questions, ...rest } = q;
       return { ...rest, question_count: n };
     }),
+  });
+}
+
+// ---- One of my quizzes, in full (so the quiz can be edited) ---------------
+// GET /api/teacher/quizzes/:id -> { quiz, attempts, used_in }
+
+export async function getMyQuiz({ request, params, env }) {
+  const { user, error } = await requireTeacher(request, env);
+  if (error) return error;
+
+  const quiz = await env.DB.prepare(
+    'SELECT id, title, subject, description, published, questions, created_by FROM quizzes WHERE id = ?'
+  ).bind(params.id).first();
+  if (!quiz) return notFound('Quiz not found.');
+  if (user.role !== 'admin' && quiz.created_by !== user.id) return forbidden('You can only edit quizzes you created.');
+
+  let questions = [];
+  try { const v = JSON.parse(quiz.questions); if (Array.isArray(v)) questions = v; } catch { /* leave empty */ }
+
+  const [attempts, lessons, modules, exams] = await Promise.all([
+    env.DB.prepare('SELECT COUNT(*) AS n FROM quiz_attempts WHERE quiz_id = ?').bind(quiz.id).first(),
+    env.DB.prepare('SELECT COUNT(*) AS n FROM course_lessons WHERE quiz_id = ?').bind(quiz.id).first(),
+    env.DB.prepare('SELECT COUNT(*) AS n FROM course_modules WHERE quiz_id = ?').bind(quiz.id).first(),
+    env.DB.prepare('SELECT COUNT(*) AS n FROM courses WHERE final_exam_quiz_id = ?').bind(quiz.id).first(),
+  ]);
+  return json({
+    quiz: { id: quiz.id, title: quiz.title, subject: quiz.subject, description: quiz.description, published: quiz.published, questions },
+    attempts: attempts?.n || 0,
+    used_in: { lessons: lessons?.n || 0, modules: modules?.n || 0, final_exams: exams?.n || 0 },
   });
 }
 

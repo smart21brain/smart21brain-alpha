@@ -10,6 +10,21 @@ function canManage(user, course) {
 
 // ---- Categories (admin-manageable) ----
 
+// Ids of teachers who chose not to show their profile publicly (Teacher settings).
+// If the settings table does not exist yet, nobody is hidden.
+async function hiddenInstructorIds(env) {
+  try {
+    const { results } = await env.DB.prepare('SELECT user_id FROM teacher_settings WHERE show_profile_to_parents = 0').all();
+    return new Set(results.map((r) => r.user_id));
+  } catch { return new Set(); }
+}
+
+// A percentage between 0 and 100; anything else falls back to the 70 default.
+function pct(v) {
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n))) : 70;
+}
+
 export async function listCategories({ env }) {
   const { results } = await env.DB.prepare(
     'SELECT * FROM course_categories ORDER BY name ASC'
@@ -100,7 +115,13 @@ export async function listCourses({ request, env, url }) {
     ({ results } = await build('NULL AS avg_rating, 0 AS review_count'));
   }
 
-  return json({ courses: results.map((c) => ({ ...c, objectives: parseJsonArray(c.objectives), requirements: parseJsonArray(c.requirements) })) });
+  // Teachers who switched off "Show my profile to parents" are listed without their name.
+  const hidden = await hiddenInstructorIds(env);
+  return json({ courses: results.map((c) => ({
+    ...c,
+    instructor_name: hidden.has(c.instructor_id) ? null : c.instructor_name,
+    objectives: parseJsonArray(c.objectives), requirements: parseJsonArray(c.requirements),
+  })) });
 }
 
 export async function createCourse({ request, env }) {
@@ -114,7 +135,7 @@ export async function createCourse({ request, env }) {
   // A teacher can only create courses under their own name.
   const instructorId = user.role === 'teacher' ? user.id : (body.instructor_id || user.id);
 
-  const price = Number(body.price) || 0;
+  const price = Math.max(0, Number(body.price) || 0);
   let slug = slugify(body.slug || body.title);
   // slug is UNIQUE — two teachers can easily pick the same title.
   const taken = await env.DB.prepare('SELECT id FROM courses WHERE slug = ?').bind(slug).first();
@@ -132,8 +153,8 @@ export async function createCourse({ request, env }) {
     body.language || 'English',
     JSON.stringify(Array.isArray(body.objectives) ? body.objectives : []),
     JSON.stringify(Array.isArray(body.requirements) ? body.requirements : []),
-    price, price > 0 ? 0 : 1, body.certificate_enabled ? 1 : 0, Number(body.passing_score) || 70,
-    body.final_exam_quiz_id || null, Number(body.final_exam_passing_score) || 70,
+    price, price > 0 ? 0 : 1, body.certificate_enabled ? 1 : 0, pct(body.passing_score),
+    body.final_exam_quiz_id || null, pct(body.final_exam_passing_score),
     body.published === false ? 0 : 1, user.id
   ).run();
 
@@ -164,6 +185,12 @@ export async function getCourse({ request, params, env }) {
 
   course.objectives = parseJsonArray(course.objectives);
   course.requirements = parseJsonArray(course.requirements);
+
+  // "Show my profile to parents" switched off: hide the teacher's name and photo from everyone but the teacher and admins.
+  if (!isManager && (await hiddenInstructorIds(env)).has(course.instructor_id)) {
+    course.instructor_name = null;
+    course.instructor_avatar_key = null;
+  }
 
   const { results: lessons } = await env.DB.prepare(
     'SELECT id, module_id, title, content_type, duration_seconds, sort_order, is_preview FROM course_lessons WHERE course_id = ? ORDER BY sort_order ASC, id ASC'
@@ -223,7 +250,8 @@ export async function updateCourse({ request, params, env }) {
   if (!canManage(user, course)) return forbidden();
 
   const body = await request.json().catch(() => ({}));
-  const price = body.price != null ? Number(body.price) : course.price;
+  if (body.title !== undefined && !String(body.title).trim()) return badRequest('The course title cannot be empty.');
+  const price = body.price != null ? Math.max(0, Number(body.price) || 0) : course.price;
 
   await env.DB.prepare(
     `UPDATE courses SET title = ?, description = ?, thumbnail_url = ?, category_id = ?, level = ?,
@@ -231,20 +259,21 @@ export async function updateCourse({ request, params, env }) {
       certificate_enabled = ?, passing_score = ?, final_exam_quiz_id = ?, final_exam_passing_score = ?,
       published = ? WHERE id = ?`
   ).bind(
-    body.title ?? course.title,
+    body.title != null ? String(body.title).trim() : course.title,
     body.description ?? course.description,
-    body.thumbnail_url ?? course.thumbnail_url,
-    body.category_id ?? course.category_id,
+    // null means "clear it"; leaving the field out keeps the current value
+    body.thumbnail_url !== undefined ? (body.thumbnail_url || null) : course.thumbnail_url,
+    body.category_id !== undefined ? (body.category_id || null) : course.category_id,
     body.level ?? course.level,
-    body.age_range ?? course.age_range,
+    body.age_range !== undefined ? (body.age_range || null) : course.age_range,
     body.language ?? course.language,
     JSON.stringify(Array.isArray(body.objectives) ? body.objectives : parseJsonArray(course.objectives)),
     JSON.stringify(Array.isArray(body.requirements) ? body.requirements : parseJsonArray(course.requirements)),
     price, price > 0 ? 0 : 1,
     body.certificate_enabled != null ? (body.certificate_enabled ? 1 : 0) : course.certificate_enabled,
-    body.passing_score != null ? Number(body.passing_score) : course.passing_score,
-    body.final_exam_quiz_id !== undefined ? body.final_exam_quiz_id : course.final_exam_quiz_id,
-    body.final_exam_passing_score != null ? Number(body.final_exam_passing_score) : course.final_exam_passing_score,
+    body.passing_score != null ? pct(body.passing_score) : course.passing_score,
+    body.final_exam_quiz_id !== undefined ? (body.final_exam_quiz_id || null) : course.final_exam_quiz_id,
+    body.final_exam_passing_score != null ? pct(body.final_exam_passing_score) : course.final_exam_passing_score,
     body.published != null ? (body.published ? 1 : 0) : course.published,
     params.id
   ).run();

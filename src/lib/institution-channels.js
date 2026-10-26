@@ -77,7 +77,7 @@ export const isAllowedPushEndpoint = (endpoint) => {
 };
 
 // ---------------------------------------------------------------- senders (each returns { ok, retry, detail })
-async function sendEmail(env, { to, subject, text, html }) {
+export async function sendEmail(env, { to, subject, text, html }) {
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST', signal: timeout(),

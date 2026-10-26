@@ -19,20 +19,24 @@ export async function createModule({ request, params, env }) {
   const body = await request.json().catch(() => null);
   if (!body || !body.title) return badRequest('title is required.');
 
-  const { count } = await env.DB.prepare(
-    'SELECT COUNT(*) AS count FROM course_modules WHERE course_id = ?'
+  const { top } = await env.DB.prepare(
+    'SELECT COALESCE(MAX(sort_order), 0) AS top FROM course_modules WHERE course_id = ?'
   ).bind(params.id).first();
 
-  const result = await env.DB.prepare(
-    `INSERT INTO course_modules (course_id, title, description, quiz_id, passing_score, sort_order)
-     VALUES (?, ?, ?, ?, ?, ?)`
-  ).bind(
-    params.id, body.title, body.description || null, body.quiz_id || null,
-    Number.isFinite(body.passing_score) ? body.passing_score : 70,
-    Number.isFinite(body.sort_order) ? body.sort_order : count + 1
-  ).run();
-
-  return json({ id: result.meta.last_row_id }, { status: 201 });
+  try {
+    const result = await env.DB.prepare(
+      `INSERT INTO course_modules (course_id, title, description, quiz_id, passing_score, sort_order)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).bind(
+      params.id, String(body.title).trim(), body.description || null, body.quiz_id || null,
+      Number.isFinite(body.passing_score) ? body.passing_score : 70,
+      Number.isFinite(body.sort_order) ? body.sort_order : top + 1
+    ).run();
+    return json({ id: result.meta.last_row_id }, { status: 201 });
+  } catch (e) {
+    if (/UNIQUE/i.test(String(e && e.message))) return badRequest('This course already has a module with that name.');
+    throw e;
+  }
 }
 
 export async function updateModule({ request, params, env }) {
@@ -44,17 +48,23 @@ export async function updateModule({ request, params, env }) {
   if (!(await canManageCourse(env, user, module_.course_id))) return forbidden();
 
   const body = await request.json().catch(() => ({}));
+  if (body.title !== undefined && !String(body.title).trim()) return badRequest('The module name cannot be empty.');
 
+  try {
   await env.DB.prepare(
     `UPDATE course_modules SET title = ?, description = ?, quiz_id = ?, passing_score = ?, sort_order = ? WHERE id = ?`
   ).bind(
-    body.title ?? module_.title,
+    body.title != null ? String(body.title).trim() : module_.title,
     body.description ?? module_.description,
     body.quiz_id !== undefined ? body.quiz_id : module_.quiz_id,
     body.passing_score ?? module_.passing_score,
     body.sort_order ?? module_.sort_order,
     params.moduleId
   ).run();
+  } catch (e) {
+    if (/UNIQUE/i.test(String(e && e.message))) return badRequest('This course already has a module with that name.');
+    throw e;
+  }
 
   return json({ ok: true });
 }
