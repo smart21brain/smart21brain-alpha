@@ -21,6 +21,7 @@ Disallow: /shop-app
 Disallow: /institution-app
 Disallow: /stationery-app
 Disallow: /_bar_test
+Disallow: /auth-complete
 
 Sitemap: https://smart21brain.com/sitemap.xml
 Sitemap: https://smart21brain.com/sitemap-live.xml

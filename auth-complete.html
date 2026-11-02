@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Signing you in… | Smart21Brain</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<style>
+  html,body{height:100%;margin:0}
+  body{display:grid;place-items:center;background:#0b1410;color:#e8f2ec;font-family:Poppins,system-ui,sans-serif}
+  .box{text-align:center}
+  .box img{width:84px;height:84px;border-radius:50%}
+  .box p{margin:.9rem 0 0;opacity:.8}
+</style>
+</head>
+<body>
+<div class="box">
+  <img src="images/logo/coool-256.png" alt="Smart21Brain">
+  <p>Signing you in…</p>
+</div>
+<script>
+(function () {
+  var isNew = /[?&]new=1/.test(location.search);
+  function go(url) { location.replace(url); }
+  try {
+    localStorage.setItem('s21-onboarded', '1');
+    if (isNew) localStorage.setItem('s21-needs-onboarding', '1');
+  } catch (e) { /* continue */ }
+  if (isNew) { go('onboarding.html'); return; }
+  fetch('/api/auth/me', { credentials: 'include' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d || !d.user) { go('login.html?google_error=1'); return; }
+      try {
+        sessionStorage.setItem('s21-welcome-dashboard', 'dashboard.html');
+        if (d.user.name) sessionStorage.setItem('s21-welcome-name', d.user.name);
+      } catch (e) { /* continue */ }
+      go('welcome.html');
+    })
+    .catch(function () { go('login.html?google_error=1'); });
+})();
+</script>
+</body>
+</html>

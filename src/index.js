@@ -101,6 +101,7 @@ router.post('/api/account/avatar', account.updateAvatar);
 router.post('/api/activity/game-score', activity.submitGameScore);
 router.get('/api/auth/google/config', google.config);
 router.post('/api/auth/google', google.signIn);
+router.post('/api/auth/google/redirect', google.redirectSignIn);
 
 // ---- Games ----
 router.get('/api/games', games.listGames);

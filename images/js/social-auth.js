@@ -71,6 +71,13 @@
     }
     google.initialize({
       client_id: googleId,
+      // Full-page Google "Choose an account" screen (like other big sites), not One
+      // Tap and not a small popup. Google posts the result to our server, which signs
+      // the person in and sends them on to the site. Never signs in automatically.
+      ux_mode: 'redirect',
+      login_uri: window.location.origin + '/api/auth/google/redirect',
+      auto_select: false,
+      cancel_on_tap_outside: true,
       callback: async (response) => {
         btn.disabled = true;
         try {
@@ -94,7 +101,33 @@
         } finally { btn.disabled = false; }
       },
     });
-    btn.addEventListener('click', () => google.prompt());
+    try { google.disableAutoSelect(); } catch (e) { /* ignore */ }
+    if (/[?&]google_error=1/.test(window.location.search)) {
+      showNotice(btn, 'login_google_not_connected', 'Google sign-in could not be completed. Please try again or use your email and password.');
+    }
+
+    // Overlay Google's official button (invisible) on top of our own button, so a
+    // click goes to Google's full-page account chooser instead of the One Tap prompt.
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;display:block;width:100%';
+    btn.parentNode.insertBefore(wrap, btn);
+    wrap.appendChild(btn);
+    const overlay = document.createElement('div');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.style.cssText = 'position:absolute;inset:0;display:flex;justify-content:center;overflow:hidden;opacity:.01;z-index:2;cursor:pointer';
+    wrap.appendChild(overlay);
+
+    const draw = () => {
+      const w = Math.max(200, Math.min(400, Math.round(wrap.getBoundingClientRect().width) || 300));
+      overlay.innerHTML = '';
+      google.renderButton(overlay, {
+        type: 'standard', theme: 'outline', size: 'large',
+        text: 'continue_with', shape: 'pill', width: w,
+      });
+    };
+    draw();
+    let timer;
+    window.addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(draw, 250); });
   }
 
   function initApple(btn) {

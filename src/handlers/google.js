@@ -39,16 +39,8 @@ export async function config({ env }) {
   return json({ clientId: env.GOOGLE_CLIENT_ID || '' });
 }
 
-export async function signIn({ request, env }) {
-  const body = await request.json().catch(() => null);
-  const token = typeof body?.credential === 'string' ? body.credential : '';
-  const clientId = env.GOOGLE_CLIENT_ID || '';
-  if (!token || !clientId) return badRequest('Google sign-in is not configured.');
-
-  let claims;
-  try { claims = await googleClaims(token, clientId); } catch (error) { claims = null; }
-  if (!claims) return unauthorized('Google sign-in could not be verified.');
-
+// Find (or create) the account for a verified Google identity and start a session.
+async function completeGoogleSignIn(request, env, claims) {
   let account = await env.DB.prepare(
     'SELECT user_id FROM oauth_accounts WHERE provider = ? AND provider_sub = ?'
   ).bind('google', claims.sub).first();
@@ -77,5 +69,54 @@ export async function signIn({ request, env }) {
   await env.DB.prepare(
     'INSERT INTO login_events (user_id, ip_address, user_agent) VALUES (?, ?, ?)'
   ).bind(user.id, request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || null, request.headers.get('User-Agent') || null).run();
-  return json({ user, isNewUser }, { headers: { 'Set-Cookie': sessionCookie(sessionToken, expires) } });
+  return { user, isNewUser, cookie: sessionCookie(sessionToken, expires) };
+}
+
+// POST /api/auth/google  (JSON {credential}) — used by the script-based flow.
+export async function signIn({ request, env }) {
+  const body = await request.json().catch(() => null);
+  const token = typeof body?.credential === 'string' ? body.credential : '';
+  const clientId = env.GOOGLE_CLIENT_ID || '';
+  if (!token || !clientId) return badRequest('Google sign-in is not configured.');
+
+  let claims;
+  try { claims = await googleClaims(token, clientId); } catch (error) { claims = null; }
+  if (!claims) return unauthorized('Google sign-in could not be verified.');
+
+  const { user, isNewUser, cookie } = await completeGoogleSignIn(request, env, claims);
+  return json({ user, isNewUser }, { headers: { 'Set-Cookie': cookie } });
+}
+
+function redirectTo(location, cookie) {
+  const headers = new Headers({ Location: location });
+  if (cookie) headers.append('Set-Cookie', cookie);
+  return new Response(null, { status: 303, headers });
+}
+
+function getCookieValue(request, name) {
+  const match = (request.headers.get('Cookie') || '').match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
+  return match ? match[1] : '';
+}
+
+// POST /api/auth/google/redirect — Google posts the sign-in here (form data) after the
+// full-page "Choose an account" screen, then we send the browser on to the site.
+export async function redirectSignIn({ request, env }) {
+  const fail = () => redirectTo('/login.html?google_error=1');
+  const clientId = env.GOOGLE_CLIENT_ID || '';
+  if (!clientId) return fail();
+
+  let form;
+  try { form = await request.formData(); } catch (error) { return fail(); }
+  const token = String(form.get('credential') || '');
+  const csrfBody = String(form.get('g_csrf_token') || '');
+  const csrfCookie = getCookieValue(request, 'g_csrf_token');
+  // Google's double-submit check: the cookie and the form value must match.
+  if (!token || !csrfBody || !csrfCookie || csrfBody !== csrfCookie) return fail();
+
+  let claims;
+  try { claims = await googleClaims(token, clientId); } catch (error) { claims = null; }
+  if (!claims) return fail();
+
+  const { isNewUser, cookie } = await completeGoogleSignIn(request, env, claims);
+  return redirectTo(`/auth-complete.html?new=${isNewUser ? 1 : 0}`, cookie);
 }
