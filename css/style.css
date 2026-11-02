@@ -332,6 +332,9 @@ body {
 }
 .s21-logo .mark svg { display: none; }
 .s21-logo .brand-21 { color: var(--s21-secondary); }
+/* Keep the wordmark tight: "Smart21Brain" with no gaps (the flex gap only separates the badge from the text) */
+.s21-logo { --logo-gap: .6rem; gap: var(--logo-gap); letter-spacing: -.01em; }
+.s21-logo .brand-21 { margin-inline: calc(var(--logo-gap) * -1); }
 
 .s21-nav-link {
   font-weight: 600;
@@ -2222,12 +2225,18 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
   .s21-navbar nav > .d-none.d-lg-flex { display: none !important; }
   .s21-navbar .s21-mobile-actions { display: flex !important; margin-left: auto; }
 }
-@media (min-width: 1280px) and (max-width: 1799px) {
-  .s21-navbar .s21-nav-link { padding: .4rem .42rem !important; font-size: .78rem; }
-  .s21-navbar .s21-nav-link .fa-solid { display: none; }
+@media (min-width: 1280px) {
+  .s21-navbar { padding: .45rem 0; }
+  .s21-navbar .s21-nav-link { padding: .35rem .5rem !important; font-size: .8rem; }
+  .s21-navbar .s21-nav-link .fa-solid { font-size: .7rem; margin-right: .25rem !important; }
   .s21-navbar .navbar-nav { gap: 0 !important; }
-  .s21-navbar .btn-s21 { padding: .4rem .8rem; font-size: .78rem; }
-  .s21-navbar .s21-logo { font-size: 1.05rem; }
+  .s21-navbar .btn-s21 { padding: .35rem .85rem; font-size: .8rem; }
+  .s21-navbar .icon-btn { width: 32px; height: 32px; font-size: .68rem; }
+  .s21-navbar .s21-logo { font-size: 1.05rem; --logo-gap: .45rem; }
+  .s21-navbar .s21-logo .mark { width: 34px; height: 34px; }
+}
+@media (min-width: 1280px) and (max-width: 1799px) {
+  .s21-navbar .s21-nav-link .fa-solid { display: none; }
 }
 
 /* Course curriculum: module header bar (readable in light and dark themes) */
