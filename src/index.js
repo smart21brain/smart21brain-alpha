@@ -3,6 +3,7 @@ import * as auth from './handlers/auth.js';
 import * as games from './handlers/games.js';
 import * as quizzes from './handlers/quizzes.js';
 import { flushTeacherEmails, queueWeeklySummaries } from './lib/teacher-email.js';
+import { seoPage, liveSitemap } from './lib/seo.js';
 import * as blog from './handlers/blog.js';
 import * as materials from './handlers/materials.js';
 import * as courses from './handlers/courses.js';
@@ -781,6 +782,14 @@ export default {
     if (/^\/s\/[a-z0-9-]{1,40}(\/[a-z0-9-]{1,40})?\/?$/i.test(url.pathname) && request.method === 'GET') {
       return env.ASSETS.fetch(new Request(new URL('/institution-site', request.url), request));
     }
+
+    // SEO: database-backed courses, posts, videos and books in the sitemap...
+    if (url.pathname === '/sitemap-live.xml' && (request.method === 'GET' || request.method === 'HEAD')) {
+      return liveSitemap(env);
+    }
+    // ...and unique title / description / structured data for course, lesson, blog-post, video and book pages.
+    const seoResponse = await seoPage(request, env);
+    if (seoResponse) return seoResponse;
 
     // Everything else: serve the static site from the assets binding.
     return env.ASSETS.fetch(request);

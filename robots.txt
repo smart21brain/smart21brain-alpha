@@ -1,11 +1,26 @@
+# Smart21Brain — robots.txt
 User-agent: *
 Allow: /
-Disallow: /dashboard.html
-Disallow: /profile.html
-Disallow: /admin.html
-Disallow: /teachers.html
-Disallow: /parents.html
-Disallow: /onboarding.html
-Disallow: /splash.html
+
+# Private areas and app screens (not useful in search results)
+Disallow: /api/
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /teachers
+Disallow: /parents
+Disallow: /onboarding
+Disallow: /splash
+Disallow: /welcome
+Disallow: /certificate
+Disallow: /final-exam
+Disallow: /module-quiz
+Disallow: /course-complete
+Disallow: /school-app
+Disallow: /shop-app
+Disallow: /institution-app
+Disallow: /stationery-app
+Disallow: /_bar_test
 
 Sitemap: https://smart21brain.com/sitemap.xml
+Sitemap: https://smart21brain.com/sitemap-live.xml

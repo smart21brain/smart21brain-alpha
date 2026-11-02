@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign in — Smart21Institution</title>
 <meta name="description" content="Sign in to Smart21Institution, or register your institution in a minute.">
-<meta name="robots" content="noindex">
 <meta name="theme-color" content="#0F766E">
 <link rel="manifest" href="institution-manifest.json">
 <link rel="apple-touch-icon" href="icons/institution-apple-touch.png">
@@ -22,6 +21,10 @@
 try{var t=+localStorage.getItem('in-gate');if(t&&Date.now()-t<1800000)ok=true;if(q.get('via')==='start')localStorage.setItem('in-gate',String(Date.now()));}catch(e){}
 if(!ok){var p=new URLSearchParams();p.set('go',location.hash==='#register'?'admin-register':'login');var i=q.get('s')||q.get('i');if(i)p.set('i',i);location.replace('institution-start.html?'+p.toString());}})();
 </script>
+<!-- s21-seo:start -->
+<link rel="canonical" href="https://smart21brain.com/institution-login">
+<meta name="robots" content="noindex, follow">
+<!-- s21-seo:end -->
 </head>
 <body class="in-body">
 <div class="in-auth">

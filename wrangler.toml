@@ -23,6 +23,9 @@ GOOGLE_CLIENT_ID = ""
 [assets]
 directory = "."
 binding = "ASSETS"
+# /about.html is served at /about (the address Google should index). The canonical URLs and the
+# sitemap written by scripts/build-seo.mjs use these clean addresses.
+html_handling = "auto-trailing-slash"
 
 # D1 database binding — accessible in the Worker as `env.DB`.
 # Replace `database_id` with the id printed by:

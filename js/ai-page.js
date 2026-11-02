@@ -63,7 +63,7 @@
   }
   function aiNode(i) {
     var el = document.createElement('div'); el.className = 'msg ai'; el.setAttribute('data-i', i);
-    el.innerHTML = '<img class="avatar" src="images/logo/coool.png" alt="" width="32" height="32"><div class="ai-body"><div class="md"></div><div class="actions"></div></div>'; return el;
+    el.innerHTML = '<img class="avatar" src="images/logo/coool-256.png" alt="" width="32" height="32"><div class="ai-body"><div class="md"></div><div class="actions"></div></div>'; return el;
   }
   function paint(node, text, streaming) {
     var md = node.querySelector('.md');

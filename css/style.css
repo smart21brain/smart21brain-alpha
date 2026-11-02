@@ -327,7 +327,7 @@ body {
   flex-shrink: 0;
 }
 .s21-logo .mark {
-  background: url('../images/logo/coool.png') center / cover no-repeat;
+  background: url('../images/logo/coool-256.png') center / cover no-repeat;
   overflow: hidden;
 }
 .s21-logo .mark svg { display: none; }

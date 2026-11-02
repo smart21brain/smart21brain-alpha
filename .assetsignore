@@ -16,3 +16,10 @@ package-lock.json
 *.md
 scripts/
 tests/
+
+# dev leftovers that should not be public
+.wrangler/
+*.bat
+tmp-audit-i18n.js
+verify-i18n.js
+_bar_test.html

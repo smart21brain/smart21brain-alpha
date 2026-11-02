@@ -5,12 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Smart21brain AI — Your learning &amp; coding assistant | Smart21Brain</title>
 <meta name="description" content="Chat with Smart21brain AI: learn any subject, get coding help, write better and practise with quizzes — free, fast and made for learners.">
-<link rel="canonical" href="https://smart21brain.com/ai.html">
-<meta property="og:title" content="Smart21brain AI — Your learning & coding assistant">
-<meta property="og:description" content="Ask anything. Learn, code, write and quiz yourself with Smart21brain AI.">
-<meta property="og:type" content="website">
-<link rel="icon" href="images/logo/coool.png" type="image/png">
-<link rel="apple-touch-icon" href="images/logo/coool.png">
 <script>
   // Same theme preference as the rest of the site (js/darkmode.js uses the 's21-theme' key).
   try { var t = localStorage.getItem('s21-theme'); document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark'); } catch (e) {}
@@ -22,6 +16,29 @@
 <link rel="stylesheet" href="css/ai-page.css?v=3">
 <link rel="stylesheet" href="css/ai-extras.css?v=1">
 <link rel="stylesheet" href="css/ai-image.css?v=1">
+<!-- s21-seo:start -->
+<link rel="canonical" href="https://smart21brain.com/ai">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta property="og:site_name" content="Smart21Brain">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Smart21brain AI — Your learning &amp; coding assistant | Smart21Brain">
+<meta property="og:description" content="Chat with Smart21brain AI: learn any subject, get coding help, write better and practise with quizzes — free, fast and made for learners.">
+<meta property="og:url" content="https://smart21brain.com/ai">
+<meta property="og:image" content="https://smart21brain.com/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Smart21Brain — Learn, Watch, Read &amp; Play">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Smart21brain AI — Your learning &amp; coding assistant | Smart21Brain">
+<meta name="twitter:description" content="Chat with Smart21brain AI: learn any subject, get coding help, write better and practise with quizzes — free, fast and made for learners.">
+<meta name="twitter:image" content="https://smart21brain.com/images/og-image.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://smart21brain.com/"},{"@type":"ListItem","position":2,"name":"Smart21brain AI","item":"https://smart21brain.com/ai"}]}</script>
+<!-- s21-seo:end -->
 </head>
 <body>
 <a class="skip" href="#aiInput" data-ai-t="skip">Skip to message box</a>
@@ -31,7 +48,7 @@
   <aside class="side" id="side" aria-label="Chats">
     <div class="side-top">
       <a class="brand" href="index.html" aria-label="Smart21Brain home">
-        <img src="images/logo/coool.png" alt="" width="30" height="30">
+        <img src="images/logo/coool-256.png" alt="" width="30" height="30">
         <span>Smart<em>21</em>brain <b>AI</b></span>
       </a>
       <button class="icon-btn only-mobile" id="sideClose" aria-label="Close menu" data-ai-t-aria="close_menu"><i class="fa-solid fa-xmark"></i></button>
@@ -76,7 +93,7 @@
     <section class="stage" id="stage" aria-live="polite">
       <!-- Welcome screen -->
       <div class="welcome" id="welcome">
-        <img class="w-logo" src="images/logo/coool.png" alt="Smart21brain AI" width="64" height="64">
+        <img class="w-logo" src="images/logo/coool-256.png" alt="Smart21brain AI" width="64" height="64">
         <h1><span id="greet">Hello</span>, <span class="grad" data-ai-t="hello_q">how can I help you today?</span></h1>
         <p class="w-sub" data-ai-t="welcome_sub">Learn any subject, get coding help, write better and test yourself.</p>
         <div class="cards" id="cards"></div>

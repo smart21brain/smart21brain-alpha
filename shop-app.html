@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Smart21Shop — Smart21Brain</title>
-<meta name="robots" content="noindex">
 <meta name="theme-color" content="#4F46E5">
 <link rel="manifest" href="shop-manifest.json">
 <link rel="apple-touch-icon" href="icons/shop-apple-touch.png" data-shop="1">
@@ -18,6 +17,10 @@
   // Apply the saved light/dark choice before the page paints (no flash).
   try { var t = localStorage.getItem('sp-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
+<!-- s21-seo:start -->
+<link rel="canonical" href="https://smart21brain.com/shop-app">
+<meta name="robots" content="noindex, nofollow">
+<!-- s21-seo:end -->
 </head>
 <body class="sp-body">
 <noscript><p style="padding:2rem;font-family:sans-serif">Smart21Shop needs JavaScript. Please turn it on in your browser.</p></noscript>
