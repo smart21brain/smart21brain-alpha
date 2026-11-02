@@ -2,9 +2,11 @@ name = "smart21brain"
 main = "src/index.js"
 compatibility_date = "2026-08-01"
 
+# ...
 [vars]
-# Set this to the Google OAuth Web Client ID from Google Cloud Console.
-GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_ID = "207300963709-9btv89m1murj72riedjl67utek8r68hm.apps.googleusercontent.com"
+# ...
+
 
 # Invite code required to self-register as an admin (register.html's
 # "Admin" role option). This is a SECRET, not a var — don't add an
