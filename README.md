@@ -159,7 +159,7 @@ homepage and the entire first-run onboarding flow.
 placeholder. Google offers a key-free embed URL format
 (`google.com/maps?q=...&output=embed`) alongside the official (API-key-
 gated) Maps Embed API — this uses that key-free format, pointed at
-"Msasani Peninsula, Dar es Salaam, Tanzania" to match the address already
+"Kibaha, Pwani, Tanzania" to match the address already
 shown on the page. No account, billing, or API key setup required. A
 comment in the HTML shows how to swap it for the official Embed API (with
 its own styling controls) if a real API key is ever added later — but the
