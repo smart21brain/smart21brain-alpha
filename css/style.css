@@ -2227,8 +2227,8 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
 }
 @media (min-width: 1280px) {
   .s21-navbar { padding: .45rem 0; }
-  .s21-navbar .s21-nav-link { padding: .35rem .5rem !important; font-size: .8rem; }
-  .s21-navbar .s21-nav-link .fa-solid { font-size: .7rem; margin-right: .25rem !important; }
+  .s21-navbar .s21-nav-link { padding: .4rem .55rem !important; font-size: .86rem; }
+  .s21-navbar .s21-nav-link .fa-solid { font-size: .78rem; margin-right: .25rem !important; }
   .s21-navbar .navbar-nav { gap: 0 !important; }
   .s21-navbar .btn-s21 { padding: .35rem .85rem; font-size: .8rem; }
   .s21-navbar .icon-btn { width: 32px; height: 32px; font-size: .68rem; }
@@ -2237,6 +2237,10 @@ a.badge-pill:hover, button.badge-pill:hover { transform: translateY(-1px); }
 }
 @media (min-width: 1280px) and (max-width: 1799px) {
   .s21-navbar .s21-nav-link .fa-solid { display: none; }
+}
+/* Wide screens have room for a larger menu */
+@media (min-width: 1600px) {
+  .s21-navbar .s21-nav-link { padding: .45rem .75rem !important; font-size: .96rem; }
 }
 
 /* Course curriculum: module header bar (readable in light and dark themes) */
